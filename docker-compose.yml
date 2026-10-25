@@ -1,0 +1,11 @@
+# Static site, no build step. `docker compose up -d` then open http://localhost:8642
+services:
+  moonshot:
+    image: nginx:1.27-alpine
+    ports:
+      - "8642:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./css:/usr/share/nginx/html/css:ro
+      - ./js:/usr/share/nginx/html/js:ro
+    restart: unless-stopped
