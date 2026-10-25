@@ -20,6 +20,7 @@
           <div class="prose">
             <p>Over a spherical, non-rotating Earth with an atmosphere of density \\(\\rho(h) = \\rho_0 e^{-h/H}\\), a capsule of mass \\(m\\), drag coefficient \\(C_D\\), reference area \\(A\\) and lift-to-drag ratio \\(L/D\\) obeys:</p>
             <div class="eq">\\[ \\dot v = -\\frac{\\rho v^2}{2\\beta} - g\\sin\\gamma, \\qquad v\\dot\\gamma = \\frac{\\rho v^2}{2\\beta}\\frac{L}{D}\\cos\\sigma - \\left(g - \\frac{v^2}{r}\\right)\\cos\\gamma, \\qquad \\dot h = v\\sin\\gamma \\]</div>
+            ${Sym.where(['vdot', 'rho', 'v', 'beta', 'g', 'gammaE', 'gammadot', 'LD', 'sigma', 'r', 'hdot'], 'First equation: drag and gravity change the speed. Second: lift and gravity bend the path. Third: the descent rate.')}
             <p>Here \\(\\beta = m/(C_D A)\\) is the <b>ballistic coefficient</b>, \\(\\gamma\\) the flight-path angle (negative going down) and \\(\\sigma\\) the bank angle. Bank angle is the only control Apollo had: it rolled the lift vector up, down or sideways.</p>
           </div>
         </section>
@@ -29,6 +30,7 @@
           <div class="prose">
             <p>Drop lift and gravity (drag dominates) and the equations integrate in closed form (Allen & Eggers, 1953). The peak deceleration then depends only on entry speed and angle, not on the vehicle:</p>
             <div class="eq">\\[ a_{max} = \\frac{v_E^2\\,\\sin|\\gamma_E|}{2\\,e\\,H}, \\qquad \\rho^* = \\frac{\\beta\\,\\sin|\\gamma_E|}{H} \\]</div>
+            ${Sym.where(['amax', 'vE', 'gE', 'euler', 'H', 'rhostar', 'beta'])}
             <p>The formula assumes a straight path. At lunar-return speed the real path curves away from the Earth (\\(v^2/r > g\\)), so at shallow angles it overestimates. For 11 km/s at −6.5° it predicts 36 g, while the lab’s full simulation of a ballistic capsule gives about 16 g. That is still lethal, which is why Apollo needed lift. Heavier, more streamlined vehicles (high \\(\\beta\\)) reach their peak deeper, at higher density \\(\\rho^*\\). That makes them faster and hotter at the end, which is why warheads are slim and capsules are blunt.</p>
           </div>
         </section>
@@ -38,6 +40,7 @@
           <div class="prose">
             <p>Convective heating at the stagnation point follows the Sutton–Graves relation:</p>
             <div class="eq">\\[ \\dot q = k\\sqrt{\\frac{\\rho}{r_n}}\\;v^3, \\qquad k = 1.74\\times10^{-4}\\ \\text{(SI, Earth air)} \\]</div>
+            ${Sym.where(['qdot', 'k', 'rho', 'rn', 'v'], 'v³: twice as fast means eight times the heating.')}
             <p>The large nose radius \\(r_n\\) of a blunt body reduces it. More important, as H. Julian Allen realised in 1951, a blunt shape pushes a strong, detached shock wave ahead of it. Most of the energy then heats the air, which carries it away, instead of the vehicle. Apollo's heat shield was AVCOAT, a phenolic-epoxy resin in a fibreglass honeycomb. It <b>ablated</b>: charring and eroding, it carried heat away as it went, with up to 2 700 °C on its face. At lunar return speeds radiative heating from the hot shock layer adds about another third.</p>
           </div>
         </section>

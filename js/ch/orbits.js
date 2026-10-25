@@ -20,8 +20,10 @@
           <div class="prose">
             <p>Gravity is a conservative central force, so two quantities stay fixed along any coasting trajectory. Dot the two-body equation with \\(\\dot{\\vec r}\\) and you get the <b>specific mechanical energy</b> (energy per kilogram):</p>
             <div class="eq">\\[ \\varepsilon = \\frac{v^2}{2} - \\frac{\\mu}{r} = \\text{constant} \\]</div>
+            ${Sym.where(['eps', 'v', 'mu', 'r'], 'Like a ball on a slope: going down (smaller r) it gains speed, going up it slows, and the total stays the same.')}
             <p>Cross it with \\(\\vec r\\) and you get the <b>specific angular momentum</b>, a vector perpendicular to the orbital plane. The plane therefore never changes:</p>
             <div class="eq">\\[ \\vec h = \\vec r \\times \\vec v, \\qquad h = r\\,v\\cos\\phi \\]</div>
+            ${Sym.where(['vech', 'vecr', 'vecv', 'cross', 'h', 'phi'])}
             <p>Here \\(\\phi\\) is the <b>flight-path angle</b>, measured from the local horizontal to the velocity vector. It is zero at periapsis and apoapsis.</p>
           </div>
         </section>
@@ -31,6 +33,7 @@
           <div class="prose">
             <p>Integrating the equation of motion once more (BMW §1.5) gives the shape of every possible path, the polar equation of a conic with the central body at one focus:</p>
             <div class="eq">\\[ r = \\frac{p}{1 + e\\cos\\nu}, \\qquad p = \\frac{h^2}{\\mu} = a(1-e^2) \\]</div>
+            ${Sym.where(['r', 'p', 'e', 'nu', 'h', 'mu', 'a'], 'With ν = 0 (periapsis) you get the smallest r; with ν = 180° (apoapsis) the largest.')}
             <p>\\(\\nu\\) is the <b>true anomaly</b>, the angle from periapsis to the spacecraft. The eccentricity \\(e\\) selects the conic, and the energy sign tells you which kind you are on:</p>
           </div>
           <div class="scroll-x" style="max-width:52rem"><table class="data">
@@ -44,6 +47,7 @@
           <div class="prose">
             <p>Energy depends only on the semi-major axis, \\(\\varepsilon = -\\mu/2a\\). Combine that with the definition of \\(\\varepsilon\\) and you get the most useful equation in astrodynamics, the <b>vis-viva</b> (energy) equation:</p>
             <div class="eq">\\[ v = \\sqrt{\\mu\\left(\\frac{2}{r} - \\frac{1}{a}\\right)} \\]</div>
+            ${Sym.where(['v', 'mu', 'r', 'a'], 'Know where you are (r) and which orbit you are on (a), and you know your speed.')}
             <p>The apsides follow from the geometry: \\(r_p = a(1-e)\\), \\(r_a = a(1+e)\\), and \\(e = (r_a - r_p)/(r_a + r_p)\\).</p>
           </div>
         </section>
@@ -89,7 +93,9 @@
           <div class="prose">
             <p>Sooner or later every mission must answer the question “where will the spacecraft be at time \\(t\\)?” The angle \\(\\nu\\) does not grow uniformly with time, so Kepler introduced two auxiliary angles. The <b>eccentric anomaly</b> \\(E\\) is measured at the centre of the ellipse, on an auxiliary circle of radius \\(a\\). The <b>mean anomaly</b> \\(M\\) does grow uniformly, at the mean motion \\(n\\):</p>
             <div class="eq">\\[ n = \\sqrt{\\frac{\\mu}{a^3}}, \\qquad M = n\\,(t - t_p) = E - e\\sin E \\]</div>
+            ${Sym.where(['n', 'a', 'mu', 'Mm', 't', 'tp', 'E', 'e'])}
             <div class="eq">\\[ \\tan\\frac{\\nu}{2} = \\sqrt{\\frac{1+e}{1-e}}\\;\\tan\\frac{E}{2} \\]</div>
+            ${Sym.where(['nu', 'E', 'e', 'tan'], 'This converts the helper angle E into the real position angle ν.')}
             <p>Going from position to time is direct. Going from time to position means solving Kepler’s equation for \\(E\\), which has no closed-form solution. Newton’s iteration \\(E_{k+1} = E_k - (E_k - e\\sin E_k - M)/(1 - e\\cos E_k)\\) converges in a few steps; that is what the lab above runs on every frame. BMW chapter 4 develops the universal-variable form that also covers parabolas and hyperbolas. The Apollo Guidance Computer used that approach (Battin’s formulation) in its conic routines.</p>
           </div>
         </section>

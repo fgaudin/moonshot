@@ -45,6 +45,7 @@
           <div class="prose">
             <p>Apply Newton’s second and third laws to a control volume around the engine. The force on the rocket is the momentum flux of the exhaust, plus a pressure term at the nozzle exit:</p>
             <div class="eq">\\[ F = \\dot m\\, v_e + (p_e - p_a)\\,A_e \\]</div>
+            ${Sym.where(['Fth', 'mdot', 've', 'pexit', 'pa', 'Ae'], 'First term: momentum thrown backwards each second. Second term: extra push (or pull) from the pressure difference at the nozzle exit.')}
             <p>\\(\\dot m\\) is the propellant mass flow, \\(v_e\\) the exhaust velocity, \\(p_e\\) and \\(A_e\\) the pressure and area at the nozzle exit, and \\(p_a\\) the ambient pressure. As the vehicle climbs, \\(p_a\\) falls and thrust rises. An F-1 gave 6.77 MN at sea level and 7.77 MN in vacuum. Engineers fold both terms into one <b>effective exhaust velocity</b> \\(c = F/\\dot m\\).</p>
           </div>
           <div class="lab" id="nz" style="grid-template-columns:minmax(0,1fr) 19rem">
@@ -63,6 +64,7 @@
           <div class="prose">
             <p>The figure of merit for a propellant and engine is the <b>specific impulse</b>: the impulse delivered per unit <i>weight</i> of propellant consumed. It comes out in seconds:</p>
             <div class="eq">\\[ I_{sp} = \\frac{F}{\\dot m\\, g_0} = \\frac{c}{g_0} \\]</div>
+            ${Sym.where(['isp', 'Fth', 'mdot', 'g0', 'c'])}
             <p>Read it as the number of seconds one kilogram of propellant can produce one kilogram-force of thrust. Higher is better. Chemical rockets top out near 450 s, because the energy is in the chemical bonds and light exhaust molecules (H₂O, H₂) carry it away fastest.</p>
           </div>
           <div class="scroll-x" style="max-width:44rem"><table class="data"><thead><tr><th>Propellant</th><th>I<sub>sp</sub> (s)</th><th>c (m/s)</th><th>Flown on</th></tr></thead><tbody>
@@ -75,6 +77,7 @@
           <div class="prose">
             <p>In time \\(dt\\) a rocket of mass \\(m\\) ejects \\(-dm\\) of propellant at speed \\(c\\) relative to itself. Conservation of momentum, with no external forces, gives \\(m\\,dv = -c\\,dm\\). Integrate from the initial mass \\(m_0\\) to the final mass \\(m_f\\):</p>
             <div class="eq">\\[ \\Delta v = c\\,\\ln\\frac{m_0}{m_f} = I_{sp}\\,g_0\\,\\ln\\frac{m_0}{m_f} \\]</div>
+            ${Sym.where(['dv', 'c', 'ln', 'm0', 'mf', 'isp', 'g0'], 'Example: I<sub>sp</sub> = 421 s and a mass ratio of 3 gives 421 × 9.81 × ln 3 = 4 537 m/s.')}
             <p>Konstantin Tsiolkovsky published this in 1903. It holds two hard truths. Δv grows only <i>logarithmically</i> with the mass ratio \\(MR = m_0/m_f\\). And the required mass ratio grows <i>exponentially</i> with Δv: \\(MR = e^{\\Delta v / c}\\). Reaching low orbit (about 9.3 km/s including losses) with kerosene engines needs a mass ratio near 23. In practice no single tank and engine can be that light.</p>
           </div>
           <div class="lab" id="re">
@@ -93,6 +96,7 @@
           <div class="prose">
             <p>The way out is to stop carrying empty tanks. A <b>staged</b> rocket drops each stage’s structure when its propellant is gone, and the rocket equation restarts with a smaller mass. The total is the sum of the stages’ contributions, each computed with everything above it as payload:</p>
             <div class="eq">\\[ \\Delta v_{total} = \\sum_{k} I_{sp,k}\\,g_0\\,\\ln\\frac{m_{0,k}}{m_{f,k}} \\]</div>
+            ${Sym.where(['sumk', 'ispk', 'g0', 'm0k', 'mfk'])}
             <p>Below is the Saturn V as flown on Apollo 11, using approximate masses and an average I<sub>sp</sub> of 285 s for the S-IC across its climb out of the atmosphere. Edit any cell. Then load the single-stage version: same propellant, same structure, one stage. It cannot reach orbit.</p>
           </div>
           <div class="lab" id="st" style="grid-template-columns:minmax(0,1fr)">

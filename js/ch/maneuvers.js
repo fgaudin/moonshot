@@ -20,8 +20,11 @@
           <div class="prose">
             <p>Walter Hohmann showed in 1925 that the cheapest two-impulse way between coplanar circular orbits is an ellipse tangent to both. Its perigee touches the inner orbit and its apogee the outer one. Both burns are made along the velocity, where they change energy most efficiently:</p>
             <div class="eq">\\[ a_t = \\frac{r_1 + r_2}{2} \\]</div>
+            ${Sym.where(['at', 'r1', 'r2'])}
             <div class="eq">\\[ \\Delta v_1 = \\sqrt{\\mu\\left(\\frac{2}{r_1}-\\frac{1}{a_t}\\right)} - \\sqrt{\\frac{\\mu}{r_1}}, \\qquad \\Delta v_2 = \\sqrt{\\frac{\\mu}{r_2}} - \\sqrt{\\mu\\left(\\frac{2}{r_2}-\\frac{1}{a_t}\\right)} \\]</div>
+            ${Sym.where(['dv1', 'dv2', 'mu', 'r1', 'r2', 'at'], 'Each burn = (speed on the new orbit at that point, from vis-viva) − (speed on the old orbit at that point).')}
             <div class="eq">\\[ \\mathrm{TOF} = \\pi\\sqrt{\\frac{a_t^3}{\\mu}} \\]</div>
+            ${Sym.where(['tof', 'pi', 'at', 'mu'])}
             <p>The orbits here are circular, but the method is general: every burn sets the energy (vis-viva) and angular momentum at that point, and the new orbit follows.</p>
           </div>
         </section>
@@ -31,8 +34,10 @@
           <div class="prose">
             <p>To tilt an orbit, the velocity vector must be rotated through the angle \\(\\Delta i\\) at one of the nodes, where the two planes intersect. With constant speed, the velocity triangle is isosceles:</p>
             <div class="eq">\\[ \\Delta v_{plane} = 2\\,v\\,\\sin\\frac{\\Delta i}{2} \\]</div>
+            ${Sym.where(['dvplane', 'v', 'di'])}
             <p>A 28.5° plane change in low Earth orbit costs 3.8 km/s, nearly half of what it took to get there. Do it where the spacecraft is slowest (at apogee) and combine it with a burn you need anyway; the law of cosines then gives the combined cost:</p>
             <div class="eq">\\[ \\Delta v = \\sqrt{v_i^2 + v_f^2 - 2\\,v_i v_f\\cos\\Delta i} \\]</div>
+            ${Sym.where(['dv', 'vi', 'vf', 'di'], 'The law of cosines (Al-Kashi in French schools) applied to the triangle of the two velocity vectors.')}
             <p>Geostationary missions combine the final circularization with the plane change at apogee for exactly this reason. Try it in the lab.</p>
           </div>
         </section>
@@ -66,6 +71,7 @@
           <div class="prose">
             <p>A chaser in a lower orbit moves faster in angle than its target, so it gains on it. To meet with a Hohmann transfer, the chaser must start when the target is ahead by the <b>lead angle</b>. The target then travels \\(\\omega_{tgt}\\,\\mathrm{TOF}\\) while the chaser travels 180°:</p>
             <div class="eq">\\[ \\alpha_{lead} = \\pi - \\omega_{tgt}\\,\\mathrm{TOF}, \\qquad \\omega_{tgt} = \\sqrt{\\mu / r_2^3} \\]</div>
+            ${Sym.where(['alead', 'pi', 'wtgt', 'tof', 'r2', 'mu'])}
             <p>If the geometry is wrong, wait. The relative angle changes at \\(\\omega_{chaser} - \\omega_{tgt}\\) per second, giving a <b>synodic period</b> between opportunities. To catch up with a target ahead in the <i>same</i> orbit, burn retrograde, drop into a lower and faster phasing orbit, and come back up. In orbit you slow down to speed up.</p>
             <div class="callout history"><b>Houbolt’s gamble</b>In 1961 NASA engineer John Houbolt argued, against fierce opposition, that the CSM should stay in lunar orbit while a light, specialized lander went down and came back up to rendezvous. Lunar orbit rendezvous cut the mass to be landed and relaunched so much that a single Saturn V could do the job. No one had yet performed a rendezvous in space. Gemini 6A and 7 did it in December 1965 and proved it possible. Apollo 11’s ascent stage met Columbia about 3.5 hours after leaving Tranquility Base, using the coelliptic sequence (CSI, CDH, TPI) that Buzz Aldrin had helped develop for his doctoral thesis.</div>
           </div>

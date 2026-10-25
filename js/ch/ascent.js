@@ -20,6 +20,7 @@
           <div class="prose">
             <p>Circular speed at the Apollo parking altitude of 185 km is 7.79 km/s, yet launch vehicles must supply about 9.3–9.5 km/s. The difference is <b>losses</b>, minus a gift from Earth’s rotation:</p>
             <div class="eq">\\[ \\Delta v_{design} = v_{orbit} + \\underbrace{\\int g\\sin\\gamma\\,dt}_{\\text{gravity loss}} + \\underbrace{\\int \\frac{D}{m}\\,dt}_{\\text{drag loss}} + \\underbrace{\\int \\frac{F}{m}(1-\\cos\\alpha)\\,dt}_{\\text{steering loss}} - v_{rotation} \\]</div>
+            ${Sym.where([['\\Delta v_{design}', 'total velocity change the rocket must be able to deliver', 'm/s'], 'vorbit', 'integral', 'g', 'gamma', 'D', 'm', 'Fth', 'alpha', 'vrot'], 'In words: orbital speed + what gravity steals while you climb + what the air steals + what is wasted by not pointing exactly along the path − the free speed from Earth’s spin.')}
             <p><b>Gravity loss</b> is the thrust spent holding the vehicle up while its path is still steep (\\(\\gamma\\) is the flight-path angle). It is the largest loss, often 1–1.5 km/s, and it is why low thrust-to-weight rockets are inefficient. <b>Drag loss</b> is small for a big rocket, around 40 m/s for the Saturn V, but drag sets the <b>maximum dynamic pressure</b> \\(q = \\tfrac12\\rho v^2\\) that the structure must survive. <b>Steering loss</b> comes from thrust that isn’t aligned with the velocity.</p>
             <p><b>Earth’s rotation</b> gives a launch due east a free \\(\\omega_\\oplus R_\\oplus\\cos\\phi\\): 465 m/s at the equator, 408 m/s at Cape Canaveral (28.5° N). Launch west and you pay it back twice.</p>
           </div>
@@ -30,6 +31,7 @@
           <div class="prose">
             <p>A rocket starts vertical so it clears the pad and gets out of the thick air. A few seconds later it makes a small <b>pitch kick</b>, then lets gravity do the turning: with thrust aligned to the airflow there is no angle of attack, so no aerodynamic side load. The flight-path angle obeys</p>
             <div class="eq">\\[ \\dot\\gamma = -\\left(\\frac{g}{v} - \\frac{v}{r}\\right)\\cos\\gamma \\]</div>
+            ${Sym.where(['gammadot', 'g', 'v', 'r', 'gamma'], 'Slow rockets (small v) turn over fast; at orbital speed g/v = v/r and the path stops bending toward the ground.')}
             <p>The slower the vehicle, the faster gravity bends its path. That is why the size and timing of the kick matter so much. Once above the atmosphere the upper stages switch to closed-loop guidance. Saturn V used the Iterative Guidance Mode, which steers to hit a target altitude, speed and flight-path angle at cutoff. The simulator uses a simplified version of the same idea for the S-II and S-IVB.</p>
           </div>
         </section>

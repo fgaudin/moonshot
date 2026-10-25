@@ -11,18 +11,21 @@
 <link rel="stylesheet" href="css/style.css">
 <script>
   window.MathJax = {
-    tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+    loader: { load: ['[tex]/html'] },
+    tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['html'] } },
     svg: { fontCache: 'global' },
     startup: {
       ready() {
         // anything rendered before MathJax arrived is typeset once, as a whole page
         MathJax.startup.defaultReady();
+        // tag Greek letters and symbols so they get name tooltips (js/symbols.js)
+        MathJax.startup.input[0].preFilters.add(({ math }) => { if (window.Sym) math.math = Sym.texFilter(math.math); });
         window.__pendingTypeset = [];
       }
     }
   };
 </script>
-<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
 </head>
 <body>
 <button class="btn menu-btn" id="menu-btn" aria-controls="rail" aria-expanded="false">☰ Flight plan</button>
@@ -36,6 +39,7 @@
 </div>
 <script src="js/physics.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/symbols.js"></script>
 <script src="js/app.js"></script>
 <script src="js/ch/home.js"></script>
 <script src="js/ch/newton.js"></script>

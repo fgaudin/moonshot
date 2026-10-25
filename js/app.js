@@ -27,6 +27,7 @@
       const rail = document.getElementById('rail'), mb = document.getElementById('menu-btn');
       mb.addEventListener('click', () => { const o = rail.classList.toggle('open'); mb.setAttribute('aria-expanded', String(o)); });
       tl.addEventListener('click', () => { rail.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); });
+      Sym.observe(document.getElementById('page'));
       window.addEventListener('hashchange', route);
       route();
     },

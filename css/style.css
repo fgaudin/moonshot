@@ -122,6 +122,28 @@ mjx-container[display="true"] { margin: .4em 0 !important; }
 .section > h2 { display: flex; align-items: baseline; gap: .7rem; }
 .section > h2 .idx { font: 500 .9rem/1 var(--f-mono); color: var(--accent); }
 
+/* ---------- symbols: legends and Greek tooltips ---------- */
+.where {
+  display: grid; grid-template-columns: minmax(3.5rem, auto) minmax(0, 1fr); gap: .2rem .9rem; align-items: baseline;
+  margin: -.2rem 0 .4rem; padding: .6rem .9rem; border-left: 2px solid var(--line); font-size: .86rem; line-height: 1.45; max-width: 64ch;
+}
+.where-h { grid-column: 1 / -1; font: 600 .66rem/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.where dt { text-align: right; white-space: nowrap; }
+.where dd { margin: 0; color: var(--ink); }
+.where .unit { font: .74rem/1 var(--f-mono); color: var(--muted); white-space: nowrap; margin-left: .3rem; }
+.where .unit::before { content: "["; } .where .unit::after { content: "]"; }
+.where-note { grid-column: 1 / -1; margin: .2rem 0 0; color: var(--muted); font-style: italic; }
+abbr.gk { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; }
+mjx-container [class*="gk-"] { cursor: help; }
+mjx-container [class*="gk-"]:hover { fill: var(--accent); }
+.gk-tip {
+  position: fixed; z-index: 50; padding: .55rem .7rem; border-radius: 6px; background: var(--ink); color: var(--bg);
+  font: .8rem/1.45 var(--f-body); box-shadow: var(--shadow); pointer-events: none;
+}
+.gk-tip b { font-size: 1.15rem; }
+.gk-tip .nm { font: 600 .78rem/1 var(--f-mono); text-transform: uppercase; letter-spacing: .06em; }
+.gk-tip .say { font: .74rem/1 var(--f-mono); opacity: .75; }
+
 /* ---------- lab console ---------- */
 .lab {
   background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow);
@@ -191,6 +213,8 @@ table.data { border-collapse: collapse; width: 100%; font: .82rem/1.4 var(--f-mo
 table.data th, table.data td { padding: .45rem .6rem; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
 table.data th:first-child, table.data td:first-child { text-align: left; }
 table.data th { font-weight: 600; color: var(--muted); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+table.data.notation td { white-space: normal; text-align: left; vertical-align: top; font: .92rem/1.45 var(--f-body); }
+table.data.notation td:first-child { white-space: nowrap; }
 table.data input { width: 6.5rem; text-align: right; padding: .35rem .4rem; }
 .scroll-x { overflow-x: auto; }
 

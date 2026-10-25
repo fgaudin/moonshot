@@ -21,6 +21,7 @@
             <p><b>First law, inertia.</b> A body keeps its velocity, constant speed in a straight line, unless an external force acts on it. A spacecraft coasting between Earth and Moon needs no engine to keep moving. It needs an engine only to <i>change</i> its motion.</p>
             <p><b>Second law.</b> The rate of change of momentum equals the applied force:</p>
             <div class="eq">\\[ \\vec F = \\frac{d}{dt}\\left(m\\vec v\\right) \\quad\\Longrightarrow\\quad \\vec F = m\\,\\vec a \\;\\; \\text{(constant mass)} \\]</div>
+            ${Sym.where(['vecF', 'ddt', 'm', 'vecv', 'veca'], 'Read it as: force = mass × acceleration. Push twice as hard and a body speeds up twice as fast.')}
             <p>A rocket's mass is <i>not</i> constant; it throws away about 13 tonnes of propellant every second at liftoff. Working this law with changing mass gives the rocket equation (Phase 3).</p>
             <p><b>Third law, action and reaction.</b> When the engine pushes exhaust backward, the exhaust pushes the engine forward with an equal and opposite force. A rocket needs no air to push against, which is why it works in a vacuum.</p>
           </div>
@@ -31,8 +32,10 @@
           <div class="prose">
             <p>Any two masses attract each other along the line joining them, with a force proportional to both masses and inversely proportional to the square of their distance:</p>
             <div class="eq">\\[ F_g = \\frac{G\\,M\\,m}{r^2}, \\qquad G = 6.674\\times10^{-11}\\ \\mathrm{N\\,m^2\\,kg^{-2}} \\]</div>
+            ${Sym.where(['Fg', 'G', 'M', 'm', 'r'], 'Double the distance and the pull drops to a quarter (inverse square).')}
             <p>Astrodynamicists rarely use \\(G\\) and \\(M\\) separately. The product, the <b>gravitational parameter</b> \\(\\mu = GM\\), is known far more precisely from tracking spacecraft. For Earth, \\(\\mu_\\oplus = 3.986\\,004\\times10^{14}\\ \\mathrm{m^3/s^2}\\). The gravitational acceleration at distance \\(r\\) from the centre is then</p>
             <div class="eq">\\[ g(r) = \\frac{\\mu}{r^2} = g_0\\left(\\frac{R_\\oplus}{r}\\right)^2, \\qquad g_0 = 9.806\\,65\\ \\mathrm{m/s^2} \\]</div>
+            ${Sym.where(['gr', 'mu', 'r', 'g0', 'RE'])}
             <div class="callout"><b>Weightless, not gravity-free</b>At the International Space Station's altitude of 400 km, \\(g\\) is still 8.7 m/s², 89% of its surface value. Astronauts float because they and their station fall together. Orbiting is falling while moving sideways fast enough that the ground curves away beneath you.</div>
           </div>
         </section>
@@ -42,8 +45,10 @@
           <div class="prose">
             <p>In <i>A Treatise of the System of the World</i>, Newton imagined a cannon on a very tall mountain firing horizontally. The faster the shot, the farther it lands, until at one particular speed the ground curves away exactly as fast as the shot falls. That speed is the <b>circular orbital velocity</b>. Gravity supplies exactly the centripetal acceleration of a circle:</p>
             <div class="eq">\\[ \\frac{\\mu}{r^2} = \\frac{v^2}{r} \\quad\\Longrightarrow\\quad v_{\\text{circ}} = \\sqrt{\\frac{\\mu}{r}} \\]</div>
+            ${Sym.where(['mu', 'r', 'v', 'vcirc'], 'Left side: the pull of gravity per kilogram. Right side: the acceleration needed to move in a circle of radius r at speed v. Set them equal and solve for v.')}
             <p>Faster still, the path becomes an ellipse. At \\(\\sqrt2\\) times circular speed the shot never returns: it has reached <b>escape velocity</b>, where kinetic energy matches the depth of the gravity well.</p>
             <div class="eq">\\[ \\tfrac12 v_{\\text{esc}}^2 - \\frac{\\mu}{r} = 0 \\quad\\Longrightarrow\\quad v_{\\text{esc}} = \\sqrt{\\frac{2\\mu}{r}} \\]</div>
+            ${Sym.where(['ke', 'pe', 'vesc'], 'Escape means just enough kinetic energy to climb out of the gravity well, so the total energy is zero.')}
             <p>Try it below. Find the speed that gives a circle, then the speed that escapes. Notice that every shot fired horizontally passes back through the cannon's position if it misses the Earth.</p>
           </div>
           <div class="lab" id="cannon">
@@ -64,6 +69,7 @@
           <div class="prose">
             <p>Combine the second law with gravitation for a small body \\(m\\) near a large one \\(M\\). Bate, Mueller and White (§1.3) show that if the bodies are spherically symmetric, no other forces act and \\(m \\ll M\\), the motion of \\(m\\) relative to \\(M\\) obeys</p>
             <div class="eq">\\[ \\ddot{\\vec r} + \\frac{\\mu}{r^3}\\,\\vec r = \\vec 0 \\]</div>
+            ${Sym.where(['rddot', 'vecr', 'r', 'mu'], 'Read it as: acceleration = μ/r² pointing back toward the planet’s centre. (μ/r³ times the vector r⃗, whose length is r, gives a length of μ/r².)')}
             <p>This is the <b>two-body equation of motion</b>, the starting point of Phase 2. A sphere's gravity acts as if all its mass sat at the centre; Newton proved this shell theorem and needed calculus, which he invented, to do it. Real missions add perturbations: Earth's oblateness (\\(J_2\\)), the Sun and Moon, drag, solar pressure. Two-body motion still describes the trajectory to better than a percent most of the time.</p>
           </div>
         </section>
