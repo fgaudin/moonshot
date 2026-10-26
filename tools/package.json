@@ -1,0 +1,6 @@
+{
+  "name": "moonshot-tools",
+  "private": true,
+  "description": "Dev tools for Moonshot (not needed to run the app)",
+  "dependencies": { "acorn": "8.12.1", "acorn-walk": "8.3.3" }
+}

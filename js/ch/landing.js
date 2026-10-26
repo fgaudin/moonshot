@@ -6,77 +6,77 @@
   const DPS = { F: 45040, isp: 311 };
 
   App.chapter({
-    id: 'landing', phase: 'Descent', title: 'Landing on the Moon', lab: 'Lunar lander',
-    blurb: 'Take over from the computer 150 m above a boulder field, with 60 seconds of fuel and a 1202 alarm.',
+    id: 'landing', phase: N`Descent`, title: N`Landing on the Moon`, lab: N`Lunar lander`,
+    blurb: N`Take over from the computer 150 m above a boulder field, with 60 seconds of fuel and a 1202 alarm.`,
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Training module TM-8 · Powered descent & ascent',
-          title: 'Landing on the Moon',
-          lede: 'Twelve and a half minutes from 15 km altitude and 1.7 km/s to standstill on the surface, paid for with 2 km/s of Δv. The Moon has no air, so every metre per second comes from the engine.',
-          refs: ['Sellers · Rockets and Launch Vehicles', 'Apollo 11 Mission Report (MSC-00171) §5'],
+          eyebrow: T`Training module TM-8 · Powered descent & ascent`,
+          title: T`Landing on the Moon`,
+          lede: T`Twelve and a half minutes from 15 km altitude and 1.7 km/s to standstill on the surface, paid for with 2 km/s of Δv. The Moon has no air, so every metre per second comes from the engine.`,
+          refs: [T`Sellers · Rockets and Launch Vehicles`, T`Apollo 11 Mission Report (MSC-00171) §5`],
         })}
-        ${Progress.briefing('landing', { theory: 'theory', lab: 'ld', math: 'refresher', mathLabel: 'Logarithms.' })}
+        ${Progress.briefing('landing', { theory: 'theory', lab: 'ld', math: 'refresher', mathLabel: N`Logarithms.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">8.1</span>Powered descent</h2>
+          <h2><span class="idx">8.1</span>${T`Powered descent`}</h2>
           <div class="prose">
-            <p>After undocking, the Lunar Module <i>Eagle</i> lowered its perilune to 15 km with a 23 m/s descent orbit insertion burn. At perilune it lit the Descent Propulsion System (DPS) for <b>powered descent initiation</b> and flew three guidance programs:</p>
+            <p>${T`After undocking, the Lunar Module <i>Eagle</i> lowered its perilune to 15 km with a 23 m/s descent orbit insertion burn. At perilune it lit the Descent Propulsion System (DPS) for <b>powered descent initiation</b> and flew three guidance programs:`}</p>
             <ol>
-              <li><b>P63, braking.</b> Full thrust, pointed against the velocity. It removes nearly all of the 1.7 km/s orbital speed while the LM flies face-up, watching the landing radar.</li>
-              <li><b>P64, approach.</b> From <i>high gate</i>, about 2.3 km up, the LM pitches upright so the commander can see the landing site through a scale etched on his window. The computer flies to the designated point.</li>
-              <li><b>P66, landing.</b> From <i>low gate</i>, about 150 m, semi-manual. Each click of the rate-of-descent switch changes the commanded sink rate by 0.3 m/s. The commander steers horizontally by tilting the LM.</li>
+              <li>${T`<b>P63, braking.</b> Full thrust, pointed against the velocity. It removes nearly all of the 1.7 km/s orbital speed while the LM flies face-up, watching the landing radar.`}</li>
+              <li>${T`<b>P64, approach.</b> From <i>high gate</i>, about 2.3 km up, the LM pitches upright so the commander can see the landing site through a scale etched on his window. The computer flies to the designated point.`}</li>
+              <li>${T`<b>P66, landing.</b> From <i>low gate</i>, about 150 m, semi-manual. Each click of the rate-of-descent switch changes the commanded sink rate by 0.3 m/s. The commander steers horizontally by tilting the LM.`}</li>
             </ol>
-            <p>The descent cost about 2 050 m/s. The theoretical minimum is about 1.7 km/s, the orbital speed itself; the rest is <b>gravity loss</b>. Every second spent hovering costs \\(g_☾ = 1.62\\) m/s of Δv for nothing:</p>
+            <p>${T`The descent cost about 2 050 m/s. The theoretical minimum is about 1.7 km/s, the orbital speed itself; the rest is <b>gravity loss</b>. Every second spent hovering costs \\(g_☾ = 1.62\\) m/s of Δv for nothing:`}</p>
             <div class="eq">\\[ t_{hover} = \\frac{I_{sp}\\,g_0}{g_☾}\\,\\ln\\frac{m_0}{m_0 - m_{prop}} \\]</div>
             ${Sym.where(['thover', 'isp', 'g0', 'gM', 'ln', 'm0h', 'mprop'])}
             ${Primer.box('log', false, 'refresher')}
-            <div class="callout history"><b>1202</b>Five minutes into Apollo 11's descent the guidance computer raised program alarms 1202 and 1201: “executive overflow”. The rendezvous radar, left on as a safety backup, was stealing CPU cycles through a hardware quirk. The software, designed by Margaret Hamilton's team at MIT, restarted and dropped low-priority tasks while it kept flying. Twenty-six-year-old guidance officer Steve Bales made the “go” call. Then Armstrong saw that P64 was heading for a boulder field beside West crater. He took over in P66, flew 400 m further, and landed with about 45 seconds of propellant before the bingo call.</div>
+            <div class="callout history"><b>1202</b>${T`Five minutes into Apollo 11's descent the guidance computer raised program alarms 1202 and 1201: “executive overflow”. The rendezvous radar, left on as a safety backup, was stealing CPU cycles through a hardware quirk. The software, designed by Margaret Hamilton's team at MIT, restarted and dropped low-priority tasks while it kept flying. Twenty-six-year-old guidance officer Steve Bales made the “go” call. Then Armstrong saw that P64 was heading for a boulder field beside West crater. He took over in P66, flew 400 m further, and landed with about 45 seconds of propellant before the bingo call.`}</div>
           </div>
         </section>
 
         <section class="section">
-          <h2><span class="idx">8.2</span>Lab: you have the stick</h2>
-          <div class="prose"><p>You start at low gate: 500 m up, sinking at 12 m/s and drifting forward at 18 m/s over a boulder field. Real numbers: 8 t lander, 45 kN engine throttleable 10–60% (plus 100%), I<sub>sp</sub> 311 s, lunar gravity 1.62 m/s². Land on the flat pad: sink rate under 3 m/s, drift under 1.2 m/s, tilt under 6°.</p>
-          <p class="mono note">Keyboard: ↑/↓ or W/S throttle (or descent rate in P66) · ←/→ or A/D tilt · P toggles P66 · R restart. Buttons work on touch screens.</p></div>
+          <h2><span class="idx">8.2</span>${T`Lab: you have the stick`}</h2>
+          <div class="prose"><p>${T`You start at low gate: 500 m up, sinking at 12 m/s and drifting forward at 18 m/s over a boulder field. Real numbers: 8 t lander, 45 kN engine throttleable 10–60% (plus 100%), I<sub>sp</sub> 311 s, lunar gravity 1.62 m/s². Land on the flat pad: sink rate under 3 m/s, drift under 1.2 m/s, tilt under 6°.`}</p>
+          <p class="mono note">${T`Keyboard: ↑/↓ or W/S throttle (or descent rate in P66) · ←/→ or A/D tilt · P toggles P66 · R restart. Buttons work on touch screens.`}</p></div>
           <div class="lab" id="ld">
-            <div class="lab-head"><span class="tag">Lab</span><h3>Lunar lander</h3><span class="spacer"></span>
-              <label class="mono note" style="display:flex;gap:.4rem;align-items:center"><input type="checkbox" id="ld-p66"> P66 rate-of-descent mode</label>
-              <button class="btn primary" id="ld-start">▸ Start descent</button></div>
-            <div class="stage" style="min-height:460px" tabindex="0" id="ld-stage" aria-label="Lunar lander simulation. Use arrow keys."><canvas id="ld-cv"></canvas><div class="overlay" id="ld-ov" style="color:#c9d2df"></div><div class="badge" id="ld-badge">Ready</div></div>
+            <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Lunar lander`}</h3><span class="spacer"></span>
+              <label class="mono note" style="display:flex;gap:.4rem;align-items:center"><input type="checkbox" id="ld-p66"> ${T`P66 rate-of-descent mode`}</label>
+              <button class="btn primary" id="ld-start">${T`▸ Start descent`}</button></div>
+            <div class="stage" style="min-height:460px" tabindex="0" id="ld-stage" aria-label="${T`Lunar lander simulation. Use arrow keys.`}"><canvas id="ld-cv"></canvas><div class="overlay" id="ld-ov" style="color:#c9d2df"></div><div class="badge" id="ld-badge">${T`Ready`}</div></div>
             <div class="controls">
               <dl class="readout" id="ld-ro" style="font-size:.9rem"></dl>
               <div class="btn-row" style="justify-content:center">
-                <button class="btn" data-k="left" aria-label="Tilt left">◀ tilt</button>
-                <button class="btn" data-k="up" aria-label="More thrust">▲</button>
-                <button class="btn" data-k="down" aria-label="Less thrust">▼</button>
-                <button class="btn" data-k="right" aria-label="Tilt right">tilt ▶</button>
+                <button class="btn" data-k="left" aria-label="${T`Tilt left`}">${T`◀ tilt`}</button>
+                <button class="btn" data-k="up" aria-label="${T`More thrust`}">▲</button>
+                <button class="btn" data-k="down" aria-label="${T`Less thrust`}">▼</button>
+                <button class="btn" data-k="right" aria-label="${T`Tilt right`}">${T`tilt ▶`}</button>
               </div>
-              <div class="ctl"><label for="ld-thr"><span>Throttle</span><output id="ld-thr-out"></output></label><input type="range" id="ld-thr" min="0" max="100" step="1" value="40"></div>
+              <div class="ctl"><label for="ld-thr"><span>${T`Throttle`}</span><output id="ld-thr-out"></output></label><input type="range" id="ld-thr" min="0" max="100" step="1" value="40"></div>
               <p class="note" id="ld-call" style="margin:0;min-height:3em;font-family:var(--f-mono);font-size:.8rem" aria-live="polite"></p>
             </div>
           </div>
         </section>
 
         <section class="section">
-          <h2><span class="idx">8.3</span>Ascent and rendezvous</h2>
+          <h2><span class="idx">8.3</span>${T`Ascent and rendezvous`}</h2>
           <div class="prose">
-            <p>The ascent stage used the descent stage as its launch pad. Its Ascent Propulsion System had one fixed-thrust engine (15.6 kN, I<sub>sp</sub> 311 s) with no throttle and no gimbal. It was built as simply as possible: pressure-fed, with hypergolic propellants that ignite on contact. There was no backup. A 7-minute burn delivered about 1 850 m/s, into a 17 × 83 km orbit. From there, the CSI, CDH and TPI manoeuvres of Chapter 5 brought <i>Eagle</i> back to <i>Columbia</i>.</p>
+            <p>${T`The ascent stage used the descent stage as its launch pad. Its Ascent Propulsion System had one fixed-thrust engine (15.6 kN, I<sub>sp</sub> 311 s) with no throttle and no gimbal. It was built as simply as possible: pressure-fed, with hypergolic propellants that ignite on contact. There was no backup. A 7-minute burn delivered about 1 850 m/s, into a 17 × 83 km orbit. From there, the CSI, CDH and TPI manoeuvres of Chapter 5 brought <i>Eagle</i> back to <i>Columbia</i>.`}</p>
           </div>
-          <div class="scroll-x" style="max-width:48rem"><table class="data"><thead><tr><th>Lunar Module (Apollo 11)</th><th>Mass (kg)</th><th>Engine</th><th>Thrust</th><th>I<sub>sp</sub></th></tr></thead><tbody>
-            <tr><td>Descent stage, dry</td><td>2 030</td><td rowspan="1">DPS</td><td>45.0 kN, 10–60% + 100%</td><td>311 s</td></tr>
-            <tr><td>Descent propellant</td><td>8 200</td><td></td><td></td><td></td></tr>
-            <tr><td>Ascent stage, dry (with crew)</td><td>2 450</td><td>APS</td><td>15.6 kN fixed</td><td>311 s</td></tr>
-            <tr><td>Ascent propellant</td><td>2 350</td><td></td><td></td><td></td></tr>
-            <tr><td><b>Total at separation</b></td><td><b>15 030</b></td><td></td><td></td><td></td></tr>
+          <div class="scroll-x" style="max-width:48rem"><table class="data"><thead><tr><th>${T`Lunar Module (Apollo 11)`}</th><th>${T`Mass (kg)`}</th><th>${T`Engine`}</th><th>${T`Thrust`}</th><th>I<sub>sp</sub></th></tr></thead><tbody>
+            <tr><td>${T`Descent stage, dry`}</td><td>2 030</td><td rowspan="1">DPS</td><td>${T`45.0 kN, 10–60% + 100%`}</td><td>311 s</td></tr>
+            <tr><td>${T`Descent propellant`}</td><td>8 200</td><td></td><td></td><td></td></tr>
+            <tr><td>${T`Ascent stage, dry (with crew)`}</td><td>2 450</td><td>APS</td><td>${T`15.6 kN fixed`}</td><td>311 s</td></tr>
+            <tr><td>${T`Ascent propellant`}</td><td>2 350</td><td></td><td></td><td></td></tr>
+            <tr><td>${T`<b>Total at separation</b>`}</td><td><b>15 030</b></td><td></td><td></td><td></td></tr>
           </tbody></table></div>
         </section>
 
         <section class="section">
-          <h2><span class="idx">✓</span>Check yourself</h2>
+          <h2><span class="idx">✓</span>${T`Check yourself`}</h2>
           <div id="practice-slot"></div>
         </section>
-        ${Progress.debrief('landing', { math: 'log', mathLabel: 'Exponentials and logarithms.' })}`;
+        ${Progress.debrief('landing', { math: 'log', mathLabel: N`Exponentials and logarithms.` })}`;
 
       mountLander(page.querySelector('#ld'));
       Practice.embed(page.querySelector('#practice-slot'), 'landing', 2);
@@ -112,8 +112,8 @@
       S = { t: 0, x: 0, h: 500, vx: 18, vh: -12, m: 8000, prop: 500, pitch: 0, pitchCmd: 0, thr: 40, rodCmd: -1.0, flame: 0 };
       calls = []; ended = false;
       root.querySelector('#ld-thr').value = 40;
-      say('Eagle, Houston. You are go for landing.');
-      setBadge('Ready', '');
+      say(T`Eagle, Houston. You are go for landing.`);
+      setBadge(T`Ready`, '');
     };
     const setBadge = (txt, cls) => { const b = root.querySelector('#ld-badge'); b.textContent = txt; b.className = 'badge ' + cls; };
     const say = (txt) => { root.querySelector('#ld-call').textContent = txt; };
@@ -123,7 +123,7 @@
     const stage = root.querySelector('#ld-stage');
 
     const startBtn = root.querySelector('#ld-start');
-    startBtn.addEventListener('click', () => { reset(); running = true; startBtn.textContent = '⟲ Restart'; stage.focus({ preventScroll: true }); });
+    startBtn.addEventListener('click', () => { reset(); running = true; startBtn.textContent = T`⟲ Restart`; stage.focus({ preventScroll: true }); });
     const thrEl = root.querySelector('#ld-thr');
     const thrOut = root.querySelector('#ld-thr-out');
     thrEl.addEventListener('input', () => { S.thr = snapThr(+thrEl.value); });
@@ -184,35 +184,35 @@
         if (ok) {
           Progress.done('landing', 'land');
           if (onPad && hoverLeft() >= 30) Progress.done('landing', 'pad');
-          setBadge(onPad ? 'The Eagle has landed' : 'Landed, off the pad', onPad ? 'good' : 'warn');
-          say(`Contact light. Engine stop. Touchdown at ${UI.fmt(-S.vh, 2)} m/s with ${UI.fmt(S.prop, 0)} kg (${UI.fmt(hoverLeft(), 0)} s) of propellant left. ${onPad ? 'Houston, Tranquility Base here.' : 'Safe, but outside the planned area.'}`);
+          setBadge(onPad ? T`The Eagle has landed` : T`Landed, off the pad`, onPad ? 'good' : 'warn');
+          say(T`Contact light. Engine stop. Touchdown at ${UI.fmt(-S.vh, 2)} m/s with ${UI.fmt(S.prop, 0)} kg (${UI.fmt(hoverLeft(), 0)} s) of propellant left. ${onPad ? T`Houston, Tranquility Base here.` : T`Safe, but outside the planned area.`}`);
         } else {
-          const why = Math.abs(S.vh) >= 3 ? `sink rate ${UI.fmt(-S.vh, 1)} m/s` : Math.abs(S.vx) >= 1.2 ? `drift ${UI.fmt(S.vx, 1)} m/s` : Math.abs(S.pitch) >= 6 ? `tilt ${UI.fmt(S.pitch, 1)}°` : 'slope too steep (boulder?)';
-          setBadge('Crash: ' + why, 'bad');
-          say(`Landing gear failure: ${why}. Press restart and try again.`);
+          const why = Math.abs(S.vh) >= 3 ? T`sink rate ${UI.fmt(-S.vh, 1)} m/s` : Math.abs(S.vx) >= 1.2 ? T`drift ${UI.fmt(S.vx, 1)} m/s` : Math.abs(S.pitch) >= 6 ? T`tilt ${UI.fmt(S.pitch, 1)}°` : T`slope too steep (boulder?)`;
+          setBadge(T`Crash: ${why}`, 'bad');
+          say(T`Landing gear failure: ${why}. Press restart and try again.`);
         }
       }
-      if (S.h - g > 2500 || Math.abs(S.x) > 3000) { running = false; ended = true; setBadge('Abort: out of range', 'bad'); }
+      if (S.h - g > 2500 || Math.abs(S.x) > 3000) { running = false; ended = true; setBadge(T`Abort: out of range`, 'bad'); }
     }
     const hoverLeft = () => S.prop / ((S.m * GM) / (DPS.isp * C.g0));
 
     function callouts() {
       const tl = hoverLeft(), alt = S.h - groundAt(S.x);
       const once = (k, txt) => { if (!calls.includes(k)) { calls.push(k); say(txt); } };
-      if (S.t > 1) once('1202', 'PROGRAM ALARM 1202… Houston: “We’re go on that alarm.”');
-      if (S.prop < 120) once('low', 'LOW LEVEL light: about 5% of the descent propellant left.');
-      if (tl < 60) once('60', 'Houston: “Sixty seconds.”');
-      if (tl < 30) once('30', 'Houston: “Thirty seconds.” Bingo comes after this: land or abort.');
-      if (S.prop <= 0) once('dry', 'Descent propellant depleted. Fire the ascent engine to abort!');
-      if (alt < 30 && Math.abs(S.vh) < 2) once('dust', `“${UI.fmt(alt, 0)} m, down ${UI.fmt(-S.vh, 1)}, picking up some dust.”`);
+      if (S.t > 1) once('1202', T`PROGRAM ALARM 1202… Houston: “We’re go on that alarm.”`);
+      if (S.prop < 120) once('low', T`LOW LEVEL light: about 5% of the descent propellant left.`);
+      if (tl < 60) once('60', T`Houston: “Sixty seconds.”`);
+      if (tl < 30) once('30', T`Houston: “Thirty seconds.” Bingo comes after this: land or abort.`);
+      if (S.prop <= 0) once('dry', T`Descent propellant depleted. Fire the ascent engine to abort!`);
+      if (alt < 30 && Math.abs(S.vh) < 2) once('dust', T`“${UI.fmt(alt, 0)} m, down ${UI.fmt(-S.vh, 1)}, picking up some dust.”`);
     }
 
     view.draw = (ctx, w, h) => {
-      const T = UI.tok();
+      const K = UI.tok();
       ctx.clearRect(0, 0, w, h);
       // the lunar sky is black in daylight, whatever the page theme
       ctx.fillStyle = '#05080d'; ctx.fillRect(0, 0, w, h);
-      UI.stars(ctx, w, h * 0.6, { ...T, muted: '#c9d2df' }, 60);
+      UI.stars(ctx, w, h * 0.6, { ...K, muted: '#c9d2df' }, 60);
       const alt = S.h - groundAt(S.x);
       // camera: zoom in as altitude falls
       const span = Math.max(160, Math.min(900, alt * 2.2 + 120));
@@ -221,7 +221,7 @@
       const camX = S.x + (w / s) * 0.12;
       const P = (x, y) => [w / 2 + (x - camX) * s, h * 0.82 - (y - camG) * s];
       // Earth hanging in the black sky
-      UI.drawEarth(ctx, w * 0.85, h * 0.14, 14, T);
+      UI.drawEarth(ctx, w * 0.85, h * 0.14, 14, K);
       // terrain
       ctx.fillStyle = '#8b8d91'; ctx.beginPath();
       const [sx0] = P(camX - span, 0);
@@ -231,8 +231,8 @@
       // pad
       const [pa, pya] = P(PAD[0], 2), [pb] = P(PAD[1], 2);
       ctx.strokeStyle = '#5fd39a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(pa, pya); ctx.lineTo(pb, pya); ctx.stroke();
-      ctx.fillStyle = '#5fd39a'; ctx.font = `11px ${T.mono}`; ctx.textAlign = 'center'; ctx.fillText('LANDING SITE', (pa + pb) / 2, pya + 16);
-      const [bfx, bfy] = P(240, -10); ctx.fillStyle = '#ff8a7a'; ctx.fillText('boulder field', bfx, bfy + 26);
+      ctx.fillStyle = '#5fd39a'; ctx.font = `11px ${K.mono}`; ctx.textAlign = 'center'; ctx.fillText(T`LANDING SITE`, (pa + pb) / 2, pya + 16);
+      const [bfx, bfy] = P(240, -10); ctx.fillStyle = '#ff8a7a'; ctx.fillText(T`boulder field`, bfx, bfy + 26);
       // LM
       const [lx, ly] = P(S.x, S.h);
       const k = Math.max(1.8, s);                       // LM is ~9 m wide incl. legs; enlarged when far away
@@ -240,20 +240,20 @@
       const u = 1 * k;
       if (S.flame > 0.01 && S.prop > 0) {
         const fl = (6 + 10 * S.flame + Math.random() * 2) * u;
-        const g = ctx.createLinearGradient(0, -2 * u, 0, fl); g.addColorStop(0, T.warn); g.addColorStop(1, 'rgba(0,0,0,0)');
+        const g = ctx.createLinearGradient(0, -2 * u, 0, fl); g.addColorStop(0, K.warn); g.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-1.6 * u, -2.2 * u); ctx.lineTo(1.6 * u, -2.2 * u); ctx.lineTo(0, fl); ctx.closePath(); ctx.fill();
       }
       ctx.strokeStyle = '#d9dde3'; ctx.lineWidth = Math.max(1, 0.35 * u);
       // legs
       ctx.beginPath(); ctx.moveTo(-2.5 * u, -3.5 * u); ctx.lineTo(-4.5 * u, 0); ctx.moveTo(2.5 * u, -3.5 * u); ctx.lineTo(4.5 * u, 0);
       ctx.moveTo(-5.2 * u, 0); ctx.lineTo(-3.8 * u, 0); ctx.moveTo(3.8 * u, 0); ctx.lineTo(5.2 * u, 0); ctx.stroke();
-      ctx.fillStyle = T.warn; ctx.fillRect(-2.6 * u, -5.4 * u, 5.2 * u, 2.6 * u);          // descent stage (gold foil)
+      ctx.fillStyle = K.warn; ctx.fillRect(-2.6 * u, -5.4 * u, 5.2 * u, 2.6 * u);          // descent stage (gold foil)
       ctx.fillStyle = '#b9bec6'; ctx.fillRect(-2.2 * u, -8.6 * u, 4.4 * u, 3.2 * u);         // ascent stage
       ctx.fillStyle = '#20262e'; ctx.fillRect(-1.2 * u, -7.8 * u, 0.9 * u, 0.9 * u);
       ctx.restore();
       // altitude tape
-      ctx.fillStyle = '#c9d2df'; ctx.textAlign = 'left'; ctx.fillText(`${UI.fmt(w / s, 0)} m across`, 10, h - 10);
-      root.querySelector('#ld-ov').innerHTML = running || ended ? '' : 'Press Start descent. Keys: ↑↓ throttle · ←→ tilt';
+      ctx.fillStyle = '#c9d2df'; ctx.textAlign = 'left'; ctx.fillText(T`${UI.fmt(w / s, 0)} m across`, 10, h - 10);
+      root.querySelector('#ld-ov').innerHTML = running || ended ? '' : T`Press Start descent. Keys: ↑↓ throttle · ←→ tilt`;
     };
 
     function readout() {
@@ -261,15 +261,15 @@
       const warn = (c, txt) => `<span style="color:var(--${c})">${txt}</span>`;
       root.querySelector('#ld-ro').innerHTML = `
         <dt>MET</dt><dd>${UI.fmtTime(S.t)}</dd>
-        <dt>Altitude</dt><dd class="hl">${UI.fmt(alt, 1)} m</dd>
-        <dt>Altitude rate</dt><dd>${Math.abs(S.vh) > 3 && alt < 50 ? warn('bad', UI.fmt(S.vh, 2)) : UI.fmt(S.vh, 2)} m/s</dd>
-        <dt>Horizontal velocity</dt><dd>${Math.abs(S.vx) > 1.2 && alt < 30 ? warn('warn', UI.fmt(S.vx, 2)) : UI.fmt(S.vx, 2)} m/s</dd>
-        <dt>Tilt</dt><dd>${UI.fmt(S.pitch, 1)}°</dd>
-        <dt>Throttle</dt><dd>${UI.fmt(S.thr, 0)} %${p66() ? ` (P66 ROD ${UI.fmt(S.rodCmd, 1)})` : ''}</dd>
-        <dt>Thrust / weight</dt><dd>${UI.fmt(DPS.F * S.thr / 100 / (S.m * GM), 2)}</dd>
-        <dt>Propellant</dt><dd>${UI.fmt(S.prop, 0)} kg</dd>
-        <dt>Hover time left</dt><dd>${tl < 30 ? warn('bad', UI.fmt(tl, 0)) : tl < 60 ? warn('warn', UI.fmt(tl, 0)) : UI.fmt(tl, 0)} s</dd>
-        <dt>Downrange to site</dt><dd>${UI.fmt((PAD[0] + PAD[1]) / 2 - S.x, 0)} m</dd>`;
+        <dt>${T`Altitude`}</dt><dd class="hl">${UI.fmt(alt, 1)} m</dd>
+        <dt>${T`Altitude rate`}</dt><dd>${Math.abs(S.vh) > 3 && alt < 50 ? warn('bad', UI.fmt(S.vh, 2)) : UI.fmt(S.vh, 2)} m/s</dd>
+        <dt>${T`Horizontal velocity`}</dt><dd>${Math.abs(S.vx) > 1.2 && alt < 30 ? warn('warn', UI.fmt(S.vx, 2)) : UI.fmt(S.vx, 2)} m/s</dd>
+        <dt>${T`Tilt`}</dt><dd>${UI.fmt(S.pitch, 1)}°</dd>
+        <dt>${T`Throttle`}</dt><dd>${UI.fmt(S.thr, 0)} %${p66() ? ` (P66 ROD ${UI.fmt(S.rodCmd, 1)})` : ''}</dd>
+        <dt>${T`Thrust / weight`}</dt><dd>${UI.fmt(DPS.F * S.thr / 100 / (S.m * GM), 2)}</dd>
+        <dt>${T`Propellant`}</dt><dd>${UI.fmt(S.prop, 0)} kg</dd>
+        <dt>${T`Hover time left`}</dt><dd>${tl < 30 ? warn('bad', UI.fmt(tl, 0)) : tl < 60 ? warn('warn', UI.fmt(tl, 0)) : UI.fmt(tl, 0)} s</dd>
+        <dt>${T`Downrange to site`}</dt><dd>${UI.fmt((PAD[0] + PAD[1]) / 2 - S.x, 0)} m</dd>`;
       thrOut.textContent = UI.fmt(S.thr, 0) + ' %';
     }
 

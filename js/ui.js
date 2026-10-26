@@ -78,8 +78,10 @@
   UI.fmt = (x, d = 2) => {
     if (x === Infinity) return '∞';
     if (!isFinite(x)) return '—';
-    return x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }).replace(/,/g, ' ');
+    return UI.dec(x.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }).replace(/,/g, '\u202f'));
   };
+  // decimal comma in French and German
+  UI.dec = (s) => (window.I18N && I18N.decimalComma() ? String(s).replace(/(\d)\.(\d)/g, '$1,$2') : String(s));
   UI.fmtTime = (s) => {
     if (!isFinite(s)) return '—';
     const sign = s < 0 ? '−' : '';
@@ -118,12 +120,12 @@
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
     for (let x = Math.ceil(x0 / xs_) * xs_; x <= x1 + 1e-9; x += xs_) {
       ctx.beginPath(); ctx.moveTo(X(x), pad.t); ctx.lineTo(X(x), h - pad.b); ctx.stroke();
-      ctx.fillText((opts.xFmt || ((v) => +v.toFixed(6)))(x), X(x), h - pad.b + 5);
+      ctx.fillText(UI.dec((opts.xFmt || ((v) => +v.toFixed(6)))(x)), X(x), h - pad.b + 5);
     }
     ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     for (let y = Math.ceil(y0 / ys_) * ys_; y <= y1 + 1e-9; y += ys_) {
       ctx.beginPath(); ctx.moveTo(pad.l, Y(y)); ctx.lineTo(w - pad.r, Y(y)); ctx.stroke();
-      ctx.fillText((opts.yFmt || ((v) => +v.toFixed(6)))(y), pad.l - 6, Y(y));
+      ctx.fillText(UI.dec((opts.yFmt || ((v) => +v.toFixed(6)))(y)), pad.l - 6, Y(y));
     }
     ctx.strokeStyle = T.line;
     ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
@@ -181,7 +183,7 @@
       const v = read();
       for (const i of inputs) {
         const o = root.querySelector('#' + i.id + '-out');
-        if (o) o.textContent = (fmts[i.id] ? fmts[i.id](v[i.id]) : v[i.id]) + (i.dataset.unit ? ' ' + i.dataset.unit : '');
+        if (o) o.textContent = UI.dec(fmts[i.id] ? fmts[i.id](v[i.id]) : v[i.id]) + (i.dataset.unit ? ' ' + i.dataset.unit : '');
       }
       onChange(v, src);
     };

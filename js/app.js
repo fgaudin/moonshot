@@ -20,17 +20,39 @@
       for (const id of ORDER) {
         const c = chapters[id];
         if (!c) continue;
-        if (id === 'toolkit') html += '<li class="sep">Training</li>';
+        if (id === 'toolkit') html += `<li class="sep">${T`Training`}</li>`;
         const m = Progress.MODULES[id];
         const state = m ? (Progress.complete(id) ? 'done' : Progress.count(id) ? 'started' : '') : '';
-        const label = m ? `${m.code} · ${c.phase}` : c.phase;
+        const label = m ? `${m.code} · ${T(c.phase)}` : T(c.phase);
         const cur = (location.hash || '#home').slice(1) === id ? ' aria-current="page"' : '';
-        html += `<li><a href="#${id}" data-id="${id}" class="${state}"${cur}><span class="phase">${label}</span><span class="ttl">${c.title}</span></a></li>`;
+        html += `<li><a href="#${id}" data-id="${id}" class="${state}"${cur}><span class="phase">${label}</span><span class="ttl">${T(c.title)}</span></a></li>`;
       }
       tl.innerHTML = html;
     },
+    // switch language: load its dictionaries, then redraw everything that shows text
+    setLang(lang) {
+      if (!I18N.LANGS[lang]) return;
+      UI.store.set('lang', lang);
+      return I18N.load(lang).then(() => {
+        I18N.lang = lang;
+        document.documentElement.lang = lang;
+        App.translateStatic();
+        App.refreshRail();
+        route(true);
+      });
+    },
+    // static shell text marked with data-i18n (text), data-i18n-title, data-i18n-aria
+    translateStatic() {
+      document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = T(el.dataset.i18n); });
+      document.querySelectorAll('[data-i18n-title]').forEach((el) => { el.title = T(el.dataset.i18nTitle); });
+      document.querySelectorAll('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', T(el.dataset.i18nAria)); });
+      document.querySelectorAll('[data-lang-set]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.langSet === I18N.lang)));
+    },
     start() {
+      // a non-English first visit waits for its dictionaries before the first render
+      if (!I18N.loaded[I18N.lang]) { I18N.load(I18N.lang).then(App.start); return; }
       const tl = document.getElementById('timeline');
+      App.translateStatic();
       App.refreshRail();
       Progress.checkQual();
       const rail = document.getElementById('rail'), mb = document.getElementById('menu-btn');
@@ -38,13 +60,15 @@
       tl.addEventListener('click', () => { rail.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); });
       Sym.observe(document.getElementById('page'));
       document.getElementById('theme-switch').addEventListener('click', (e) => { const m = e.target.dataset.themeSet; if (m) UI.theme.set(m); });
+      document.getElementById('lang-switch').addEventListener('click', (e) => { const l = e.target.dataset.langSet; if (l) App.setLang(l); });
       UI.theme.refresh();
-      window.addEventListener('hashchange', route);
+      window.addEventListener('hashchange', () => route());
       route();
     },
   };
 
-  function route() {
+  function route(keepScroll) {
+    const y = window.scrollY;
     const id = (location.hash || '#home').slice(1);
     const c = chapters[id] || chapters.home;
     UI.cleanup();
@@ -62,7 +86,8 @@
     App.pendingFocus = null;
     const target = focus && document.getElementById(focus);
     if (target && target.tagName === 'DETAILS') target.open = true;
-    if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
+    if (keepScroll === true) window.scrollTo(0, y);
+    else if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
   }
 
   /* Shared chapter scaffolding */
@@ -75,7 +100,7 @@
     </header>`;
   App.next = (id) => {
     const i = ORDER.indexOf(id), n = chapters[ORDER[i + 1]];
-    return n ? `<a class="card" href="#${n.id}" style="max-width:26rem"><span class="phase">Next phase · ${n.phase}</span><h3>${n.title}</h3><p>${n.blurb || ''}</p></a>` : '';
+    return n ? `<a class="card" href="#${n.id}" style="max-width:26rem"><span class="phase">${T`Next phase`} · ${T(n.phase)}</span><h3>${T(n.title)}</h3><p>${T(n.blurb || '')}</p></a>` : '';
   };
 
   window.App = App;
