@@ -23,6 +23,24 @@
 
   /* ---- theme tokens, read live so canvases follow light/dark ---- */
   let tokCache = null, tokStamp = 0;
+  const liveCanvases = new Set();
+
+  /* ---- theme: auto (system), light or dark; canvases redraw with the new tokens ---- */
+  UI.theme = {
+    get: () => UI.store.get('theme', 'auto'),
+    set(mode) {
+      UI.store.set('theme', mode);
+      if (mode === 'auto') delete document.documentElement.dataset.theme;
+      else document.documentElement.dataset.theme = mode;
+      UI.theme.refresh();
+    },
+    refresh() {
+      tokCache = null;
+      liveCanvases.forEach((s) => s.redraw());
+      document.querySelectorAll('[data-theme-set]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeSet === UI.theme.get())));
+    },
+  };
+  if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (UI.theme.get() === 'auto') UI.theme.refresh(); });
   UI.tok = () => {
     const now = performance.now();
     if (tokCache && now - tokStamp < 500) return tokCache;
@@ -49,7 +67,8 @@
     };
     const ro = new ResizeObserver(fit);
     ro.observe(canvas);
-    UI.onCleanup(() => ro.disconnect());
+    liveCanvases.add(state);
+    UI.onCleanup(() => { ro.disconnect(); liveCanvases.delete(state); });
     fit();
     state.redraw = () => { if (state.draw) state.draw(ctx, state.w, state.h); };
     return state;

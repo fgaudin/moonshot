@@ -313,7 +313,7 @@ table.data input { width: 6.5rem; text-align: right; padding: .35rem .4rem; }
 .patch .pg-line { fill: none; stroke: var(--muted); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .patch .pg-fill { fill: var(--line); }
 .patch .pg-dot { fill: var(--muted); }
-.patch.earned .pt-bg { fill: var(--ink); }
+.patch.earned .pt-bg { fill: var(--ink); fill: color-mix(in srgb, var(--ink) 80%, #8a5a2b); }   /* a touch of sepia: embroidered-patch feel */
 .patch.earned .pt-ring { stroke: var(--accent); stroke-dasharray: none; stroke-width: 4; }
 .patch.earned .pt-inner { stroke: var(--accent); opacity: .5; }
 .patch.earned .pt-code, .patch.earned .pt-num { fill: var(--accent); }
@@ -387,3 +387,7 @@ details.primer[open] > summary::before { content: "−"; }
 #st-tab input { width: 5.2rem; }
 .twr-checks { margin: 0; padding: 0 1rem .7rem; display: flex; flex-wrap: wrap; gap: .4rem .8rem; align-items: center; font-size: .85rem; }
 .twr-check { display: inline-flex; align-items: center; gap: .3rem; font: 500 .78rem/1 var(--f-mono); }
+
+/* theme switch in the rail */
+.theme-switch { align-self: flex-start; }
+.theme-switch button { padding: .4rem .6rem; }

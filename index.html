@@ -10,6 +10,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Saira+Condensed:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="css/style.css">
 <script>
+  // apply the saved theme before first paint (auto = follow the system setting)
+  try { const t = localStorage.getItem('moonshot:theme'); if (t === '"light"' || t === '"dark"') document.documentElement.dataset.theme = JSON.parse(t); } catch (e) { /* storage unavailable */ }
+</script>
+<script>
   window.MathJax = {
     loader: { load: ['[tex]/html'] },
     tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], packages: { '[+]': ['html'] } },
@@ -33,6 +37,11 @@
 <div class="shell">
   <nav class="rail" id="rail" aria-label="Chapters">
     <a class="brand" href="#home"><b>Moon<span>shot</span></b><small>A flight manual for astrodynamics</small></a>
+    <div class="seg theme-switch" id="theme-switch" role="group" aria-label="Colour theme">
+      <button type="button" data-theme-set="auto" title="Follow the system setting">Auto</button>
+      <button type="button" data-theme-set="light">Light</button>
+      <button type="button" data-theme-set="dark">Dark</button>
+    </div>
     <ol class="timeline" id="timeline"></ol>
     <div class="rail-foot">All units SI. Constants in the Reference.<br>Progress is saved in this browser.</div>
   </nav>

@@ -37,6 +37,8 @@
       mb.addEventListener('click', () => { const o = rail.classList.toggle('open'); mb.setAttribute('aria-expanded', String(o)); });
       tl.addEventListener('click', () => { rail.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); });
       Sym.observe(document.getElementById('page'));
+      document.getElementById('theme-switch').addEventListener('click', (e) => { const m = e.target.dataset.themeSet; if (m) UI.theme.set(m); });
+      UI.theme.refresh();
       window.addEventListener('hashchange', route);
       route();
     },
