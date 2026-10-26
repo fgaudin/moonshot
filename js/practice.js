@@ -17,7 +17,7 @@
 
   const TOPICS = {
     newton: 'Newton & gravity', orbits: 'Orbits & Kepler', rockets: 'Rocket equation', ascent: 'Getting to orbit',
-    maneuvers: 'Manoeuvres', moon: 'Lunar trajectories', landing: 'Landing & ascent', entry: 'Re-entry',
+    maneuvers: 'Manoeuvres', docking: 'Docking', moon: 'Lunar trajectories', landing: 'Landing & ascent', entry: 'Re-entry',
   };
 
   /* Each generator returns { q, answer, unit, tol, hint, sol } — q/sol may contain TeX. */
@@ -235,6 +235,35 @@
         sol: R`\[ \mathrm{TOF} = \pi\sqrt{a_t^3/\mu} = ${f(tof, 0)}\ \mathrm{s},\quad \omega_{CSM} = \sqrt{\mu/r_2^3} = ${f(w2, 6)}\ \mathrm{rad/s} \] \[ \alpha_{lead} = 180^\circ - \omega_{CSM}\,\mathrm{TOF} = ${f(lead, 2)}^\circ \]` };
     } },
 
+    // ---------------- Docking ----------------
+    { topic: 'docking', title: 'RCS pulse', make() {
+      const v = pick([{ n: 'the CSM on the way out', m: 28800 }, { n: 'the CSM in lunar orbit', m: 16800 }, { n: 'the LM ascent stage', m: 2500 }]);
+      const F = 890, t = pick([0.5, 1, 2, 3, 5]), dv = F * t / v.m;
+      return { q: `Two 445 N RCS thrusters fire for <b>${t} s</b> on ${v.n} (${f(v.m, 0)} kg). By how much does the velocity change?`, answer: dv * 100, unit: 'cm/s',
+        hint: 'Δv = F t / m, with F the total thrust of the thrusters firing.',
+        sol: R`\[ \Delta v = \frac{F\,t}{m} = \frac{890\times${t}}{${v.m}} = ${f(dv, 4)}\ \mathrm{m/s} = ${f(dv * 100, 2)}\ \mathrm{cm/s} \]` };
+    } },
+    { topic: 'docking', title: 'Braking distance', make() {
+      const m = pick([28800, 16800]), v = pick([0.3, 0.5, 0.8, 1.0]), F = 890;
+      const a = F / m, d = v * v / (2 * a), t = v / a;
+      return { q: `You are closing on the target at <b>${v} m/s</b> in a ${f(m, 0)} kg CSM. Firing two 445 N thrusters to brake, how far do you travel before stopping?`, answer: d, unit: 'm',
+        hint: 'Constant deceleration a = F/m. Stopping distance d = v²/(2a), like a car braking.',
+        sol: R`\[ a = \frac{F}{m} = ${f(a, 4)}\ \mathrm{m/s^2}, \quad t = \frac{v}{a} = ${f(t, 1)}\ \mathrm{s}, \quad d = \frac{v^2}{2a} = ${f(d, 1)}\ \mathrm{m} \]<p>Brake early: at docking accelerations, stopping takes tens of seconds and metres.</p>` };
+    } },
+    { topic: 'docking', title: 'Drift from a height difference', make() {
+      const dz = pick([5, 10, 20, 50]), above = pick([true, false]);
+      const d = 3 * Math.PI * dz;
+      return { q: `In a circular orbit, you sit <b>${dz} m ${above ? 'above' : 'below'}</b> the target, with no relative velocity other than that of your slightly different circular orbit. How far do you drift along-track in one orbit? (Clohessy–Wiltshire: drift rate = 1.5 n Δz)`, answer: d, unit: 'm',
+        hint: 'Drift per orbit = 1.5 n Δz × T, with T = 2π/n. The n cancels.',
+        sol: R`\[ \Delta x = \tfrac32\,n\,\Delta z \times \frac{2\pi}{n} = 3\pi\,\Delta z = ${f(d, 1)}\ \mathrm{m\ per\ orbit} \]<p>${above ? 'Above the target you are slower: you fall behind.' : 'Below the target you are faster: you move ahead.'} It does not depend on which planet you orbit.</p>` };
+    } },
+    { topic: 'docking', title: 'Time to contact', make() {
+      const r = pick([30, 50, 100, 150]), v = pick([0.1, 0.2, 0.3, 0.5]);
+      return { q: `The target is <b>${r} m</b> away and you close at a steady <b>${v} m/s</b>. How long until contact?`, answer: r / v / 60, unit: 'min',
+        hint: 'Time = distance / speed. Convert seconds to minutes.',
+        sol: R`\[ t = \frac{${r}}{${v}} = ${f(r / v, 0)}\ \mathrm{s} = ${f(r / v / 60, 2)}\ \mathrm{min} \]` };
+    } },
+
     // ---------------- Moon ----------------
     { topic: 'moon', title: 'Sphere of influence', make() {
       const o = pick([{ n: 'the Moon (relative to Earth)', D: 384400, m: 0.0123000371 }, { n: 'Earth (relative to the Sun)', D: 149597871, m: 3.003e-6 }, { n: 'Mars (relative to the Sun)', D: 227939200, m: 3.227e-7 }]);
@@ -333,6 +362,10 @@
     { topic: 'ascent', q: 'Why launch toward the east?', opts: ['To avoid the Sun', 'Earth’s rotation gives a free eastward velocity of up to 465 m/s', 'Weather is better', 'Tradition'], a: 1, why: 'From Cape Canaveral (28.5° N) the free boost is about 408 m/s.' },
     { topic: 'maneuvers', q: 'In a Hohmann transfer to a higher circular orbit, the second burn is made…', opts: ['At perigee, retrograde', 'At apogee, prograde', 'At apogee, retrograde', 'Halfway, radially'], a: 1, why: 'At apogee the transfer orbit is slower than the circular orbit there, so a prograde burn circularizes.' },
     { topic: 'maneuvers', q: 'To catch up with a target ahead of you in the same circular orbit, you should first…', opts: ['Burn prograde', 'Burn retrograde to drop into a lower, faster phasing orbit', 'Burn radially outward', 'Wait'], a: 1, why: 'Orbital mechanics is counter-intuitive here: a lower orbit has a shorter period, so you gain on the target. Prograde would raise you and slow you down.' },
+    { topic: 'docking', q: 'You are 200 m directly behind a target in the same circular orbit. You point at it and fire forward. What happens?', opts: ['You fly straight to it', 'You climb into a higher, slower orbit and fall further behind', 'You drop below it and pass underneath', 'Nothing: 200 m is too close for orbital effects'], a: 1, why: 'Speeding up raises your orbit, and higher orbits take longer. Gemini 4 learned this in 1965. To catch a target ahead you first slow down.' },
+    { topic: 'docking', q: 'Your docking axis is perfectly opposite the target’s, but 1 m to the side of it. Can you dock?', opts: ['Yes, alignment is all that matters', 'No: you must also be on the target’s axis, within about 0.3 m', 'Yes, if you go fast enough', 'Only in lunar orbit'], a: 1, why: 'Docking needs attitude, position and velocity all matched. Parallel but offset axes are two cars in neighbouring lanes.' },
+    { topic: 'docking', q: 'In attitude hold, releasing the rotation stick makes the jets fire the other way. Is that wasted propellant?', opts: ['Yes: free drift would make the same turn for half the cost', 'No: any turn that starts and ends at rest needs a start and an equal stop; the autopilot just does the braking for you', 'Yes: the jets fire twice as long', 'No: braking jets use no propellant'], a: 1, why: 'A spinning spacecraft keeps spinning (Newton’s first law for rotation). Free drift saves propellant only by not holding attitude afterwards, and by letting you stop exactly when you choose.' },
+    { topic: 'docking', q: 'Why does the COAS docking target have a cross mounted in front of the port?', opts: ['Decoration', 'Parallax: if your approach is at an angle, the cross appears offset from the port behind it', 'To push the probe in', 'To measure the range by its colour'], a: 1, why: 'Two marks at different distances only line up when you look straight down the axis. Offset means misaligned, even if the target looks centred.' },
     { topic: 'moon', q: 'What is a free-return trajectory?', opts: ['A trajectory that costs no propellant to reach orbit', 'A trans-lunar path that swings around the Moon and returns to Earth’s atmosphere without a major burn', 'A return powered only by the Sun', 'A lunar orbit that decays'], a: 1, why: 'Apollo 8 to 11 flew free-return (or near free-return) trajectories. It saved Apollo 13 when its service module failed.' },
     { topic: 'moon', q: 'Why did Apollo choose lunar orbit rendezvous over a direct landing?', opts: ['Better radio coverage', 'Only a small lander had to descend and climb out of the Moon’s gravity well, which saved a huge amount of mass', 'Astronauts preferred it', 'It was faster'], a: 1, why: 'John Houbolt’s argument: the return vehicle and heat shield stayed in orbit, so the mass that had to land and take off again was cut dramatically.' },
     { topic: 'landing', q: 'Why does hovering waste propellant?', opts: ['The engine runs hotter', 'All thrust goes to cancelling gravity (pure gravity loss) and none to changing velocity', 'Throttling lowers Isp', 'It doesn’t'], a: 1, why: 'Hovering spends about 1.6 m/s of Δv every second for nothing. Armstrong’s long hover over the boulder field left about 45 s of propellant.' },

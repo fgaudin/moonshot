@@ -5,12 +5,14 @@
   const BURNS = [
     { t: 0, end: 0.195, name: 'Launch to Earth parking orbit', dv: 9300, who: 'Saturn V', ch: 'ascent', note: '7.8 km/s orbital speed + ~1.5 km/s gravity & drag losses' },
     { t: 2.73, end: 2.83, name: 'Trans-lunar injection (TLI)', dv: 3182, who: 'S-IVB', ch: 'moon' },
+    { t: 3.3, end: 3.4, name: 'Transposition, docking and LM extraction', dv: 0, who: 'CSM RCS', ch: 'docking' },
     { t: 26.7, end: 26.7, name: 'Midcourse correction 2', dv: 6.4, who: 'CSM SPS', ch: 'moon' },
     { t: 75.8, end: 75.9, name: 'Lunar orbit insertion 1', dv: 889, who: 'CSM SPS', ch: 'moon' },
     { t: 80.2, end: 80.2, name: 'Lunar orbit insertion 2', dv: 48, who: 'CSM SPS', ch: 'maneuvers' },
     { t: 101.6, end: 101.6, name: 'Descent orbit insertion', dv: 23, who: 'LM DPS', ch: 'maneuvers' },
     { t: 102.55, end: 102.75, name: 'Powered descent to landing', dv: 2050, who: 'LM DPS', ch: 'landing' },
     { t: 124.37, end: 124.49, name: 'Lunar ascent', dv: 1850, who: 'LM APS', ch: 'landing' },
+    { t: 128.05, end: 128.05, name: 'Docking with Eagle in lunar orbit', dv: 0, who: 'CSM RCS', ch: 'docking' },
     { t: 135.4, end: 135.45, name: 'Trans-Earth injection (TEI)', dv: 1001, who: 'CSM SPS', ch: 'moon' },
     { t: 195.05, end: 195.3, name: 'Entry, from 11.03 km/s to 0 by drag', dv: 0, who: 'Heat shield', ch: 'entry' },
   ];
@@ -34,7 +36,7 @@
           <div style="display:flex;flex-direction:column;gap:1.2rem;min-width:0">
             <span class="eyebrow">Moonshot Academy · Astronaut Candidate Program</span>
             <h1>How we went<br>to the <em>Moon</em></h1>
-            <p class="lede">You have been selected. Between you and the launch pad stand eight training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all eight mission patches and you are <b>go for launch</b>.</p>
+            <p class="lede">You have been selected. Between you and the launch pad stand nine training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all nine mission patches and you are <b>go for launch</b>.</p>
             <form class="enrol" id="enrol" autocomplete="off">
               <label for="callsign">Your callsign</label>
               <input type="text" id="callsign" maxlength="24" placeholder="e.g. Eagle, or your name" value="${P.callsign() === 'Candidate' ? '' : P.callsign().replace(/"/g, '&quot;')}">
@@ -62,7 +64,7 @@
           ${certified ? `<div class="certificate">
             <span class="eyebrow">Moonshot Academy · Certificate of training</span>
             <b class="cert-name">${P.callsign()}</b>
-            <p>has completed all eight training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared</p>
+            <p>has completed all nine training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared</p>
             <b class="cert-go">GO FOR LAUNCH</b>
             <span class="mono note">Vega, Chief Flight Instructor · ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
           </div>` : ''}

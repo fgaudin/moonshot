@@ -20,7 +20,7 @@
       const soi = C.DEM * Math.pow(C.muM / C.muE, 0.4) / 1000;
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Training module TM-6 · Trans-lunar injection to lunar orbit',
+          eyebrow: 'Training module TM-7 · Trans-lunar injection to lunar orbit',
           title: 'Going to the Moon',
           lede: 'Three bodies, no closed-form solution, and a target moving at 1 km/s. Apollo’s planners stitched two-body conics together to design the trajectory, then refined it by numerical integration. This module does both.',
           refs: ['Sellers · Interplanetary Travel', 'BMW ch. 7 Lunar Trajectories', 'BMW ch. 8 Interplanetary Trajectories'],
@@ -28,7 +28,7 @@
         ${Progress.briefing('moon', { theory: 'theory', lab: 'tl', math: 'refresher', mathLabel: 'Powers and roots.' })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">6.1</span>The sphere of influence and patched conics</h2>
+          <h2><span class="idx">7.1</span>The sphere of influence and patched conics</h2>
           <div class="prose">
             <p>Near the Moon, its gravity dominates the spacecraft’s motion relative to it; farther out, Earth’s does. Laplace defined the boundary as the <b>sphere of influence</b>:</p>
             <div class="eq">\\[ r_{SOI} = D\\left(\\frac{m_☾}{m_\\oplus}\\right)^{2/5} = 384\\,400\\ \\mathrm{km}\\times(0.0123)^{0.4} \\approx ${UI.fmt(soi, 0)}\\ \\mathrm{km} \\]</div>
@@ -39,7 +39,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.2</span>Trans-lunar injection</h2>
+          <h2><span class="idx">7.2</span>Trans-lunar injection</h2>
           <div class="prose">
             <p>From the 185 km parking orbit, the S-IVB re-ignited over the Pacific about 2 h 44 min after launch and burned for 5 min 47 s. The first estimate is a Hohmann-like ellipse with apogee at the Moon’s distance:</p>
             <div class="eq">\\[ v_p = \\sqrt{\\mu_\\oplus\\left(\\frac{2}{r_p} - \\frac{2}{r_p + r_a}\\right)} = 10.93\\ \\mathrm{km/s}, \\qquad \\Delta v_{TLI} = v_p - \\sqrt{\\frac{\\mu_\\oplus}{r_p}} = 10.93 - 7.79 = 3.14\\ \\mathrm{km/s} \\]</div>
@@ -49,7 +49,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.3</span>Lab: fly to the Moon</h2>
+          <h2><span class="idx">7.3</span>Lab: fly to the Moon</h2>
           <div class="prose"><p>This simulator does not use patched conics. It integrates the planar <b>circular restricted three-body problem</b> numerically: the spacecraft feels Earth and Moon at the same time, and the two bodies circle their common barycentre. Set the TLI burn and its position in the parking orbit. The preset free return was found by searching this simulator for a trajectory passing 290 km behind the Moon and returning to a 40 km vacuum perigee, inside the entry corridor.</p>
           <p>The free return is extremely sensitive. A TLI error of <b>0.1 m/s</b>, out of 3 160, moves the return perigee by about a thousand kilometres. No engine is that precise, so Apollo flew <b>midcourse corrections</b> (MCC). The ground tracked the spacecraft by radio Doppler, computed the correction on Mission Control's IBM 360s, and read the burn to the crew. Pick the “no midcourse correction” scenario, then press <i>Mission Control: solve MCC</i>.</p></div>
           <div class="lab" id="tl">
@@ -78,7 +78,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.4</span>The free return</h2>
+          <h2><span class="idx">7.4</span>The free return</h2>
           <div class="prose">
             <p>Pass behind the Moon on the right side and its gravity bends the trajectory back toward Earth, with no engine needed. In the rotating frame the path traces the famous <b>figure eight</b>. Apollo 8, 10 and 11 flew free-return trajectories, so that a dead main engine would still mean coming home.</p>
             <p>Apollo 12 onward used <b>hybrid</b> trajectories to reach landing sites the free return could not. They left the free return with a midcourse burn of the Service Propulsion System. On Apollo 13 an oxygen tank exploded 56 hours out, crippling the Service Module and making its engine too risky to use. The crew fired the Lunar Module’s descent engine for 35 seconds to get <i>back</i> on a free return, then burned again after passing the Moon (PC+2) to speed up the return. The Moon did the rest.</p>
@@ -86,7 +86,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.5</span>Lunar orbit insertion</h2>
+          <h2><span class="idx">7.5</span>Lunar orbit insertion</h2>
           <div class="prose">
             <p>Relative to the Moon, an arriving spacecraft is on a hyperbola with excess speed \\(v_\\infty \\approx 0.8\\)–\\(1\\) km/s. To be captured it must burn retrograde at periselene, behind the Moon and out of radio contact with Earth:</p>
             <div class="eq">\\[ v_{p} = \\sqrt{v_\\infty^2 + \\frac{2\\mu_☾}{r_p}}, \\qquad \\Delta v_{LOI} = v_p - v_{\\text{target orbit}} \\]</div>

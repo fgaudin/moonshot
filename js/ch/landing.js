@@ -11,7 +11,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Training module TM-7 · Powered descent & ascent',
+          eyebrow: 'Training module TM-8 · Powered descent & ascent',
           title: 'Landing on the Moon',
           lede: 'Twelve and a half minutes from 15 km altitude and 1.7 km/s to standstill on the surface, paid for with 2 km/s of Δv. The Moon has no air, so every metre per second comes from the engine.',
           refs: ['Sellers · Rockets and Launch Vehicles', 'Apollo 11 Mission Report (MSC-00171) §5'],
@@ -19,7 +19,7 @@
         ${Progress.briefing('landing', { theory: 'theory', lab: 'ld', math: 'refresher', mathLabel: 'Logarithms.' })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">7.1</span>Powered descent</h2>
+          <h2><span class="idx">8.1</span>Powered descent</h2>
           <div class="prose">
             <p>After undocking, the Lunar Module <i>Eagle</i> lowered its perilune to 15 km with a 23 m/s descent orbit insertion burn. At perilune it lit the Descent Propulsion System (DPS) for <b>powered descent initiation</b> and flew three guidance programs:</p>
             <ol>
@@ -36,7 +36,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.2</span>Lab: you have the stick</h2>
+          <h2><span class="idx">8.2</span>Lab: you have the stick</h2>
           <div class="prose"><p>You start at low gate: 500 m up, sinking at 12 m/s and drifting forward at 18 m/s over a boulder field. Real numbers: 8 t lander, 45 kN engine throttleable 10–60% (plus 100%), I<sub>sp</sub> 311 s, lunar gravity 1.62 m/s². Land on the flat pad: sink rate under 3 m/s, drift under 1.2 m/s, tilt under 6°.</p>
           <p class="mono note">Keyboard: ↑/↓ or W/S throttle (or descent rate in P66) · ←/→ or A/D tilt · P toggles P66 · R restart. Buttons work on touch screens.</p></div>
           <div class="lab" id="ld">
@@ -59,7 +59,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.3</span>Ascent and rendezvous</h2>
+          <h2><span class="idx">8.3</span>Ascent and rendezvous</h2>
           <div class="prose">
             <p>The ascent stage used the descent stage as its launch pad. Its Ascent Propulsion System had one fixed-thrust engine (15.6 kN, I<sub>sp</sub> 311 s) with no throttle and no gimbal. It was built as simply as possible: pressure-fed, with hypergolic propellants that ignite on contact. There was no backup. A 7-minute burn delivered about 1 850 m/s, into a 17 × 83 km orbit. From there, the CSI, CDH and TPI manoeuvres of Chapter 5 brought <i>Eagle</i> back to <i>Columbia</i>.</p>
           </div>

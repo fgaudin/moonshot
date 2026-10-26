@@ -85,6 +85,17 @@
         <p class="try">Try it: change the eccentricity; the two string lengths always add to 2a.</p>`,
       widget: 'ellipse',
     },
+    relative: {
+      title: 'Relative velocity and reference frames',
+      used: 'Rendezvous, docking, arriving at the Moon',
+      html: R`
+        <p>A velocity only means something <b>relative to</b> something else. On a train at 300 km/h, a coffee cup is at rest relative to you. In lunar orbit both spacecraft move at about 1.6 km/s relative to the Moon, but what matters for docking is their velocity relative to <i>each other</i>, a few centimetres per second.</p>
+        \[ \vec v_{rel} = \vec v_{chaser} - \vec v_{target} \]
+        <p>Subtracting vectors works component by component, like adding, with a minus sign. Two huge, almost identical arrows give a tiny difference arrow, and that small arrow is the one the pilot flies.</p>
+        <p>Choosing the <b>reference frame</b>, the point of view you measure from, can make a problem simple. Docking is flown in the target’s frame: the target sits still at the origin and only the chaser moves. Arriving at the Moon (Chapter 7) uses the Moon’s frame. The physics is the same; only the description changes. A frame that rotates or accelerates, like the target’s orbiting frame, adds apparent forces such as the Coriolis terms of the Clohessy–Wiltshire equations.</p>
+        <p class="try">Try it: two orbital velocities, almost the same, and the tiny difference (shown ×10 000).</p>`,
+      widget: 'relative',
+    },
     iteration: {
       title: 'Solving equations by iteration',
       used: 'Kepler’s equation, finding free-return trajectories',
@@ -329,6 +340,34 @@
       UI.loop((dt) => { if (!el.isConnected || !el.closest('details').open) return; ang += dt * 0.6; view.redraw(); });
     },
 
+    relative(el) {
+      const id = wid();
+      const { cv, ro, side } = frame(el, sliderRow(id, 'Chaser speed vs target (cm/s)', -30, 30, 0.5, 8));
+      const vt = 1633;                                    // lunar orbit speed at 110 km, m/s
+      let dv = 0.08;
+      const view = UI.canvas(cv, (ctx, w, h) => {
+        const T = UI.tok();
+        ctx.clearRect(0, 0, w, h);
+        const ox = 30, s = (w - 120) / vt;
+        ctx.font = `11px ${T.mono}`; ctx.textAlign = 'left';
+        UI.arrow(ctx, ox, h * 0.28, ox + vt * s, h * 0.28, T.trace, 3);
+        ctx.fillStyle = T.trace; ctx.fillText(`target: ${UI.fmt(vt, 2)} m/s`, ox, h * 0.28 - 10);
+        UI.arrow(ctx, ox, h * 0.48, ox + (vt + dv) * s, h * 0.48, T.accent, 3);
+        ctx.fillStyle = T.accent; ctx.fillText(`chaser: ${UI.fmt(vt + dv, 2)} m/s`, ox, h * 0.48 - 10);
+        const z = 10000 * s, cx = w / 2;
+        ctx.strokeStyle = T.line; ctx.beginPath(); ctx.moveTo(cx, h * 0.68); ctx.lineTo(cx, h * 0.9); ctx.stroke();
+        if (Math.abs(dv) > 1e-4) UI.arrow(ctx, cx, h * 0.8, cx + dv * z, h * 0.8, T.good, 3);
+        ctx.fillStyle = T.good; ctx.textAlign = 'center'; ctx.fillText(`relative: ${UI.fmt(dv * 100, 1)} cm/s  (drawn ×10 000)`, cx, h * 0.68 - 6);
+      });
+      const inp = side.querySelector('input'), out = side.querySelector('output');
+      const upd = () => {
+        dv = +inp.value / 100; out.textContent = (dv >= 0 ? '+' : '') + UI.fmt(dv * 100, 1);
+        ro.innerHTML = `<dt>target speed</dt><dd>${UI.fmt(vt, 3)} m/s</dd><dt>chaser speed</dt><dd>${UI.fmt(vt + dv, 3)} m/s</dd><dt>relative velocity</dt><dd class="hl">${UI.fmt(dv * 100, 1)} cm/s</dd><dt>ratio</dt><dd>1 : ${UI.fmt(vt / Math.max(1e-6, Math.abs(dv)), 0)}</dd><dt>meaning</dt><dd>${dv > 0.001 ? 'chaser gaining' : dv < -0.001 ? 'chaser falling back' : 'station-keeping'}</dd>`;
+        view.redraw();
+      };
+      inp.addEventListener('input', upd); upd();
+    },
+
     iteration(el) {
       const i1 = wid(), i2 = wid();
       const { ro, side } = frame(el, sliderRow(i1, 'Mean anomaly M', 0, 360, 1, 100) + sliderRow(i2, 'Eccentricity e', 0, 0.97, 0.01, 0.7));
@@ -355,7 +394,7 @@
   /* ---------------- the Math Toolkit page ---------------- */
   App.chapter({
     id: 'toolkit', phase: 'Ground school', title: 'Math Toolkit',
-    blurb: 'Eight short refreshers, from vectors to logarithms, each with something to play with.',
+    blurb: 'Nine short refreshers, from vectors to logarithms, each with something to play with.',
     render(page) {
       page.innerHTML = `
         ${App.header({ eyebrow: 'Training · Ground school', title: 'Math Toolkit', lede: 'Everything the modules assume you remember from school, explained again in plain words. These same refreshers appear, folded, where each notion first matters. Open what you need, skip what you know.' })}

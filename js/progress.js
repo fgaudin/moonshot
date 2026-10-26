@@ -56,8 +56,21 @@
       ],
       debrief: 'Transfers and rendezvous are second nature now, {name}. Next stop: the Moon.',
     },
+    docking: {
+      code: 'TM-6', name: 'Two Ships, One Line', topic: 'docking', glyph: 'docking',
+      briefing: 'Three hours after launch, coasting away from Earth, your spacecraft must turn around and dock with the lunar module stowed on top of the spent rocket stage. After the landing you will do it again in lunar orbit, with no second chance. Your instinct says: point the noses at each other and push. Space will teach you otherwise, {name}.',
+      objectives: [
+        { id: 'tde', text: 'Complete transposition and docking with the LM' },
+        { id: 'soft', text: 'Dock gently: contact at 10 cm/s or less' },
+        { id: 'paradox', text: 'Live the Gemini 4 paradox: thrust straight at a target ahead and miss it' },
+        { id: 'lunar', text: 'Dock with the ascent stage in lunar orbit' },
+        { id: 'blind', text: 'Real mode: dock using only the COAS and the numbers for the last 30 m' },
+        { id: 'qual', text: 'Qualify: answer 2 docking problems correctly' },
+      ],
+      debrief: 'Hard dock, {name}. You can now join two spacecraft into one. Next: the long coast to the Moon.',
+    },
     moon: {
-      code: 'TM-6', name: 'Translunar Navigation', topic: 'moon', glyph: 'figure8',
+      code: 'TM-7', name: 'Translunar Navigation', topic: 'moon', glyph: 'figure8',
       briefing: 'Three days of coasting towards a target moving at a kilometre per second. Get the trans-lunar burn right and the Moon itself will swing you home if anything breaks, as it did for Apollo 13. Get it wrong by a tenth of a metre per second and you will need Mission Control. You are in Mission Control today, {name}.',
       objectives: [
         { id: 'free', text: 'Fly a free return that comes home inside the entry corridor' },
@@ -68,7 +81,7 @@
       debrief: 'You navigated to the Moon and back, {name}. Now the hardest five hundred metres of the whole mission.',
     },
     landing: {
-      code: 'TM-7', name: 'The Last 500 Metres', topic: 'landing', glyph: 'lander',
+      code: 'TM-8', name: 'The Last 500 Metres', topic: 'landing', glyph: 'lander',
       briefing: 'The computer has brought you to low gate, but the landing site is a boulder field. You have the stick, sixty-odd seconds of propellant to spare and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.',
       objectives: [
         { id: 'land', text: 'Land the Lunar Module safely' },
@@ -78,7 +91,7 @@
       debrief: 'Contact light, {name}. One last test: getting home alive.',
     },
     entry: {
-      code: 'TM-8', name: 'Threading the Corridor', topic: 'entry', glyph: 'capsule',
+      code: 'TM-9', name: 'Threading the Corridor', topic: 'entry', glyph: 'capsule',
       briefing: 'You come home at 11 kilometres per second into a corridor two degrees wide. Too shallow and you skip off into space; too steep and the deceleration crushes you. The only control you have is which way the capsule’s lift points. Find the corridor, {name}.',
       objectives: [
         { id: 'skip', text: 'Find the overshoot boundary: make a capsule skip out' },
@@ -148,6 +161,7 @@
     transfer: '<circle cx="0" cy="4" r="9" class="pg-line"/><circle cx="0" cy="4" r="20" class="pg-line" opacity=".5"/><path d="M9 4 A 14.5 12 0 0 1 -20 4" class="pg-line pg-acc"/><circle cx="0" cy="4" r="3" class="pg-fill"/>',
     figure8: '<path d="M-18 4 C -8 -12 8 -12 14 0 C 20 12 24 12 24 4 C 24 -4 20 -4 14 8 C 8 20 -8 20 -18 4" class="pg-line"/><circle cx="-18" cy="4" r="5" class="pg-fill"/><circle cx="22" cy="4" r="3" class="pg-dot"/>',
     lander: '<rect x="-7" y="-10" width="14" height="9" class="pg-fill"/><rect x="-9" y="-1" width="18" height="7" class="pg-dot"/><path d="M-9 6 L-15 16 M9 6 L15 16 M-18 16 L-12 16 M12 16 L18 16" class="pg-line"/><path d="M-24 18 L24 18" class="pg-line" opacity=".5"/>',
+    docking: '<path d="M-26 0 L-8 0 L-4 -6 L-4 6 L-8 0" class="pg-fill"/><rect x="-24" y="-7" width="16" height="14" class="pg-fill"/><path d="M-4 0 L2 0" class="pg-line pg-acc"/><path d="M4 -9 L4 9 M4 -6 L10 -6 M4 6 L10 6" class="pg-line"/><rect x="10" y="-9" width="14" height="18" class="pg-dot"/>',
     capsule: '<path d="M-6 -14 L6 -14 L14 8 L-14 8 Z" class="pg-fill"/><path d="M-16 12 A 30 12 0 0 0 16 12" class="pg-line pg-acc"/><path d="M-12 18 A 26 12 0 0 0 12 18" class="pg-line pg-acc" opacity=".6"/>',
   };
   function patchSVG(mod, earned, size = 96) {
