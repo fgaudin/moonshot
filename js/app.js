@@ -58,6 +58,10 @@
       const rail = document.getElementById('rail'), mb = document.getElementById('menu-btn');
       mb.addEventListener('click', () => { const o = rail.classList.toggle('open'); mb.setAttribute('aria-expanded', String(o)); });
       tl.addEventListener('click', () => { rail.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); });
+      // close the off-canvas menu with a tap anywhere outside it, or with Escape
+      const closeRail = () => { if (rail.classList.contains('open')) { rail.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); } };
+      document.addEventListener('pointerdown', (e) => { if (!rail.contains(e.target) && !mb.contains(e.target)) closeRail(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeRail(); });
       Sym.observe(document.getElementById('page'));
       document.getElementById('theme-switch').addEventListener('click', (e) => { const m = e.target.dataset.themeSet; if (m) UI.theme.set(m); });
       document.getElementById('lang-switch').addEventListener('click', (e) => { const l = e.target.dataset.langSet; if (l) App.setLang(l); });
