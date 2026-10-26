@@ -9,13 +9,14 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Phase 5 · Manoeuvres',
+          eyebrow: 'Training module TM-5 · Manoeuvres',
           title: 'Orbital Manoeuvres',
           lede: 'A rocket burn changes the velocity at one point, and the orbit through that point changes with it. Changing orbits means choosing where to burn.',
           refs: ['Sellers · Maneuvering in Space', 'BMW ch. 3 Basic Orbital Maneuvers'],
         })}
+        ${Progress.briefing('maneuvers', { theory: 'theory', lab: 'mv', math: 'refresher', mathLabel: 'Trigonometry and the law of cosines.' })}
 
-        <section class="section">
+        <section class="section" id="theory">
           <h2><span class="idx">5.1</span>The Hohmann transfer</h2>
           <div class="prose">
             <p>Walter Hohmann showed in 1925 that the cheapest two-impulse way between coplanar circular orbits is an ellipse tangent to both. Its perigee touches the inner orbit and its apogee the outer one. Both burns are made along the velocity, where they change energy most efficiently:</p>
@@ -38,6 +39,7 @@
             <p>A 28.5° plane change in low Earth orbit costs 3.8 km/s, nearly half of what it took to get there. Do it where the spacecraft is slowest (at apogee) and combine it with a burn you need anyway; the law of cosines then gives the combined cost:</p>
             <div class="eq">\\[ \\Delta v = \\sqrt{v_i^2 + v_f^2 - 2\\,v_i v_f\\cos\\Delta i} \\]</div>
             ${Sym.where(['dv', 'vi', 'vf', 'di'], 'The law of cosines (Al-Kashi in French schools) applied to the triangle of the two velocity vectors.')}
+            ${Primer.box('trig', false, 'refresher')}
             <p>Geostationary missions combine the final circularization with the plane change at apogee for exactly this reason. Try it in the lab.</p>
           </div>
         </section>
@@ -81,7 +83,7 @@
           <h2><span class="idx">✓</span>Check yourself</h2>
           <div id="practice-slot"></div>
         </section>
-        ${App.next('maneuvers')}`;
+        ${Progress.debrief('maneuvers', { math: 'trig', mathLabel: 'Trigonometry and the law of cosines.' })}`;
 
       mountPlanner(page.querySelector('#mv'));
       Practice.embed(page.querySelector('#practice-slot'), 'maneuvers', 3);
@@ -102,6 +104,10 @@
       moon: { body: 'earth', h1: 185e3, h2: 384400e3 - C.RE, di: 0, split: 'combined' },
       lor: { body: 'moon', h1: 18e3, h2: 111e3, di: 0, split: 'combined' },
     };
+    // objectives count only after the candidate has changed a control themselves (not a preset)
+    let touched = false;
+    root.addEventListener('input', () => { touched = true; }, true);
+    root.addEventListener('change', (e) => { touched = e.target.id !== '-'; }, true);
     const view = UI.canvas(root.querySelector('#mv-cv'), null);
 
     const km = (m) => UI.fmt(m / 1000, 0);
@@ -139,6 +145,8 @@
       plan = { r1, r2, at, e: Math.abs(r2 - r1) / (r1 + r2), v1, v2, vtp, vta, dv1, dv2, dvp, tof, w1, w2, lead, syn, down, bi, di };
       t = 0;
       const total = dv1 + dv2 + dvp;
+      if (touched && body === BODY.earth && altOf(v['mv-h1']) <= 400e3 && Math.abs(altOf(v['mv-h2']) - 35786e3) < 500e3 && v['mv-di'] >= 28 && total < 4300) Progress.done('maneuvers', 'geo');
+      if (body === BODY.moon && r2 > r1) Progress.done('maneuvers', 'lor');
       root.querySelector('#mv-ro').innerHTML = `
         <dt>v₁ circular</dt><dd>${UI.fmt(v1 / 1000, 3)} km/s</dd>
         <dt>v at transfer ${down ? 'apoapsis' : 'periapsis'}</dt><dd>${UI.fmt(vtp / 1000, 3)} km/s</dd>
@@ -158,6 +166,7 @@
     root.querySelector('#mv-split').addEventListener('change', () => ctl.update());
     root.querySelectorAll('[data-p]').forEach((b) => b.addEventListener('click', () => {
       const p = presets[b.dataset.p];
+      touched = false;
       root.querySelector('#mv-body').value = p.body; body = BODY[p.body];
       ctl.set('mv-h1', uOf(p.h1)); ctl.set('mv-h2', uOf(p.h2)); ctl.set('mv-di', p.di);
       root.querySelector('#mv-split').value = p.split;

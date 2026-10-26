@@ -156,6 +156,28 @@
         sol: R`\[ m_{0,1} = ${f(st[0].m0, 0)},\ m_{f,1} = ${f(st[0].mf, 0)} \Rightarrow \Delta v_1 = 300\,g_0\ln\frac{m_{0,1}}{m_{f,1}} = ${f(st[0].dv, 0)}\ \mathrm{m/s} \] \[ m_{0,2} = ${f(st[1].m0, 0)},\ m_{f,2} = ${f(st[1].mf, 0)} \Rightarrow \Delta v_2 = ${f(st[1].dv, 0)}\ \mathrm{m/s} \] \[ \Delta v = ${f(tot, 0)}\ \mathrm{m/s} \]` };
     } },
 
+    { topic: 'rockets', title: 'Liftoff acceleration', make() {
+      const v = pick([{ n: 'the Saturn V', F: 34.02e6, m: 2938e3 }, { n: 'a Titan II GLV (Gemini)', F: 1.9e6, m: 154e3 }, { n: 'a Soyuz-FG', F: 4.15e6, m: 305e3 }, { n: 'a Falcon 9', F: 7.6e6, m: 549e3 }]);
+      const twr = v.F / (v.m * G0), a = (twr - 1) * G0;
+      return { q: `At liftoff, <b>${v.n}</b> produces ${f(v.F / 1e6, 2)} MN of thrust and has a mass of ${f(v.m / 1000, 0)} t. What is its initial upward acceleration?`, answer: a, unit: 'm/s²', tol: 0.02,
+        hint: 'First the thrust-to-weight ratio, F/(m g₀). Only the thrust beyond the weight accelerates the rocket: a = (TWR − 1) g₀.',
+        sol: R`\[ \mathrm{TWR} = \frac{F}{m g_0} = \frac{${f(v.F, 0)}}{${f(v.m, 0)}\times9.807} = ${f(twr, 3)} \] \[ a = (\mathrm{TWR}-1)\,g_0 = ${f(a, 2)}\ \mathrm{m/s^2} \]` };
+    } },
+    { topic: 'rockets', title: 'Burn time from TWR', make() {
+      const isp = pick([263, 285, 304, 421]), twr = pick([0.65, 0.8, 1.2, 1.5, 2.0]), frac = pick([0.7, 0.75, 0.8, 0.85]);
+      const t = isp / twr * frac;
+      return { q: `A stage with I<sub>sp</sub> = <b>${isp} s</b> ignites with a thrust-to-weight ratio of <b>${twr}</b> (relative to g₀). Propellant is ${Math.round(frac * 100)}% of its mass at ignition. How long does it burn?`, answer: t, unit: 's',
+        hint: 't_b = (I_sp / TWR₀) × (1 − m_f/m₀), and 1 − m_f/m₀ is the propellant fraction.',
+        sol: R`\[ t_b = \frac{I_{sp}}{\mathrm{TWR}_0}\left(1-\frac{m_f}{m_0}\right) = \frac{${isp}}{${twr}}\times${frac} = ${f(t, 0)}\ \mathrm{s} \]<p>Lower TWR means a longer burn. On the first stage, that time is paid for in gravity loss.</p>` };
+    } },
+    { topic: 'rockets', title: 'Heaviest rocket that lifts off', make() {
+      const n = pick([1, 3, 5, 9]), F1 = pick([{ e: 'F-1', F: 6.77e6 }, { e: 'RD-180', F: 3.83e6 }, { e: 'Merlin 1D', F: 0.845e6 }]), twr = pick([1.2, 1.3, 1.4]);
+      const m = n * F1.F / (twr * G0) / 1000;
+      return { q: `A first stage has <b>${n} × ${F1.e}</b> engines (${f(F1.F / 1e6, 3)} MN each at sea level). If the liftoff TWR must be at least <b>${twr}</b>, what is the maximum liftoff mass?`, answer: m, unit: 't',
+        hint: 'Rearrange TWR = F/(m g₀) for m.',
+        sol: R`\[ m_{max} = \frac{F}{\mathrm{TWR}\,g_0} = \frac{${n}\times${f(F1.F, 0)}}{${twr}\times9.807} = ${f(m * 1000, 0)}\ \mathrm{kg} = ${f(m, 0)}\ \mathrm{t} \]` };
+    } },
+
     // ---------------- Ascent ----------------
     { topic: 'ascent', title: 'Free speed from Earth’s rotation', make() {
       const s = pick([{ n: 'Kennedy Space Center', lat: 28.5 }, { n: 'Baikonur', lat: 45.9 }, { n: 'Kourou', lat: 5.2 }, { n: 'Plesetsk', lat: 62.9 }, { n: 'Wenchang', lat: 19.6 }]);
@@ -305,6 +327,8 @@
     { topic: 'orbits', q: 'Two orbits have the same semi-major axis but different eccentricities. Their periods are…', opts: ['Identical', 'Longer for the more eccentric one', 'Shorter for the more eccentric one', 'Impossible to compare'], a: 0, why: 'T = 2π√(a³/μ) depends only on a. So does the specific mechanical energy, ε = −μ/2a.' },
     { topic: 'rockets', q: 'Doubling the specific impulse of a stage, at the same mass ratio, does what to its Δv?', opts: ['Doubles it', 'Multiplies it by √2', 'Multiplies it by ln 2', 'No change'], a: 0, why: 'Δv = I_sp g₀ ln(MR) is linear in I_sp. The mass ratio only enters through a logarithm, which is why staging matters so much.' },
     { topic: 'rockets', q: 'Why did the Saturn V use kerosene (RP-1) for the first stage but hydrogen for the upper stages?', opts: ['Hydrogen was cheaper', 'RP-1 is dense and gives high thrust in a compact tank; LH₂ gives higher Isp where Δv per kilogram matters most', 'Hydrogen does not work at sea level', 'Kerosene freezes in space'], a: 1, why: 'At liftoff the job is raw thrust, and dense propellant keeps tanks and drag small. Upper stages carry every kilogram the whole way, so their Isp (421 s versus 263 s) pays off more.' },
+    { topic: 'rockets', q: 'A rocket’s liftoff thrust-to-weight ratio is 0.95. What happens when the engines ignite?', opts: ['It rises slowly', 'It stays on the pad while burning propellant, until it is light enough', 'It tips over', 'It depends on the specific impulse'], a: 1, why: 'Thrust is less than weight, so the net force is downward and the pad holds it. As propellant burns the mass drops and TWR rises, but all that propellant is wasted. Real rockets are held down until thrust is verified and released only when TWR > 1.' },
+    { topic: 'rockets', q: 'Why can the S-IVB upper stage fly with a TWR of only 0.64?', opts: ['Gravity is much weaker at 180 km', 'It is already high, fast and nearly horizontal: it only needs to build sideways speed, and near orbital speed gravity is cancelled by the curvature of the path', 'Its engine is more efficient', 'It cannot; it falls back'], a: 1, why: 'At 180 km gravity is still 95% of its surface value. What changes is the task: the vehicle no longer has to climb, and the faster it goes sideways the less of its weight it must support.' },
     { topic: 'ascent', q: 'What is gravity loss?', opts: ['Mass lost from the vehicle', 'The part of thrust spent holding the vehicle up against gravity instead of accelerating it along its path', 'Weaker gravity at altitude', 'Energy lost to heat'], a: 1, why: 'Δv_grav = ∫ g sin γ dt. A vertical climb loses about 9.8 m/s every second. Pitching over early reduces it, but drag rises.' },
     { topic: 'ascent', q: 'Why launch toward the east?', opts: ['To avoid the Sun', 'Earth’s rotation gives a free eastward velocity of up to 465 m/s', 'Weather is better', 'Tradition'], a: 1, why: 'From Cape Canaveral (28.5° N) the free boost is about 408 m/s.' },
     { topic: 'maneuvers', q: 'In a Hohmann transfer to a higher circular orbit, the second burn is made…', opts: ['At perigee, retrograde', 'At apogee, prograde', 'At apogee, retrograde', 'Halfway, radially'], a: 1, why: 'At apogee the transfer orbit is slower than the circular orbit there, so a prograde burn circularizes.' },
@@ -324,6 +348,7 @@
     s[topic].tries++; if (ok) s[topic].right++;
     s.streak = ok ? (s.streak || 0) + 1 : 0;
     UI.store.set('stats', s);
+    if (window.Progress) Progress.checkQual();
   };
   const RANKS = [[0, 'Trainee'], [5, 'Flight Controller'], [15, 'CAPCOM'], [30, 'FIDO'], [50, 'Flight Director']];
   const rankOf = (n) => RANKS.filter((r) => n >= r[0]).pop()[1];
@@ -406,7 +431,7 @@
   window.Practice = Practice;
 
   App.chapter({
-    id: 'practice', phase: 'Simulator', title: 'Practice', blurb: 'Randomized problems with worked solutions, from vis-viva to re-entry heating. Climb from Trainee to Flight Director.',
+    id: 'practice', phase: 'Simulator room', title: 'Practice', blurb: 'Randomized problems with worked solutions, from vis-viva to re-entry heating. Climb from Trainee to Flight Director.',
     render(page) {
       let topic = UI.store.get('ptopic', 'all');
       page.innerHTML = `

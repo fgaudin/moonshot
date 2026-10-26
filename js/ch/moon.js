@@ -20,18 +20,20 @@
       const soi = C.DEM * Math.pow(C.muM / C.muE, 0.4) / 1000;
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Phase 6 · Trans-lunar injection to lunar orbit',
+          eyebrow: 'Training module TM-6 · Trans-lunar injection to lunar orbit',
           title: 'Going to the Moon',
-          lede: 'Three bodies, no closed-form solution, and a target moving at 1 km/s. Apollo’s planners stitched two-body conics together to design the trajectory, then refined it by numerical integration. This chapter does both.',
+          lede: 'Three bodies, no closed-form solution, and a target moving at 1 km/s. Apollo’s planners stitched two-body conics together to design the trajectory, then refined it by numerical integration. This module does both.',
           refs: ['Sellers · Interplanetary Travel', 'BMW ch. 7 Lunar Trajectories', 'BMW ch. 8 Interplanetary Trajectories'],
         })}
+        ${Progress.briefing('moon', { theory: 'theory', lab: 'tl', math: 'refresher', mathLabel: 'Powers and roots.' })}
 
-        <section class="section">
+        <section class="section" id="theory">
           <h2><span class="idx">6.1</span>The sphere of influence and patched conics</h2>
           <div class="prose">
             <p>Near the Moon, its gravity dominates the spacecraft’s motion relative to it; farther out, Earth’s does. Laplace defined the boundary as the <b>sphere of influence</b>:</p>
             <div class="eq">\\[ r_{SOI} = D\\left(\\frac{m_☾}{m_\\oplus}\\right)^{2/5} = 384\\,400\\ \\mathrm{km}\\times(0.0123)^{0.4} \\approx ${UI.fmt(soi, 0)}\\ \\mathrm{km} \\]</div>
             ${Sym.where(['rsoi', 'Dem', 'mM', 'mE'])}
+            ${Primer.box('powers', false, 'refresher')}
             <p>The <b>patched-conic</b> method (BMW §7.4) treats the flight as two two-body problems. Outbound it is an Earth-centred ellipse. At the sphere boundary, subtract the Moon’s velocity (≈ 1.02 km/s) to get the spacecraft’s velocity relative to the Moon. Inside the sphere the path is a Moon-centred hyperbola. Its periselene is set by where the outbound ellipse crosses the boundary, which makes the method very sensitive, but it gives Δv and flight times to within a few percent.</p>
           </div>
         </section>
@@ -97,7 +99,7 @@
           <h2><span class="idx">✓</span>Check yourself</h2>
           <div id="practice-slot"></div>
         </section>
-        ${App.next('moon')}`;
+        ${Progress.debrief('moon', { math: 'powers', mathLabel: 'Powers, roots and scientific notation.' })}`;
 
       mountTLI(page.querySelector('#tl'));
       Practice.embed(page.querySelector('#practice-slot'), 'moon', 3);
@@ -106,6 +108,11 @@
 
   function mountTLI(root) {
     let sim = null, frame = 'rotating', idx = 0, playing = !UI.reducedMotion(), cum = [];
+    // objectives count only after the candidate has changed a control themselves (not a preset)
+    let touched = false;
+    root.addEventListener('input', () => { touched = true; }, true);
+    root.addEventListener('change', (e) => { touched = e.target.id !== 'tl-preset'; }, true);
+    const inCorridor = (s) => s.outcome === 'entry' && s.retAlt >= 20e3 && s.retAlt <= 65e3 && s.minM.alt < 20000e3;
     const view = UI.canvas(root.querySelector('#tl-cv'), null);
     const minis = ['#tl-c1', '#tl-c2'].map((s) => UI.canvas(root.querySelector(s), null));
 
@@ -125,7 +132,11 @@
     const fmts = { 'tl-dv': (x) => UI.fmt(x, 0), 'tl-ang': (x) => x.toFixed(2), 'tl-loidv': (x) => UI.fmt(x, 0), 'tl-mcc': (x) => (x > 0 ? '+' : '') + x.toFixed(2), 'tl-t': () => (sim ? 'GET ' + UI.fmtTime(sim.pts[idx].t) : '') };
     const ctl = UI.bindControls(root, fmts, (v, src) => {
       if (src === 'tl-t') { idx = Math.round(v['tl-t'] * (sim.pts.length - 1)); playing = false; setPlayLabel(); draw(); return; }
+      const wasBad = sim && !inCorridor(sim);
       sim = Phys.simulateTLI(simOpts(v));
+      if (touched && inCorridor(sim)) Progress.done('moon', 'free');
+      if (src === 'tl-mcc' && wasBad && inCorridor(sim)) Progress.done('moon', 'rescue');
+      if (touched && sim.outcome === 'lunarOrbit') Progress.done('moon', 'loi');
       // velocity relative to Earth by finite differences of samples (for the speed chart)
       cum = sim.pts.map((p, i) => {
         const q = sim.pts[Math.min(i + 1, sim.pts.length - 1)], o = sim.pts[Math.max(0, i - 1)];
@@ -150,9 +161,11 @@
       btn.textContent = 'Computing…';
       setTimeout(() => {
         const dv = Phys.solveMCC({ ...simOpts(v), mcc: { t: MCC_T, dv: 0 } });
+        const wasBad = !inCorridor(sim);
         if (dv == null) { btn.textContent = 'No fix within ±15 m/s: adjust TLI'; return; }
         btn.textContent = `RTCC solution: ${dv >= 0 ? '+' : ''}${dv.toFixed(2)} m/s. Solve again`;
-        ctl.set('tl-mcc', dv.toFixed(2)); idx = 0; playing = true; setPlayLabel(); ctl.update();
+        ctl.set('tl-mcc', dv.toFixed(2)); idx = 0; playing = true; setPlayLabel(); touched = true; ctl.update();
+        if (wasBad && inCorridor(sim)) Progress.done('moon', 'rescue');
       }, 30);
     });
     UI.seg(root, '#tl-view', (v) => { frame = v; draw(); });

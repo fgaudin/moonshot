@@ -9,13 +9,14 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Phase 2 · Coast',
+          eyebrow: 'Training module TM-2 · Coast',
           title: 'Describing Orbits',
           lede: 'The two-body equation has an exact solution: the conic sections. Energy fixes the orbit’s size, angular momentum its shape, and Kepler’s equation gives the position at any time.',
           refs: ['Sellers · Understanding Orbits; Describing Orbits', 'BMW ch. 1 Two-Body Orbital Mechanics', 'BMW ch. 2 & 4 Elements; Position vs Time'],
         })}
+        ${Progress.briefing('orbits', { theory: 'theory', lab: 'od', math: 'refresher', mathLabel: 'Vectors, trigonometry, ellipses and iteration.' })}
 
-        <section class="section">
+        <section class="section" id="theory">
           <h2><span class="idx">2.1</span>Two constants of motion</h2>
           <div class="prose">
             <p>Gravity is a conservative central force, so two quantities stay fixed along any coasting trajectory. Dot the two-body equation with \\(\\dot{\\vec r}\\) and you get the <b>specific mechanical energy</b> (energy per kilogram):</p>
@@ -24,6 +25,7 @@
             <p>Cross it with \\(\\vec r\\) and you get the <b>specific angular momentum</b>, a vector perpendicular to the orbital plane. The plane therefore never changes:</p>
             <div class="eq">\\[ \\vec h = \\vec r \\times \\vec v, \\qquad h = r\\,v\\cos\\phi \\]</div>
             ${Sym.where(['vech', 'vecr', 'vecv', 'cross', 'h', 'phi'])}
+            ${Primer.box('vectors', false, 'refresher') + Primer.box('trig')}
             <p>Here \\(\\phi\\) is the <b>flight-path angle</b>, measured from the local horizontal to the velocity vector. It is zero at periapsis and apoapsis.</p>
           </div>
         </section>
@@ -34,6 +36,7 @@
             <p>Integrating the equation of motion once more (BMW §1.5) gives the shape of every possible path, the polar equation of a conic with the central body at one focus:</p>
             <div class="eq">\\[ r = \\frac{p}{1 + e\\cos\\nu}, \\qquad p = \\frac{h^2}{\\mu} = a(1-e^2) \\]</div>
             ${Sym.where(['r', 'p', 'e', 'nu', 'h', 'mu', 'a'], 'With ν = 0 (periapsis) you get the smallest r; with ν = 180° (apoapsis) the largest.')}
+            ${Primer.box('ellipse')}
             <p>\\(\\nu\\) is the <b>true anomaly</b>, the angle from periapsis to the spacecraft. The eccentricity \\(e\\) selects the conic, and the energy sign tells you which kind you are on:</p>
           </div>
           <div class="scroll-x" style="max-width:52rem"><table class="data">
@@ -96,6 +99,7 @@
             ${Sym.where(['n', 'a', 'mu', 'Mm', 't', 'tp', 'E', 'e'])}
             <div class="eq">\\[ \\tan\\frac{\\nu}{2} = \\sqrt{\\frac{1+e}{1-e}}\\;\\tan\\frac{E}{2} \\]</div>
             ${Sym.where(['nu', 'E', 'e', 'tan'], 'This converts the helper angle E into the real position angle ν.')}
+            ${Primer.box('iteration')}
             <p>Going from position to time is direct. Going from time to position means solving Kepler’s equation for \\(E\\), which has no closed-form solution. Newton’s iteration \\(E_{k+1} = E_k - (E_k - e\\sin E_k - M)/(1 - e\\cos E_k)\\) converges in a few steps; that is what the lab above runs on every frame. BMW chapter 4 develops the universal-variable form that also covers parabolas and hyperbolas. The Apollo Guidance Computer used that approach (Battin’s formulation) in its conic routines.</p>
           </div>
         </section>
@@ -122,7 +126,7 @@
           <h2><span class="idx">✓</span>Check yourself</h2>
           <div id="practice-slot"></div>
         </section>
-        ${App.next('orbits')}`;
+        ${Progress.debrief('orbits', { math: 'ellipse', mathLabel: 'Ellipses, trigonometry, iteration.' })}`;
 
       mountDesigner(page.querySelector('#od'));
       Practice.embed(page.querySelector('#practice-slot'), 'orbits', 3);
@@ -166,6 +170,10 @@
       const b = root.querySelector('#od-badge');
       const kind = el.e < 0.001 ? 'Circle' : el.e < 1 ? 'Ellipse' : el.e < 1.001 ? 'Parabola' : 'Hyperbola';
       b.textContent = el.rp < C.RE ? kind + ' · hits Earth' : kind;
+      if (src && el.rp - C.RE > 100e3) {          // designed by hand with the sliders
+        if (el.e < 0.01) Progress.done('orbits', 'circle');
+        if (el.e < 1 && el.ra - C.RE >= 35786e3) Progress.done('orbits', 'high');
+      }
       b.className = 'badge ' + (el.rp < C.RE ? 'bad' : el.e >= 1 ? 'warn' : 'good');
     });
     root.querySelectorAll('[data-p]').forEach((b) => b.addEventListener('click', () => {

@@ -18,21 +18,56 @@
   App.chapter({
     id: 'home', phase: 'Pre-launch', title: 'The Mission',
     render(page) {
-      const cards = ['newton', 'orbits', 'rockets', 'ascent', 'maneuvers', 'moon', 'landing', 'entry', 'practice']
-        .map((id) => App.chapters[id]).filter(Boolean)
-        .map((c) => `<a class="card" href="#${c.id}"><span class="phase">${c.phase}</span><h3>${c.title}</h3><p>${c.blurb || ''}</p>${c.lab ? `<span class="lablink">Lab · ${c.lab} →</span>` : ''}</a>`).join('');
+      const P = Progress, mods = P.ORDER;
+      const tot = P.totals(), next = P.nextModule();
+      const nextMod = next && P.MODULES[next];
+      const patches = mods.map((id) => {
+        const m = P.MODULES[id], c = App.chapters[id], n = P.count(id), all = m.objectives.length;
+        return `<a class="patch-card ${P.complete(id) ? 'earned' : ''}" href="#${id}">
+          <span data-patch-of="${id}" data-size="88">${P.patchSVG(id, P.complete(id), 88)}</span>
+          <span class="pc-text"><span class="phase">${m.code} · ${c.phase}</span><b>${m.name}</b><span class="pc-sub">${c.title} · lab: ${c.lab}</span>
+          <span class="meter" aria-label="${n} of ${all} objectives"><i style="width:${100 * n / all}%"></i></span><span class="pc-sub">${n}/${all} objectives</span></span></a>`;
+      }).join('');
+      const certified = tot.patches === mods.length;
       page.innerHTML = `
         <section class="hero">
           <div style="display:flex;flex-direction:column;gap:1.2rem;min-width:0">
-            <span class="eyebrow">Apollo · 1961–1972 · astrodynamics &amp; rocket science</span>
+            <span class="eyebrow">Moonshot Academy · Astronaut Candidate Program</span>
             <h1>How we went<br>to the <em>Moon</em></h1>
-            <p class="lede">The theory, the equations and the numbers behind the Apollo missions, from Newton's laws to the heat shield. Each chapter has a working simulator and exercises that check your arithmetic.</p>
-            <div class="btn-row"><a class="btn primary" href="#newton">Begin at Newton →</a><a class="btn" href="#moon">Fly the free return</a><a class="btn" href="#practice">Practice problems</a></div>
+            <p class="lede">You have been selected. Between you and the launch pad stand eight training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all eight mission patches and you are <b>go for launch</b>.</p>
+            <form class="enrol" id="enrol" autocomplete="off">
+              <label for="callsign">Your callsign</label>
+              <input type="text" id="callsign" maxlength="24" placeholder="e.g. Eagle, or your name" value="${P.callsign() === 'Candidate' ? '' : P.callsign().replace(/"/g, '&quot;')}">
+              <button class="btn" type="submit">Save</button>
+              <span class="note" id="enrol-msg" aria-live="polite"></span>
+            </form>
+            <div class="btn-row">
+              <a class="btn primary" href="#${next || 'practice'}">${next ? (tot.d ? `Continue: ${nextMod.code} ${nextMod.name} →` : `Report for training: ${nextMod.code} →`) : 'Keep your skills sharp →'}</a>
+              <a class="btn" href="#toolkit">Ground school (math refreshers)</a>
+              <a class="btn" href="#practice">Simulator room</a>
+            </div>
           </div>
           <figure style="margin:0;display:flex;flex-direction:column;gap:.5rem;align-items:center;min-width:0">
             <div class="stage-hero"><canvas id="hero-cv" aria-label="Animated free-return trajectory from the Earth around the Moon and back, in the rotating Earth–Moon frame"></canvas></div>
-            <figcaption class="note mono" id="hero-cap" style="font-size:.72rem;text-align:center">Free-return trajectory, integrated live: TLI Δv 3 160 m/s. Earth–Moon rotating frame, to scale.</figcaption>
+            <figcaption class="note mono" id="hero-cap" style="font-size:.72rem;text-align:center">Your flight plan: a free-return trajectory, integrated live. Earth–Moon rotating frame, to scale.</figcaption>
           </figure>
+        </section>
+
+        <section class="section" id="record">
+          <h2><span class="idx">★</span>Flight record: ${P.callsign()}</h2>
+          <div class="record-sum">
+            <span class="meter big" aria-label="${tot.d} of ${tot.n} objectives"><i style="width:${100 * tot.d / tot.n}%"></i></span>
+            <span class="mono note">${tot.d} of ${tot.n} objectives · ${tot.patches} of ${mods.length} patches</span>
+          </div>
+          ${certified ? `<div class="certificate">
+            <span class="eyebrow">Moonshot Academy · Certificate of training</span>
+            <b class="cert-name">${P.callsign()}</b>
+            <p>has completed all eight training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared</p>
+            <b class="cert-go">GO FOR LAUNCH</b>
+            <span class="mono note">Vega, Chief Flight Instructor · ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+          </div>` : ''}
+          <div class="patch-grid">${patches}</div>
+          <p class="note">The modules follow the mission in order. The theory follows Sellers’ <i>Understanding Space</i> for physical intuition and Bate, Mueller &amp; White’s <i>Fundamentals of Astrodynamics</i> (BMW) for the mathematics. Objectives are checked by the simulators themselves; your record is kept in this browser.</p>
         </section>
 
         <div class="stats">
@@ -44,8 +79,8 @@
         </div>
 
         <section class="section">
-          <h2><span class="idx">Δv</span>The mission, burn by burn</h2>
-          <div class="prose"><p>Every phase of the flight is paid for in velocity change, Δv. The staircase below adds up the major Apollo 11 manoeuvres against ground elapsed time. Reaching orbit costs more than everything that follows. That is why the Saturn V was 85% propellant by mass. Click a step to open the chapter that explains it.</p></div>
+          <h2><span class="idx">Δv</span>The mission you are training for</h2>
+          <div class="prose"><p>Every phase of the flight is paid for in velocity change, Δv. The staircase adds up the major Apollo 11 manoeuvres against ground elapsed time. Reaching orbit costs more than everything that follows, which is why the Saturn V was 85% propellant by mass. Click a step to open the module that trains you for it.</p></div>
           <div class="lab" style="grid-template-columns:minmax(0,1fr)">
             <div class="stage" style="height:300px;min-height:0;background:var(--panel)"><canvas id="stair-cv"></canvas></div>
             <div class="scroll-x"><table class="data" id="burns"><thead><tr><th>Manoeuvre</th><th>GET (h)</th><th>Engine</th><th>Δv (m/s)</th><th>Σ Δv (km/s)</th></tr></thead><tbody></tbody></table></div>
@@ -54,10 +89,21 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">→</span>Flight plan</h2>
-          <div class="prose"><p>The chapters follow the mission in order, and each builds on the one before. The theory follows the two books on your shelf: Sellers' <i>Understanding Space</i> for the physical intuition, and Bate, Mueller &amp; White's <i>Fundamentals of Astrodynamics</i> (BMW) for the mathematics.</p></div>
-          <div class="cards">${cards}</div>
+          <h2><span class="idx">↺</span>Start over</h2>
+          <div class="btn-row"><button class="btn" id="reset-prog">Reset my training record</button><span class="note" id="reset-msg"></span></div>
         </section>`;
+
+      page.querySelector('#enrol').addEventListener('submit', (e) => {
+        e.preventDefault();
+        P.setCallsign(page.querySelector('#callsign').value);
+        page.querySelector('#enrol-msg').textContent = `Welcome aboard, ${P.callsign()}.`;
+        page.querySelector('#record h2').innerHTML = `<span class="idx">★</span>Flight record: ${P.callsign()}`;
+      });
+      let armed = false;
+      page.querySelector('#reset-prog').addEventListener('click', (e) => {
+        if (!armed) { armed = true; e.target.textContent = 'Click again to erase all objectives and patches'; return; }
+        P.reset(); App.go('home'); location.reload();
+      });
 
       // --- staircase chart
       let cum = 0;

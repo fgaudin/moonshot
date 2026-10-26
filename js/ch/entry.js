@@ -9,18 +9,20 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Phase 8 · Entry & splashdown',
+          eyebrow: 'Training module TM-8 · Entry & splashdown',
           title: 'Coming Home',
           lede: 'The Command Module arrived at 11 km/s carrying 60 megajoules per kilogram, fourteen times the energy of the same mass of TNT. The atmosphere had to absorb all of it in about ten minutes.',
           refs: ['Sellers · Returning from Space: Re-entry', 'Allen & Eggers, NACA Report 1381 (1958)'],
         })}
+        ${Progress.briefing('entry', { theory: 'theory', lab: 'en', math: 'refresher', mathLabel: 'Derivatives and exponentials.' })}
 
-        <section class="section">
+        <section class="section" id="theory">
           <h2><span class="idx">8.1</span>Equations of entry</h2>
           <div class="prose">
             <p>Over a spherical, non-rotating Earth with an atmosphere of density \\(\\rho(h) = \\rho_0 e^{-h/H}\\), a capsule of mass \\(m\\), drag coefficient \\(C_D\\), reference area \\(A\\) and lift-to-drag ratio \\(L/D\\) obeys:</p>
             <div class="eq">\\[ \\dot v = -\\frac{\\rho v^2}{2\\beta} - g\\sin\\gamma, \\qquad v\\dot\\gamma = \\frac{\\rho v^2}{2\\beta}\\frac{L}{D}\\cos\\sigma - \\left(g - \\frac{v^2}{r}\\right)\\cos\\gamma, \\qquad \\dot h = v\\sin\\gamma \\]</div>
             ${Sym.where(['vdot', 'rho', 'v', 'beta', 'g', 'gammaE', 'gammadot', 'LD', 'sigma', 'r', 'hdot'], 'First equation: drag and gravity change the speed. Second: lift and gravity bend the path. Third: the descent rate.')}
+            ${Primer.box('derivative', false, 'refresher')}
             <p>Here \\(\\beta = m/(C_D A)\\) is the <b>ballistic coefficient</b>, \\(\\gamma\\) the flight-path angle (negative going down) and \\(\\sigma\\) the bank angle. Bank angle is the only control Apollo had: it rolled the lift vector up, down or sideways.</p>
           </div>
         </section>
@@ -31,6 +33,7 @@
             <p>Drop lift and gravity (drag dominates) and the equations integrate in closed form (Allen & Eggers, 1953). The peak deceleration then depends only on entry speed and angle, not on the vehicle:</p>
             <div class="eq">\\[ a_{max} = \\frac{v_E^2\\,\\sin|\\gamma_E|}{2\\,e\\,H}, \\qquad \\rho^* = \\frac{\\beta\\,\\sin|\\gamma_E|}{H} \\]</div>
             ${Sym.where(['amax', 'vE', 'gE', 'euler', 'H', 'rhostar', 'beta'])}
+            ${Primer.box('log')}
             <p>The formula assumes a straight path. At lunar-return speed the real path curves away from the Earth (\\(v^2/r > g\\)), so at shallow angles it overestimates. For 11 km/s at −6.5° it predicts 36 g, while the lab’s full simulation of a ballistic capsule gives about 16 g. That is still lethal, which is why Apollo needed lift. Heavier, more streamlined vehicles (high \\(\\beta\\)) reach their peak deeper, at higher density \\(\\rho^*\\). That makes them faster and hotter at the end, which is why warheads are slim and capsules are blunt.</p>
           </div>
         </section>
@@ -87,7 +90,7 @@
           <h2><span class="idx">✓</span>Check yourself</h2>
           <div id="practice-slot"></div>
         </section>
-        ${App.next('entry')}`;
+        ${Progress.debrief('entry', { math: 'derivative', mathLabel: 'Derivatives and exponentials.' })}`;
 
       mountEntry(page.querySelector('#en'));
       Practice.embed(page.querySelector('#practice-slot'), 'entry', 3);
@@ -104,6 +107,10 @@
       ballistic: { 'en-v': 11.03, 'en-g': -6.5, 'en-b': 0, 'en-ld': 0 },
       leo: { 'en-v': 7.8, 'en-g': -1.5, 'en-b': 0, 'en-ld': 0.18 },
     };
+    // objectives count only after the candidate has changed a control themselves (not a preset)
+    let touched = false;
+    root.addEventListener('input', () => { touched = true; }, true);
+    root.addEventListener('change', (e) => { touched = e.target.id !== '-'; }, true);
     const view = UI.canvas(root.querySelector('#en-cv'), null);
     const minis = ['#en-c1', '#en-c2', '#en-c3'].map((s) => UI.canvas(root.querySelector(s), null));
     const mapCv = UI.canvas(root.querySelector('#en-map'), null);
@@ -114,12 +121,14 @@
     const ctl = UI.bindControls(root, fmts, (v) => {
       opts = { v0: v['en-v'] * 1000, gamma0: v['en-g'], bank: v['en-b'], ld: v['en-ld'] };
       sim = Phys.simulateEntry(opts);
+      if (touched && classify(sim) === 'skip') Progress.done('entry', 'skip');
+      if (touched && classify(sim) === 'ok' && sim.maxG < 8 && opts.v0 >= 10500) Progress.done('entry', 'safe');
       const key = `${v['en-v']}|${v['en-ld']}`;
       if (key !== mapKey) { map = buildMap(opts); mapKey = key; }
       readout();
       view.redraw(); minis.forEach((m) => m.redraw()); mapCv.redraw();
     });
-    root.querySelectorAll('[data-p]').forEach((b) => b.addEventListener('click', () => { const p = presets[b.dataset.p]; for (const k in p) ctl.set(k, p[k]); ctl.update(); }));
+    root.querySelectorAll('[data-p]').forEach((b) => b.addEventListener('click', () => { const p = presets[b.dataset.p]; touched = false; for (const k in p) ctl.set(k, p[k]); ctl.update(); }));
 
     function buildMap(o) {
       const cells = [];
@@ -206,6 +215,7 @@
       const r = e.currentTarget.getBoundingClientRect(), { pad, w, h } = mapGeom;
       const g = GMIN + (e.clientX - r.left - pad.l) / (w - pad.l - pad.r) * (GMAX - GMIN);
       const b = (e.clientY - r.top - pad.t) / (h - pad.t - pad.b) * 180;
+      touched = true;
       ctl.set('en-g', Math.max(GMIN, Math.min(GMAX, g)).toFixed(2)); ctl.set('en-b', Math.round(Math.max(0, Math.min(180, b)) / 5) * 5);
       ctl.update();
     });

@@ -9,19 +9,21 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Phase 1 · Foundations',
+          eyebrow: 'Training module TM-1 · Foundations',
           title: 'Newton & Gravity',
           lede: 'Isaac Newton published the physics of spaceflight in 1687. Every trajectory in this manual, Apollo’s included, is his second law applied to his law of gravitation.',
           refs: ['Sellers · Understanding Orbits', 'BMW §1.2–1.3 The n-body and two-body problems'],
         })}
+        ${Progress.briefing('newton', { theory: 'theory', lab: 'cannon', math: 'refresher', mathLabel: 'Vectors, derivatives and powers of ten.' })}
 
-        <section class="section">
+        <section class="section" id="theory">
           <h2><span class="idx">1.1</span>The three laws of motion</h2>
           <div class="prose">
             <p><b>First law, inertia.</b> A body keeps its velocity, constant speed in a straight line, unless an external force acts on it. A spacecraft coasting between Earth and Moon needs no engine to keep moving. It needs an engine only to <i>change</i> its motion.</p>
             <p><b>Second law.</b> The rate of change of momentum equals the applied force:</p>
             <div class="eq">\\[ \\vec F = \\frac{d}{dt}\\left(m\\vec v\\right) \\quad\\Longrightarrow\\quad \\vec F = m\\,\\vec a \\;\\; \\text{(constant mass)} \\]</div>
             ${Sym.where(['vecF', 'ddt', 'm', 'vecv', 'veca'], 'Read it as: force = mass × acceleration. Push twice as hard and a body speeds up twice as fast.')}
+            ${Primer.box('vectors', false, 'refresher') + Primer.box('derivative')}
             <p>A rocket's mass is <i>not</i> constant; it throws away about 13 tonnes of propellant every second at liftoff. Working this law with changing mass gives the rocket equation (Phase 3).</p>
             <p><b>Third law, action and reaction.</b> When the engine pushes exhaust backward, the exhaust pushes the engine forward with an equal and opposite force. A rocket needs no air to push against, which is why it works in a vacuum.</p>
           </div>
@@ -33,6 +35,7 @@
             <p>Any two masses attract each other along the line joining them, with a force proportional to both masses and inversely proportional to the square of their distance:</p>
             <div class="eq">\\[ F_g = \\frac{G\\,M\\,m}{r^2}, \\qquad G = 6.674\\times10^{-11}\\ \\mathrm{N\\,m^2\\,kg^{-2}} \\]</div>
             ${Sym.where(['Fg', 'G', 'M', 'm', 'r'], 'Double the distance and the pull drops to a quarter (inverse square).')}
+            ${Primer.box('powers')}
             <p>Astrodynamicists rarely use \\(G\\) and \\(M\\) separately. The product, the <b>gravitational parameter</b> \\(\\mu = GM\\), is known far more precisely from tracking spacecraft. For Earth, \\(\\mu_\\oplus = 3.986\\,004\\times10^{14}\\ \\mathrm{m^3/s^2}\\). The gravitational acceleration at distance \\(r\\) from the centre is then</p>
             <div class="eq">\\[ g(r) = \\frac{\\mu}{r^2} = g_0\\left(\\frac{R_\\oplus}{r}\\right)^2, \\qquad g_0 = 9.806\\,65\\ \\mathrm{m/s^2} \\]</div>
             ${Sym.where(['gr', 'mu', 'r', 'g0', 'RE'])}
@@ -78,7 +81,7 @@
           <h2><span class="idx">✓</span>Check yourself</h2>
           <div id="practice-slot"></div>
         </section>
-        ${App.next('newton')}`;
+        ${Progress.debrief('newton', { math: 'vectors', mathLabel: 'Vectors, derivatives, powers of ten.' })}`;
 
       mountCannon(page.querySelector('#cannon'));
       Practice.embed(page.querySelector('#practice-slot'), 'newton', 3);
@@ -178,6 +181,8 @@
 
     const fire = () => {
       shot = { pts: info.pts, i: 0, clock: 0 };
+      if (info.outcome === 'orbit') Progress.done('newton', 'orbit');
+      if (info.outcome === 'escape') Progress.done('newton', 'escape');
     };
     root.querySelector('#cn-fire').addEventListener('click', fire);
     root.querySelector('#cn-clear').addEventListener('click', () => { traces.length = 0; view.redraw(); });

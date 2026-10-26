@@ -1,7 +1,7 @@
 /* Router and chapter registry. Each chapter file calls App.chapter({...}). */
 (function () {
   'use strict';
-  const ORDER = ['home', 'newton', 'orbits', 'rockets', 'ascent', 'maneuvers', 'moon', 'landing', 'entry', 'practice', 'reference'];
+  const ORDER = ['home', 'newton', 'orbits', 'rockets', 'ascent', 'maneuvers', 'moon', 'landing', 'entry', 'toolkit', 'practice', 'reference'];
   const chapters = {};
 
   const App = {
@@ -13,17 +13,26 @@
       v[id] = true;
       UI.store.set('visited', v);
     },
-    start() {
+    // rail: module code and state (patch earned = filled, started = ring)
+    refreshRail() {
       const tl = document.getElementById('timeline');
-      const visited = UI.store.get('visited', {});
       let html = '';
       for (const id of ORDER) {
         const c = chapters[id];
         if (!c) continue;
-        if (id === 'practice') html += '<li class="sep">Training</li>';
-        html += `<li><a href="#${id}" data-id="${id}" class="${visited[id] ? 'done' : ''}"><span class="phase">${c.phase}</span><span class="ttl">${c.title}</span></a></li>`;
+        if (id === 'toolkit') html += '<li class="sep">Training</li>';
+        const m = Progress.MODULES[id];
+        const state = m ? (Progress.complete(id) ? 'done' : Progress.count(id) ? 'started' : '') : '';
+        const label = m ? `${m.code} · ${c.phase}` : c.phase;
+        const cur = (location.hash || '#home').slice(1) === id ? ' aria-current="page"' : '';
+        html += `<li><a href="#${id}" data-id="${id}" class="${state}"${cur}><span class="phase">${label}</span><span class="ttl">${c.title}</span></a></li>`;
       }
       tl.innerHTML = html;
+    },
+    start() {
+      const tl = document.getElementById('timeline');
+      App.refreshRail();
+      Progress.checkQual();
       const rail = document.getElementById('rail'), mb = document.getElementById('menu-btn');
       mb.addEventListener('click', () => { const o = rail.classList.toggle('open'); mb.setAttribute('aria-expanded', String(o)); });
       tl.addEventListener('click', () => { rail.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); });
@@ -45,11 +54,12 @@
       if (a.dataset.id === c.id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     App.markVisited(c.id);
-    const link = document.querySelector(`#timeline a[data-id="${c.id}"]`);
-    if (link) link.classList.add('done');
-    // ?focus=<element id> scrolls straight to a lab (handy for links and screenshots)
-    const focus = new URLSearchParams(location.search).get('focus');
+    Primer.activate(page);
+    // focus targets: a debrief link into ground school, or ?focus=<element id> (handy for links and screenshots)
+    const focus = App.pendingFocus || new URLSearchParams(location.search).get('focus');
+    App.pendingFocus = null;
     const target = focus && document.getElementById(focus);
+    if (target && target.tagName === 'DETAILS') target.open = true;
     if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
   }
 

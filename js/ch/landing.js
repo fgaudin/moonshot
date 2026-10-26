@@ -11,13 +11,14 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Phase 7 · Powered descent & ascent',
+          eyebrow: 'Training module TM-7 · Powered descent & ascent',
           title: 'Landing on the Moon',
           lede: 'Twelve and a half minutes from 15 km altitude and 1.7 km/s to standstill on the surface, paid for with 2 km/s of Δv. The Moon has no air, so every metre per second comes from the engine.',
           refs: ['Sellers · Rockets and Launch Vehicles', 'Apollo 11 Mission Report (MSC-00171) §5'],
         })}
+        ${Progress.briefing('landing', { theory: 'theory', lab: 'ld', math: 'refresher', mathLabel: 'Logarithms.' })}
 
-        <section class="section">
+        <section class="section" id="theory">
           <h2><span class="idx">7.1</span>Powered descent</h2>
           <div class="prose">
             <p>After undocking, the Lunar Module <i>Eagle</i> lowered its perilune to 15 km with a 23 m/s descent orbit insertion burn. At perilune it lit the Descent Propulsion System (DPS) for <b>powered descent initiation</b> and flew three guidance programs:</p>
@@ -29,6 +30,7 @@
             <p>The descent cost about 2 050 m/s. The theoretical minimum is about 1.7 km/s, the orbital speed itself; the rest is <b>gravity loss</b>. Every second spent hovering costs \\(g_☾ = 1.62\\) m/s of Δv for nothing:</p>
             <div class="eq">\\[ t_{hover} = \\frac{I_{sp}\\,g_0}{g_☾}\\,\\ln\\frac{m_0}{m_0 - m_{prop}} \\]</div>
             ${Sym.where(['thover', 'isp', 'g0', 'gM', 'ln', 'm0h', 'mprop'])}
+            ${Primer.box('log', false, 'refresher')}
             <div class="callout history"><b>1202</b>Five minutes into Apollo 11's descent the guidance computer raised program alarms 1202 and 1201: “executive overflow”. The rendezvous radar, left on as a safety backup, was stealing CPU cycles through a hardware quirk. The software, designed by Margaret Hamilton's team at MIT, restarted and dropped low-priority tasks while it kept flying. Twenty-six-year-old guidance officer Steve Bales made the “go” call. Then Armstrong saw that P64 was heading for a boulder field beside West crater. He took over in P66, flew 400 m further, and landed with about 45 seconds of propellant before the bingo call.</div>
           </div>
         </section>
@@ -74,7 +76,7 @@
           <h2><span class="idx">✓</span>Check yourself</h2>
           <div id="practice-slot"></div>
         </section>
-        ${App.next('landing')}`;
+        ${Progress.debrief('landing', { math: 'log', mathLabel: 'Exponentials and logarithms.' })}`;
 
       mountLander(page.querySelector('#ld'));
       Practice.embed(page.querySelector('#practice-slot'), 'landing', 2);
@@ -180,6 +182,8 @@
         const onPad = S.x > PAD[0] && S.x < PAD[1];
         S.h = g; running = false; ended = true;
         if (ok) {
+          Progress.done('landing', 'land');
+          if (onPad && hoverLeft() >= 30) Progress.done('landing', 'pad');
           setBadge(onPad ? 'The Eagle has landed' : 'Landed, off the pad', onPad ? 'good' : 'warn');
           say(`Contact light. Engine stop. Touchdown at ${UI.fmt(-S.vh, 2)} m/s with ${UI.fmt(S.prop, 0)} kg (${UI.fmt(hoverLeft(), 0)} s) of propellant left. ${onPad ? 'Houston, Tranquility Base here.' : 'Safe, but outside the planned area.'}`);
         } else {

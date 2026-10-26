@@ -101,6 +101,9 @@
     m0k: ['m_{0,k}', 'mass when stage k ignites, including all stages above it and the payload', 'kg'],
     mfk: ['m_{f,k}', 'mass when stage k burns out, before it is dropped', 'kg'],
     ispk: ['I_{sp,k}', 'specific impulse of stage k', 's'],
+    twr: ['\\mathrm{TWR}', 'thrust-to-weight ratio: engine thrust divided by the vehicle’s weight (no unit). Above 1 the rocket can rise', '—'],
+    avert: ['a_{\\text{vertical}}', 'upward acceleration when the rocket is pointing straight up', 'm/s²'],
+    tb: ['t_b', 'burn time: how long the stage fires before its tanks are empty', 's'],
     // ascent
     vorbit: ['v_{orbit}', 'speed needed in the target orbit (7.79 km/s at 185 km)', 'm/s'],
     integral: ['\\int \\ldots dt', '“add up over the whole ascent”: each second of flight adds (the expression) × 1 s to the total', ''],

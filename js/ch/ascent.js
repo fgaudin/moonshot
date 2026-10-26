@@ -9,18 +9,20 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: 'Phase 4 · Ascent',
+          eyebrow: 'Training module TM-4 · Ascent',
           title: 'Getting to Orbit',
           lede: 'Orbit is about speed, not height: 185 km up but 7.8 km/s sideways. The ascent is a compromise between climbing out of the air quickly and turning horizontal early.',
           refs: ['Sellers · Getting to Orbit', 'BMW ch. 6 Ballistic Missile Trajectories'],
         })}
+        ${Progress.briefing('ascent', { theory: 'theory', lab: 'as', math: 'refresher', mathLabel: 'Integrals and trigonometry.' })}
 
-        <section class="section">
+        <section class="section" id="theory">
           <h2><span class="idx">4.1</span>The Δv budget to orbit</h2>
           <div class="prose">
             <p>Circular speed at the Apollo parking altitude of 185 km is 7.79 km/s, yet launch vehicles must supply about 9.3–9.5 km/s. The difference is <b>losses</b>, minus a gift from Earth’s rotation:</p>
             <div class="eq">\\[ \\Delta v_{design} = v_{orbit} + \\underbrace{\\int g\\sin\\gamma\\,dt}_{\\text{gravity loss}} + \\underbrace{\\int \\frac{D}{m}\\,dt}_{\\text{drag loss}} + \\underbrace{\\int \\frac{F}{m}(1-\\cos\\alpha)\\,dt}_{\\text{steering loss}} - v_{rotation} \\]</div>
             ${Sym.where([['\\Delta v_{design}', 'total velocity change the rocket must be able to deliver', 'm/s'], 'vorbit', 'integral', 'g', 'gamma', 'D', 'm', 'Fth', 'alpha', 'vrot'], 'In words: orbital speed + what gravity steals while you climb + what the air steals + what is wasted by not pointing exactly along the path − the free speed from Earth’s spin.')}
+            ${Primer.box('integral', false, 'refresher') + Primer.box('trig')}
             <p><b>Gravity loss</b> is the thrust spent holding the vehicle up while its path is still steep (\\(\\gamma\\) is the flight-path angle). It is the largest loss, often 1–1.5 km/s, and it is why low thrust-to-weight rockets are inefficient. <b>Drag loss</b> is small for a big rocket, around 40 m/s for the Saturn V, but drag sets the <b>maximum dynamic pressure</b> \\(q = \\tfrac12\\rho v^2\\) that the structure must survive. <b>Steering loss</b> comes from thrust that isn’t aligned with the velocity.</p>
             <p><b>Earth’s rotation</b> gives a launch due east a free \\(\\omega_\\oplus R_\\oplus\\cos\\phi\\): 465 m/s at the equator, 408 m/s at Cape Canaveral (28.5° N). Launch west and you pay it back twice.</p>
           </div>
@@ -65,7 +67,7 @@
           <h2><span class="idx">✓</span>Check yourself</h2>
           <div id="practice-slot"></div>
         </section>
-        ${App.next('ascent')}`;
+        ${Progress.debrief('ascent', { math: 'integral', mathLabel: 'Integrals: adding up tiny pieces.' })}`;
 
       mountAscent(page.querySelector('#as'));
       Practice.embed(page.querySelector('#practice-slot'), 'ascent', 2);
@@ -80,6 +82,10 @@
       flat: { 'as-kt': 10, 'as-ka': 1.5, 'as-alt': 185, 'as-lat': 28.5, 'as-dir': 'east' },
       west: { 'as-kt': 16, 'as-ka': 0.7, 'as-alt': 185, 'as-lat': 28.5, 'as-dir': 'west' },
     };
+    // objectives count only after the candidate has changed a control themselves (not a preset)
+    let touched = false;
+    root.addEventListener('input', () => { touched = true; }, true);
+    root.addEventListener('change', (e) => { touched = e.target.id !== '-'; }, true);
     const view = UI.canvas(root.querySelector('#as-cv'), null);
     const minis = ['#as-c1', '#as-c2', '#as-c3', '#as-c4'].map((s) => UI.canvas(root.querySelector(s), null));
 
@@ -87,12 +93,15 @@
     const ctl = UI.bindControls(root, fmts, (v) => {
       sim = Phys.simulateAscent({ kickTime: v['as-kt'], kickAngle: v['as-ka'], targetAlt: v['as-alt'] * 1000, latitude: v['as-lat'], east: v['as-dir'] !== 'west' });
       play = UI.reducedMotion() ? sim.t : 0;
+      if (sim.outcome === 'crash' || sim.outcome === 'burnout') Progress.done('ascent', 'fail');
+      if (touched && sim.outcome === 'orbit' && sim.perigee >= 150e3) Progress.done('ascent', 'orbit');
       readout(v);
       minis.forEach((m) => m.redraw());
     });
     root.querySelector('#as-dir').addEventListener('change', () => ctl.update());
     root.querySelectorAll('[data-p]').forEach((b) => b.addEventListener('click', () => {
       const p = presets[b.dataset.p];
+      touched = false;
       for (const k in p) ctl.set(k, p[k]);
       ctl.update();
     }));
