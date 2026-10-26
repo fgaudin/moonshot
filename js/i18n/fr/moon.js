@@ -93,4 +93,7 @@ I18N.add('fr', {
   "dashed circle: Moon's sphere of influence": 'cercle en pointillés : sphère d’influence de la Lune',
   'GET (h)': 'GET (h)',
   'periselene': 'périsélène',
+  'playback ×{$0}': 'lecture ×{$0}',
+  'slowed down near the Moon': 'ralentie près de la Lune',
+  'slowed down near Earth': 'ralentie près de la Terre',
 });

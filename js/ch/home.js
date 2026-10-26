@@ -12,7 +12,7 @@
     { t: 80.2, end: 80.2, name: N`Lunar orbit insertion 2`, dv: 48, who: N`CSM SPS`, ch: 'maneuvers' },
     { t: 101.6, end: 101.6, name: N`Descent orbit insertion`, dv: 23, who: N`LM DPS`, ch: 'maneuvers' },
     { t: 102.55, end: 102.75, name: N`Powered descent to landing`, short: N`Landing`, dv: 2050, who: N`LM DPS`, ch: 'landing' },
-    { t: 124.37, end: 124.49, name: N`Lunar ascent`, dv: 1850, who: N`LM APS`, ch: 'landing', right: true },
+    { t: 124.37, end: 124.49, name: N`Lunar ascent`, short: N`Lunar ascent`, dv: 1850, who: N`LM APS`, ch: 'landing', right: true },
     { t: 128.05, end: 128.05, name: N`Docking with Eagle in lunar orbit`, dv: 0, who: N`CSM RCS`, ch: 'docking' },
     { t: 135.4, end: 135.45, name: N`Trans-Earth injection (TEI)`, short: N`TEI`, dv: 1001, who: N`CSM SPS`, ch: 'moon' },
     { t: 195.05, end: 195.3, name: N`Entry, from 11.03 km/s to 0 by drag`, short: N`Entry`, dv: 0, who: N`Heat shield`, ch: 'entry' },
@@ -120,18 +120,35 @@
       stair.push([196, c2 / 1000]);
       const cv = UI.canvas(page.querySelector('#stair-cv'), (ctx, w, h) => {
         const K = UI.tok();
+        const yTitle = T`cumulative Δv (km/s)`;
         const { X, Y } = UI.chart(ctx, w, h, {
           series: [{ data: stair, color: K.accent, width: 2.2, fill: true }],
-          xMin: 0, xMax: 196, yMin: 0, yMax: 19, xLabel: T`ground elapsed time (h)`, yLabel: T`cumulative Δv (km/s)`,
+          xMin: 0, xMax: 196, yMin: 0, yMax: 19, xLabel: T`ground elapsed time (h)`, yLabel: yTitle,
         });
-        ctx.font = `11px ${K.mono}`; ctx.fillStyle = K.ink; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+        ctx.font = `11px ${K.mono}`; ctx.fillStyle = K.ink; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        // step labels: try above the step (left or right of it), then below the line; skip a label that would
+        // overlap one already placed or the axis title. Label lengths differ per language and screens are narrow.
+        const placed = [{ x0: 46, x1: 46 + ctx.measureText(yTitle).width + 14, y0: 0, y1: 26 }];
+        const free = (r) => r.x0 >= 2 && r.x1 <= w - 2 && placed.every((p) => r.x1 < p.x0 || r.x0 > p.x1 || r.y1 < p.y0 || r.y0 > p.y1);
         let cc = 0;
         for (const b of BURNS) {
           cc += b.dv;
-          if (b.dv < 500 && b.dv !== 0) continue;
-          const lbl = T(b.short || b.name), right = !!b.right;
-          ctx.textAlign = right ? 'right' : 'left';
-          ctx.fillText(lbl, right ? X(b.t) - 4 : Math.min(w - 60, X(b.t) + 4), Y(cc / 1000) - 4);
+          if (!b.short) continue;                       // only the major steps carry a chart label
+          const lbl = T(b.short), tw = ctx.measureText(lbl).width, x = X(b.t), y = Y(cc / 1000);
+          const box = (x0, base) => ({ x0, x1: x0 + tw, y0: base - 10, y1: base + 2 });
+          const tries = [
+            b.right ? box(x - 4 - tw, y - 4) : box(x + 4, y - 4),   // preferred: above the step
+            box(Math.min(x + 4, w - 4 - tw), y - 4),                // above, pushed in from the right edge
+            box(x - 4 - tw, y - 4),                                  // above, to the left of the step
+            box(x + 4, y + 14),                                      // below the line
+          ];
+          const spot = tries.find(free);
+          if (!spot) continue;
+          placed.push(spot);
+          // a halo in the chart's background colour keeps the label readable where it crosses the line
+          ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.strokeStyle = K.panel;
+          ctx.strokeText(lbl, spot.x0, spot.y1 - 2);
+          ctx.fillText(lbl, spot.x0, spot.y1 - 2);
         }
       });
 

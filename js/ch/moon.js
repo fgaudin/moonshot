@@ -107,7 +107,15 @@
   });
 
   function mountTLI(root) {
-    let sim = null, frame = 'rotating', idx = 0, playing = !UI.reducedMotion(), cum = [];
+    let sim = null, frame = 'rotating', idx = 0, tNow = 0, warp = 0, playing = !UI.reducedMotion(), cum = [];
+    const tEnd = () => sim.pts[sim.pts.length - 1].t;
+    // the slider and playback work in mission time; idx is the last sample at or before tNow
+    function seek(t) {
+      tNow = Math.max(0, Math.min(tEnd(), t));
+      let lo = 0, hi = sim.pts.length - 1;
+      while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (sim.pts[mid].t <= tNow) lo = mid; else hi = mid - 1; }
+      idx = lo;
+    }
     // objectives count only after the candidate has changed a control themselves (not a preset)
     let touched = false;
     root.addEventListener('input', () => { touched = true; }, true);
@@ -129,9 +137,9 @@
 
     const MCC_T = 26.7 * 3600;
     const simOpts = (v) => ({ dv: v['tl-dv'], burnAngle: v['tl-ang'], mcc: { t: MCC_T, dv: v['tl-mcc'] }, loi: v['tl-loi'] ? { dv: v['tl-loidv'] } : null });
-    const fmts = { 'tl-dv': (x) => UI.fmt(x, 0), 'tl-ang': (x) => x.toFixed(2), 'tl-loidv': (x) => UI.fmt(x, 0), 'tl-mcc': (x) => (x > 0 ? '+' : '') + x.toFixed(2), 'tl-t': () => (sim ? 'GET ' + UI.fmtTime(sim.pts[idx].t) : '') };
+    const fmts = { 'tl-dv': (x) => UI.fmt(x, 0), 'tl-ang': (x) => x.toFixed(2), 'tl-loidv': (x) => UI.fmt(x, 0), 'tl-mcc': (x) => (x > 0 ? '+' : '') + x.toFixed(2), 'tl-t': () => (sim ? 'GET ' + UI.fmtTime(tNow) : '') };
     const ctl = UI.bindControls(root, fmts, (v, src) => {
-      if (src === 'tl-t') { idx = Math.round(v['tl-t'] * (sim.pts.length - 1)); playing = false; setPlayLabel(); draw(); return; }
+      if (src === 'tl-t') { seek(v['tl-t'] * tEnd()); playing = false; setPlayLabel(); draw(); minis.forEach((m) => m.redraw()); return; }
       const wasBad = sim && !inCorridor(sim);
       sim = Phys.simulateTLI(simOpts(v));
       if (touched && inCorridor(sim)) Progress.done('moon', 'free');
@@ -143,7 +151,7 @@
         const dt = q.t - o.t || 1;
         return Math.hypot((q.x - q.ex) - (o.x - o.ex), (q.y - q.ey) - (o.y - o.ey)) / dt;
       });
-      idx = playing ? 0 : sim.pts.length - 1;
+      seek(playing ? 0 : Infinity);
       summarize();
       minis.forEach((m) => m.redraw());
       draw();
@@ -164,15 +172,15 @@
         const wasBad = !inCorridor(sim);
         if (dv == null) { btn.textContent = T`No fix within ±15 m/s: adjust TLI`; return; }
         btn.textContent = T`RTCC solution: ${dv >= 0 ? '+' : ''}${UI.dec(dv.toFixed(2))} m/s. Solve again`;
-        ctl.set('tl-mcc', dv.toFixed(2)); idx = 0; playing = true; setPlayLabel(); touched = true; ctl.update();
+        ctl.set('tl-mcc', dv.toFixed(2)); tNow = 0; playing = true; setPlayLabel(); touched = true; ctl.update();
         if (wasBad && inCorridor(sim)) Progress.done('moon', 'rescue');
       }, 30);
     });
     UI.seg(root, '#tl-view', (v) => { frame = v; draw(); });
     const playBtn = root.querySelector('#tl-play');
     const setPlayLabel = () => { playBtn.textContent = playing ? T`❚❚ Pause` : T`▸ Play`; };
-    playBtn.addEventListener('click', () => { if (idx >= sim.pts.length - 1) idx = 0; playing = !playing; setPlayLabel(); });
-    root.querySelector('#tl-restart').addEventListener('click', () => { idx = 0; playing = true; setPlayLabel(); });
+    playBtn.addEventListener('click', () => { if (tNow >= tEnd()) seek(0); playing = !playing; setPlayLabel(); });
+    root.querySelector('#tl-restart').addEventListener('click', () => { seek(0); playing = true; setPlayLabel(); });
     setPlayLabel();
 
     function summarize() {
@@ -207,15 +215,14 @@
       if (!sim) return;
       const p = sim.pts[idx];
       root.querySelector('#tl-ro').innerHTML = `
-        <dt>GET</dt><dd class="hl">${UI.fmtTime(p.t)}</dd>
         <dt>${T`Distance from Earth`}</dt><dd>${UI.fmt(p.rE / 1000, 0)} km</dd>
         <dt>${T`Distance from Moon`}</dt><dd>${UI.fmt(p.rM / 1000, 0)} km</dd>
         <dt>${T`Speed rel. Earth`}</dt><dd>${UI.fmt(cum[idx] / 1000, 3)} km/s</dd>
         <dt>${T`Inside Moon's SOI`}</dt><dd>${p.rM < 66.1e6 ? T`yes` : T`no`}</dd>
         <dt class="sub">${T`Outcome`}</dt>${root.querySelector('#tl-ro').dataset.summary || ''}`;
       const o = root.querySelector('#tl-t');
-      o.value = idx / Math.max(1, sim.pts.length - 1);
-      root.querySelector('#tl-t-out').textContent = 'GET ' + UI.fmtTime(p.t);
+      o.value = tNow / tEnd();
+      root.querySelector('#tl-t-out').textContent = 'GET ' + UI.fmtTime(tNow);
     }
 
     view.draw = (ctx, w, h) => {
@@ -231,6 +238,8 @@
         let maxR = C.DEM * 1.12;
         for (const p of pts) { const [x, y] = tf(p); maxR = Math.max(maxR, Math.min(Math.hypot(x, y), 1.2e9)); }
         s = Math.min((w - 40) / (maxR * 1.25), (h - 40) / (maxR * 1.25));
+        // inertial view is centred on Earth and the Moon goes all the way round: fit the whole diameter
+        if (frame === 'inertial') s = Math.min((w - 40) / (2 * maxR * 1.05), (h - 50) / (2 * maxR * 1.05));
         cx = frame === 'rotating' ? w / 2 - C.DEM * s * 0.45 : w / 2; cy = h / 2;
         if (frame === 'rotating' && maxR < C.DEM * 1.5) s = Math.min((w - 60) / (C.DEM * 1.45), (h - 40) / (C.DEM * 0.9));
       }
@@ -269,25 +278,29 @@
       const [sx, sy] = P(tf(cur));
       ctx.fillStyle = K.ink; ctx.beginPath(); ctx.arc(sx, sy, 4, 0, 7); ctx.fill();
       ctx.strokeStyle = K.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(sx, sy, 7, 0, 7); ctx.stroke();
-      root.querySelector('#tl-ov').innerHTML = `${frame === 'rotating' ? T`rotating frame: Earth–Moon line fixed` : frame === 'inertial' ? T`inertial frame, Earth-centred` : T`rotating frame, Moon-centred, 24 000 km wide`}<br>${T`dashed circle: Moon's sphere of influence`}`;
+      root.querySelector('#tl-ov').innerHTML = `${frame === 'rotating' ? T`rotating frame: Earth–Moon line fixed` : frame === 'inertial' ? T`inertial frame, Earth-centred` : T`rotating frame, Moon-centred, 24 000 km wide`}<br>${T`dashed circle: Moon's sphere of influence`}${playing && warp ? `<br>${T`playback ×${UI.fmt(warp, 0)}`}${slowNote ? ' · ' + slowNote : ''}` : ''}`;
     };
 
     const miniDraw = (k) => (ctx, w, h) => {
       if (!sim) return;
       const K = UI.tok();
       const data = sim.pts.map((p, i) => [p.t / 3600, k === 0 ? p.rE / 1e6 : cum[i] / 1000]);
-      UI.chart(ctx, w, h, { series: [{ data, color: k === 0 ? K.trace : K.accent, width: 1.6, fill: k === 0 }], xMin: 0, xFmt: (x) => x.toFixed(0), xLabel: T`GET (h)`, yFmt: (y) => y.toFixed(0), cursor: sim.pts[idx].t / 3600,
+      UI.chart(ctx, w, h, { series: [{ data, color: k === 0 ? K.trace : K.accent, width: 1.6, fill: k === 0 }], xMin: 0, xFmt: (x) => x.toFixed(0), xLabel: T`GET (h)`, yFmt: (y) => y.toFixed(0), cursor: tNow / 3600,
         yMax: k === 1 ? 11.5 : undefined,
         marks: [{ x: sim.minM.t / 3600, color: K.moon, label: T`periselene` }] });
     };
     minis[0].draw = miniDraw(0); minis[1].draw = miniDraw(1);
 
-    let acc = 0;
+    // playback runs in mission time: the whole flight in about 25 s, slowed down (and labelled so) near Earth
+    // and the Moon, where things happen in minutes rather than days
+    let acc = 0, slowNote = '';
     UI.loop((dt) => {
       if (!sim || !playing) return;
-      // index-based playback: samples are denser near Earth and Moon, so the action slows down there
-      idx = Math.min(sim.pts.length - 1, idx + Math.max(1, Math.round(dt * 60 * (sim.pts.length > 6000 ? 6 : 1))));
-      if (idx >= sim.pts.length - 1) { playing = false; setPlayLabel(); }
+      const p = sim.pts[idx], fE = p.rE / 6e7, fM = p.rM / 1.5e7, f = Math.max(0.04, Math.min(1, fE, fM));
+      warp = tEnd() / 25 * f;
+      slowNote = f < 0.9 ? (fM < fE ? T`slowed down near the Moon` : T`slowed down near Earth`) : '';
+      seek(tNow + dt * warp);
+      if (tNow >= tEnd()) { playing = false; setPlayLabel(); }
       draw();
       acc += dt; if (acc > 0.3) { minis.forEach((m) => m.redraw()); acc = 0; }
     });

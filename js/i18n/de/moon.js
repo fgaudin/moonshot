@@ -93,4 +93,7 @@ I18N.add('de', {
   "dashed circle: Moon's sphere of influence": 'gestrichelter Kreis: Einflusssphäre des Mondes',
   'GET (h)': 'GET (h)',
   'periselene': 'Periselenum',
+  'playback ×{$0}': 'Wiedergabe ×{$0}',
+  'slowed down near the Moon': 'verlangsamt in Mondnähe',
+  'slowed down near Earth': 'verlangsamt in Erdnähe',
 });
