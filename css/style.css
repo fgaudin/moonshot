@@ -86,7 +86,7 @@ a { color: var(--trace); }
 .timeline a.done::before { border-color: var(--good); }
 .timeline .sep { margin: .6rem 0 .3rem 1.75rem; font: 500 .66rem/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 
-.rail-foot { margin-top: auto; font: .72rem/1.5 var(--f-mono); color: var(--muted); }
+.rail-foot { font: .72rem/1.5 var(--f-mono); color: var(--muted); }
 
 main { min-width: 0; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); padding-block: 2.5rem 6rem; }
 .page { max-width: 72rem; margin: 0 auto; display: flex; flex-direction: column; gap: 2.2rem; }
@@ -399,3 +399,6 @@ details.primer[open] > summary::before { content: "−"; }
 /* rail: theme and language switches */
 .rail-switches { display: flex; flex-wrap: wrap; gap: .4rem; }
 .lang-switch button { padding: .4rem .5rem; }
+
+/* bottom of the rail: theme switch above the footnote */
+.rail-bottom { margin-top: auto; display: flex; flex-direction: column; gap: .7rem; }
