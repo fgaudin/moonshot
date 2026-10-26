@@ -12,7 +12,7 @@ I18N.add('de', {
   'Docking': 'Andocken',
   'Docking simulator': 'Andocksimulator',
   'Two ships, one line: match attitude, position and velocity to within centimetres per second.': 'Zwei Raumschiffe, eine Achse: Lage, Position und Geschwindigkeit bis auf Zentimeter pro Sekunde angleichen.',
-  'Training module TM-6 · Docking': 'Ausbildungsmodul TM-6 · Andocken',
+  'Training module TM-7 · Docking': 'Ausbildungsmodul TM-7 · Andocken',
   'Rendezvous brings two spacecraft within a few hundred metres. Docking closes the last gap, a slow, precise dance where every push lasts forever and orbital mechanics still has a say.': 'Das Rendezvous bringt zwei Raumfahrzeuge auf wenige hundert Meter zusammen. Das Andocken schließt die letzte Lücke: ein langsamer, präziser Tanz, bei dem jeder Stoß ewig nachwirkt und die Bahnmechanik noch mitredet.',
   'Sellers · Maneuvering in Space (rendezvous)': 'Sellers · Maneuvering in Space (Rendezvous)',
   'BMW ch. 3 Basic Orbital Maneuvers': 'BMW Kap. 3 Basic Orbital Maneuvers',

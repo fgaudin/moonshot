@@ -19,7 +19,7 @@
 
   const TOPICS = {
     newton: N`Newton & gravity`, orbits: N`Orbits & Kepler`, rockets: N`Rocket equation`, ascent: N`Getting to orbit`,
-    maneuvers: N`Manoeuvres`, docking: N`Docking`, moon: N`Lunar trajectories`, landing: N`Landing & ascent`, entry: N`Re-entry`,
+    maneuvers: N`Manoeuvres`, burns: N`Planning a burn`, docking: N`Docking`, moon: N`Lunar trajectories`, landing: N`Landing & ascent`, entry: N`Re-entry`,
   };
 
   /* Each generator returns { q, answer, unit, tol, hint, sol } — q/sol may contain TeX. Text is translated in make(). */
@@ -237,6 +237,43 @@
         sol: R`\[ \mathrm{TOF} = \pi\sqrt{a_t^3/\mu} = ${f(tof, 0)}\ \mathrm{s},\quad \omega_{CSM} = \sqrt{\mu/r_2^3} = ${f(w2, 6)}\ \mathrm{rad/s} \] \[ \alpha_{lead} = 180^\circ - \omega_{CSM}\,\mathrm{TOF} = ${f(lead, 2)}^\circ \]` };
     } },
 
+    // ---------------- Planning a burn ----------------
+    { topic: 'burns', title: N`Circularization burn`, make() {
+      const hp = pick([200, 250, 300]), ha = pick([800, 1000, 1500, 2000]);
+      const rp = RE + hp, ra = RE + ha, a = (rp + ra) / 2, va = Math.sqrt(MU * (2 / ra - 1 / a)), vc = Math.sqrt(MU / ra), dv = (vc - va) * 1000;
+      return { q: T`Your orbit is ${hp} × ${f(ha, 0)} km. What prograde Δv at apoapsis makes it circular at ${f(ha, 0)} km?`, answer: dv, unit: 'm/s',
+        hint: T`At apoapsis the velocity is horizontal, so the burn is pure prograde: circular speed minus the current speed, both from vis-viva.`,
+        sol: R`\[ v_a = \sqrt{\mu\left(\frac{2}{r_a}-\frac{1}{a}\right)} = ${f(va, 4)},\quad v_c = \sqrt{\frac{\mu}{r_a}} = ${f(vc, 4)}\ \mathrm{km/s} \] \[ \Delta v_P = v_c - v_a = ${f(dv, 1)}\ \mathrm{m/s},\quad \Delta v_R = 0 \]` };
+    } },
+    { topic: 'burns', title: N`Magnitude and attitude`, make() {
+      const P = rnd(-200, 400, 10), Rr = rnd(-150, 150, 10) || 50;
+      const mag = Math.hypot(P, Rr), att = Math.atan2(Rr, P) / deg;
+      return { q: T`Mission Control reads up a burn of <b>${P} m/s prograde</b> and <b>${Rr} m/s radial</b>. What is the total Δv the engine must deliver?`, answer: mag, unit: 'm/s',
+        hint: T`The components are perpendicular: use Pythagoras. The attitude is the angle from prograde, arctan(radial / prograde).`,
+        sol: R`\[ |\Delta\vec v| = \sqrt{${P}^2 + ${Rr}^2} = ${f(mag, 1)}\ \mathrm{m/s},\qquad \alpha = \operatorname{atan2}(${Rr}, ${P}) = ${f(att, 1)}^\circ \]` };
+    } },
+    { topic: 'burns', title: N`Burn time`, make() {
+      const v = pick([{ n: N`the Apollo CSM (28 800 kg, SPS 91.2 kN, I<sub>sp</sub> 314 s)`, m: 28800, F: 91200, isp: 314 }, { n: N`the LM in lunar orbit (15 000 kg, descent engine 45 kN, I<sub>sp</sub> 311 s)`, m: 15000, F: 45040, isp: 311 }, { n: N`a small stage (10 000 kg, 8 kN, I<sub>sp</sub> 450 s)`, m: 10000, F: 8000, isp: 450 }]);
+      const dv = pick([100, 214, 400, 900]), c = v.isp * G0, tb = v.m * c / v.F * (1 - Math.exp(-dv / c)), naive = dv * v.m / v.F;
+      return { q: T`How long does a ${dv} m/s burn last for ${T(v.n)}?`, answer: tb, unit: 's',
+        hint: T`The vehicle gets lighter during the burn: t_b = (m₀ I_sp g₀ / F)(1 − e^(−Δv / (I_sp g₀))).`,
+        sol: R`\[ t_b = \frac{${v.m}\times${v.isp}\times9.807}{${v.F}}\left(1 - e^{-${dv}/(${v.isp}\times9.807)}\right) = ${f(tb, 1)}\ \mathrm{s} \]` + `<p>${T`Dividing Δv by the initial acceleration would give ${f(naive, 1)} s: slightly too long, because the acceleration grows as propellant is burned.`}</p>` };
+    } },
+    { topic: 'burns', title: N`Centring the burn`, make() {
+      const tb = rnd(40, 400, 2), tig = rnd(2 * 3600, 30 * 3600, 60);
+      const start = tig - tb / 2;
+      return { q: T`A burn lasting <b>${tb} s</b> has its TIG at GET <b>${UI.fmtTime(tig)}</b>. To centre it on TIG, at what GET must the engine ignite? Answer in seconds of GET.`, answer: start, unit: 's', tol: 0.0005,
+        hint: T`Start half a burn time early.`,
+        sol: R`\[ t_{ignition} = t_{TIG} - \frac{t_b}{2} = ${tig} - ${tb / 2} = ${start}\ \mathrm{s} \]` + `<p>${T`That is GET ${UI.fmtTime(start)}.`}</p>` };
+    } },
+    { topic: 'burns', title: N`Converting LVLH to the velocity frame`, make() {
+      const H = rnd(50, 300, 10), V = rnd(-80, 80, 10) || 30, phi = pick([2, 5, 10, 15]);
+      const P = H * Math.cos(phi * deg) + V * Math.sin(phi * deg), Rr = -H * Math.sin(phi * deg) + V * Math.cos(phi * deg);
+      return { q: T`Mission Control computed a burn in the local vertical frame: <b>${H} m/s horizontal</b> and <b>${V} m/s vertical</b>. The flight-path angle at TIG is <b>${phi}°</b>. What is the prograde component in the velocity frame?`, answer: P, unit: 'm/s',
+        hint: T`Δv_P = Δv_H cos φ + Δv_V sin φ.`,
+        sol: R`\[ \Delta v_P = ${H}\cos ${phi}^\circ + ${V}\sin ${phi}^\circ = ${f(P, 2)}\ \mathrm{m/s},\qquad \Delta v_R = -${H}\sin ${phi}^\circ + ${V}\cos ${phi}^\circ = ${f(Rr, 2)}\ \mathrm{m/s} \]` };
+    } },
+
     // ---------------- Docking ----------------
     { topic: 'docking', title: N`RCS pulse`, make() {
       const v = pick([{ on: N`on the CSM on the way out`, m: 28800 }, { on: N`on the CSM in lunar orbit`, m: 16800 }, { on: N`on the LM ascent stage`, m: 2500 }]);
@@ -290,6 +327,20 @@
       return { q: T`The CSM enters the Moon's sphere of influence with a hyperbolic excess speed v∞ = <b>${f(vinf, 2)} km/s</b>. Periselene altitude is ${h} km. What retrograde Δv at periselene circularizes the orbit?`, answer: dv, unit: 'km/s',
         hint: T`On a hyperbola, v² = v∞² + 2μ/r. Subtract the circular speed at that radius.`,
         sol: R`\[ v_p = \sqrt{v_\infty^2 + \frac{2\mu_☾}{r}} = ${f(vp, 3)},\quad v_c = \sqrt{\mu_☾/r} = ${f(vc, 3)}\ \mathrm{km/s} \] \[ \Delta v = ${f(dv, 3)}\ \mathrm{km/s} \]` + `<p>${T`Apollo split this into LOI-1 (an ellipse, 889 m/s) and LOI-2 (circularization, 48 m/s).`}</p>` };
+    } },
+    { topic: 'moon', title: N`Arrival speed relative to the Moon`, make() {
+      const vsc = rnd(0.6, 1.2, 0.05), th = pick([30, 45, 60, 75, 90]), vm = 1.02;
+      const vinf = Math.sqrt(vsc * vsc + vm * vm - 2 * vsc * vm * Math.cos(th * deg));
+      return { q: T`At the edge of the Moon’s sphere of influence the spacecraft moves at <b>${f(vsc, 2)} km/s</b> relative to Earth. The Moon moves at 1.02 km/s, and the angle between the two velocities is <b>${th}°</b>. What is the speed relative to the Moon, v∞?`, answer: vinf, unit: 'km/s',
+        hint: T`v∞ is the vector difference of the two velocities: use the law of cosines.`,
+        sol: R`\[ v_\infty = \sqrt{v_{sc}^2 + v_☾^2 - 2\,v_{sc}\,v_☾\cos\theta} = \sqrt{${f(vsc, 2)}^2 + 1.02^2 - 2\times${f(vsc, 2)}\times1.02\cos ${th}^\circ} = ${f(vinf, 3)}\ \mathrm{km/s} \]` };
+    } },
+    { topic: 'moon', title: N`Flyby turn angle`, make() {
+      const vinf = rnd(0.8, 1.2, 0.05), h = pick([100, 300, 1000, 3000]);
+      const rp = RM + h, e = 1 + rp * vinf * vinf / MUM, d = 2 * Math.asin(1 / e) / deg;
+      return { q: T`A spacecraft arrives at the Moon with v∞ = <b>${f(vinf, 2)} km/s</b> on a hyperbola with periselene altitude <b>${f(h, 0)} km</b>. By what angle does the Moon turn its velocity?`, answer: d, unit: '°',
+        hint: T`First the eccentricity, e = 1 + r_p v∞²/μ☾ (with r_p from the Moon’s centre); then the turn angle δ = 2 arcsin(1/e).`,
+        sol: R`\[ e = 1 + \frac{r_p v_\infty^2}{\mu_☾} = 1 + \frac{${f(rp, 1)}\times${f(vinf, 2)}^2}{4902.8} = ${f(e, 4)} \] \[ \delta = 2\arcsin\frac{1}{e} = ${f(d, 1)}^\circ \]` + `<p>${T`The closer the pass, the larger the turn. A free return needs a turn of the right size to send the spacecraft back to Earth.`}</p>` };
     } },
     { topic: 'moon', title: N`Lunar orbit speed and period`, make() {
       const h = pick([15, 60, 100, 110]);
@@ -367,6 +418,9 @@
     { topic: 'ascent', q: N`Why launch toward the east?`, opts: [N`To avoid the Sun`, N`Earth’s rotation gives a free eastward velocity of up to 465 m/s`, N`Weather is better`, N`Tradition`], a: 1, why: N`From Cape Canaveral (28.5° N) the free boost is about 408 m/s.` },
     { topic: 'maneuvers', q: N`In a Hohmann transfer to a higher circular orbit, the second burn is made…`, opts: [N`At perigee, retrograde`, N`At apogee, prograde`, N`At apogee, retrograde`, N`Halfway, radially`], a: 1, why: N`At apogee the transfer orbit is slower than the circular orbit there, so a prograde burn circularizes.` },
     { topic: 'maneuvers', q: N`To catch up with a target ahead of you in the same circular orbit, you should first…`, opts: [N`Burn prograde`, N`Burn retrograde to drop into a lower, faster phasing orbit`, N`Burn radially outward`, N`Wait`], a: 1, why: N`Orbital mechanics is counter-intuitive here: a lower orbit has a shorter period, so you gain on the target. Prograde would raise you and slow you down.` },
+    { topic: 'burns', q: N`Why ignite half a burn time before TIG?`, opts: [N`To save propellant`, N`So the burn is spread evenly around the planned point instead of all after it`, N`Because engines need to warm up`, N`To cancel the attitude error`], a: 1, why: N`The plan is an instant kick at TIG. Centring the real burn on TIG puts as much of it before the planned point as after, which brings the result closest to the plan.` },
+    { topic: 'burns', q: N`Which component of a burn changes the orbit’s plane?`, opts: [N`Prograde`, N`Radial`, N`Normal`, N`None: planes cannot be changed`], a: 2, why: N`Normal is perpendicular to the orbit plane. Prograde and radial burns stay in the plane.` },
+    { topic: 'burns', q: N`A long, low-thrust burn delivers exactly the planned Δv, yet the apoapsis ends up lower than planned. Why?`, opts: [N`The engine lost thrust`, N`The spacecraft moved along its orbit during the burn while the thrust kept a fixed direction, so part of the Δv was wasted`, N`The Δv was computed in the wrong units`, N`Apoapsis cannot be predicted`], a: 1, why: N`These are finite-burn losses. They grow with the burn time compared with the orbital period; Mission Control compensates with extra Δv or by splitting the burn.` },
     { topic: 'docking', q: N`You are 200 m directly behind a target in the same circular orbit. You point at it and fire forward. What happens?`, opts: [N`You fly straight to it`, N`You climb into a higher, slower orbit and fall further behind`, N`You drop below it and pass underneath`, N`Nothing: 200 m is too close for orbital effects`], a: 1, why: N`Speeding up raises your orbit, and higher orbits take longer. Gemini 4 learned this in 1965. To catch a target ahead you first slow down.` },
     { topic: 'docking', q: N`Your docking axis is perfectly opposite the target’s, but 1 m to the side of it. Can you dock?`, opts: [N`Yes, alignment is all that matters`, N`No: you must also be on the target’s axis, within about 0.3 m`, N`Yes, if you go fast enough`, N`Only in lunar orbit`], a: 1, why: N`Docking needs attitude, position and velocity all matched. Parallel but offset axes are two cars in neighbouring lanes.` },
     { topic: 'docking', q: N`In attitude hold, releasing the rotation stick makes the jets fire the other way. Is that wasted propellant?`, opts: [N`Yes: free drift would make the same turn for half the cost`, N`No: any turn that starts and ends at rest needs a start and an equal stop; the autopilot just does the braking for you`, N`Yes: the jets fire twice as long`, N`No: braking jets use no propellant`], a: 1, why: N`A spinning spacecraft keeps spinning (Newton’s first law for rotation). Free drift saves propellant only by not holding attitude afterwards, and by letting you stop exactly when you choose.` },

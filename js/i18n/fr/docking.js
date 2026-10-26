@@ -12,7 +12,7 @@ I18N.add('fr', {
   'Docking': 'Amarrage',
   'Docking simulator': 'Simulateur d’amarrage',
   'Two ships, one line: match attitude, position and velocity to within centimetres per second.': 'Deux vaisseaux, un seul axe\u202f: accordez attitude, position et vitesse à quelques centimètres par seconde près.',
-  'Training module TM-6 · Docking': 'Module de formation TM-6 · Amarrage',
+  'Training module TM-7 · Docking': 'Module de formation TM-7 · Amarrage',
   'Rendezvous brings two spacecraft within a few hundred metres. Docking closes the last gap, a slow, precise dance where every push lasts forever and orbital mechanics still has a say.': 'Le rendez-vous amène deux vaisseaux à quelques centaines de mètres l’un de l’autre. L’amarrage comble le dernier écart\u202f: une danse lente et précise où chaque poussée dure indéfiniment et où la mécanique orbitale a encore son mot à dire.',
   'Sellers · Maneuvering in Space (rendezvous)': 'Sellers · Maneuvering in Space (rendez-vous)',
   'BMW ch. 3 Basic Orbital Maneuvers': 'BMW chap. 3 Basic Orbital Maneuvers',

@@ -9,7 +9,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-9 · Entry & splashdown`,
+          eyebrow: T`Training module TM-10 · Entry & splashdown`,
           title: T`Coming Home`,
           lede: T`The Command Module arrived at 11 km/s carrying 60 megajoules per kilogram, fourteen times the energy of the same mass of TNT. The atmosphere had to absorb all of it in about ten minutes.`,
           refs: [T`Sellers · Returning from Space: Re-entry`, T`Allen & Eggers, NACA Report 1381 (1958)`],
@@ -17,7 +17,7 @@
         ${Progress.briefing('entry', { theory: 'theory', lab: 'en', math: 'refresher', mathLabel: N`Derivatives and exponentials.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">9.1</span>${T`Equations of entry`}</h2>
+          <h2><span class="idx">10.1</span>${T`Equations of entry`}</h2>
           <div class="prose">
             <p>${T`Over a spherical, non-rotating Earth with an atmosphere of density \\(\\rho(h) = \\rho_0 e^{-h/H}\\), a capsule of mass \\(m\\), drag coefficient \\(C_D\\), reference area \\(A\\) and lift-to-drag ratio \\(L/D\\) obeys:`}</p>
             <div class="eq">\\[ \\dot v = -\\frac{\\rho v^2}{2\\beta} - g\\sin\\gamma, \\qquad v\\dot\\gamma = \\frac{\\rho v^2}{2\\beta}\\frac{L}{D}\\cos\\sigma - \\left(g - \\frac{v^2}{r}\\right)\\cos\\gamma, \\qquad \\dot h = v\\sin\\gamma \\]</div>
@@ -28,7 +28,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">9.2</span>${T`The ballistic case: Allen and Eggers`}</h2>
+          <h2><span class="idx">10.2</span>${T`The ballistic case: Allen and Eggers`}</h2>
           <div class="prose">
             <p>${T`Drop lift and gravity (drag dominates) and the equations integrate in closed form (Allen & Eggers, 1953). The peak deceleration then depends only on entry speed and angle, not on the vehicle:`}</p>
             <div class="eq">\\[ a_{max} = \\frac{v_E^2\\,\\sin|\\gamma_E|}{2\\,e\\,H}, \\qquad \\rho^* = \\frac{\\beta\\,\\sin|\\gamma_E|}{H} \\]</div>
@@ -39,7 +39,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">9.3</span>${T`Heating and the blunt body`}</h2>
+          <h2><span class="idx">10.3</span>${T`Heating and the blunt body`}</h2>
           <div class="prose">
             <p>${T`Convective heating at the stagnation point follows the Sutton–Graves relation:`}</p>
             <div class="eq">${T`\\[ \\dot q = k\\sqrt{\\frac{\\rho}{r_n}}\\;v^3, \\qquad k = 1.74\\times10^{-4}\\ \\text{(SI, Earth air)} \\]`}</div>
@@ -49,7 +49,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">9.4</span>${T`Lift and the entry corridor`}</h2>
+          <h2><span class="idx">10.4</span>${T`Lift and the entry corridor`}</h2>
           <div class="prose">
             <p>${T`The CM's centre of mass was offset from its axis, so it flew tilted at an angle of attack of about 20°, which gave \\(L/D \\approx 0.3\\). With lift up, the capsule pulls out higher and decelerates gently. With lift down, it digs in. There are two boundaries:`}</p>
             <ul>
@@ -82,7 +82,7 @@
         ${Archive.capsule('hornet')}
 
         <section class="section">
-          <h2><span class="idx">9.5</span>${T`Blackout and splashdown`}</h2>
+          <h2><span class="idx">10.5</span>${T`Blackout and splashdown`}</h2>
           <div class="prose">
             <p>${T`Air in the shock layer ionizes into a plasma that blocks radio for several minutes. Apollo's blackout lasted about 3 to 4 minutes. At 7.3 km two drogue parachutes opened to stabilize the capsule; at 3 km three 25 m main parachutes slowed it to about 9 m/s for splashdown. Apollo 11 hit the Pacific at 16:50 UTC on 24 July 1969, 195 hours 18 minutes after liftoff.`}</p>
           </div>

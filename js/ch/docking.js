@@ -26,7 +26,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-6 · Docking`,
+          eyebrow: T`Training module TM-7 · Docking`,
           title: T`Docking`,
           lede: T`Rendezvous brings two spacecraft within a few hundred metres. Docking closes the last gap, a slow, precise dance where every push lasts forever and orbital mechanics still has a say.`,
           refs: [T`Sellers · Maneuvering in Space (rendezvous)`, T`BMW ch. 3 Basic Orbital Maneuvers`, T`Apollo Operations Handbook, CSM docking system`],
@@ -34,7 +34,7 @@
         ${Progress.briefing('docking', { theory: 'theory', lab: 'dk', math: 'refresher', mathLabel: N`Vectors and relative velocity.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">6.1</span>${T`What docking really is`}</h2>
+          <h2><span class="idx">7.1</span>${T`What docking really is`}</h2>
           <div class="prose">
             <p>${T`A natural first picture: point the two docking axes at each other, then push them together. That is the right start, and it is one third of the job. Docking means bringing <b>three</b> things to zero at the same time:`}</p>
             <ol>
@@ -50,7 +50,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.2</span>${T`Newton’s first law, for real`}</h2>
+          <h2><span class="idx">7.2</span>${T`Newton’s first law, for real`}</h2>
           <div class="prose">
             <p>${T`Everything you know about driving or walking involves friction: let go of the controls and you stop. In space nothing stops you. A thruster pulse changes your velocity, and that velocity stays until another pulse cancels it. Pilots fly <i>velocities</i>, not positions: a pulse to start moving, a coast, an opposite pulse to stop.`}</p>
             <div class="eq">\\[ \\Delta v = \\frac{F\\,t}{m} \\]</div>
@@ -60,7 +60,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.3</span>${T`Orbital mechanics up close`}</h2>
+          <h2><span class="idx">7.3</span>${T`Orbital mechanics up close`}</h2>
           <div class="prose">
             <p>${T`Seen from the target, the chaser does not move in straight lines. Both ships orbit the planet, and a small difference in height means a difference in orbital speed. In the target’s frame, the <b>Clohessy–Wiltshire</b> (Hill) equations describe the relative motion for small separations:`}</p>
             <div class="eq">\\[ \\ddot x = -2n\\,\\dot z + a_x, \\qquad \\ddot z = 3n^2 z + 2n\\,\\dot x + a_z \\]</div>
@@ -71,7 +71,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.4</span>${T`Lab: dock`}</h2>
+          <h2><span class="idx">7.4</span>${T`Lab: dock`}</h2>
           <div class="prose"><p>${T`Top-down view in the target’s frame, real RCS numbers. The dashed line predicts your path if you stop firing. The <b>COAS</b> inset is the view through the Crewman Optical Alignment Sight in the CSM window: when you are on the axis and aligned, the docking target’s stand-off cross sits in the middle of the target disc behind it. A cross offset from the ring means your angle is off (parallax); the whole target off-centre means you are off the axis.`}</p>
           <p class="mono note">${T`Keys: ↑/↓ or W/S thrust forward/back · ←/→ or A/D translate left/right · Q/E rotate · hold Shift for fine thrust · F cycles thruster mode · H cycles rotation mode · V toggles real mode · 1/2/3 time warp · R restart. Buttons work on touch screens (hold to fire).`}</p>
           <p>${T`<b>Real mode</b> hides the map: you fly from the COAS and the numbers alone, as the crews did. The target’s face grows as you approach and narrows when you come in at an angle. Watch the stand-off cross against the target disc behind it, and the degree marks on the reticle.`}</p></div>
@@ -97,7 +97,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.5</span>${T`The hardware: probe, drogue and latches`}</h2>
+          <h2><span class="idx">7.5</span>${T`The hardware: probe, drogue and latches`}</h2>
           <div class="prose">
             <p>${T`The CSM carried a <b>probe</b> on its nose; the LM had a funnel-shaped <b>drogue</b> in its top hatch. The drogue guided the probe tip into a socket, where three small <b>capture latches</b> snapped shut: soft dock. A nitrogen-powered retraction then pulled the two ships together, and <b>twelve hard latches</b> around the tunnel rim locked them into one pressurised structure. The crew then removed the probe and drogue to open a tunnel between the two cabins.`}</p>
             <p>${T`Sixteen <b>RCS thrusters</b> of 445 N each, in four quads around the service module, provided both rotation and translation. The commander used two hand controllers: the rotation controller (right hand) and the translation controller (left hand).`}</p>
@@ -110,7 +110,7 @@
         ${Archive.capsule('dockingSystem')}
 
         <section class="section">
-          <h2><span class="idx">6.6</span>${T`Apollo’s two dockings`}</h2>
+          <h2><span class="idx">7.6</span>${T`Apollo’s two dockings`}</h2>
           <div class="prose">
             <p>${T`<b>Transposition, docking and extraction</b>, about three hours after launch on the way to the Moon. The CSM separated from the S-IVB, drifted away, turned 180°, came back and docked with the LM still stowed in the adapter atop the S-IVB, then pulled it out. On Apollo 14 the probe refused to latch five times in a row; the sixth attempt, with a firmer push, captured. Without it there would have been no landing.`}</p>
             <p>${T`<b>Lunar orbit docking</b>, after the LM’s ascent from the surface and its rendezvous. On most missions the command module pilot flew the final docking with the LM holding attitude. Apollo 11’s crew was reunited at GET 128:03, about four hours after liftoff from Tranquility Base.`}</p>

@@ -119,4 +119,13 @@ I18N.add('fr', {
   'Problems on {$0}, fresh numbers every time.': 'Des problèmes sur le thème « {$0} », avec de nouvelles valeurs à chaque fois.',
   'Back to ground school': 'Retour au cours au sol',
   'Review the math behind this module.': 'Revoir les maths qui sous-tendent ce module.',
+  // When, How Much, Which Way (Planning a burn)
+  "When, How Much, Which Way": "Quand, combien, dans quelle direction",
+  "Until now a burn was a number in an equation. On a real mission it is a time, three numbers and a direction, read up by the capsule communicator and keyed in by the crew. Get one of them wrong and the flight goes wrong. This module trains both ends of that loop, {name}: computing the burn at Mission Control, and flying it in the spacecraft.": "Jusqu’ici, une poussée était un nombre dans une équation. Lors d’une vraie mission, c’est un instant, trois nombres et une direction, lus par le capcom et saisis par l’équipage. Si l’un d’eux est faux, le vol tourne mal. Ce module vous entraîne aux deux bouts de cette chaîne, {name} : calculer la poussée au contrôle de mission, et l’exécuter à bord du vaisseau.",
+  "Circularize a 200 × 1 000 km orbit at 1 000 km": "Circulariser une orbite de 200 × 1 000 km à 1 000 km",
+  "Fly a two-burn Hohmann transfer to a circular 2 000 km orbit": "Effectuer un transfert de Hohmann en deux poussées vers une orbite circulaire à 2 000 km",
+  "Fly a radial burn of at least 50 m/s and see what it does to the orbit": "Effectuer une poussée radiale d’au moins 50 m/s et observer son effet sur l’orbite",
+  "With the small 8 kN stage, reach an apoapsis of 5 000 km (± 100 km) in one burn": "Avec le petit étage de 8 kN, atteindre une apoapside de 5 000 km (± 100 km) en une seule poussée",
+  "Qualify: answer 2 burn-planning problems correctly": "Qualification : résoudre correctement 2 problèmes de planification de poussée",
+  "You can plan a burn and fly it, {name}. From here on, every burn of the mission is just another PAD.": "Vous savez planifier une poussée et l’exécuter, {name}. Désormais, chaque poussée de la mission ne sera qu’un PAD de plus.",
 });

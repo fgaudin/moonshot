@@ -119,4 +119,13 @@ I18N.add('de', {
   'Problems on {$0}, fresh numbers every time.': 'Aufgaben zum Thema „{$0}“, jedes Mal mit neuen Zahlen.',
   'Back to ground school': 'Zurück zum Theorieunterricht',
   'Review the math behind this module.': 'Wiederhole die Mathematik hinter diesem Modul.',
+  // When, How Much, Which Way (Planning a burn)
+  "When, How Much, Which Way": "Wann, wie viel, welche Richtung",
+  "Until now a burn was a number in an equation. On a real mission it is a time, three numbers and a direction, read up by the capsule communicator and keyed in by the crew. Get one of them wrong and the flight goes wrong. This module trains both ends of that loop, {name}: computing the burn at Mission Control, and flying it in the spacecraft.": "Bisher war eine Brennphase eine Zahl in einer Gleichung. Bei einer echten Mission ist sie ein Zeitpunkt, drei Zahlen und eine Richtung, vom Capcom hochgefunkt und von der Crew eingetippt. Ist eine davon falsch, geht der Flug schief. Dieses Modul trainiert beide Enden dieser Kette, {name}: die Brennphase in der Missionskontrolle berechnen und sie im Raumschiff fliegen.",
+  "Circularize a 200 × 1 000 km orbit at 1 000 km": "Eine Bahn von 200 × 1 000 km auf 1 000 km zirkularisieren",
+  "Fly a two-burn Hohmann transfer to a circular 2 000 km orbit": "Einen Hohmann-Transfer mit zwei Brennphasen auf eine Kreisbahn in 2 000 km Höhe fliegen",
+  "Fly a radial burn of at least 50 m/s and see what it does to the orbit": "Eine radiale Brennphase von mindestens 50 m/s fliegen und ihre Wirkung auf die Bahn beobachten",
+  "With the small 8 kN stage, reach an apoapsis of 5 000 km (± 100 km) in one burn": "Mit der kleinen 8-kN-Stufe in einer einzigen Brennphase eine Apoapsis von 5 000 km (± 100 km) erreichen",
+  "Qualify: answer 2 burn-planning problems correctly": "Qualifikation: Löse 2 Aufgaben zur Planung von Brennphasen richtig",
+  "You can plan a burn and fly it, {name}. From here on, every burn of the mission is just another PAD.": "Du kannst eine Brennphase planen und fliegen, {name}. Ab jetzt ist jede Brennphase der Mission nur noch ein weiteres PAD.",
 });

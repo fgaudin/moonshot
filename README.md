@@ -15,9 +15,9 @@ An internet connection is needed only for MathJax and the web fonts (both from C
 
 ## How it is organised
 
-You play an astronaut candidate. Each chapter is a **training module** (TM-1 … TM-9) with a briefing,
+You play an astronaut candidate. Each chapter is a **training module** (TM-1 … TM-10) with a briefing,
 objectives that the simulators detect automatically, and a mission patch when all objectives are met.
-Earn all nine patches for the "go for launch" certificate on the home page. Folded **math refreshers**
+Earn all ten patches for the "go for launch" certificate on the home page. Folded **math refreshers**
 (vectors, trigonometry, powers, derivatives, integrals, logarithms, ellipses, relative velocity, iteration) appear where each
 notion first matters; all of them are on the Math Toolkit page. Greek letters show their name on hover,
 and every equation has a "where:" legend of its variables and units. History capsules with NASA archive
@@ -33,12 +33,13 @@ photographs (public domain, credited and linked to images.nasa.gov) tie each mod
 | Ignition | Rocket Science | F-1 thrust vs altitude · rocket-equation curves · Saturn V staging builder |
 | Ascent | Getting to Orbit | Saturn V ascent: gravity turn, guidance, Δv loss ledger, Max Q |
 | Manoeuvres | Orbital Manoeuvres | Hohmann / plane change / bi-elliptic / rendezvous lead angle (Earth or Moon) |
+| Mission Control | Planning a Burn | Maneuver computer: Δv in the prograde/radial frame, burn time, finite burns, PADs |
 | Docking | Docking | Docking simulator in the target's orbital frame (Clohessy–Wiltshire), COAS sight, three scenarios |
-| TLI → LOI | Going to the Moon | Earth–Moon restricted three-body simulator, free return, MCC solver, LOI |
+| TLI → LOI | Going to the Moon | Earth–Moon three-body simulator vs patched conics, free return, MCC solver, LOI |
 | Descent | Landing on the Moon | Lunar lander with real LM numbers and P66 mode |
 | Entry | Coming Home | Entry corridor explorer with a live corridor map |
 | Ground school | Math Toolkit | Nine refreshers with interactive widgets |
-| Simulator room | Practice | 35 problem generators with worked solutions, 15 concept questions |
+| Simulator room | Practice | 49 problem generators with worked solutions, 24 concept questions |
 
 ## Languages
 

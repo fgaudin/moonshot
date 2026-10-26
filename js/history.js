@@ -11,6 +11,12 @@
       alt: N`The whole Earth, fully lit, from Africa to the Antarctic ice cap`,
       story: N`Apollo 17’s crew took this photograph on the way to the Moon, about 29 000 km out. The Sun was behind the spacecraft, so the whole disc is lit, from the Mediterranean to the Antarctic ice cap. Every trajectory in this manual is a fall around that ball: 6 378 km of radius and μ = 3.986 × 10¹⁴ m³/s².`,
     },
+    apollo13mcc: {
+      img: 's70-35139', id: 'S70-35139', date: '1970-04-13', mission: 'Apollo 13',
+      title: N`Every burn was a PAD`,
+      alt: N`Mission Control in Houston: rows of consoles, a world map with ground tracks, and an astronaut on the big screen`,
+      story: N`Mission Control during Apollo 13’s fourth TV broadcast. Flight director Gene Kranz, back to the camera, watches Fred Haise on the big screen. Minutes later an oxygen tank exploded. Over the next four days the ground computed every burn the crew needed and read each one up as a PAD: a 30-second descent-engine burn back onto a free return, then a burn of about four and a half minutes two hours after passing the Moon to speed up the return. For a later 14-second correction, with the computer powered down to save electricity, the crew aimed the spacecraft by keeping Earth’s day–night line on a mark in the window and timed the burn by hand.`,
+    },
     trench: {
       img: 's69-39593', id: 'S69-39593', date: '1969-07-20', mission: 'Apollo 11',
       title: N`The Trench`,

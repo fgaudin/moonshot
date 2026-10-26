@@ -41,8 +41,8 @@ I18N.add('de', {
   // hero
   'Moonshot Academy · Astronaut Candidate Program': 'Moonshot-Akademie · Astronauten-Ausbildungsprogramm',
   'How we went<br>to the <em>Moon</em>': 'Wie wir<br>zum <em>Mond</em> flogen',
-  'You have been selected. Between you and the launch pad stand nine training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all nine mission patches and you are <b>go for launch</b>.':
-    'Du wurdest ausgewählt. Zwischen dir und der Startrampe stehen neun Ausbildungsmodule: dieselbe Physik, die die Apollo-Crews und Flugleiter beherrschen mussten, von Newtons Gesetzen bis zum Hitzeschild. Jedes Modul hat ein Briefing, einen Simulator zum Fliegen und Ziele, die du erreichen musst. Verdiene alle neun Missionsabzeichen und du bist <b>startklar</b>.',
+  'You have been selected. Between you and the launch pad stand ten training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all ten mission patches and you are <b>go for launch</b>.':
+    'Du wurdest ausgewählt. Zwischen dir und der Startrampe stehen zehn Ausbildungsmodule: dieselbe Physik, die die Apollo-Crews und Flugleiter beherrschen mussten, von Newtons Gesetzen bis zum Hitzeschild. Jedes Modul hat ein Briefing, einen Simulator zum Fliegen und Ziele, die du erreichen musst. Verdiene alle zehn Missionsabzeichen und du bist <b>startklar</b>.',
   'Your callsign': 'Dein Rufzeichen',
   'e.g. Eagle, or your name': 'z. B. Eagle oder dein Name',
   'Candidate': 'Kandidat:in',
@@ -61,8 +61,8 @@ I18N.add('de', {
   'Flight record: {$0}': 'Flugbuch: {$0}',
   '{$0} of {$1} objectives · {$2} of {$3} patches': '{$0} von {$1} Zielen · {$2} von {$3} Abzeichen',
   'Moonshot Academy · Certificate of training': 'Moonshot-Akademie · Ausbildungszertifikat',
-  'has completed all nine training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared':
-    'hat alle neun Ausbildungsmodule des Astronauten-Ausbildungsprogramms abgeschlossen, von Newtons Kanone bis zum Wiedereintritt in die Atmosphäre, und ist hiermit',
+  'has completed all ten training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared':
+    'hat alle zehn Ausbildungsmodule des Astronauten-Ausbildungsprogramms abgeschlossen, von Newtons Kanone bis zum Wiedereintritt in die Atmosphäre, und ist hiermit',
   'GO FOR LAUNCH': 'GO FÜR DEN START',
   'Vega, Chief Flight Instructor': 'Vega, Leitung der Flugausbildung',
   'The modules follow the mission in order. The theory follows Sellers’ <i>Understanding Space</i> for physical intuition and Bate, Mueller &amp; White’s <i>Fundamentals of Astrodynamics</i> (BMW) for the mathematics. Objectives are checked by the simulators themselves; your record is kept in this browser.':

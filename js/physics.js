@@ -359,9 +359,9 @@
   }
 
   // Find the MCC Δv (m/s, along-track) that gives a return vacuum perigee of targetAlt (Mission Control's job).
-  function solveMCC(opts, targetAlt = 40000, range = 15) {
+  function solveMCC(opts, targetAlt = 40000, range = 15, sim = simulateTLI) {
     const f = (dv) => {
-      const r = simulateTLI({ ...opts, loi: null, mcc: { t: opts.mcc.t, dv }, tMax: 12 * 86400 });
+      const r = sim({ ...opts, loi: null, mcc: { t: opts.mcc.t, dv }, tMax: 12 * 86400 });
       return r.outcome === 'impact' ? NaN : r.retAlt - targetAlt;
     };
     let best = null;
@@ -378,6 +378,203 @@
       prev = { dv, v };
     }
     return best;
+  }
+
+  /* ---------- Patched conics (planning model, BMW ch. 7) ----------
+     One body at a time: Earth-centred two-body motion until the spacecraft enters the Moon's sphere of
+     influence, then Moon-centred two-body motion (the Moon's frame treated as inertial), then Earth again.
+     Same inputs and output format as simulateTLI, plus the conic quantities at the patch points. */
+  const R_SOI = C.DEM * Math.pow(C.muM / C.muE, 0.4);
+  function simulatePatched(opts) {
+    const w = EM.w, D = C.DEM;
+    const moon = (t) => [D * Math.cos(w * t), D * Math.sin(w * t)];          // Earth-centred
+    const moonV = (t) => [-D * w * Math.sin(w * t), D * w * Math.cos(w * t)];
+    const parkAlt = opts.parkAlt ?? 185000, r0 = C.RE + parkAlt;
+    const phi = (opts.burnAngle ?? 0) * Math.PI / 180;
+    const vc = Math.sqrt(C.muE / r0), v0 = vc + opts.dv;
+    const tMax = opts.tMax ?? 10 * 86400;
+    // state in Earth-centred coordinates; in the Moon phase we integrate the Moon-centred state
+    let y = [r0 * Math.cos(phi), r0 * Math.sin(phi), -v0 * Math.sin(phi), v0 * Math.cos(phi)];
+    let phase = 'E1', t = 0, outcome = 'coast', perigee = null, loiDone = false, loiT = null;
+    let mccDone = !opts.mcc || !opts.mcc.dv, leftEarth = false, minRet = Infinity;
+    let minM = { r: Infinity, t: 0 }, prevRM = Infinity, sinceRecord = Infinity;
+    const conic = { soiIn: null, soiOut: null, rSOI: R_SOI };
+    const pts = [];
+    const fE = (tt, s) => { const r3 = Math.pow(s[0] * s[0] + s[1] * s[1], 1.5); return [s[2], s[3], -C.muE * s[0] / r3, -C.muE * s[1] / r3]; };
+    const fM = (tt, s) => { const r3 = Math.pow(s[0] * s[0] + s[1] * s[1], 1.5); return [s[2], s[3], -C.muM * s[0] / r3, -C.muM * s[1] / r3]; };
+    const earthState = () => { if (phase !== 'M') return y; const m = moon(t), mv = moonV(t); return [y[0] + m[0], y[1] + m[1], y[2] + mv[0], y[3] + mv[1]]; };
+    const record = (extra) => {
+      const e = earthState(), m = moon(t);
+      pts.push({ t, x: e[0], y: e[1], ex: 0, ey: 0, mx: m[0], my: m[1], rE: Math.hypot(e[0], e[1]), rM: Math.hypot(e[0] - m[0], e[1] - m[1]), phase, ...extra });
+      sinceRecord = 0;
+    };
+    // conic elements of a state relative to a body (2-D): energy, eccentricity, periapsis
+    const conicOf = (s, mu) => {
+      const r = Math.hypot(s[0], s[1]), v = Math.hypot(s[2], s[3]);
+      const fpa = Math.asin((s[0] * s[2] + s[1] * s[3]) / (r * v));
+      return { r, v, el: elementsFromRV(r, v, fpa, mu) };
+    };
+    while (t < tMax) {
+      const e = earthState(), m = moon(t);
+      const rE = Math.hypot(e[0], e[1]), rM = Math.hypot(e[0] - m[0], e[1] - m[1]);
+      if (rM < 3e7 || rE < 3e7 || sinceRecord >= 600 || pts.length === 0) record();
+      if (rM < minM.r) minM = { r: rM, t };
+      if (rE > 5e7) leftEarth = true;
+      if (leftEarth && rE < minRet && phase !== 'M') minRet = rE;
+      if (!mccDone && t >= opts.mcc.t && phase === 'E1') {
+        const sp = Math.hypot(y[2], y[3]);
+        y[2] += opts.mcc.dv * y[2] / sp; y[3] += opts.mcc.dv * y[3] / sp; mccDone = true;
+        record({ burn: 'MCC' });
+      }
+      // patch 1: entering the Moon's sphere of influence
+      if (phase === 'E1' && rM < R_SOI) {
+        const mv = moonV(t);
+        y = [y[0] - m[0], y[1] - m[1], y[2] - mv[0], y[3] - mv[1]];
+        phase = 'M';
+        const c = conicOf(y, C.muM);
+        const vinf = Math.sqrt(Math.max(0, c.v * c.v - 2 * C.muM / c.r));
+        conic.soiIn = { t, vinf, e: c.el.e, rp: c.el.rp, periAlt: c.el.rp - C.RM, turn: c.el.e > 1 ? 2 * Math.asin(1 / c.el.e) : null };
+        record({ burn: 'SOI' });
+        continue;
+      }
+      if (phase === 'M') {
+        if (rM < C.RM) { outcome = 'impact'; break; }
+        // optional LOI: retro burn at periselene
+        if (opts.loi && !loiDone && rM > prevRM) {
+          const sp = Math.hypot(y[2], y[3]), k = Math.max(0, sp - opts.loi.dv) / sp;
+          y[2] *= k; y[3] *= k; loiDone = true; loiT = t; record({ burn: 'LOI' });
+        }
+        if (loiDone && t > loiT + 2 * 86400) break;
+        // patch 2: leaving the sphere of influence (moving outward)
+        if (rM > R_SOI && rM > prevRM) {
+          const mv = moonV(t);
+          const c = conicOf(y, C.muM);
+          y = [y[0] + m[0], y[1] + m[1], y[2] + mv[0], y[3] + mv[1]];
+          phase = 'E2';
+          const ce = conicOf(y, C.muE);
+          conic.soiOut = { t, vinf: Math.sqrt(Math.max(0, c.v * c.v - 2 * C.muM / c.r)), returnPeriAlt: ce.el.rp - C.RE, e: ce.el.e };
+          record({ burn: 'SOI' });
+          prevRM = rM;
+          continue;
+        }
+      }
+      prevRM = rM;
+      if (phase !== 'M' && leftEarth && rE < C.RE + C.entryInterface) {   // back at Earth, with or without a flyby
+        outcome = 'entry';
+        const c = conicOf(y, C.muE);
+        perigee = { alt: c.el.rp - C.RE, t, v: c.v, fpa: 0 };
+        record(); break;
+      }
+      if (phase !== 'M' && rE < C.RE) { outcome = 'impactE'; break; }
+      const rc = phase === 'M' ? rM : rE, mu = phase === 'M' ? C.muM : C.muE;
+      const dt = Math.max(2, Math.min(900, 0.012 * Math.pow(rc, 1.5) / Math.sqrt(mu)));
+      y = rk4(phase === 'M' ? fM : fE, t, y, dt);
+      t += dt; sinceRecord += dt;
+    }
+    if (!pts.length || pts[pts.length - 1].t !== t) record();
+    if (outcome === 'coast') {
+      const lp = pts[pts.length - 1];
+      if (loiDone && phase === 'M') outcome = 'lunarOrbit';
+      else if (lp.rE > 1.5e9) outcome = 'escape';
+      else if (lp.rE > 5e8) outcome = 'flung';
+    }
+    const retAlt = perigee ? perigee.alt : (conic.soiOut ? conic.soiOut.returnPeriAlt : minRet - C.RE);
+    return { pts, outcome, minM: { alt: minM.r - C.RM, t: minM.t }, perigee, retAlt, loiT, t, v0, vc, conic, model: 'patched' };
+  }
+
+  /* ---------- Orbit helpers (2-D) and finite-burn execution ----------
+     State s = [x, y, vx, vy] around a body of parameter mu, counter-clockwise orbits. */
+  const Orbit2D = {
+    elems(s, mu) {
+      const [x, y, vx, vy] = s, r = Math.hypot(x, y), v2 = vx * vx + vy * vy;
+      const h = x * vy - y * vx;                                   // z of r × v
+      const ex = (vy * h) / mu - x / r, ey = (-vx * h) / mu - y / r; // eccentricity vector
+      const e = Math.hypot(ex, ey), eps = v2 / 2 - mu / r, a = -mu / (2 * eps);
+      const p = h * h / mu, w = e > 1e-9 ? Math.atan2(ey, ex) : 0;  // argument of periapsis (from +x)
+      const nu = Math.atan2(y, x) - w;
+      return { h, e, ex, ey, a, p, w, nu: ((nu % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI), rp: p / (1 + e), ra: e < 1 ? p / (1 - e) : Infinity, T: e < 1 ? 2 * Math.PI * Math.sqrt(a * a * a / mu) : Infinity, eps };
+    },
+    // state at true anomaly nu on the orbit of el
+    stateAt(el, nu, mu) {
+      const r = el.p / (1 + el.e * Math.cos(nu)), th = el.w + nu;
+      const vr = (mu / el.h) * el.e * Math.sin(nu), vt = (mu / el.h) * (1 + el.e * Math.cos(nu));
+      return [r * Math.cos(th), r * Math.sin(th), vr * Math.cos(th) - vt * Math.sin(th), vr * Math.sin(th) + vt * Math.cos(th)];
+    },
+    // time to go forward from nu1 to nu2 on an ellipse
+    timeBetween(el, nu1, nu2, mu) {
+      const M = (nu) => { let E = eccFromTrue(nu, el.e); if (E < 0) E += 2 * Math.PI; return E - el.e * Math.sin(E); };
+      const n = Math.sqrt(mu / Math.pow(el.a, 3));
+      let dM = M(nu2) - M(nu1); if (dM < 0) dM += 2 * Math.PI;
+      return dM / n;
+    },
+    // velocity frame: prograde along v; radial in the plane, perpendicular to v, on the side away from the body
+    frame(s) {
+      const v = Math.hypot(s[2], s[3]), pro = [s[2] / v, s[3] / v];
+      let rad = [pro[1], -pro[0]];
+      if (rad[0] * s[0] + rad[1] * s[1] < 0) rad = [-rad[0], -rad[1]];
+      return { pro, rad };
+    },
+  };
+
+  // Burn time for a given Δv (rocket equation), from mass m, thrust F (N), Isp (s)
+  const burnTime = (dv, m, F, isp) => (m * isp * C.g0 / F) * (1 - Math.exp(-dv / (isp * C.g0)));
+
+  /* Execute a list of burns as finite burns.
+     opts: s0 (state), mu, m0, F, isp, burns: [{ when: 'apo'|'peri'|'in', minutes, pro, rad }], centred (bool)
+     Each burn is planned as an impulse at its TIG (the PAD); it is flown with the attitude held fixed in space
+     along the planned Δv, at constant thrust, and cut off when the accumulated Δv equals the planned |Δv|. */
+  function executeBurns(opts) {
+    const mu = opts.mu ?? C.muE, F = opts.F, isp = opts.isp, ve = isp * C.g0;
+    let s = opts.s0.slice(), m = opts.m0, t = 0;
+    const trace = [], burns = [];
+    const f = (u, acc) => (tt, y) => { const r3 = Math.pow(y[0] * y[0] + y[1] * y[1], 1.5); return [y[2], y[3], -mu * y[0] / r3 + acc * u[0], -mu * y[1] / r3 + acc * u[1]]; };
+    const coast = (until, dtMax = 10) => {
+      while (t < until - 1e-9) {
+        const dt = Math.min(dtMax, until - t);
+        s = rk4(f([0, 0], 0), t, s, dt); t += dt;
+        if (!trace.length || t - trace[trace.length - 1].t >= 20 || t >= until - 1e-9) trace.push({ t, x: s[0], y: s[1], m, burn: -1 });
+      }
+    };
+    trace.push({ t: 0, x: s[0], y: s[1], m, burn: -1 });
+    for (const [i, b] of opts.burns.entries()) {
+      const dvMag = Math.hypot(b.pro, b.rad);
+      if (!(dvMag > 0)) continue;
+      // TIG from the current orbit
+      const el = Orbit2D.elems(s, mu);
+      let dtTig;
+      if (b.when === 'in') dtTig = Math.max(0, (b.minutes || 0) * 60);
+      else if (el.e < 1e-4 || el.e >= 1) dtTig = 0;                       // circular: "now"
+      else dtTig = Orbit2D.timeBetween(el, el.nu, b.when === 'apo' ? Math.PI : 0, mu);
+      const tig = t + dtTig;
+      // the PAD: state at TIG, Δv in the velocity frame there, predicted orbit after an impulse
+      const sTig = b.when === 'in' || el.e < 1e-4 ? null : Orbit2D.stateAt(el, b.when === 'apo' ? Math.PI : 0, mu);
+      const tb = burnTime(dvMag, m, F, isp);
+      const tStart = Math.max(t, opts.centred ? tig - tb / 2 : tig);
+      // where we will be at TIG (exact state for apo/peri, otherwise propagate a copy)
+      let sPlan = sTig;
+      if (!sPlan) { let c = s.slice(), tc = t; while (tc < tig - 1e-9) { const dt = Math.min(10, tig - tc); c = rk4(f([0, 0], 0), tc, c, dt); tc += dt; } sPlan = c; }
+      const fr = Orbit2D.frame(sPlan);
+      const dvVec = [b.pro * fr.pro[0] + b.rad * fr.rad[0], b.pro * fr.pro[1] + b.rad * fr.rad[1]];
+      const u = [dvVec[0] / dvMag, dvVec[1] / dvMag];
+      const planned = Orbit2D.elems([sPlan[0], sPlan[1], sPlan[2] + dvVec[0], sPlan[3] + dvVec[1]], mu);
+      coast(tStart);
+      // finite burn, attitude fixed in space, cut off on accumulated Δv
+      let dvDone = 0;
+      const burnStart = t, mStart = m;
+      while (dvDone < dvMag - 1e-6 && m > 0) {
+        const acc = F / m;
+        let dt = Math.min(1, (dvMag - dvDone) / acc);
+        s = rk4(f(u, acc), t, s, dt); t += dt;
+        dvDone += acc * dt; m -= F / ve * dt;
+        if (t - trace[trace.length - 1].t >= 2 || dvDone >= dvMag - 1e-6) trace.push({ t, x: s[0], y: s[1], m, burn: i });
+      }
+      const actual = Orbit2D.elems(s, mu);
+      burns.push({ i, tig, tStart: burnStart, tEnd: t, tb, dv: dvMag, attitude: Math.atan2(b.rad, b.pro), planned, actual, prop: mStart - m, sPlan, u });
+    }
+    // one more orbit (at most) to show the result
+    const elF = Orbit2D.elems(s, mu);
+    coast(t + Math.min(isFinite(elF.T) ? elF.T : 6 * 3600, 6 * 3600));
+    return { trace, burns, final: Orbit2D.elems(s, mu), t, m };
   }
 
   /* ---------- Atmospheric entry (planar, non-rotating spherical Earth) ---------- */
@@ -419,7 +616,7 @@
     return { trace, maxG, maxQdot, heatLoad, outcome, t, range: y[3], minH, vEnd: y[1] };
   }
 
-  const Phys = { C, elementsFromRV, solveKepler, trueFromEcc, eccFromTrue, timeSincePeriapsis, rocket, rk4, SATURN_V, simulateAscent, EM, simulateTLI, solveMCC, simulateEntry, density, pressure };
+  const Phys = { C, elementsFromRV, solveKepler, trueFromEcc, eccFromTrue, timeSincePeriapsis, rocket, rk4, SATURN_V, simulateAscent, EM, Orbit2D, burnTime, executeBurns, simulateTLI, simulatePatched, R_SOI, solveMCC, simulateEntry, density, pressure };
   root.Phys = Phys;
   if (typeof module !== 'undefined' && module.exports) module.exports = Phys;
 })(typeof window !== 'undefined' ? window : globalThis);

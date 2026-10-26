@@ -99,7 +99,7 @@
         N`<p>A velocity only means something <b>relative to</b> something else. On a train at 300 km/h, a coffee cup is at rest relative to you. In lunar orbit both spacecraft move at about 1.6 km/s relative to the Moon, but what matters for docking is their velocity relative to <i>each other</i>, a few centimetres per second.</p>`,
         R`\[ \vec v_{rel} = \vec v_{chaser} - \vec v_{target} \]`,
         N`<p>Subtracting vectors works component by component, like adding, with a minus sign. Two huge, almost identical arrows give a tiny difference arrow, and that small arrow is the one the pilot flies.</p>`,
-        N`<p>Choosing the <b>reference frame</b>, the point of view you measure from, can make a problem simple. Docking is flown in the target’s frame: the target sits still at the origin and only the chaser moves. Arriving at the Moon (Chapter 7) uses the Moon’s frame. The physics is the same; only the description changes. A frame that rotates or accelerates, like the target’s orbiting frame, adds apparent forces such as the Coriolis terms of the Clohessy–Wiltshire equations.</p>`,
+        N`<p>Choosing the <b>reference frame</b>, the point of view you measure from, can make a problem simple. Docking is flown in the target’s frame: the target sits still at the origin and only the chaser moves. Arriving at the Moon (Chapter 8) uses the Moon’s frame. The physics is the same; only the description changes. A frame that rotates or accelerates, like the target’s orbiting frame, adds apparent forces such as the Coriolis terms of the Clohessy–Wiltshire equations.</p>`,
         N`<p class="try">Try it: two orbital velocities, almost the same, and the tiny difference (shown ×10 000).</p>`,
       ],
       widget: 'relative',

@@ -4,7 +4,7 @@ I18N.add('fr', {
   'Landing on the Moon': 'Se poser sur la Lune',
   'Lunar lander': 'Module lunaire',
   'Take over from the computer 150 m above a boulder field, with 60 seconds of fuel and a 1202 alarm.': 'Reprenez les commandes à l’ordinateur 150 m au-dessus d’un champ de rochers, avec 60 secondes de carburant et une alarme 1202.',
-  'Training module TM-8 · Powered descent & ascent': 'Module de formation TM-8 · Descente propulsée et remontée',
+  'Training module TM-9 · Powered descent & ascent': 'Module de formation TM-9 · Descente propulsée et remontée',
   'Twelve and a half minutes from 15 km altitude and 1.7 km/s to standstill on the surface, paid for with 2 km/s of Δv. The Moon has no air, so every metre per second comes from the engine.': 'Douze minutes et demie pour passer de 15 km d’altitude et 1,7 km/s à l’arrêt complet sur le sol, au prix de 2 km/s de Δv. La Lune n’a pas d’air : chaque mètre par seconde vient du moteur.',
   'Sellers · Rockets and Launch Vehicles': 'Sellers · Rockets and Launch Vehicles',
   'Apollo 11 Mission Report (MSC-00171) §5': 'Apollo 11 Mission Report (MSC-00171) §5',
