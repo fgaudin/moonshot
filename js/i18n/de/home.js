@@ -93,4 +93,7 @@ I18N.add('de', {
   'Reset my training record': 'Mein Ausbildungsprotokoll zurücksetzen',
   'Welcome aboard, {$0}.': 'Willkommen an Bord, {$0}.',
   'Click again to erase all objectives and patches': 'Klick noch einmal, um alle Ziele und Abzeichen zu löschen',
+  "Your destination": "Dein Ziel",
+  "The Moon": "Der Mond",
+  "384 400 km away, three days of coasting, and a target moving at a kilometre per second. Twelve people have walked there. Everything in this manual is about how they got there and back.": "384 400 km entfernt, drei Tage Freiflug und ein Ziel, das sich mit einem Kilometer pro Sekunde bewegt. Zwölf Menschen sind dort gegangen. Dieses ganze Handbuch handelt davon, wie sie hin- und wieder zurückkamen.",
 });

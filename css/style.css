@@ -457,3 +457,32 @@ dialog.lightbox p a { font: .72rem var(--f-mono); color: var(--muted); }
 .pad-burn dt { color: var(--muted); }
 .pad-burn dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
 .pad-burn .hl { color: var(--accent); font-weight: 600; }
+
+/* home: the destination band. Deliberately space-black in both themes, like the photograph itself */
+.destination {
+  display: grid; grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: 1.5rem 2rem; align-items: center;
+  background: #000; color: #e6ebf2; border-radius: 12px; padding: 1.5rem 1.8rem; overflow: hidden;   /* the photo's own black */
+}
+.dest-moon .capsule-img { background: transparent; border-radius: 0; }
+.dest-moon img { width: 100%; height: auto; display: block; aspect-ratio: auto; object-fit: contain; }   /* no capsule crop: the whole disc */
+.dest-text { display: flex; flex-direction: column; gap: .7rem; min-width: 0; }
+.dest-text .eyebrow { color: #f08a3c; }
+.dest-title { font: 700 clamp(2.4rem, 5vw, 3.6rem)/1 var(--f-display); text-transform: uppercase; letter-spacing: .02em; }
+.dest-text p { margin: 0; max-width: 52ch; color: #b9c3d0; line-height: 1.6; }
+.dest-stats { background: transparent; border: 0; gap: .4rem; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.dest-stats b { font-size: 1.5rem; white-space: nowrap; }
+.dest-stats div { padding: .7rem .8rem; border: 1px solid rgba(255, 255, 255, .12); border-radius: 6px; }
+.dest-stats div { background: #0b111a; }
+.dest-stats b { color: #f2f5f9; }
+.dest-stats b small, .dest-stats span { color: #93a0b2; }
+.destination .capsule-credit { color: #7f8b9c; }
+@media (max-width: 1100px) {
+  .destination { grid-template-columns: minmax(0, 1fr); }
+  .dest-moon { max-width: 15rem; justify-self: center; }
+  .dest-stats { grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); }
+}
+@media (max-width: 760px) {
+  .dest-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .destination { grid-template-columns: minmax(0, 1fr); padding: 1.2rem; }
+  .dest-moon { max-width: 16rem; justify-self: center; }
+}

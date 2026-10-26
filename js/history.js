@@ -11,6 +11,12 @@
       alt: N`The whole Earth, fully lit, from Africa to the Antarctic ice cap`,
       story: N`Apollo 17’s crew took this photograph on the way to the Moon, about 29 000 km out. The Sun was behind the spacecraft, so the whole disc is lit, from the Mediterranean to the Antarctic ice cap. Every trajectory in this manual is a fall around that ball: 6 378 km of radius and μ = 3.986 × 10¹⁴ m³/s².`,
     },
+    fullMoon: {
+      img: 'as11-44-6667', date: '1969-07-21', mission: 'Apollo 11',
+      title: N`The full Moon, on the way home`,
+      alt: N`The full Moon against black space, every mare and crater sharp`,
+      story: N`Photographed by the Apollo 11 crew on their way home, about 18 500 km from the Moon, a day after Armstrong and Aldrin left its surface.`,
+    },
     apollo13mcc: {
       img: 's70-35139', id: 'S70-35139', date: '1970-04-13', mission: 'Apollo 13',
       title: N`Every burn was a PAD`,
@@ -124,6 +130,12 @@
         </figcaption>
       </figure>`;
     },
+    // just the photo (click to enlarge) and its credit line, for custom layouts
+    photo(key) {
+      const c = CAPSULES[key];
+      return `<button class="capsule-img" type="button" data-capsule="${key}" aria-label="${T`Enlarge photograph`}: ${T(c.title)}"><img src="${src(c)}" alt="${T(c.alt)}" decoding="async"></button>`;
+    },
+    creditLink(key) { const c = CAPSULES[key]; return `<a class="capsule-credit" href="${link(c)}" target="_blank" rel="noopener">${credit(c)}</a>`; },
     // credits list for the Reference page
     credits() {
       return `<ul class="credits">${Object.values(CAPSULES).map((c) => `<li><a href="${link(c)}" target="_blank" rel="noopener">${nasaId(c).toUpperCase()}</a> · ${T(c.title)} · ${c.mission}, ${fmtDate(c.date)}</li>`).join('')}</ul>`;

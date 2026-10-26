@@ -56,6 +56,23 @@
           </figure>
         </section>
 
+        <section class="destination" aria-label="${T`Your destination`}">
+          <div class="dest-moon">${Archive.photo('fullMoon')}</div>
+          <div class="dest-text">
+            <span class="eyebrow">${T`Your destination`}</span>
+            <b class="dest-title">${T`The Moon`}</b>
+            <p>${T`384 400 km away, three days of coasting, and a target moving at a kilometre per second. Twelve people have walked there. Everything in this manual is about how they got there and back.`}</p>
+            <div class="stats dest-stats">
+              <div><b class="num">2 938<small>t</small></b><span>${T`Saturn V mass at liftoff`}</span></div>
+              <div><b class="num">${UI.dec('7.79')}<small>km/s</small></b><span>${T`circular speed in the 185 km parking orbit`}</span></div>
+              <div><b class="num">${UI.dec('3.18')}<small>km/s</small></b><span>${T`trans-lunar injection burn, Apollo 11`}</span></div>
+              <div><b class="num">384 400<small>km</small></b><span>${T`mean Earth–Moon distance`}</span></div>
+              <div><b class="num">${UI.dec('11.03')}<small>km/s</small></b><span>${T`speed at entry interface, 122 km`}</span></div>
+            </div>
+            ${Archive.creditLink('fullMoon')}
+          </div>
+        </section>
+
         <section class="section" id="record">
           <h2><span class="idx">★</span>${T`Flight record: ${P.callsign()}`}</h2>
           <div class="record-sum">
@@ -72,14 +89,6 @@
           <div class="patch-grid">${patches}</div>
           <p class="note">${T`The modules follow the mission in order. The theory follows Sellers’ <i>Understanding Space</i> for physical intuition and Bate, Mueller &amp; White’s <i>Fundamentals of Astrodynamics</i> (BMW) for the mathematics. Objectives are checked by the simulators themselves; your record is kept in this browser.`}</p>
         </section>
-
-        <div class="stats">
-          <div><b class="num">2 938<small>t</small></b><span>${T`Saturn V mass at liftoff`}</span></div>
-          <div><b class="num">${UI.dec('7.79')}<small>km/s</small></b><span>${T`circular speed in the 185 km parking orbit`}</span></div>
-          <div><b class="num">${UI.dec('3.18')}<small>km/s</small></b><span>${T`trans-lunar injection burn, Apollo 11`}</span></div>
-          <div><b class="num">384 400<small>km</small></b><span>${T`mean Earth–Moon distance`}</span></div>
-          <div><b class="num">${UI.dec('11.03')}<small>km/s</small></b><span>${T`speed at entry interface, 122 km`}</span></div>
-        </div>
 
         <section class="section">
           <h2><span class="idx">Δv</span>${T`The mission you are training for`}</h2>
