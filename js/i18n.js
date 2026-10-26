@@ -31,8 +31,11 @@
     initial() {
       let l = null;
       try { l = JSON.parse(localStorage.getItem('moonshot:lang')); } catch (e) { /* storage unavailable */ }
-      if (!l && navigator.language) l = navigator.language.slice(0, 2);
-      return LANGS[l] ? l : 'en';
+      if (LANGS[l]) return l;                       // the user's own choice, saved when they used the switch
+      // otherwise the first of the browser's preferred languages that we support (e.g. it-IT, fr-CH → fr)
+      const prefs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
+      for (const p of prefs) { const c = String(p).slice(0, 2).toLowerCase(); if (LANGS[c]) return c; }
+      return 'en';
     },
   };
 

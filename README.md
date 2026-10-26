@@ -39,6 +39,23 @@ and every equation has a "where:" legend of its variables and units.
 | Ground school | Math Toolkit | Nine refreshers with interactive widgets |
 | Simulator room | Practice | 35 problem generators with worked solutions, 15 concept questions |
 
+## Languages
+
+English, French and German. The switch is in the side rail; the first visit follows the browser's language.
+English lives in the code: visible strings are wrapped in `` T`…` `` (or marked `` N`…` `` when defined as data and
+translated where displayed). Translations are in `js/i18n/<lang>/<source file>.js`, keyed by the English text.
+French and German use decimal commas, also inside equations.
+
+To add or change text: edit the English in the code, then run the checker and add the missing entries:
+
+```sh
+cd tools && npm install          # once: installs acorn for the checker
+node tools/i18n-check.js check fr    # lists missing / unused keys per source file
+node tools/i18n-check.js check de
+```
+
+Conventions, style and the glossary are in `tools/I18N.md`.
+
 ## Layout
 
 ```
@@ -52,6 +69,9 @@ js/practice.js      exercise generators and the Practice page
 js/progress.js      training modules: briefings, objectives, patches, debriefs, toasts
 js/primers.js       math refreshers, their widgets and the Math Toolkit page
 js/symbols.js       Greek-letter tooltips and the variable legends under equations
+js/i18n.js          T/N translation helpers, language loading
+js/i18n/fr|de/      French and German dictionaries, one per source file
+tools/              dev-only: i18n checker and translation guide
 tmp/                scratch: Node test scripts, screenshots (safe to delete)
 ```
 

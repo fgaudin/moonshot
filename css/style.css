@@ -395,3 +395,7 @@ details.primer[open] > summary::before { content: "−"; }
 /* docking simulator thruster pad */
 .dk-pad { display: grid; grid-template-columns: repeat(3, 3.2rem); gap: .35rem; justify-content: center; }
 .dk-pad .btn { padding: .55rem 0; font-size: 1rem; touch-action: none; user-select: none; }
+
+/* rail: theme and language switches */
+.rail-switches { display: flex; flex-wrap: wrap; gap: .4rem; }
+.lang-switch button { padding: .4rem .5rem; }

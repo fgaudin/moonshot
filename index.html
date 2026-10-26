@@ -33,21 +33,29 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js"></script>
 </head>
 <body>
-<button class="btn menu-btn" id="menu-btn" aria-controls="rail" aria-expanded="false">☰ Flight plan</button>
+<button class="btn menu-btn" id="menu-btn" aria-controls="rail" aria-expanded="false">☰ <span data-i18n="Flight plan">Flight plan</span></button>
 <div class="shell">
   <nav class="rail" id="rail" aria-label="Chapters">
-    <a class="brand" href="#home"><b>Moon<span>shot</span></b><small>A flight manual for astrodynamics</small></a>
-    <div class="seg theme-switch" id="theme-switch" role="group" aria-label="Colour theme">
-      <button type="button" data-theme-set="auto" title="Follow the system setting">Auto</button>
-      <button type="button" data-theme-set="light">Light</button>
-      <button type="button" data-theme-set="dark">Dark</button>
+    <a class="brand" href="#home"><b>Moon<span>shot</span></b><small data-i18n="A flight manual for astrodynamics">A flight manual for astrodynamics</small></a>
+    <div class="rail-switches">
+    <div class="seg theme-switch" id="theme-switch" role="group" aria-label="Colour theme" data-i18n-aria="Colour theme">
+      <button type="button" data-theme-set="auto" title="Follow the system setting" data-i18n-title="Follow the system setting" data-i18n="Auto">Auto</button>
+      <button type="button" data-theme-set="light" data-i18n="Light">Light</button>
+      <button type="button" data-theme-set="dark" data-i18n="Dark">Dark</button>
+    </div>
+    <div class="seg lang-switch" id="lang-switch" role="group" aria-label="Language">
+      <button type="button" data-lang-set="en" lang="en" title="English">EN</button>
+      <button type="button" data-lang-set="fr" lang="fr" title="Français">FR</button>
+      <button type="button" data-lang-set="de" lang="de" title="Deutsch">DE</button>
+    </div>
     </div>
     <ol class="timeline" id="timeline"></ol>
-    <div class="rail-foot">All units SI. Constants in the Reference.<br>Progress is saved in this browser.</div>
+    <div class="rail-foot"><span data-i18n="All units SI. Constants in the Reference.">All units SI. Constants in the Reference.</span><br><span data-i18n="Progress is saved in this browser.">Progress is saved in this browser.</span></div>
   </nav>
   <main id="main"><div class="page" id="page"></div></main>
 </div>
 <script src="js/physics.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/symbols.js"></script>
 <script src="js/app.js"></script>
