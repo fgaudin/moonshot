@@ -28,6 +28,8 @@
           </div>
         </section>
 
+        ${Archive.capsule('liftoff')}
+
         <section class="section">
           <h2><span class="idx">4.2</span>${T`The gravity turn`}</h2>
           <div class="prose">

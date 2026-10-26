@@ -104,6 +104,8 @@
           </div>
         </section>
 
+        ${Archive.capsule('trench')}
+
         <section class="section">
           <h2><span class="idx">2.6</span>${T`Orbital elements in three dimensions`}</h2>
           <div class="prose">

@@ -79,12 +79,16 @@
           <p class="note">${T`Corridor map: each cell is a full simulation at the current speed and L/D. <span style="color:var(--good)">■</span> safe (≤ 10 g, captured) · <span style="color:var(--trace)">■</span> skip-out · <span style="color:var(--bad)">■</span> over 10 g. Click the map to fly that case. Command Module: 5 500 kg, C<sub>D</sub> 1.3, 3.9 m diameter, so β ≈ 355 kg/m². Constant bank angle. The real Apollo guidance varied the bank to hold about 4–6.5 g and steer toward the recovery ship, so its peak was lower than this simple model gives.`}</p>
         </section>
 
+        ${Archive.capsule('hornet')}
+
         <section class="section">
           <h2><span class="idx">9.5</span>${T`Blackout and splashdown`}</h2>
           <div class="prose">
             <p>${T`Air in the shock layer ionizes into a plasma that blocks radio for several minutes. Apollo's blackout lasted about 3 to 4 minutes. At 7.3 km two drogue parachutes opened to stabilize the capsule; at 3 km three 25 m main parachutes slowed it to about 9 m/s for splashdown. Apollo 11 hit the Pacific at 16:50 UTC on 24 July 1969, 195 hours 18 minutes after liftoff.`}</p>
           </div>
         </section>
+
+        ${Archive.capsule('celebration')}
 
         <section class="section">
           <h2><span class="idx">✓</span>${T`Check yourself`}</h2>

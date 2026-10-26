@@ -20,7 +20,8 @@ objectives that the simulators detect automatically, and a mission patch when al
 Earn all nine patches for the "go for launch" certificate on the home page. Folded **math refreshers**
 (vectors, trigonometry, powers, derivatives, integrals, logarithms, ellipses, relative velocity, iteration) appear where each
 notion first matters; all of them are on the Math Toolkit page. Greek letters show their name on hover,
-and every equation has a "where:" legend of its variables and units.
+and every equation has a "where:" legend of its variables and units. History capsules with NASA archive
+photographs (public domain, credited and linked to images.nasa.gov) tie each module to the real missions.
 
 ## Modules and labs
 
@@ -69,6 +70,8 @@ js/practice.js      exercise generators and the Practice page
 js/progress.js      training modules: briefings, objectives, patches, debriefs, toasts
 js/primers.js       math refreshers, their widgets and the Math Toolkit page
 js/symbols.js       Greek-letter tooltips and the variable legends under equations
+js/history.js       history capsules: NASA photo, story and credit per module
+img/history/        the NASA photographs (WebP, 1280 px)
 js/i18n.js          T/N translation helpers, language loading
 js/i18n/fr|de/      French and German dictionaries, one per source file
 tools/              dev-only: i18n checker and translation guide

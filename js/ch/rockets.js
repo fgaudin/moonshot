@@ -63,6 +63,8 @@
           </div>
         </section>
 
+        ${Archive.capsule('f1')}
+
         <section class="section">
           <h2><span class="idx">3.2</span>${T`Specific impulse`}</h2>
           <div class="prose">
@@ -131,6 +133,8 @@
           </div>
           <div class="callout history"><b>${T`Why 85% propellant`}</b>${T`The Saturn V weighed 2 938 tonnes at liftoff. About 2 700 t of that was propellant, and only 45 t, the Apollo spacecraft, was sent towards the Moon. The upper stages burned liquid hydrogen. Its 421 s I<sub>sp</sub> mattered most there, because every kilogram of upper stage has to be accelerated by all the stages below it.`}</div>
         </section>
+
+        ${Archive.capsule('sic')}
 
         <section class="section">
           <h2><span class="idx">✓</span>${T`Check yourself`}</h2>

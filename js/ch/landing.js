@@ -35,6 +35,8 @@
           </div>
         </section>
 
+        ${Archive.capsule('eagleUndocks')}
+
         <section class="section">
           <h2><span class="idx">8.2</span>${T`Lab: you have the stick`}</h2>
           <div class="prose"><p>${T`You start at low gate: 500 m up, sinking at 12 m/s and drifting forward at 18 m/s over a boulder field. Real numbers: 8 t lander, 45 kN engine throttleable 10–60% (plus 100%), I<sub>sp</sub> 311 s, lunar gravity 1.62 m/s². Land on the flat pad: sink rate under 3 m/s, drift under 1.2 m/s, tilt under 6°.`}</p>
@@ -57,6 +59,8 @@
             </div>
           </div>
         </section>
+
+        ${Archive.capsule('ladder')}
 
         <section class="section">
           <h2><span class="idx">8.3</span>${T`Ascent and rendezvous`}</h2>

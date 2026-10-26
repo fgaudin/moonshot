@@ -79,6 +79,8 @@
           </div>
         </section>
 
+        ${Archive.capsule('gemini')}
+
         <section class="section">
           <h2><span class="idx">✓</span>${T`Check yourself`}</h2>
           <div id="practice-slot"></div>

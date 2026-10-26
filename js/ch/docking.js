@@ -107,6 +107,8 @@
           </div>
         </section>
 
+        ${Archive.capsule('dockingSystem')}
+
         <section class="section">
           <h2><span class="idx">6.6</span>${T`Apollo’s two dockings`}</h2>
           <div class="prose">
@@ -114,6 +116,8 @@
             <p>${T`<b>Lunar orbit docking</b>, after the LM’s ascent from the surface and its rendezvous. On most missions the command module pilot flew the final docking with the LM holding attitude. Apollo 11’s crew was reunited at GET 128:03, about four hours after liftoff from Tranquility Base.`}</p>
           </div>
         </section>
+
+        ${Archive.capsule('eagleReturns')}
 
         <section class="section">
           <h2><span class="idx">✓</span>${T`Check yourself`}</h2>

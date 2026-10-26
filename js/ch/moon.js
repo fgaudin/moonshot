@@ -85,6 +85,10 @@
           </div>
         </section>
 
+        ${Archive.capsule('earthrise')}
+
+        ${Archive.capsule('apollo13')}
+
         <section class="section">
           <h2><span class="idx">7.5</span>${T`Lunar orbit insertion`}</h2>
           <div class="prose">

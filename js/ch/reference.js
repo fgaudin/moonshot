@@ -129,6 +129,12 @@
               <li>${T`D. Woods &amp; F. O’Brien, <i>Apollo Flight Journal</i>, history.nasa.gov/afj: annotated transcripts of every mission.`}</li>
             </ul>
           </div>
+        </section>
+
+        <section class="section">
+          <h2><span class="idx">G</span>${T`Photographs`}</h2>
+          <div class="prose"><p>${T`The archive photographs in this manual are NASA images from the NASA Image and Video Library (images.nasa.gov). Works created by NASA are generally not subject to copyright in the United States; NASA asks to be credited as the source. NASA’s use does not imply its endorsement of this manual. Each photograph links to its original record.`}</p></div>
+          ${Archive.credits()}
         </section>`;
     },
   });

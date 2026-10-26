@@ -43,6 +43,8 @@
           </div>
         </section>
 
+        ${Archive.capsule('blueMarble')}
+
         <section class="section">
           <h2><span class="idx">1.3</span>${T`Newton’s cannon`}</h2>
           <div class="prose">
