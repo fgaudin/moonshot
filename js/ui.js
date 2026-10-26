@@ -189,7 +189,8 @@
   UI.typeset = (el) => {
     const MJ = window.MathJax;
     if (MJ && MJ.typesetPromise) {
-      typesetQueue = typesetQueue.then(() => MJ.startup.promise).then(() => (el.isConnected ? MJ.typesetPromise([el]) : null)).catch((e) => console.warn(e));
+      typesetQueue = typesetQueue.then(() => MJ.startup.promise).then(() => (el.isConnected ? MJ.typesetPromise([el]) : null))
+        .then(() => { if (window.Sym && el.isConnected) Sym.hitAreas(el); }).catch((e) => console.warn(e));
     } else window.__pendingTypeset = (window.__pendingTypeset || []).concat(el);
   };
 

@@ -133,7 +133,7 @@ mjx-container[display="true"] { margin: .4em 0 !important; }
 .where .unit { font: .74rem/1 var(--f-mono); color: var(--muted); white-space: nowrap; margin-left: .3rem; }
 .where .unit::before { content: "["; } .where .unit::after { content: "]"; }
 .where-note { grid-column: 1 / -1; margin: .2rem 0 0; color: var(--muted); font-style: italic; }
-abbr.gk { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; }
+abbr.gk { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; padding: .15em .2em; margin: -.15em -.2em; }
 mjx-container [class*="gk-"] { cursor: help; }
 mjx-container [class*="gk-"]:hover { fill: var(--accent); }
 .gk-tip {

@@ -219,6 +219,23 @@
     mo.observe(root, { childList: true, subtree: true });
   };
 
+  /* SVG only catches the pointer on a glyph's painted strokes, so give each tagged letter an
+     invisible padded rectangle covering its bounding box. Units are MathJax's (1000 per em). */
+  Sym.hitAreas = (root) => {
+    root.querySelectorAll('mjx-container g[class*="gk-"]:not([data-hit])').forEach((g) => {
+      let b;
+      try { b = g.getBBox(); } catch (e) { return; }
+      if (!b.width && !b.height) return;
+      const pad = 220;
+      const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      r.setAttribute('x', b.x - pad); r.setAttribute('y', b.y - pad);
+      r.setAttribute('width', b.width + 2 * pad); r.setAttribute('height', b.height + 2 * pad);
+      r.setAttribute('style', 'fill: transparent; stroke: none; pointer-events: all');
+      g.insertBefore(r, g.firstChild);
+      g.dataset.hit = '1';
+    });
+  };
+
   /* ---------- the tooltip ---------- */
   let tip = null, current = null;
   const keyOf = (el) => {
@@ -244,7 +261,13 @@
     current = el;
   }
   function hide() { if (tip) tip.hidden = true; current = null; }
-  document.addEventListener('pointerover', (e) => { if (e.pointerType === 'touch') return; const t = findTarget(e.target); if (t) show(t); else if (current) hide(); });
+  document.addEventListener('pointerover', (e) => {
+    // equations that were hidden when typeset (closed refreshers, solutions) get their hit areas on first approach
+    const mc = e.target.closest && e.target.closest('mjx-container');
+    if (mc && mc.querySelector('g[class*="gk-"]:not([data-hit])')) Sym.hitAreas(mc);
+    if (e.pointerType === 'touch') return;
+    const t = findTarget(e.target); if (t) show(t); else if (current) hide();
+  });
   document.addEventListener('click', (e) => { const t = findTarget(e.target); if (t) { if (current === t) hide(); else show(t); } else if (current) hide(); });
   window.addEventListener('scroll', hide, { passive: true });
 
