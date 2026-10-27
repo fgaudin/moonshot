@@ -86,7 +86,7 @@ I18N.add('fr', {
   'Start over': 'Recommencer',
   'Reset my training record': 'Réinitialiser mon carnet de formation',
   'Welcome aboard, {$0}.': 'Bienvenue à bord, {$0}.',
-  'Click again to erase all objectives and patches': 'Cliquez à nouveau pour effacer tous les objectifs et écussons',
+  'Click again to erase all objectives, patches and practice scores': 'Cliquez à nouveau pour effacer tous les objectifs, écussons et scores d’entraînement',
   "Your destination": "Votre destination",
   "The Moon": "La Lune",
   "384 400 km away, three days of coasting, and a target moving at a kilometre per second. Twelve people have walked there. Everything in this manual is about how they got there and back.": "À 384 400 km, trois jours de croisière, et une cible qui se déplace à un kilomètre par seconde. Douze personnes y ont marché. Tout ce manuel explique comment elles y sont allées, et comment elles en sont revenues.",

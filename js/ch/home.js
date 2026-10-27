@@ -114,7 +114,7 @@
       });
       let armed = false;
       page.querySelector('#reset-prog').addEventListener('click', (e) => {
-        if (!armed) { armed = true; e.target.textContent = T`Click again to erase all objectives and patches`; return; }
+        if (!armed) { armed = true; e.target.textContent = T`Click again to erase all objectives, patches and practice scores`; return; }
         P.reset(); App.go('home'); location.reload();
       });
 

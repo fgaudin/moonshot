@@ -139,7 +139,8 @@
     complete(mod) { const m = MODULES[mod]; return !!m && Progress.count(mod) === m.objectives.length; },
     totals() { let d = 0, n = 0; for (const k of ORDER) { d += Progress.count(k); n += MODULES[k].objectives.length; } return { d, n, patches: ORDER.filter(Progress.complete).length }; },
     nextModule() { return ORDER.find((k) => !Progress.complete(k)) || null; },
-    reset() { state = { name: state.name, done: {} }; save(); },
+    // qualification objectives are recomputed from practice scores at every start, so those go too
+    reset() { state = { name: state.name, done: {} }; save(); UI.store.set('stats', {}); },
 
     // Mark an objective done. Safe to call repeatedly.
     done(mod, id) {
