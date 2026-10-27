@@ -173,21 +173,15 @@
             <p>${T`Linear in pressure is not linear in altitude, because pressure falls exponentially. This course uses <i>p</i> = <i>p</i><sub>0</sub> e<sup>−h/7.5 km</sup>, and an air density that falls with a scale height of 7.2 km. You will measure such a scale height from sounding-rocket data in module ${Progress.code('sounding')}. For the F-1 above, at 10 km the pressure is 26 % of sea level, the thrust is 7.77 − 1.05 × 0.26 = 7.49 MN and the Isp is 304 − 41 × 0.26 = 293 s. Most of the gain comes in the first 20 km, which a rocket crosses in about a minute.`}</p>
             <div class="eq">\\[ p(h) = p_0\\,e^{-h/H_p},\\qquad H_p = 7.5\\ \\mathrm{km} \\]</div>
             ${Sym.where([['h', N`altitude above the surface`, 'm'], ['H_p', N`pressure scale height used here`, 'm'], 'p_0'], N`Every 7.5 km the pressure falls by a factor e (2.718). At 30 km it is 1.8 % of sea level.`)}
+            <p>${T`<b>TWR during the burn.</b> Module ${Progress.code('rockets')} defined the thrust-to-weight ratio and showed why a first stage lifts off at little more than 1. Here it grows for two reasons at once: the mass falls as propellant burns, and the thrust rises as the air thins, by the pressure term above.`}</p>
+            <div class="eq">\\[ \\mathrm{TWR}(t) = \\frac{F\\big(p(h)\\big)}{\\left(m_0 - \\dot m\\,t\\right) g_0} \\]</div>
+            ${Sym.where(['twr', ['F\\big(p(h)\\big)', N`thrust at the air pressure of the current altitude`, 'N'], 'm0', 'mdot', 'g0'], N`The numerator grows and the denominator shrinks, so the TWR rises faster than the mass alone would suggest.`)}
+            <p>${T`Launchers lift off at a TWR of about 1.2 to 1.5. Our scaled Saturn-like preset starts at 1.31 and reaches 5.3 just before its first stage is empty. The lab’s first objective asks you to build a vehicle of your own that lifts off above 1.2.`}</p>
           </div>
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.3</span>${T`Thrust-to-weight: at liftoff and later`}</h2>
-          <div class="prose">
-            <p>${T`The thrust-to-weight ratio at liftoff must exceed 1, or the vehicle stays on the pad. Launchers fly with about 1.2 to 1.5. Lower wastes little thrust but climbs slowly, and the gravity losses grow. Higher needs bigger engines and a stronger structure. While the engines burn, the mass falls and the thrust rises, so the TWR grows quickly:`}</p>
-            <div class="eq">\\[ \\mathrm{TWR}_0 = \\frac{F_{SL}}{m_0 g_0},\\qquad \\mathrm{TWR}(t) = \\frac{F(t)}{\\left(m_0 - \\dot m\\,t\\right) g_0} \\]</div>
-            ${Sym.where(['twr', 'm0', 'g0', 'mdot', ['F_{SL}', N`sea-level thrust of the first stage (all engines)`, 'N']], N`The acceleration along the thrust is (TWR − 1) g₀ if you fly straight up. At the end of the burn the same engines push a much lighter vehicle.`)}
-            <p>${T`Our scaled Saturn-like preset starts at TWR 1.31 and reaches 5.3 just before its first stage is empty. The real Saturn V shut down its centre engine early in the S-IC burn to hold the acceleration below about 4 g (module ${Progress.code('ascent')}). That limit is the crew’s and the structure’s, not the engines’.`}</p>
-          </div>
-        </section>
-
-        <section class="section">
-          <h2><span class="idx">7.4</span>${T`Two stages, two jobs`}</h2>
+          <h2><span class="idx">7.3</span>${T`Two stages, two jobs`}</h2>
           <div class="prose">
             <p>${T`The rocket equation of module ${Progress.code('rockets')} adds up stage by stage. The two stages face different problems:`}</p>
             <ul>
@@ -199,7 +193,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.5</span>${T`Where the Δv goes`}</h2>
+          <h2><span class="idx">7.4</span>${T`Where the Δv goes`}</h2>
           <div class="prose">
             <p>${T`Circular orbital speed at 200 km is 7.79 km/s. A launcher must supply more than that, because gravity and the air take part of the thrust. The vehicle’s ideal Δv, the integral of its thrust acceleration, is:`}</p>
             <div class="eq">\\[ \\Delta v_{ideal} = v_{orbit} + \\Delta v_{grav} + \\Delta v_{drag} + \\Delta v_{steer} - \\Delta v_{rot} \\]</div>
@@ -211,7 +205,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.6</span>${T`The pitch program`}</h2>
+          <h2><span class="idx">7.5</span>${T`The pitch program`}</h2>
           <div class="prose">
             <p>${T`A launcher does not choose its angle in flight. It follows a program written on the ground as a table of pitch angles against time. The pitch is measured from the vertical, 0° straight up and 90° horizontal. The usual phases are:`}</p>
             <ol>
@@ -227,7 +221,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.7</span>${T`How Mission Control iterates a table`}</h2>
+          <h2><span class="idx">7.6</span>${T`How Mission Control iterates a table`}</h2>
           <div class="prose">
             <p>${T`Nobody writes a perfect table at the first try. The method is a loop, the same guess, check and correct as in any iteration.`}</p>
             ${Primer.box('iteration', false)}
@@ -242,7 +236,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.8</span>${T`Lab: pitch program designer`}</h2>
+          <h2><span class="idx">7.7</span>${T`Lab: pitch program designer`}</h2>
           <div class="prose"><p>${T`Choose a preset or edit the stage sliders to make your own vehicle. Then edit the kick and the pitch table. The simulation is planar, over a round, <b>non-rotating</b> Earth, with the exponential atmosphere of this module. Stage 1 follows a vertical rise, the kick and a gravity turn. Stage 2 follows your table. Stage 2 cuts off when it has the energy of a circular orbit at 200 km: your table decides the shape of the orbit. The preset tables are drafts that do <b>not</b> reach orbit. Only flights after your own edits count for the objectives.`}</p></div>
           <div class="lab tl-lab" id="ln">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Pitch program designer`}</h3><span class="spacer"></span>
