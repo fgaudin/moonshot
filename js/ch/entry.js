@@ -30,7 +30,7 @@
         <section class="section">
           <h2><span class="idx">10.2</span>${T`The ballistic case: Allen and Eggers`}</h2>
           <div class="prose">
-            <p>${T`Drop lift and gravity (drag dominates) and the equations integrate in closed form (Allen & Eggers, 1953). The peak deceleration then depends only on entry speed and angle, not on the vehicle:`}</p>
+            <p>${T`Drop lift and gravity (drag dominates) and the equations integrate in closed form (Allen & Eggers: studied in 1953, published by NACA in 1958). The peak deceleration then depends only on entry speed and angle, not on the vehicle:`}</p>
             <div class="eq">\\[ a_{max} = \\frac{v_E^2\\,\\sin|\\gamma_E|}{2\\,e\\,H}, \\qquad \\rho^* = \\frac{\\beta\\,\\sin|\\gamma_E|}{H} \\]</div>
             ${Sym.where(['amax', 'vE', 'gE', 'euler', 'H', 'rhostar', 'beta'])}
             ${Primer.box('log')}

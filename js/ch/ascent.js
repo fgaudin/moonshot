@@ -33,7 +33,7 @@
         <section class="section">
           <h2><span class="idx">4.2</span>${T`The gravity turn`}</h2>
           <div class="prose">
-            <p>${T`A rocket starts vertical so it clears the pad and gets out of the thick air. A few seconds later it makes a small <b>pitch kick</b>, then lets gravity do the turning: with thrust aligned to the airflow there is no angle of attack, so no aerodynamic side load. The flight-path angle obeys`}</p>
+            <p>${T`A rocket starts vertical so it clears the pad and gets out of the thick air. A few seconds later it makes a small <b>pitch kick</b>, a slight tilt away from the vertical, then lets gravity do the turning (the Saturn V flew a pre-computed tilt program that approximates this turn): with thrust aligned to the airflow there is no <b>angle of attack</b> (the angle between the vehicle’s axis and the oncoming air), so no aerodynamic side load. The flight-path angle obeys`}</p>
             <div class="eq">\\[ \\dot\\gamma = -\\left(\\frac{g}{v} - \\frac{v}{r}\\right)\\cos\\gamma \\]</div>
             ${Sym.where(['gammadot', 'g', 'v', 'r', 'gamma'], N`Slow rockets (small v) turn over fast; at orbital speed g/v = v/r and the path stops bending toward the ground.`)}
             <p>${T`The slower the vehicle, the faster gravity bends its path. That is why the size and timing of the kick matter so much. Once above the atmosphere the upper stages switch to closed-loop guidance. Saturn V used the Iterative Guidance Mode, which steers to hit a target altitude, speed and flight-path angle at cutoff. The simulator uses a simplified version of the same idea for the S-II and S-IVB.`}</p>
@@ -42,7 +42,7 @@
 
         <section class="section">
           <h2><span class="idx">4.3</span>${T`Lab: fly the Saturn V`}</h2>
-          <div class="prose"><p>${T`A planar simulation with Apollo-era numbers: five F-1s whose thrust rises as the air thins, the centre engine shut down at T+135 s, J-2 upper stages, an exponential atmosphere and a rotating Earth. You choose when and how hard to pitch over. Small changes to the kick have large effects: real launch vehicles fly a carefully pre-computed pitch program for this reason.`}</p></div>
+          <div class="prose"><p>${T`A planar simulation with Apollo-era numbers: five F-1s whose thrust rises as the air thins, the centre engine shut down at T+135 s, J-2 upper stages, an exponential atmosphere and a rotating Earth. You choose when and how hard to pitch over. Small changes to the kick have large effects: real launch vehicles fly a carefully pre-computed <b>pitch program</b>, a table of tilt angles against time, for this reason.`}</p></div>
           <div class="lab" id="as">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Saturn V ascent`}</h3><span class="spacer"></span>
               <div class="btn-row"><button class="btn" data-p="nominal">${T`Nominal`}</button><button class="btn" data-p="lofted">${T`Too late`}</button><button class="btn" data-p="flat">${T`Too hard`}</button><button class="btn" data-p="west">${T`Launch west`}</button><button class="btn primary" id="as-play">${T`▸ Replay`}</button></div></div>

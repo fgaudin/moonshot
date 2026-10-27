@@ -39,7 +39,7 @@
 
         <section class="section">
           <h2><span class="idx">9.2</span>${T`Lab: you have the stick`}</h2>
-          <div class="prose"><p>${T`You start at low gate: 500 m up, sinking at 12 m/s and drifting forward at 18 m/s over a boulder field. Real numbers: 8 t lander, 45 kN engine throttleable 10–60% (plus 100%), I<sub>sp</sub> 311 s, lunar gravity 1.62 m/s². Land on the flat pad: sink rate under 3 m/s, drift under 1.2 m/s, tilt under 6°.`}</p>
+          <div class="prose"><p>${T`You start late in the approach phase, 500 m up and above low gate, sinking at 12 m/s and drifting forward at 18 m/s over a boulder field. Real numbers: 8 t lander, 45 kN engine throttleable 10–60% (plus 100%), I<sub>sp</sub> 311 s, lunar gravity 1.62 m/s². Land on the flat pad: sink rate under 3 m/s, drift under 1.2 m/s, tilt under 6°.`}</p>
           <p class="mono note">${T`Keyboard: ↑/↓ or W/S throttle (or descent rate in P66) · ←/→ or A/D tilt · P toggles P66 · R restart. Buttons work on touch screens.`}</p></div>
           <div class="lab" id="ld">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Lunar lander`}</h3><span class="spacer"></span>
@@ -65,7 +65,7 @@
         <section class="section">
           <h2><span class="idx">9.3</span>${T`Ascent and rendezvous`}</h2>
           <div class="prose">
-            <p>${T`The ascent stage used the descent stage as its launch pad. Its Ascent Propulsion System had one fixed-thrust engine (15.6 kN, I<sub>sp</sub> 311 s) with no throttle and no gimbal. It was built as simply as possible: pressure-fed, with hypergolic propellants that ignite on contact. There was no backup. A 7-minute burn delivered about 1 850 m/s, into a 17 × 83 km orbit. From there, the CSI, CDH and TPI manoeuvres of module ${Progress.code('maneuvers')} brought <i>Eagle</i> back to <i>Columbia</i>.`}</p>
+            <p>${T`The ascent stage used the descent stage as its launch pad. Its Ascent Propulsion System had one fixed-thrust engine (15.6 kN, I<sub>sp</sub> 311 s) with no throttle and no gimbal (a pivot that lets an engine steer by tilting). It was built as simply as possible: pressure-fed, with hypergolic propellants that ignite on contact. There was no backup. A 7-minute burn delivered about 1 850 m/s, into a 17 × 83 km orbit. From there, three more burns brought <i>Eagle</i> back to <i>Columbia</i>. CSI (coelliptic sequence initiation) and CDH (constant delta height) placed the LM on an orbit a constant height below the CSM’s; TPI (terminal phase initiation), timed on the phase angle as in module ${Progress.code('timing')}, started the final climb to it.`}</p>
           </div>
           <div class="scroll-x" style="max-width:48rem"><table class="data"><thead><tr><th>${T`Lunar Module (Apollo 11)`}</th><th>${T`Mass (kg)`}</th><th>${T`Engine`}</th><th>${T`Thrust`}</th><th>I<sub>sp</sub></th></tr></thead><tbody>
             <tr><td>${T`Descent stage, dry`}</td><td>2 030</td><td rowspan="1">DPS</td><td>${T`45.0 kN, 10–60% + 100%`}</td><td>311 s</td></tr>

@@ -54,8 +54,6 @@ I18N.add('de', {
   'Simulator room': 'Simulatorraum',
   'Animated free-return trajectory from the Earth around the Moon and back, in the rotating Earth–Moon frame':
     'Animierte Flugbahn mit freier Rückkehr von der Erde um den Mond und zurück, im rotierenden Erde-Mond-System',
-  'Your flight plan: a free-return trajectory, integrated live. Earth–Moon rotating frame, to scale.':
-    'Dein Flugplan: eine Flugbahn mit freier Rückkehr, live berechnet. Rotierendes Erde-Mond-System, maßstabsgetreu.',
 
   // flight record
   'Flight record: {$0}': 'Flugbuch: {$0}',
@@ -77,12 +75,8 @@ I18N.add('de', {
 
   // Δv staircase
   'The mission you are training for': 'Die Mission, für die du trainierst',
-  'Every phase of the flight is paid for in velocity change, Δv. The staircase adds up the major Apollo 11 manoeuvres against ground elapsed time. Reaching orbit costs more than everything that follows, which is why the Saturn V was 85% propellant by mass. Click a step to open the module that trains you for it.':
-    'Jede Flugphase wird mit Geschwindigkeitsänderung bezahlt, Δv. Die Treppe summiert die wichtigsten Manöver von Apollo 11 über der Missionszeit seit dem Start. Den Orbit zu erreichen kostet mehr als alles, was danach kommt; deshalb bestand die Saturn V zu 85 % ihrer Masse aus Treibstoff. Klick auf eine Stufe, um das Modul zu öffnen, das dich darauf vorbereitet.',
   'Manoeuvre': 'Manöver',
   'Engine': 'Triebwerk',
-  'Approximate values from the Apollo 11 Mission Report. GET is ground elapsed time from liftoff, 16 July 1969, 13:32 UTC.':
-    'Ungefähre Werte aus dem Apollo 11 Mission Report. GET ist die Missionszeit seit dem Start am 16. Juli 1969, 13:32 UTC.',
   'ground elapsed time (h)': 'Missionszeit seit dem Start (h)',
   'cumulative Δv (km/s)': 'kumuliertes Δv (km/s)',
   'EARTH': 'ERDE',
@@ -96,4 +90,8 @@ I18N.add('de', {
   "Your destination": "Dein Ziel",
   "The Moon": "Der Mond",
   "384 400 km away, three days of coasting, and a target moving at a kilometre per second. Twelve people have walked there. Everything in this manual is about how they got there and back.": "384 400 km entfernt, drei Tage Freiflug und ein Ziel, das sich mit einem Kilometer pro Sekunde bewegt. Zwölf Menschen sind dort gegangen. Dieses ganze Handbuch handelt davon, wie sie hin- und wieder zurückkamen.",
+  'Your flight plan: a free-return trajectory, a path that loops around the Moon and falls back to Earth with no further burn. Integrated live; Earth–Moon rotating frame, to scale.': 'Dein Flugplan: eine Flugbahn mit freier Rückkehr, ein Weg, der den Mond umrundet und ohne weiteres Zünden zur Erde zurückfällt. Live berechnet; rotierendes Erde-Mond-System, maßstabsgetreu.',
+  'Every phase of the flight is paid for in velocity change, Δv. The staircase adds up the major Apollo 11 manoeuvres against ground elapsed time, with rounded values: the simulators and the training budgets of later modules use slightly different numbers. Reaching orbit costs more than everything that follows, which is why the Saturn V was about 90% propellant by mass. Click a step to open the module that trains you for it.': 'Jede Flugphase wird mit Geschwindigkeitsänderung bezahlt, Δv. Die Treppe summiert die wichtigsten Manöver von Apollo 11 über der Missionszeit seit dem Start, mit gerundeten Werten: Die Simulatoren und die Übungsbudgets späterer Module verwenden etwas andere Zahlen. Den Orbit zu erreichen kostet mehr als alles, was danach kommt; deshalb bestand die Saturn V zu etwa 90 % ihrer Masse aus Treibstoff. Klick auf eine Stufe, um das Modul zu öffnen, das dich darauf vorbereitet.',
+  'Approximate values from the Apollo 11 Mission Report. GET is ground elapsed time from liftoff, 16 July 1969, 13:32 UTC (Coordinated Universal Time).': 'Ungefähre Werte aus dem Apollo 11 Mission Report. GET ist die Missionszeit seit dem Start am 16. Juli 1969, 13:32 UTC (koordinierte Weltzeit).',
+  '<b>Who flies what.</b> CSM: command and service module, the crew’s ship to the Moon and back; its main engine is the SPS (service propulsion system) and its small attitude thrusters the RCS (reaction control system). LM: lunar module, the lander; DPS and APS are its descent and ascent engines. S-IVB: the third stage of the Saturn V. TLI, LOI and TEI are the burns that leave Earth orbit, enter lunar orbit and leave it again.': '<b>Wer fliegt was.</b> CSM: Kommando- und Servicemodul, das Schiff der Besatzung zum Mond und zurück; sein Haupttriebwerk ist das SPS (service propulsion system), seine kleinen Lagetriebwerke das RCS (reaction control system). LM: Mondlandefähre, der Lander; DPS und APS sind ihre Abstiegs- und Aufstiegstriebwerke. S-IVB: die dritte Stufe der Saturn V. TLI, LOI und TEI sind die Zündungen, die die Erdumlaufbahn verlassen, in die Mondumlaufbahn einschwenken und sie wieder verlassen.',
 });

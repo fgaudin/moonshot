@@ -29,7 +29,6 @@ I18N.add('fr', {
   'dot product: for unit vectors it equals the cosine of the angle between them. −1 means exactly opposite (180°)': 'produit scalaire\u202f: pour des vecteurs unitaires, il vaut le cosinus de l’angle qu’ils forment. −1 signifie exactement opposés (180°)',
   'sideways distance between the chaser’s probe and the target’s axis': 'distance latérale entre la sonde du chasseur et l’axe de la cible',
   'velocity of the chaser relative to the target': 'vitesse du chasseur par rapport à la cible',
-  'closing speed along the axis: walking pace is 1.4 m/s; docking is 10 to 50 times slower': 'vitesse de rapprochement le long de l’axe\u202f: un piéton marche à 1,4 m/s\u202f; l’amarrage est 10 à 50 fois plus lent',
   'Apollo’s probe could capture within about 0.3 m and 10° of misalignment, at 3 to 30 cm/s.': 'La sonde d’Apollo pouvait assurer la capture avec un désalignement d’environ 0,3 m et 10° au plus, entre 3 et 30 cm/s.',
   'Crews tackle them in a fixed order. <b>Rotate first</b>: turning costs little propellant and changes nothing else. Then <b>null the sideways drift and slide onto the axis</b>. Only then <b>close in</b>, slowing down at each “braking gate” as the range shrinks: a common rule is a closing speed of about 1% of the range per second when far out, down to a few centimetres per second at contact.': 'Les équipages les traitent dans un ordre fixe. <b>D’abord tourner</b>\u202f: une rotation coûte peu d’ergols et ne change rien d’autre. Ensuite, <b>annuler la dérive latérale et glisser sur l’axe</b>. Alors seulement, <b>approcher</b>, en ralentissant à chaque «\u202fporte de freinage\u202f» à mesure que la distance diminue\u202f: une règle courante est une vitesse de rapprochement d’environ 1\u202f% de la distance par seconde au loin, jusqu’à quelques centimètres par seconde au contact.',
   'Newton’s first law, for real': 'La première loi de Newton, pour de vrai',
@@ -149,4 +148,5 @@ I18N.add('fr', {
   'Press Start. Rotate first, then line up, then close.': 'Appuyez sur Démarrer. D’abord tourner, puis s’aligner, puis approcher.',
   'In flight': 'En vol',
   '⟲ Restart': '⟲ Recommencer',
+  'closing speed along the axis: walking pace is 1.4 m/s; docking is 5 to 50 times slower': 'vitesse de rapprochement le long de l’axe : un piéton marche à 1,4 m/s ; l’amarrage est 5 à 50 fois plus lent',
 });

@@ -85,7 +85,7 @@
   };
 
   // Lab scenarios (numbers only; texts live in the chapter). Altitudes in m, GET of the fix in s, angles in degrees.
-  const muE = 3.986004418e14, RE = 6.378137e6, muM = 4.9048695e12, RM = 1.7374e6, DEM = 3.844e8;
+  const muE = 3.986004418e14, RE = 6.378137e6, muM = 4.9028e12, RM = 1.7374e6, DEM = 3.844e8;
   const deg = Math.PI / 180;
   const mk = (body, h1, h2, t0, th1, phi0) => {
     const mu = body === 'moon' ? muM : muE, R = body === 'moon' ? RM : RE;

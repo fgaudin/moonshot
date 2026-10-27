@@ -52,7 +52,7 @@
           </div>
           <figure style="margin:0;display:flex;flex-direction:column;gap:.5rem;align-items:center;min-width:0">
             <div class="stage-hero"><canvas id="hero-cv" aria-label="${T`Animated free-return trajectory from the Earth around the Moon and back, in the rotating Earth–Moon frame`}"></canvas></div>
-            <figcaption class="note mono" id="hero-cap" style="font-size:.72rem;text-align:center">${T`Your flight plan: a free-return trajectory, integrated live. Earth–Moon rotating frame, to scale.`}</figcaption>
+            <figcaption class="note mono" id="hero-cap" style="font-size:.72rem;text-align:center">${T`Your flight plan: a free-return trajectory, a path that loops around the Moon and falls back to Earth with no further burn. Integrated live; Earth–Moon rotating frame, to scale.`}</figcaption>
           </figure>
         </section>
 
@@ -92,12 +92,13 @@
 
         <section class="section">
           <h2><span class="idx">Δv</span>${T`The mission you are training for`}</h2>
-          <div class="prose"><p>${T`Every phase of the flight is paid for in velocity change, Δv. The staircase adds up the major Apollo 11 manoeuvres against ground elapsed time. Reaching orbit costs more than everything that follows, which is why the Saturn V was 85% propellant by mass. Click a step to open the module that trains you for it.`}</p></div>
+          <div class="prose"><p>${T`Every phase of the flight is paid for in velocity change, Δv. The staircase adds up the major Apollo 11 manoeuvres against ground elapsed time, with rounded values: the simulators and the training budgets of later modules use slightly different numbers. Reaching orbit costs more than everything that follows, which is why the Saturn V was about 90% propellant by mass. Click a step to open the module that trains you for it.`}</p></div>
           <div class="lab" style="grid-template-columns:minmax(0,1fr)">
             <div class="stage" style="height:300px;min-height:0;background:var(--panel)"><canvas id="stair-cv"></canvas></div>
             <div class="scroll-x"><table class="data" id="burns"><thead><tr><th>${T`Manoeuvre`}</th><th>GET (h)</th><th>${T`Engine`}</th><th>Δv (m/s)</th><th>Σ Δv (km/s)</th></tr></thead><tbody></tbody></table></div>
           </div>
-          <p class="note">${T`Approximate values from the Apollo 11 Mission Report. GET is ground elapsed time from liftoff, 16 July 1969, 13:32 UTC.`}</p>
+          <p class="note">${T`Approximate values from the Apollo 11 Mission Report. GET is ground elapsed time from liftoff, 16 July 1969, 13:32 UTC (Coordinated Universal Time).`}</p>
+          <p class="note">${T`<b>Who flies what.</b> CSM: command and service module, the crew’s ship to the Moon and back; its main engine is the SPS (service propulsion system) and its small attitude thrusters the RCS (reaction control system). LM: lunar module, the lander; DPS and APS are its descent and ascent engines. S-IVB: the third stage of the Saturn V. TLI, LOI and TEI are the burns that leave Earth orbit, enter lunar orbit and leave it again.`}</p>
         </section>
 
         <section class="section">

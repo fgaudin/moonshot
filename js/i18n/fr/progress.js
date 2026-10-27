@@ -14,7 +14,6 @@ I18N.add('fr', {
   'In flight, Houston will read you numbers like “one-eleven by three-twelve”. A navigator must see the orbit in those numbers: its size, its shape, where you are on it and when you will be somewhere else. This module teaches you to.':
     'En vol, Houston vous annoncera des nombres comme « cent onze sur trois cent douze ». Un navigateur doit voir l’orbite dans ces nombres : sa taille, sa forme, l’endroit où vous vous trouvez et le moment où vous serez ailleurs. Ce module vous l’apprend.',
   'Design a circular orbit (eccentricity below 0.01) by hand': 'Concevoir à la main une orbite circulaire (excentricité inférieure à 0,01)',
-  'Design an orbit whose apogee reaches geostationary altitude (35 786 km)': 'Concevoir une orbite dont l’apogée atteint l’altitude géostationnaire (35 786 km)',
   'Qualify: answer 2 orbit problems correctly': 'Qualification : résoudre correctement 2 problèmes d’orbites',
   'You read orbits like a flight dynamics officer now, {name}. Time to meet the machine that puts you on one.':
     'Vous lisez désormais les orbites comme un spécialiste de la dynamique du vol, {name}. Place à la machine qui vous y envoie.',
@@ -42,7 +41,6 @@ I18N.add('fr', {
   'Changing Orbits': 'Changer d’orbite',
   'In orbit, intuition lies. Speed up and you end up slower; to catch someone ahead, you brake. Your lunar module pilot will one day have to find the command module in lunar orbit with no second chance. Plan your transfers carefully, {name}.':
     'En orbite, l’intuition ment. Accélérez et vous finirez plus lent ; pour rattraper quelqu’un devant vous, vous freinez. Votre pilote du module lunaire devra un jour retrouver le module de commande en orbite lunaire, sans seconde chance. Planifiez vos transferts avec soin, {name}.',
-  'Plan LEO → GEO including the 28.5° plane change for under 4.3 km/s': 'Planifier LEO → GEO, changement de plan de 28,5° compris, pour moins de 4,3 km/s',
   'Plan the LM ascent-stage rendezvous with the CSM in lunar orbit': 'Planifier le rendez-vous de l’étage de remontée du LM avec le CSM en orbite lunaire',
   'Qualify: answer 2 manoeuvre problems correctly': 'Qualification : résoudre correctement 2 problèmes de manœuvres',
   'Transfers and rendezvous are second nature now, {name}. Next stop: the Moon.':
@@ -128,4 +126,6 @@ I18N.add('fr', {
   "With the small 8 kN stage, reach an apoapsis of 5 000 km (± 100 km) in one burn": "Avec le petit étage de 8 kN, atteindre une apoapside de 5 000 km (± 100 km) en une seule poussée",
   "Qualify: answer 2 burn-planning problems correctly": "Qualification : résoudre correctement 2 problèmes de planification de poussée",
   "You can plan a burn and fly it, {name}. From here on, every burn of the mission is just another PAD.": "Vous savez planifier une poussée et l’exécuter, {name}. Désormais, chaque poussée de la mission ne sera qu’un PAD de plus.",
+  'Design an orbit whose apogee reaches geostationary altitude (35 786 km, where a circular orbit keeps pace with the Earth’s rotation)': 'Concevoir une orbite dont l’apogée atteint l’altitude géostationnaire (35 786 km, où une orbite circulaire suit la rotation de la Terre)',
+  'Plan a transfer from low Earth orbit (LEO) to geostationary orbit (GEO) including the 28.5° plane change for under 4.4 km/s': 'Planifier un transfert de l’orbite terrestre basse (LEO) vers l’orbite géostationnaire (GEO), changement de plan de 28,5° compris, pour moins de 4,4 km/s',
 });

@@ -9,7 +9,7 @@
     muE: 3.986004418e14,         // Earth GM, m³/s²
     RE: 6.378137e6,              // Earth equatorial radius, m
     omegaE: 7.2921159e-5,        // Earth sidereal rotation rate, rad/s
-    muM: 4.9048695e12,           // Moon GM, m³/s²
+    muM: 4.9028e12,              // Moon GM, m³/s² (4 902.80 km³/s²)
     RM: 1.7374e6,                // Moon mean radius, m
     DEM: 3.844e8,                // mean Earth–Moon distance, m
     muS: 1.32712440018e20,       // Sun GM

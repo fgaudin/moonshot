@@ -117,7 +117,7 @@
         <section class="section" id="theory">
           <h2><span class="idx">3.1</span>${T`What the crew actually reads`}</h2>
           <div class="prose">
-            <p>${T`The previous module described orbits by their elements. A spacecraft does not measure elements. The instruments give four things:`}</p>
+            <p>${T`The previous module described orbits by their elements. A spacecraft does not measure elements. The instruments, read on board or sent to the ground by radio as <b>telemetry</b>, give four things:`}</p>
             <ul>
               <li>${T`<b>altitude</b> <i>h</i> above the surface, from radar or from the navigation computer;`}</li>
               <li>${T`<b>speed</b> <i>v</i>, the length of the velocity vector;`}</li>

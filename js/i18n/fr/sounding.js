@@ -161,4 +161,5 @@ I18N.add('fr', {
   "truth": "valeur réelle",
   "least squares": "moindres carrés",
   "your estimate": "votre estimation",
+  "air pressure at altitude h": "pression de l’air à l’altitude h",
 });

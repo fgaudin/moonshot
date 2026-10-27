@@ -161,4 +161,5 @@ I18N.add('de', {
   "truth": "wahrer Wert",
   "least squares": "kleinste Quadrate",
   "your estimate": "deine Schätzung",
+  "air pressure at altitude h": "Luftdruck in der Höhe h",
 });

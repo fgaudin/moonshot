@@ -29,7 +29,6 @@ I18N.add('de', {
   'dot product: for unit vectors it equals the cosine of the angle between them. −1 means exactly opposite (180°)': 'Skalarprodukt: Bei Einheitsvektoren ist es gleich dem Kosinus des Winkels zwischen ihnen. −1 heißt genau entgegengesetzt (180°)',
   'sideways distance between the chaser’s probe and the target’s axis': 'seitlicher Abstand zwischen der Kopplungssonde des Verfolgers und der Achse des Ziels',
   'velocity of the chaser relative to the target': 'Geschwindigkeit des Verfolgers relativ zum Ziel',
-  'closing speed along the axis: walking pace is 1.4 m/s; docking is 10 to 50 times slower': 'Annäherungsgeschwindigkeit entlang der Achse: Schrittgeschwindigkeit ist 1,4 m/s; Andocken ist 10- bis 50-mal langsamer',
   'Apollo’s probe could capture within about 0.3 m and 10° of misalignment, at 3 to 30 cm/s.': 'Die Apollo-Sonde konnte bei bis zu etwa 0,3 m und 10° Fehlausrichtung fangen, bei 3 bis 30 cm/s.',
   'Crews tackle them in a fixed order. <b>Rotate first</b>: turning costs little propellant and changes nothing else. Then <b>null the sideways drift and slide onto the axis</b>. Only then <b>close in</b>, slowing down at each “braking gate” as the range shrinks: a common rule is a closing speed of about 1% of the range per second when far out, down to a few centimetres per second at contact.': 'Die Besatzungen gehen in fester Reihenfolge vor. <b>Zuerst drehen</b>: Drehen kostet wenig Treibstoff und ändert sonst nichts. Dann <b>die seitliche Drift aufheben und auf die Achse gleiten</b>. Erst dann <b>annähern</b> und an jedem „Bremstor“ langsamer werden, während die Entfernung schrumpft: Eine gängige Regel ist eine Annäherungsgeschwindigkeit von etwa 1 % der Entfernung pro Sekunde in großem Abstand, bis hinunter zu wenigen Zentimetern pro Sekunde beim Kontakt.',
   'Newton’s first law, for real': 'Newtons erstes Gesetz, ganz real',
@@ -149,4 +148,5 @@ I18N.add('de', {
   'Press Start. Rotate first, then line up, then close.': 'Drücke Start. Erst drehen, dann ausrichten, dann annähern.',
   'In flight': 'Im Flug',
   '⟲ Restart': '⟲ Neustart',
+  'closing speed along the axis: walking pace is 1.4 m/s; docking is 5 to 50 times slower': 'Annäherungsgeschwindigkeit entlang der Achse: Schrittgeschwindigkeit ist 1,4 m/s; Andocken ist 5- bis 50-mal langsamer',
 });

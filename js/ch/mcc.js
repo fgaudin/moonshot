@@ -204,7 +204,7 @@
   /* ---------------- Chapter ---------------- */
   const POS = [
     ['FLIGHT', N`Flight Director`, N`Leads the team, polls the room and makes every go/no-go decision. Owns the mission rules.`, N`Runs the polls. In an exercise, the instructor.`],
-    ['CAPCOM', N`Spacecraft Communicator`, N`The one voice to the crew, in Apollo always an astronaut. Voices PADs and takes the readback.`, N`Reads PADs to the pilot and checks the readback.`],
+    ['CAPCOM', N`Capsule communicator`, N`The one voice to the crew, in Apollo always an astronaut. Voices PADs and takes the readback.`, N`Reads PADs to the pilot and checks the readback.`],
     ['FIDO', N`Flight Dynamics Officer`, N`Plans and tracks the trajectory and works out the maneuvers that shape it.`, N`Computes TLI, midcourse, LOI, DOI, descent and lunar-ascent burns.`],
     ['GUIDO', N`Guidance Officer`, N`Watches the onboard guidance, navigation and computer systems and the state they hold.`, N`Checks the state vector and the program loaded in the onboard computer.`],
     ['RETRO', N`Retrofire Officer`, N`Plans the return to Earth: abort options, the way home and the entry targets.`, N`Computes TEI, homebound midcourse, the entry PAD and every abort option.`],
@@ -275,11 +275,11 @@
             <ul>
               <li>${T`the <b>purpose</b> of the burn, so the crew can check the numbers against the plan;`}</li>
               <li>${T`<b>TIG</b> on GET;`}</li>
-              <li>${T`<b>Δv</b> as prograde, normal and radial components, exactly the frame of module ${Progress.code('burns')}, and the total;`}</li>
+              <li>${T`<b>Δv</b> as prograde, normal and radial components in the velocity frame of module ${Progress.code('burns')}, in m/s, and the total;`}</li>
               <li>${T`the <b>attitude</b> (α in the orbit plane from prograde towards radial, β out of the plane towards normal) and the <b>burn time</b>;`}</li>
               <li>${T`the <b>result</b>: the orbit the crew should see after the burn, apoapsis and periapsis, to check the burn.`}</li>
             </ul>
-            <p>${T`The <b>TEI PAD</b> adds the entry angle the burn is aimed at. The <b>entry PAD</b> gives the entry interface time, the flight-path angle and velocity there, the range to the target and the splashdown point. Real Apollo PADs used feet per second and gimbal angles, and carried more lines. The content is the same: when, how much, which way, how long, and what you should see.`}</p>
+            <p>${T`The <b>TEI PAD</b> adds the entry angle the burn is aimed at. The <b>entry PAD</b> gives the entry interface time, the flight-path angle and velocity there, the range to the target and the splashdown point. Real Apollo PADs used feet per second and gimbal angles, and carried more lines; this course uses metres per second and the attitude α of module ${Progress.code('burns')}. The content is the same: when, how much, which way, how long, and what you should see.`}</p>
             <p>${T`The crew copies, reads back, then <b>checks the PAD for sense</b> before loading it: is the total consistent with the three components? Is the burn time plausible for this Δv and this vehicle? Does the result match the purpose? This is the arithmetic you practise in the lab.`}</p>
           </div>
         </section>

@@ -7,7 +7,7 @@
   'use strict';
   const LANGS = { en: { name: 'English', locale: 'en-GB' }, fr: { name: 'Français', locale: 'fr-FR' }, de: { name: 'Deutsch', locale: 'de-DE' } };
   // one dictionary file per source file; keep in sync with the files in js/i18n/<lang>/
-  const MANIFEST = ['app', 'home', 'progress', 'newton', 'orbits', 'rockets', 'ascent', 'maneuvers', 'burns', 'docking', 'moon', 'landing', 'entry', 'practice', 'symbols', 'primers', 'reference', 'history', 'navigation', 'sounding', 'launcher', 'timing', 'planes', 'descent', 'homeward', 'mcc'];
+  const MANIFEST = ['app', 'home', 'progress', 'newton', 'orbits', 'rockets', 'ascent', 'maneuvers', 'burns', 'docking', 'moon', 'landing', 'entry', 'practice', 'symbols', 'primers', 'reference', 'history', 'navigation', 'sounding', 'launcher', 'timing', 'planes', 'descent', 'homeward', 'mcc', 'glossary'];
 
   const I18N = {
     LANGS,

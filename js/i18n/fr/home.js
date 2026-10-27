@@ -54,8 +54,6 @@ I18N.add('fr', {
   'Simulator room': 'Salle des simulateurs',
   'Animated free-return trajectory from the Earth around the Moon and back, in the rotating Earth–Moon frame':
     'Animation d’une trajectoire de retour libre de la Terre autour de la Lune et retour, dans le repère tournant Terre–Lune',
-  'Your flight plan: a free-return trajectory, integrated live. Earth–Moon rotating frame, to scale.':
-    'Votre plan de vol : une trajectoire de retour libre, intégrée en direct. Repère tournant Terre–Lune, à l’échelle.',
 
   // flight record
   'Flight record: {$0}': 'Carnet de vol : {$0}',
@@ -77,12 +75,8 @@ I18N.add('fr', {
 
   // Δv staircase
   'The mission you are training for': 'La mission à laquelle vous vous préparez',
-  'Every phase of the flight is paid for in velocity change, Δv. The staircase adds up the major Apollo 11 manoeuvres against ground elapsed time. Reaching orbit costs more than everything that follows, which is why the Saturn V was 85% propellant by mass. Click a step to open the module that trains you for it.':
-    'Chaque phase du vol se paie en variation de vitesse, Δv. L’escalier cumule les principales manœuvres d’Apollo 11 en fonction du temps écoulé depuis le décollage. Atteindre l’orbite coûte plus que tout ce qui suit : c’est pourquoi la Saturn V était constituée à 85 % d’ergols en masse. Cliquez sur une marche pour ouvrir le module qui vous y prépare.',
   'Manoeuvre': 'Manœuvre',
   'Engine': 'Moteur',
-  'Approximate values from the Apollo 11 Mission Report. GET is ground elapsed time from liftoff, 16 July 1969, 13:32 UTC.':
-    'Valeurs approximatives tirées du rapport de mission d’Apollo 11 (Mission Report). GET est le temps écoulé depuis le décollage, le 16 juillet 1969 à 13:32 UTC.',
   'ground elapsed time (h)': 'temps écoulé depuis le décollage (h)',
   'cumulative Δv (km/s)': 'Δv cumulé (km/s)',
   'EARTH': 'TERRE',
@@ -96,4 +90,8 @@ I18N.add('fr', {
   "Your destination": "Votre destination",
   "The Moon": "La Lune",
   "384 400 km away, three days of coasting, and a target moving at a kilometre per second. Twelve people have walked there. Everything in this manual is about how they got there and back.": "À 384 400 km, trois jours de croisière, et une cible qui se déplace à un kilomètre par seconde. Douze personnes y ont marché. Tout ce manuel explique comment elles y sont allées, et comment elles en sont revenues.",
+  'Your flight plan: a free-return trajectory, a path that loops around the Moon and falls back to Earth with no further burn. Integrated live; Earth–Moon rotating frame, to scale.': 'Votre plan de vol : une trajectoire de retour libre, un chemin qui contourne la Lune et retombe vers la Terre sans nouvelle poussée. Intégrée en direct ; repère tournant Terre–Lune, à l’échelle.',
+  'Every phase of the flight is paid for in velocity change, Δv. The staircase adds up the major Apollo 11 manoeuvres against ground elapsed time, with rounded values: the simulators and the training budgets of later modules use slightly different numbers. Reaching orbit costs more than everything that follows, which is why the Saturn V was about 90% propellant by mass. Click a step to open the module that trains you for it.': 'Chaque phase du vol se paie en variation de vitesse, Δv. L’escalier cumule les principales manœuvres d’Apollo 11 en fonction du temps écoulé depuis le décollage, avec des valeurs arrondies : les simulateurs et les budgets d’entraînement des modules suivants utilisent des nombres légèrement différents. Atteindre l’orbite coûte plus que tout ce qui suit : c’est pourquoi la Saturn V était constituée à environ 90 % d’ergols en masse. Cliquez sur une marche pour ouvrir le module qui vous y prépare.',
+  'Approximate values from the Apollo 11 Mission Report. GET is ground elapsed time from liftoff, 16 July 1969, 13:32 UTC (Coordinated Universal Time).': 'Valeurs approximatives tirées du rapport de mission d’Apollo 11 (Mission Report). GET est le temps écoulé depuis le décollage, le 16 juillet 1969 à 13:32 UTC (temps universel coordonné).',
+  '<b>Who flies what.</b> CSM: command and service module, the crew’s ship to the Moon and back; its main engine is the SPS (service propulsion system) and its small attitude thrusters the RCS (reaction control system). LM: lunar module, the lander; DPS and APS are its descent and ascent engines. S-IVB: the third stage of the Saturn V. TLI, LOI and TEI are the burns that leave Earth orbit, enter lunar orbit and leave it again.': '<b>Qui fait quoi.</b> CSM : module de commande et de service, le vaisseau de l’équipage pour aller à la Lune et en revenir ; son moteur principal est le SPS (service propulsion system) et ses petits propulseurs d’attitude le RCS (reaction control system). LM : module lunaire, l’atterrisseur ; DPS et APS sont ses moteurs de descente et de remontée. S-IVB : le troisième étage de la Saturn V. TLI, LOI et TEI sont les poussées qui quittent l’orbite terrestre, entrent en orbite lunaire et la quittent à nouveau.',
 });

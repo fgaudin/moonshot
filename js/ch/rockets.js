@@ -7,7 +7,7 @@
   const PROPELLANTS = [
     { n: N`Solid (APCP)`, isp: 265, ex: 'Shuttle SRB' },
     { n: 'RP-1 / LOX', isp: 304, ex: 'F-1 (vac), S-IC' },
-    { n: 'N₂O₄ / Aerozine-50', isp: 314, ex: N`Apollo SPS, LM engines` },
+    { n: 'N₂O₄ / Aerozine-50', isp: 314, ex: N`Apollo SPS (the LM engines: 311 s)` },
     { n: 'LH₂ / LOX', isp: 421, ex: 'J-2, S-II & S-IVB' },
     { n: N`Nuclear thermal`, isp: 850, ex: N`NERVA (tested 1960s)` },
   ];
@@ -32,7 +32,7 @@
 
   App.chapter({
     id: 'rockets', phase: N`Ignition`, title: N`Rocket Science`, lab: N`Staging builder`,
-    blurb: N`Thrust, specific impulse and Tsiolkovsky’s logarithm. Why the Saturn V had three stages and was 85% propellant.`,
+    blurb: N`Thrust, specific impulse and Tsiolkovsky’s logarithm. Why the Saturn V had three stages and was about 90% propellant.`,
     render(page) {
       page.innerHTML = `
         ${App.header({
@@ -71,7 +71,7 @@
             <p>${T`The figure of merit for a propellant and engine is the <b>specific impulse</b>: the impulse delivered per unit <i>weight</i> of propellant consumed. It comes out in seconds:`}</p>
             <div class="eq">\\[ I_{sp} = \\frac{F}{\\dot m\\, g_0} = \\frac{c}{g_0} \\]</div>
             ${Sym.where(['isp', 'Fth', 'mdot', 'g0', 'c'])}
-            <p>${T`Read it as the number of seconds one kilogram of propellant can produce one kilogram-force of thrust. Higher is better. Chemical rockets top out near 450 s, because the energy is in the chemical bonds and light exhaust molecules (H₂O, H₂) carry it away fastest.`}</p>
+            <p>${T`Read it as the exhaust speed divided by 9.81 m/s²: an engine with 300 s throws its exhaust out at about 2 940 m/s. Equivalently, it is how many seconds one kilogram of propellant can hold up its own weight (9.81 N) in thrust. Higher is better. Chemical rockets top out near 450 s, because the energy is in the chemical bonds and light exhaust molecules (H₂O, H₂) carry it away fastest.`}</p>
           </div>
           <div class="scroll-x" style="max-width:44rem"><table class="data"><thead><tr><th>${T`Propellant`}</th><th>I<sub>sp</sub> (s)</th><th>c (m/s)</th><th>${T`Flown on`}</th></tr></thead><tbody>
             ${PROPELLANTS.map((p) => `<tr><td>${T(p.n)}</td><td>${p.isp}</td><td>${UI.fmt(p.isp * G0, 0)}</td><td>${T(p.ex)}</td></tr>`).join('')}
@@ -104,7 +104,7 @@
             <p>${T`The rocket equation says how much Δv the propellant can buy. It says nothing about <i>how fast</i> the propellant is burned, and that matters as soon as gravity is pulling. The <b>thrust-to-weight ratio</b> compares the engines’ push with the vehicle’s weight:`}</p>
             <div class="eq">\\[ \\mathrm{TWR} = \\frac{F}{m\\,g} \\qquad\\Longrightarrow\\qquad a_{\\text{vertical}} = (\\mathrm{TWR} - 1)\\,g \\]</div>
             ${Sym.where(['twr', 'Fth', 'm', ['g', N`gravity where the rocket is: 9.81 m/s² on Earth, 1.62 m/s² for a lander on the Moon`, 'm/s²'], 'avert'], N`Standing on the pad, weight pulls down with m·g; only the thrust beyond that accelerates the rocket upward.`)}
-            <p>${T`<b>Below 1, nothing happens.</b> The engines roar, the propellant drains, the rocket sits on the pad. Above 1, it rises, slowly at first. The Saturn V lifted off with 34.0 MN of thrust for 2 938 t, a TWR of just 1.18. It accelerated at 0.18 g and took about 12 seconds to clear its own tower.`}</p>
+            <p>${T`<b>Below 1, nothing happens.</b> The engines roar, the propellant drains, the rocket sits on the pad. Above 1, it rises, slowly at first. The Saturn V lifted off with 34.0 MN of thrust for 2 938 t, a TWR of just 1.18. It accelerated at 0.18 g (one g is 9.81 m/s², the pull you feel standing on Earth; at 4 g you feel four times your own weight) and took about 12 seconds to clear its own tower.`}</p>
             <p>${T`<b>TWR climbs during the burn</b>, because the thrust stays the same (it even grows as the air thins) while the mass drops. The S-IC ended its burn near 4 g. NASA shut down its centre engine early to cap the load on the crew.`}</p>
             <p>${T`<b>Why not lift off at 1.05?</b> Every second spent climbing costs Δv to gravity, about \\(g\\) per second when going straight up. The burn time follows directly from TWR and I<sub>sp</sub>:`}</p>
             <div class="eq">\\[ t_b = \\frac{m_{prop}\\,I_{sp}\\,g_0}{F} = \\frac{I_{sp}}{\\mathrm{TWR}_0}\\left(1 - \\frac{m_f}{m_0}\\right) \\]</div>
@@ -131,7 +131,7 @@
             <p class="twr-checks" id="st-checks" aria-live="polite"></p>
             <div class="stage" style="min-height:220px;background:var(--panel);border-top:1px solid var(--line)"><canvas id="st-cv" aria-label="${T`Delta-v bar per stage against mission requirements`}"></canvas></div>
           </div>
-          <div class="callout history"><b>${T`Why 85% propellant`}</b>${T`The Saturn V weighed 2 938 tonnes at liftoff. About 2 700 t of that was propellant, and only 45 t, the Apollo spacecraft, was sent towards the Moon. The upper stages burned liquid hydrogen. Its 421 s I<sub>sp</sub> mattered most there, because every kilogram of upper stage has to be accelerated by all the stages below it.`}</div>
+          <div class="callout history"><b>${T`Why 90% propellant`}</b>${T`The Saturn V weighed 2 938 tonnes at liftoff. About 2 700 t of that was propellant, and only 45 t, the Apollo spacecraft, was sent towards the Moon. The upper stages burned liquid hydrogen. Its 421 s I<sub>sp</sub> mattered most there, because every kilogram of upper stage has to be accelerated by all the stages below it.`}</div>
         </section>
 
         ${Archive.capsule('sic')}

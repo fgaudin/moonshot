@@ -71,7 +71,7 @@
   ], [
     { q: N`A chaser in a lower circular orbit and a target in a higher one start with the target ahead. Why does the chaser catch up?`, opts: [N`The lower orbit has the larger angular rate (shorter period), so the angle between them shrinks`, N`The lower orbit has the lower speed`, N`Gravity is weaker at the target’s altitude, so it slows down`, N`The chaser’s engine pushes it forward`], a: 0, why: N`Circular speed falls with altitude, but the angular rate falls faster: n = √(μ/r³). The lower spacecraft goes round more often and closes the angle.` },
     { q: N`The chaser is in the higher orbit. Where must the target be at the start of a Hohmann transfer down to its orbit?`, opts: [N`Behind the chaser: the phase angle (target minus chaser) is negative`, N`Ahead of the chaser, as for a transfer upward`, N`Exactly opposite the chaser`, N`Anywhere: the transfer time does not depend on it`], a: 0, why: N`In the flight time the target, on the faster lower orbit, covers more than 180°, while the chaser covers exactly 180°. So the target must start behind by the difference.` },
-    { q: N`A burn lasts 2 minutes and the planned TIG is 04:26:53. When should the engine ignite?`, opts: [N`About 04:25:53, one minute early, so the burn is centred on TIG`, N`At 04:26:53, exactly`, N`At 04:28:53, after TIG`, N`At 04:24:53, one burn time early`], a: 0, why: N`The plan assumes an impulse at TIG. A burn centred on that moment starts half a burn time early.` },
+    { q: N`A burn lasts 2 minutes and its burn point, the instant of the impulsive plan, is 04:26:53. What TIG goes on the PAD?`, opts: [N`04:25:53, one minute early, so the burn is centred on the burn point`, N`04:26:53, exactly`, N`04:28:53, after the burn point`, N`04:24:53, one burn time early`], a: 0, why: N`The plan assumes an impulse at the burn point. A burn centred on that moment ignites half a burn time early, and the TIG on a PAD is the ignition time.` },
   ]);
   registerPractice();
 
@@ -141,9 +141,9 @@
           <div class="prose">
             <p>${T`The crew and Mission Control talk in <b>ground elapsed time</b>, GET: hours, minutes and seconds since liftoff, hours not wrapped into days. The calculation above gives a wait. Add it to the GET at which the phase angle was measured:`}</p>
             <div class="eq">\\[ \\mathrm{TIG} = \\mathrm{GET}_{fix} + t_{wait} \\]</div>
-            ${Sym.where([['\\mathrm{TIG}', N`time of ignition: the moment the burn is planned for, as GET`, 's'], ['\\mathrm{GET}_{fix}', N`GET at which φ<sub>now</sub> was measured`, 's'], ['t_{wait}', N`wait from the previous section`, 's']])}
+            ${Sym.where([['\\mathrm{TIG}', N`time of ignition, as GET; for an impulsive burn it is also the burn point`, 's'], ['\\mathrm{GET}_{fix}', N`GET at which φ<sub>now</sub> was measured`, 's'], ['t_{wait}', N`wait from the previous section`, 's']])}
             <p>${T`Example: φ = 42° measured at GET 03:10:00 gives TIG = 03:10:00 + 1 h 16 min 53 s = <b>04:26:53</b>. The phase angle itself is measured from tracking or from the onboard navigation of module ${Progress.code('navigation')}. An error of 1° in φ moves the burn by 1°/(closing rate) = 2.4 minutes here. Small closing rates amplify angle errors into time errors.`}</p>
-            <p>${T`A real engine does not fire an impulse. As module ${Progress.code('burns')} (section ${App.sec('burns', 5)}) showed, the engine ignites half a burn time before TIG: t<sub>ignition</sub> = TIG − t<sub>b</sub>/2. A 2-minute burn at TIG 04:26:53 starts at 04:25:53.`}</p>
+            <p>${T`A real engine does not fire an impulse. As module ${Progress.code('burns')} (section ${App.sec('burns', 5)}) showed, the engine ignites half a burn time before the burn point: TIG = t<sub>burn point</sub> − t<sub>b</sub>/2. A 2-minute burn whose burn point is 04:26:53 has TIG 04:25:53, and that is the time on the PAD.`}</p>
           </div>
         </section>
 

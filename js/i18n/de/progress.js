@@ -14,7 +14,6 @@ I18N.add('de', {
   'In flight, Houston will read you numbers like “one-eleven by three-twelve”. A navigator must see the orbit in those numbers: its size, its shape, where you are on it and when you will be somewhere else. This module teaches you to.':
     'Im Flug gibt dir Houston Zahlen wie „hundertelf zu dreihundertzwölf“ durch. Wer navigiert, muss die Bahn in diesen Zahlen sehen: ihre Größe, ihre Form, wo du dich auf ihr befindest und wann du woanders sein wirst. Dieses Modul bringt es dir bei.',
   'Design a circular orbit (eccentricity below 0.01) by hand': 'Entwirf von Hand eine Kreisbahn (Exzentrizität unter 0,01)',
-  'Design an orbit whose apogee reaches geostationary altitude (35 786 km)': 'Entwirf eine Bahn, deren Apogäum die geostationäre Höhe (35 786 km) erreicht',
   'Qualify: answer 2 orbit problems correctly': 'Qualifikation: Löse 2 Bahnaufgaben richtig',
   'You read orbits like a flight dynamics officer now, {name}. Time to meet the machine that puts you on one.':
     'Du liest Umlaufbahnen jetzt wie ein Profi der Flugdynamik, {name}. Zeit, die Maschine kennenzulernen, die dich hinaufbringt.',
@@ -42,7 +41,6 @@ I18N.add('de', {
   'Changing Orbits': 'Bahnen wechseln',
   'In orbit, intuition lies. Speed up and you end up slower; to catch someone ahead, you brake. Your lunar module pilot will one day have to find the command module in lunar orbit with no second chance. Plan your transfers carefully, {name}.':
     'Im Orbit lügt die Intuition. Beschleunige, und du wirst am Ende langsamer; um jemanden vor dir einzuholen, bremst du. Wer bei dir die Mondlandefähre fliegt, muss eines Tages das Kommandomodul in der Mondumlaufbahn finden, ohne zweite Chance. Plane deine Transfers sorgfältig, {name}.',
-  'Plan LEO → GEO including the 28.5° plane change for under 4.3 km/s': 'Plane LEO → GEO einschließlich des Bahnebenenwechsels um 28,5° für weniger als 4,3 km/s',
   'Plan the LM ascent-stage rendezvous with the CSM in lunar orbit': 'Plane das Rendezvous der LM-Aufstiegsstufe mit dem CSM in der Mondumlaufbahn',
   'Qualify: answer 2 manoeuvre problems correctly': 'Qualifikation: Löse 2 Manöveraufgaben richtig',
   'Transfers and rendezvous are second nature now, {name}. Next stop: the Moon.':
@@ -128,4 +126,6 @@ I18N.add('de', {
   "With the small 8 kN stage, reach an apoapsis of 5 000 km (± 100 km) in one burn": "Mit der kleinen 8-kN-Stufe in einer einzigen Brennphase eine Apoapsis von 5 000 km (± 100 km) erreichen",
   "Qualify: answer 2 burn-planning problems correctly": "Qualifikation: Löse 2 Aufgaben zur Planung von Brennphasen richtig",
   "You can plan a burn and fly it, {name}. From here on, every burn of the mission is just another PAD.": "Du kannst eine Brennphase planen und fliegen, {name}. Ab jetzt ist jede Brennphase der Mission nur noch ein weiteres PAD.",
+  'Design an orbit whose apogee reaches geostationary altitude (35 786 km, where a circular orbit keeps pace with the Earth’s rotation)': 'Entwirf eine Bahn, deren Apogäum die geostationäre Höhe (35 786 km, wo eine Kreisbahn mit der Erdrotation Schritt hält) erreicht',
+  'Plan a transfer from low Earth orbit (LEO) to geostationary orbit (GEO) including the 28.5° plane change for under 4.4 km/s': 'Plane einen Transfer von der niedrigen Erdumlaufbahn (LEO) auf die geostationäre Bahn (GEO) einschließlich des Bahnebenenwechsels um 28,5° für weniger als 4,4 km/s',
 });

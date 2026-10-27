@@ -23,10 +23,10 @@
             <div class="eq">\\[ \\varepsilon = \\frac{v^2}{2} - \\frac{\\mu}{r} = ${T`\\text{constant}`} \\]</div>
             ${Sym.where(['eps', 'v', 'mu', 'r'], N`Like a ball on a slope: going down (smaller r) it gains speed, going up it slows, and the total stays the same.`)}
             <p>${T`Cross it with \\(\\vec r\\) and you get the <b>specific angular momentum</b>, a vector perpendicular to the orbital plane. The plane therefore never changes:`}</p>
-            <div class="eq">\\[ \\vec h = \\vec r \\times \\vec v, \\qquad h = r\\,v\\cos\\phi \\]</div>
-            ${Sym.where(['vech', 'vecr', 'vecv', 'cross', 'h', 'phi'])}
+            <div class="eq">\\[ \\vec h = \\vec r \\times \\vec v, \\qquad h = r\\,v\\cos\\gamma \\]</div>
+            ${Sym.where(['vech', 'vecr', 'vecv', 'cross', 'h', 'gamma'])}
             ${Primer.box('vectors', false, 'refresher') + Primer.box('trig')}
-            <p>${T`Here \\(\\phi\\) is the <b>flight-path angle</b>, measured from the local horizontal to the velocity vector. It is zero at periapsis and apoapsis.`}</p>
+            <p>${T`Here \\(\\gamma\\) is the <b>flight-path angle</b>, measured from the local horizontal to the velocity vector. It is zero at <b>periapsis</b> and <b>apoapsis</b>, the lowest and highest points of the orbit, together called the <b>apsides</b>. Around the Earth they are the perigee and apogee; around the Moon the perilune and apolune (Apollo documents say pericynthion and apocynthion, and this course also uses periselene). Flight controllers quote an orbit by its two apsis altitudes: “185 by 185” is a circular orbit 185 km up.`}</p>
           </div>
         </section>
 
@@ -42,7 +42,7 @@
           <div class="scroll-x" style="max-width:52rem"><table class="data">
             <thead><tr><th>${T`Conic`}</th><th>${T`Eccentricity`}</th><th>${T`Energy ε`}</th><th>${T`Semi-major axis`}</th><th>${T`Example`}</th></tr></thead>
             <tbody>
-              <tr><td>${T`Circle`}</td><td>e = 0</td><td>< 0</td><td>a = r</td><td>${T`Apollo parking orbit, 185 km`}</td></tr>
+              <tr><td>${T`Circle`}</td><td>e = 0</td><td>< 0</td><td>a = r</td><td>${T`Apollo parking orbit, 185 km: a temporary orbit where the spacecraft waits before its next burn`}</td></tr>
               <tr><td>${T`Ellipse`}</td><td>0 < e < 1</td><td>< 0</td><td>a > 0</td><td>${T`Trans-lunar coast (two-body view)`}</td></tr>
               <tr><td>${T`Parabola`}</td><td>e = 1</td><td>= 0</td><td>a = ∞</td><td>${T`Exactly escape velocity`}</td></tr>
               <tr><td>${T`Hyperbola`}</td><td>e > 1</td><td>> 0</td><td>a < 0</td><td>${T`Path relative to the Moon on arrival`}</td></tr>
@@ -83,7 +83,7 @@
             <div class="controls">
               ${UI.slider({ id: 'od-h', label: T`Burnout altitude`, min: 100, max: 20000, step: 5, value: 300, unit: 'km' })}
               ${UI.slider({ id: 'od-v', label: T`Burnout speed`, min: 4, max: 13, step: 0.005, value: 9.2, unit: 'km/s' })}
-              ${UI.slider({ id: 'od-phi', label: T`Flight-path angle φ`, min: -60, max: 60, step: 0.5, value: 5, unit: '°' })}
+              ${UI.slider({ id: 'od-phi', label: T`Flight-path angle γ`, min: -60, max: 60, step: 0.5, value: 5, unit: '°' })}
               ${UI.slider({ id: 'od-warp', label: T`Time warp`, min: 1, max: 4, step: 0.05, value: 2.8 })}
               <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="od-areas" checked> ${T`Equal-area sectors (T/12 each)`}</label>
               <dl class="readout" id="od-ro"></dl>
@@ -117,8 +117,8 @@
               <tr><td>${T`Semi-major axis`}</td><td>a</td><td>${T`size (energy)`}</td><td>≈ 6 563 km</td></tr>
               <tr><td>${T`Eccentricity`}</td><td>e</td><td>${T`shape`}</td><td>${UI.dec('≈ 0.0006')}</td></tr>
               <tr><td>${T`Inclination`}</td><td>i</td><td>${T`tilt of the plane relative to the equator`}</td><td>${UI.dec('32.5°')}</td></tr>
-              <tr><td>${T`Right ascension of ascending node`}</td><td>Ω</td><td>${T`swivel of the plane`}</td><td>${T`set by launch time and azimuth`}</td></tr>
-              <tr><td>${T`Argument of periapsis`}</td><td>ω</td><td>${T`orientation of the ellipse in its plane`}</td><td>${T`poorly defined for e ≈ 0`}</td></tr>
+              <tr><td>${T`Right ascension of ascending node`}</td><td>Ω</td><td>${T`swivel of the plane: the direction, measured from a fixed direction in the stars, of the <b>ascending node</b>, where the orbit crosses the equator going north (often abbreviated RAAN)`}</td><td>${T`set by launch time and azimuth (the compass heading of the launch)`}</td></tr>
+              <tr><td>${T`Argument of periapsis`}</td><td>ω</td><td>${T`orientation of the ellipse in its plane: the angle from the ascending node to periapsis`}</td><td>${T`poorly defined for e ≈ 0`}</td></tr>
               <tr><td>${T`True anomaly`}</td><td>ν</td><td>${T`spacecraft position`}</td><td>${T`changes continuously`}</td></tr>
             </tbody></table></div>
           <div class="callout history"><b>${T`Canonical units in BMW`}</b>${T`Bate, Mueller and White work in canonical units: 1 DU = Earth radius (6 378.145 km), 1 TU = 806.8 s, which makes μ = 1. They keep numbers near unity and the algebra clean. This manual stays in SI, but the book’s answers convert directly: 1 DU/TU = 7.905 km/s, the circular speed at Earth’s surface.`}</div>
@@ -281,7 +281,7 @@
         ${st.E != null ? `<dt>${T`Eccentric anomaly E`}</dt><dd>${UI.fmt(((st.E * 180 / Math.PI) % 360 + 360) % 360, 1)}°</dd>` : ''}
         <dt>${T`Radius r`}</dt><dd>${km(st.r)} km</dd>
         <dt>${T`Speed v (vis-viva)`}</dt><dd class="hl">${UI.fmt(st.v / 1000, 3)} km/s</dd>
-        <dt>${T`Flight-path angle φ`}</dt><dd>${UI.fmt(st.phi * 180 / Math.PI, 1)}°</dd>`;
+        <dt>${T`Flight-path angle γ`}</dt><dd>${UI.fmt(st.phi * 180 / Math.PI, 1)}°</dd>`;
       root.querySelector('#od-ov').innerHTML = `${T`orange arrow: velocity`}<br>${showAreas && !hyper ? T`each shaded sector takes T/12` : ''}`;
     };
 

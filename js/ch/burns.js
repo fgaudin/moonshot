@@ -69,11 +69,11 @@
               <li>${T`<b>Normal</b>: perpendicular to the orbit plane. It tilts the plane; a separate module covers plane changes.`}</li>
               <li>${T`<b>Radial</b>: in the plane, perpendicular to the velocity. It rotates the orbit around the spacecraft’s position: one apsis rises, the other falls.`}</li>
             </ul>
-            <div class="eq">\\[ \\Delta\\vec v = \\Delta v_P\\,\\hat p + \\Delta v_N\\,\\hat n + \\Delta v_R\\,\\hat r, \\qquad |\\Delta\\vec v| = \\sqrt{\\Delta v_P^2 + \\Delta v_N^2 + \\Delta v_R^2}, \\qquad \\alpha = \\arctan\\frac{\\Delta v_R}{\\Delta v_P} \\]</div>
-            ${Sym.where([['\\Delta v_P,\\ \\Delta v_N,\\ \\Delta v_R', N`prograde, normal and radial components of the burn`, 'm/s'], ['\\hat p,\\ \\hat n,\\ \\hat r', N`unit vectors of the maneuver frame (length 1, pure directions)`, '—'], ['\\alpha', N`attitude in the orbit plane: how far the thrust points away from prograde, towards radial`, N`rad or °`]], N`The burn magnitude is Pythagoras in three dimensions; the attitude follows from the ratio of the components.`)}
-            <p>${T`<b>Which “radial”?</b> There are two common conventions for the in-plane axis. Apollo used a <b>local vertical</b> frame (LVLH): straight up from the planet, and horizontal. Many planning tools and simulators use a <b>velocity</b> frame: prograde along the velocity, radial perpendicular to it. The two agree only where the flight-path angle φ is zero, at periapsis and apoapsis. Anywhere else, convert:`}</p>
-            <div class="eq">\\[ \\Delta v_P = \\Delta v_H\\cos\\phi + \\Delta v_V\\sin\\phi, \\qquad \\Delta v_R = -\\Delta v_H\\sin\\phi + \\Delta v_V\\cos\\phi \\]</div>
-            ${Sym.where([['\\Delta v_H,\\ \\Delta v_V', N`horizontal and vertical (local vertical) components of the same burn`, 'm/s'], 'phi'], N`A Mission Control that computes in one frame and enters into the other gets a slightly wrong burn. Agree on the frame before you agree on the numbers.`)}
+            <div class="eq">\\[ \\Delta\\vec v = \\Delta v_P\\,\\hat p + \\Delta v_N\\,\\hat n + \\Delta v_R\\,\\hat r, \\qquad |\\Delta\\vec v| = \\sqrt{\\Delta v_P^2 + \\Delta v_N^2 + \\Delta v_R^2}, \\qquad \\alpha = \\operatorname{atan2}(\\Delta v_R,\\ \\Delta v_P) \\]</div>
+            ${Sym.where([['\\Delta v_P,\\ \\Delta v_N,\\ \\Delta v_R', N`prograde, normal and radial components of the burn`, 'm/s'], ['\\hat p,\\ \\hat n,\\ \\hat r', N`unit vectors of the maneuver frame (length 1, pure directions)`, '—'], ['\\alpha', N`attitude in the orbit plane: how far the thrust points away from prograde, towards radial`, N`rad or °`]], N`The burn magnitude is Pythagoras in three dimensions. The attitude is the angle of the in-plane components; atan2, the two-argument arctangent of calculators and spreadsheets, keeps the quadrant: 0° is prograde, 180° retrograde, +90° radial out, −90° radial in.`)}
+            <p>${T`<b>Which “radial”?</b> There are two common conventions for the in-plane axis. Apollo used a <b>local vertical</b> frame (LVLH): straight up from the planet, and horizontal. Many planning tools and simulators use a <b>velocity</b> frame: prograde along the velocity, radial perpendicular to it. The two agree only where the flight-path angle γ is zero, at periapsis and apoapsis. Anywhere else, convert:`}</p>
+            <div class="eq">\\[ \\Delta v_P = \\Delta v_H\\cos\\gamma + \\Delta v_V\\sin\\gamma, \\qquad \\Delta v_R = -\\Delta v_H\\sin\\gamma + \\Delta v_V\\cos\\gamma \\]</div>
+            ${Sym.where([['\\Delta v_H,\\ \\Delta v_V', N`horizontal and vertical (local vertical) components of the same burn`, 'm/s'], 'gamma'], N`A Mission Control that computes in one frame and enters into the other gets a slightly wrong burn. Agree on the frame before you agree on the numbers. This course uses the <b>velocity</b> frame in every lab and on every PAD.`)}
           </div>
         </section>
 
@@ -88,7 +88,7 @@
             <ul>
               <li>${T`<b>Circularize or Hohmann:</b> at an apsis the velocity is horizontal, so the burn is pure prograde: Δv<sub>P</sub> = v<sub>new</sub> − v<sub>old</sub>, each from vis-viva.`}</li>
               <li>${T`<b>Move the apsides:</b> a radial burn leaves the energy almost unchanged but turns the velocity, which shifts periapsis and apoapsis around the orbit.`}</li>
-              <li>${T`<b>Change the plane by Δi:</b> the velocity must turn out of the plane without changing length, which gives Δv<sub>N</sub> = v sin Δi and Δv<sub>P</sub> = −v (1 − cos Δi). Plane changes get their own module.`}</li>
+              <li>${T`<b>Change the plane by Δi:</b> the velocity must turn out of the plane without changing length, which gives Δv<sub>N</sub> = v sin Δi and Δv<sub>P</sub> = −v (1 − cos Δi). Module ${Progress.code('planes')} derives these and shows where to burn.`}</li>
             </ul>
           </div>
         </section>
@@ -106,12 +106,12 @@
         <section class="section">
           <h2><span class="idx">6.5</span>${T`Finite burns`}</h2>
           <div class="prose">
-            <p>${T`The plan assumes an instant kick at TIG. A real burn lasts seconds or minutes, during which the spacecraft keeps moving along its orbit while the engine holds a fixed direction in space. Two consequences:`}</p>
+            <p>${T`The plan assumes an instant kick at one moment, the <b>burn point</b>. A real burn lasts seconds or minutes, during which the spacecraft keeps moving along its orbit while the engine holds a fixed direction in space. Two consequences:`}</p>
             <ul>
-              <li>${T`<b>Centre the burn on TIG.</b> Ignite half a burn time early, so the burn is spread evenly around the planned point: t<sub>ignition</sub> = TIG − t<sub>b</sub>/2. Starting at TIG puts all of it after the planned point.`}</li>
+              <li>${T`<b>Centre the burn on the burn point.</b> Ignite half a burn time early, so the burn is spread evenly around it: TIG = t<sub>burn point</sub> − t<sub>b</sub>/2. Mission Control makes this shift before reading the PAD up, so the TIG on a PAD is always the moment the engine lights. Igniting at the burn point puts all of the burn after it.`}</li>
               <li>${T`<b>Finite-burn losses.</b> As the spacecraft moves, the fixed thrust direction drifts away from the ideal one, so part of the Δv is wasted. The loss grows with the burn time compared with the orbital period. Under a few percent of the period it is negligible; for long burns, Mission Control adds Δv or plans the burn in pieces.`}</li>
             </ul>
-            <p>${T`In the lab, a small 8 kN stage tries to raise its apoapsis from 300 km to 5 000 km with the impulsive Δv of 947 m/s, an 18-minute burn. Started at TIG it reaches only about 3 760 km; centred on TIG, about 4 610 km. Getting to 5 000 km takes more Δv than the plan says.`}</p>
+            <p>${T`In the lab, a small 8 kN stage tries to raise its apoapsis from 300 km to 5 000 km with the impulsive Δv of 947 m/s, an 18-minute burn. Ignited at the burn point it reaches only about 3 760 km; centred on it, about 4 610 km. Getting to 5 000 km takes more Δv than the plan says.`}</p>
           </div>
         </section>
 
@@ -137,13 +137,13 @@
                 <div class="ctl"><label for="mc-scen"><span>${T`Scenario`}</span></label><select id="mc-scen">${Object.entries(SCEN).map(([k, s]) => `<option value="${k}">${T(s.label)}</option>`).join('')}</select></div>
                 <p class="note" id="mc-task" style="margin:0"></p>
                 <div class="ctl"><label for="mc-veh"><span>${T`Vehicle`}</span></label><select id="mc-veh">${Object.entries(VEHICLES).map(([k, v]) => `<option value="${k}">${T(v.name)}</option>`).join('')}</select></div>
-                <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="mc-centre" checked> ${T`Centre each burn on its TIG`}</label>
+                <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="mc-centre" checked> ${T`Centre each burn on its burn point (TIG = burn point − t<sub>b</sub>/2)`}</label>
                 <button class="btn" id="mc-solve">${T`Show Mission Control’s impulsive solution`}</button>
               </div>
               ${[0, 1].map((i) => `
               <div class="tl-group mc-burn" data-i="${i}">
                 <h4>${T`Burn ${i + 1}`}</h4>
-                <div class="ctl"><label for="mc-when${i}"><span>${T`Ignition (TIG)`}</span></label><select id="mc-when${i}">
+                <div class="ctl"><label for="mc-when${i}"><span>${T`Burn point`}</span></label><select id="mc-when${i}">
                   ${i ? `<option value="off">${T`no second burn`}</option>` : ''}
                   <option value="in">${T`in … minutes`}</option><option value="apo">${T`at next apoapsis`}</option><option value="peri">${T`at next periapsis`}</option></select></div>
                 <div class="mc-fields">
@@ -221,8 +221,8 @@
         <div class="pad-burn">
           <b>${T`PAD · burn ${b.i + 1}`}</b>
           <dl>
-            <dt>TIG</dt><dd>GET ${UI.fmtTime(b.tig)}</dd>
-            <dt>${T`Ignition`}</dt><dd>GET ${UI.fmtTime(b.tStart)}</dd>
+            <dt>TIG</dt><dd>GET ${UI.fmtTime(b.tStart)}</dd>
+            <dt>${T`Burn point`}</dt><dd>GET ${UI.fmtTime(b.tig)}</dd>
             <dt>Δv P / R</dt><dd>${UI.fmt(b.dv * Math.cos(b.attitude), 1)} / ${UI.fmt(b.dv * Math.sin(b.attitude), 1)} m/s</dd>
             <dt>|Δv|</dt><dd>${UI.fmt(b.dv, 1)} m/s</dd>
             <dt>${T`Attitude α`}</dt><dd>${UI.fmt(deg(b.attitude), 1)}°</dd>
@@ -275,9 +275,9 @@
         ctx.strokeStyle = c.burn >= 0 ? K.warn : K.trace; ctx.lineWidth = c.burn >= 0 ? 4 : 2;
         ctx.beginPath(); ctx.moveTo(...P(a.x, a.y)); ctx.lineTo(...P(c.x, c.y)); ctx.stroke();
       }
-      // TIG markers
+      // burn-point markers
       ctx.font = `10px ${K.mono}`; ctx.textAlign = 'left';
-      res.burns.forEach((b) => { const [x, y] = P(b.sPlan[0], b.sPlan[1]); ctx.strokeStyle = K.good; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 6, 0, 7); ctx.stroke(); ctx.fillStyle = K.good; ctx.fillText(`TIG ${b.i + 1}`, x + 9, y - 6); });
+      res.burns.forEach((b) => { const [x, y] = P(b.sPlan[0], b.sPlan[1]); ctx.strokeStyle = K.good; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 6, 0, 7); ctx.stroke(); ctx.fillStyle = K.good; ctx.fillText(`${T`burn point`} ${b.i + 1}`, x + 9, y - 6); });
       // spacecraft and thrust direction
       const [sx, sy] = P(cur.x, cur.y);
       ctx.fillStyle = K.ink; ctx.beginPath(); ctx.arc(sx, sy, 4, 0, 7); ctx.fill();

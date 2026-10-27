@@ -99,7 +99,7 @@
           <div class="prose">
             <p>${T`Air has weight. The pressure at any height is the weight of the air above, spread over one square metre. Climb a little and some of that air is below you: the pressure drops by the weight of the slice you passed. A slice of thickness dh holds a mass ρ dh per square metre, so its weight is ρ g dh:`}</p>
             <div class="eq">\\[ \\frac{dp}{dh} = -\\rho\\,g \\]</div>
-            ${Sym.where(['p', ['h', N`altitude above a reference level (datum)`, 'm'], 'rho', 'g', ['dp/dh', N`the rate at which pressure changes per metre of climb`, 'Pa/m']], N`This is hydrostatic equilibrium: each layer of air is held up by the pressure difference across it. In words: every metre you climb removes ρg pascals. The minus sign says that pressure falls with height.`)}
+            ${Sym.where([['p', N`air pressure at altitude h`, 'Pa'], ['h', N`altitude above a reference level (datum)`, 'm'], 'rho', 'g', ['dp/dh', N`the rate at which pressure changes per metre of climb`, 'Pa/m']], N`This is hydrostatic equilibrium: each layer of air is held up by the pressure difference across it. In words: every metre you climb removes ρg pascals. The minus sign says that pressure falls with height.`)}
             ${Primer.box('derivative', false, 'refresher')}
             <p>${T`A check. At sea level the pressure is 101 325 Pa. Divide by g = 9.81 m/s² and you get 10 330 kg: about ten tonnes of air sit above every square metre of ground.`}</p>
           </div>

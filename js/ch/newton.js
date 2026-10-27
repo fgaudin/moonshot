@@ -75,7 +75,7 @@
             <p>${T`Combine the second law with gravitation for a small body \\(m\\) near a large one \\(M\\). Bate, Mueller and White (§1.3) show that if the bodies are spherically symmetric, no other forces act and \\(m \\ll M\\), the motion of \\(m\\) relative to \\(M\\) obeys`}</p>
             <div class="eq">\\[ \\ddot{\\vec r} + \\frac{\\mu}{r^3}\\,\\vec r = \\vec 0 \\]</div>
             ${Sym.where(['rddot', 'vecr', 'r', 'mu'], N`Read it as: acceleration = μ/r² pointing back toward the planet’s centre. (μ/r³ times the vector r⃗, whose length is r, gives a length of μ/r².)`)}
-            <p>${T`This is the <b>two-body equation of motion</b>, the starting point of Phase 2. A sphere's gravity acts as if all its mass sat at the centre; Newton proved this shell theorem and needed calculus, which he invented, to do it. Real missions add perturbations: Earth's oblateness (\\(J_2\\)), the Sun and Moon, drag, solar pressure. Two-body motion still describes the trajectory to better than a percent most of the time.`}</p>
+            <p>${T`This is the <b>two-body equation of motion</b>, the starting point of Phase 2. A sphere's gravity acts as if all its mass sat at the centre; Newton proved this shell theorem and needed calculus, which he invented, to do it. Real missions add perturbations: Earth's oblateness (its slight bulge at the equator, measured by the coefficient \\(J_2\\)), the Sun and Moon, drag, solar pressure. Over a few orbits two-body motion describes the trajectory well. Over days the perturbations add up, which is why spacecraft are tracked and their orbits corrected.`}</p>
           </div>
         </section>
 

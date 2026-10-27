@@ -63,7 +63,6 @@ I18N.add('de', {
   "Apollo Operations Handbook": "Apollo Operations Handbook",
   "Sine, cosine and arcsine.": "Sinus, Kosinus und Arkussinus.",
   "What the crew actually reads": "Was die Besatzung tatsächlich abliest",
-  "The previous module described orbits by their elements. A spacecraft does not measure elements. The instruments give four things:": "Das vorige Modul beschrieb Bahnen durch ihre Elemente. Ein Raumfahrzeug misst keine Elemente. Die Instrumente liefern vier Größen:",
   "<b>altitude</b> <i>h</i> above the surface, from radar or from the navigation computer;": "die <b>Höhe</b> <i>h</i> über der Oberfläche, von Radar oder vom Navigationscomputer;",
   "<b>speed</b> <i>v</i>, the length of the velocity vector;": "die <b>Geschwindigkeit</b> <i>v</i>, der Betrag des Geschwindigkeitsvektors;",
   "<b>vertical speed</b> <i>ḣ</i>, the rate at which the altitude changes (positive when climbing);": "die <b>Vertikalgeschwindigkeit</b> <i>ḣ</i>, die Änderungsrate der Höhe (positiv beim Steigen);",
@@ -163,4 +162,5 @@ I18N.add('de', {
   "t to apo": "t bis Apo",
   "Working shown: no objective credit for these readings. Take new readings to earn it.": "Rechenweg angezeigt: keine Zielwertung für diese Messwerte. Nimm neue Messwerte auf, um sie zu bekommen.",
   "orbit hidden until you submit": "Bahn verborgen bis zum Absenden",
+  "The previous module described orbits by their elements. A spacecraft does not measure elements. The instruments, read on board or sent to the ground by radio as <b>telemetry</b>, give four things:": "Das vorige Modul beschrieb Bahnen durch ihre Elemente. Ein Raumfahrzeug misst keine Elemente. Die Instrumente, an Bord abgelesen oder per Funk als <b>Telemetrie</b> zum Boden gesendet, liefern vier Größen:",
 });

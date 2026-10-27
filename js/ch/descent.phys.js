@@ -6,14 +6,14 @@
 (function (root) {
   'use strict';
   const C = {
-    mu: 4.9048695e12,      // Moon GM, m³/s²
+    mu: 4.9028e12,         // Moon GM, m³/s² (4 902.80 km³/s²)
     R: 1.7374e6,           // Moon mean radius, m
     g0: 9.80665,
     F: 45040,              // LM descent engine (DPS), full thrust, N
     isp: 311,              // s
   };
   C.hMin = 5000;         // lowest safe periapsis in this lab (terrain clearance), m
-  C.gM = C.mu / (C.R * C.R); // 1.625 m/s²
+  C.gM = C.mu / (C.R * C.R); // 1.624 m/s²
   C.c = C.isp * C.g0;        // effective exhaust velocity, 3 050 m/s
 
   const P = { C };

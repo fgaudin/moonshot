@@ -21,7 +21,7 @@
       img: 's70-35139', id: 'S70-35139', date: '1970-04-13', mission: 'Apollo 13',
       title: N`Every burn was a PAD`,
       alt: N`Mission Control in Houston: rows of consoles, a world map with ground tracks, and an astronaut on the big screen`,
-      story: N`Mission Control during Apollo 13’s fourth TV broadcast. Flight director Gene Kranz, back to the camera, watches Fred Haise on the big screen. Minutes later an oxygen tank exploded. Over the next four days the ground computed every burn the crew needed and read each one up as a PAD: a 30-second descent-engine burn back onto a free return, then a burn of about four and a half minutes two hours after passing the Moon to speed up the return. For a later 14-second correction, with the computer powered down to save electricity, the crew aimed the spacecraft by keeping Earth’s day–night line on a mark in the window and timed the burn by hand.`,
+      story: N`Mission Control during Apollo 13’s fourth TV broadcast. Flight director Gene Kranz, back to the camera, watches Fred Haise on the big screen. Minutes later an oxygen tank exploded. Over the next four days the ground computed every burn the crew needed and read each one up as a PAD: a 35-second descent-engine burn back onto a free return, then a burn of about four and a half minutes two hours after passing the Moon to speed up the return. For a later 14-second correction, with the computer powered down to save electricity, the crew aimed the spacecraft by keeping Earth’s day–night line on a mark in the window and timed the burn by hand.`,
     },
     trench: {
       img: 's69-39593', id: 'S69-39593', date: '1969-07-20', mission: 'Apollo 11',

@@ -23,7 +23,7 @@
       title: N('Sine, cosine, tangent and radians'),
       used: N('Flight-path angles, plane changes, the law of cosines'),
       html: [
-        N`<p>In a right triangle with angle \\(\\theta\\): \\(\\cos\\theta = \\dfrac{\\text{adjacent}}{\\text{hypotenuse}}\\), \\(\\sin\\theta = \\dfrac{\\text{opposite}}{\\text{hypotenuse}}\\), \\(\\tan\\theta = \\dfrac{\\sin\\theta}{\\cos\\theta}\\). On a circle of radius 1, the point at angle \\(\\theta\\) sits at \\((\\cos\\theta, \\sin\\theta)\\). That is why cos and sin <b>split a vector into components</b>: a velocity \\(v\\) at flight-path angle \\(\\phi\\) has a horizontal part \\(v\\cos\\phi\\) and a vertical part \\(v\\sin\\phi\\).</p>`,
+        N`<p>In a right triangle with angle \\(\\theta\\): \\(\\cos\\theta = \\dfrac{\\text{adjacent}}{\\text{hypotenuse}}\\), \\(\\sin\\theta = \\dfrac{\\text{opposite}}{\\text{hypotenuse}}\\), \\(\\tan\\theta = \\dfrac{\\sin\\theta}{\\cos\\theta}\\). On a circle of radius 1, the point at angle \\(\\theta\\) sits at \\((\\cos\\theta, \\sin\\theta)\\). That is why cos and sin <b>split a vector into components</b>: a velocity \\(v\\) at flight-path angle \\(\\gamma\\) has a horizontal part \\(v\\cos\\gamma\\) and a vertical part \\(v\\sin\\gamma\\).</p>`,
         N`<p><b>Radians.</b> An angle in radians is the arc length on a circle of radius 1. A full turn is \\(2\\pi\\) rad = 360°, so \\(\\pi\\) rad = 180° and 1 rad ≈ 57.3°. Physics formulas expect radians; calculators must be in the right mode.</p>`,
         N`<p><b>Law of cosines</b> (Al-Kashi): in any triangle with sides \\(a\\), \\(b\\) and the angle \\(\\gamma\\) between them, the third side is</p>`,
         R`\[ c^2 = a^2 + b^2 - 2ab\cos\gamma \]`,

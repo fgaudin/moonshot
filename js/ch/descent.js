@@ -122,8 +122,8 @@
           <div class="prose">
             <p>${T`The lander cannot brake from a 110 km circular orbit: the braking burn would start high above the terrain. The plan is to drop the periapsis first. A short <b>descent orbit insertion</b> (DOI) burn, retrograde, on the side of the Moon opposite the site, turns the circle into an ellipse whose low point is about 15 km above the surface. Apollo used a periapsis of about that height. The burn is made at the apoapsis of the new ellipse, so vis-viva gives the new speed there:`}</p>
             <div class="eq">\\[ \\Delta v_{DOI} = v_c - v_a,\\qquad v_c = \\sqrt{\\frac{\\mu}{r_a}},\\qquad v_a = \\sqrt{\\mu\\left(\\frac{2}{r_a} - \\frac{1}{a}\\right)},\\qquad a = \\frac{r_a + r_p}{2} \\]</div>
-            ${Sym.where(['mu', ['r_a', N`radius of the circular orbit (R☾ + 110 km) = apoapsis of the new ellipse`, 'm'], ['r_p', N`radius of the new periapsis (R☾ + 15 km)`, 'm'], 'a', ['v_c,\\ v_a', N`circular speed, and speed at the apoapsis of the ellipse`, 'm/s']], N`The lunar values are μ = 4.9049 × 10¹² m³/s² and R☾ = 1 737.4 km.`)}
-            <p>${T`For 110 km and 15 km: r<sub>a</sub> = 1 847.4 km, r<sub>p</sub> = 1 752.4 km, v<sub>c</sub> = 1 629.4 m/s, v<sub>a</sub> = 1 607.8 m/s. So Δv = <b>21.6 m/s</b>. It is a small difference of two large speeds, so carry six digits. A mistake of 1 m/s moves the periapsis by about 4 km.`}</p>
+            ${Sym.where(['mu', ['r_a', N`radius of the circular orbit (R☾ + 110 km) = apoapsis of the new ellipse`, 'm'], ['r_p', N`radius of the new periapsis (R☾ + 15 km)`, 'm'], 'a', ['v_c,\\ v_a', N`circular speed, and speed at the apoapsis of the ellipse`, 'm/s']], N`The lunar values are μ = 4.9028 × 10¹² m³/s² and R☾ = 1 737.4 km.`)}
+            <p>${T`For 110 km and 15 km: r<sub>a</sub> = 1 847.4 km, r<sub>p</sub> = 1 752.4 km, v<sub>c</sub> = 1 629.1 m/s, v<sub>a</sub> = 1 607.4 m/s. So Δv = <b>21.6 m/s</b>. It is a small difference of two large speeds, so carry six digits. A mistake of 1 m/s moves the periapsis by about 4 km.`}</p>
             <p>${T`The lander coasts half an orbit, about 57 minutes, to periapsis. There its speed is 1 695 m/s (the vis-viva speed at r<sub>p</sub>), nearly horizontal, at 15 km altitude. That is the place and time of <b>powered descent initiation</b> (PDI).`}</p>
           </div>
         </section>
@@ -166,7 +166,7 @@
             <p>${T`The propellant that remains at the end of the plan is the reserve. A good way to express it is as time: how long could the lander hover? To hover, the thrust equals the weight, F = m g☾. The flow rate is F/c, so:`}</p>
             <div class="eq">\\[ \\dot m = \\frac{m\\,g_☾}{c},\\qquad t_{hover} = \\frac{m_{res}}{\\dot m} = \\frac{m_{res}\\,I_{sp}\\,g_0}{m\\,g_☾} \\]</div>
             ${Sym.where([['m_{res}', N`propellant left`, 'kg'], ['m', N`mass of the lander now`, 'kg'], 'isp', ['g_0', N`standard gravity, 9.80665`, 'm/s²'], 'gM'], N`This linear form is slightly pessimistic, because the lander gets lighter while it hovers. The error is a few percent for a reserve of 300 kg.`)}
-            <p>${T`Example: 200 kg of propellant, a lander of 7 500 kg. Then t = 200 × 3 050/(7 500 × 1.625) = 50 s. On Apollo 11 Mission Control counted the remaining hover time down aloud, with calls at “60 seconds” and “30 seconds”, so that the crew knew how long they had to choose a spot before a land-or-abort decision. This module uses 60 s as the threshold.`}</p>
+            <p>${T`Example: 200 kg of propellant, a lander of 7 500 kg. Then t = 200 × 3 050/(7 500 × 1.624) = 50 s. On Apollo 11 Mission Control counted the remaining hover time down aloud, with calls at “60 seconds” and “30 seconds”, so that the crew knew how long they had to choose a spot before a land-or-abort decision. This module uses 60 s as the threshold.`}</p>
           </div>
         </section>
 

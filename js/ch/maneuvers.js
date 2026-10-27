@@ -40,7 +40,7 @@
             <div class="eq">\\[ \\Delta v = \\sqrt{v_i^2 + v_f^2 - 2\\,v_i v_f\\cos\\Delta i} \\]</div>
             ${Sym.where(['dv', 'vi', 'vf', 'di'], N`The law of cosines (Al-Kashi in French schools) applied to the triangle of the two velocity vectors.`)}
             ${Primer.box('trig', false, 'refresher')}
-            <p>${T`Geostationary missions combine the final circularization with the plane change at apogee for exactly this reason. Try it in the lab.`}</p>
+            <p>${T`Geostationary missions combine the final circularization with the plane change at apogee for exactly this reason. Try it in the lab. Module ${Progress.code('planes')} returns to plane changes in full: nodes, where to burn, the PAD components and the launch azimuth.`}</p>
           </div>
         </section>
 
@@ -64,17 +64,15 @@
         <section class="section">
           <h2><span class="idx">5.4</span>${T`When Hohmann is not the cheapest`}</h2>
           <div class="prose">
-            <p>${T`For \\(r_2/r_1 > 11.94\\) a <b>bi-elliptic</b> transfer is cheaper. It burns out to a far apoapsis \\(r_b > r_2\\), raises its periapsis there for almost nothing, then falls back and circularizes at \\(r_2\\). The flight takes much longer. The lab shows the bi-elliptic cost, with \\(r_b = 3 r_2\\), whenever the ratio is large enough. In practice the time penalty usually rules it out.`}</p>
+            <p>${T`Above \\(r_2/r_1 \\approx 15.58\\) a <b>bi-elliptic</b> transfer is cheaper than a Hohmann transfer for any far apoapsis \\(r_b > r_2\\). Between 11.94 and 15.58 it is cheaper only if \\(r_b\\) is far enough out. It burns out to a far apoapsis \\(r_b > r_2\\), raises its periapsis there for almost nothing, then falls back and circularizes at \\(r_2\\). The flight takes much longer. The lab shows the bi-elliptic cost, with \\(r_b = 3 r_2\\), whenever the ratio is large enough. In practice the time penalty usually rules it out.`}</p>
           </div>
         </section>
 
         <section class="section">
           <h2><span class="idx">5.5</span>${T`Rendezvous: lunar orbit rendezvous`}</h2>
           <div class="prose">
-            <p>${T`A chaser in a lower orbit moves faster in angle than its target, so it gains on it. To meet with a Hohmann transfer, the chaser must start when the target is ahead by the <b>lead angle</b>. The target then travels \\(\\omega_{tgt}\\,\\mathrm{TOF}\\) while the chaser travels 180°:`}</p>
-            <div class="eq">\\[ \\alpha_{lead} = \\pi - \\omega_{tgt}\\,\\mathrm{TOF}, \\qquad \\omega_{tgt} = \\sqrt{\\mu / r_2^3} \\]</div>
-            ${Sym.where(['alead', 'pi', 'wtgt', 'tof', 'r2', 'mu'])}
-            <p>${T`If the geometry is wrong, wait. The relative angle changes at \\(\\omega_{chaser} - \\omega_{tgt}\\) per second, giving a <b>synodic period</b> between opportunities. To catch up with a target ahead in the <i>same</i> orbit, burn retrograde, drop into a lower and faster phasing orbit, and come back up. In orbit you slow down to speed up.`}</p>
+            <p>${T`A chaser in a lower orbit moves faster in angle than its target, so it gains on it. To meet with a Hohmann transfer, the chaser must start when the target is ahead by the right angle, the <b>lead angle</b>: during the transfer the target moves on while the chaser travels 180°. The lab shows the lead angle for each transfer; module ${Progress.code('timing')} derives it, as the phase angle, and turns it into an ignition time.`}</p>
+            <p>${T`If the geometry is wrong, wait. The relative angle changes at \\(\\omega_{chaser} - \\omega_{tgt}\\) per second, giving a <b>synodic period</b> between opportunities: the time until the same alignment comes round again (module ${Progress.code('timing')}). To catch up with a target ahead in the <i>same</i> orbit, burn <b>retrograde</b> (against the direction of flight; <b>prograde</b> is along it), drop into a lower and faster phasing orbit, and come back up. In orbit you slow down to speed up.`}</p>
             <div class="callout history"><b>${T`Houbolt’s gamble`}</b>${T`In 1961 NASA engineer John Houbolt argued, against fierce opposition, that the CSM should stay in lunar orbit while a light, specialized lander went down and came back up to rendezvous. Lunar orbit rendezvous cut the mass to be landed and relaunched so much that a single Saturn V could do the job. No one had yet performed a rendezvous in space. Gemini 6A and 7 did it in December 1965 and proved it possible. Apollo 11’s ascent stage met Columbia about 3.5 hours after leaving Tranquility Base, using the coelliptic sequence (CSI, CDH, TPI) that Buzz Aldrin had helped develop for his doctoral thesis.`}</div>
           </div>
         </section>
@@ -147,7 +145,7 @@
       plan = { r1, r2, at, e: Math.abs(r2 - r1) / (r1 + r2), v1, v2, vtp, vta, dv1, dv2, dvp, tof, w1, w2, lead, syn, down, bi, di };
       t = 0;
       const total = dv1 + dv2 + dvp;
-      if (touched && body === BODY.earth && altOf(v['mv-h1']) <= 400e3 && Math.abs(altOf(v['mv-h2']) - 35786e3) < 500e3 && v['mv-di'] >= 28 && total < 4300) Progress.done('maneuvers', 'geo');
+      if (touched && body === BODY.earth && altOf(v['mv-h1']) <= 400e3 && Math.abs(altOf(v['mv-h2']) - 35786e3) < 500e3 && v['mv-di'] >= 28 && total < 4400) Progress.done('maneuvers', 'geo');
       if (body === BODY.moon && r2 > r1) Progress.done('maneuvers', 'lor');
       root.querySelector('#mv-ro').innerHTML = `
         <dt>${T`v₁ circular`}</dt><dd>${UI.fmt(v1 / 1000, 3)} km/s</dd>

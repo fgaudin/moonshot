@@ -21,7 +21,7 @@
       briefing: N`In flight, Houston will read you numbers like “one-eleven by three-twelve”. A navigator must see the orbit in those numbers: its size, its shape, where you are on it and when you will be somewhere else. This module teaches you to.`,
       objectives: [
         { id: 'circle', text: N`Design a circular orbit (eccentricity below 0.01) by hand` },
-        { id: 'high', text: N`Design an orbit whose apogee reaches geostationary altitude (35 786 km)` },
+        { id: 'high', text: N`Design an orbit whose apogee reaches geostationary altitude (35 786 km, where a circular orbit keeps pace with the Earth’s rotation)` },
         { id: 'qual', text: N`Qualify: answer 2 orbit problems correctly` },
       ],
       debrief: N`You read orbits like a flight dynamics officer now, {name}. Time to meet the machine that puts you on one.`,
@@ -51,7 +51,7 @@
       name: N`Changing Orbits`, topic: 'maneuvers', glyph: 'transfer',
       briefing: N`In orbit, intuition lies. Speed up and you end up slower; to catch someone ahead, you brake. Your lunar module pilot will one day have to find the command module in lunar orbit with no second chance. Plan your transfers carefully, {name}.`,
       objectives: [
-        { id: 'geo', text: N`Plan LEO → GEO including the 28.5° plane change for under 4.3 km/s` },
+        { id: 'geo', text: N`Plan a transfer from low Earth orbit (LEO) to geostationary orbit (GEO) including the 28.5° plane change for under 4.4 km/s` },
         { id: 'lor', text: N`Plan the LM ascent-stage rendezvous with the CSM in lunar orbit` },
         { id: 'qual', text: N`Qualify: answer 2 manoeuvre problems correctly` },
       ],
