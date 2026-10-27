@@ -124,7 +124,39 @@
             <div class="eq">\\[ e = 1 + \\frac{r_p\\,v_\\infty^2}{\\mu_☾}, \\qquad \\delta = 2\\arcsin\\frac{1}{e} \\]</div>
             ${Sym.where(['e', ['r_p', N`periselene radius, from the Moon’s centre`, 'm'], 'vinf', 'muM', ['\\delta', N`turn angle: how far the velocity relative to the Moon is rotated during the flyby`, N`rad or °`]], N`A close pass (small r_p) gives a small e and a large turn; a fast or distant pass barely bends.`)}
             <p>${T`Relative to the Moon, the spacecraft leaves exactly as fast as it arrived: only the direction has turned, by δ. Back in Earth’s frame, add the Moon’s velocity to that turned vector and you get a new speed and direction. That is the gravity assist. A free return is the flyby whose turn puts the new Earth orbit’s perigee inside the entry corridor.`}</p>
-            <p>${T`Now compare the plan with reality in the lab. For the preset free return, patched conics predicts a periselene near 890 km and a return perigee thousands of kilometres below Earth’s surface; the three-body integration gives 290 km and a 40 km perigee. The planning model gets the Δv and the timing right but the precise geometry wrong, because near the boundary of the sphere both bodies pull comparably hard, which the model ignores. Apollo’s planners used patched conics for the first design, refined the trajectory by numerical integration, and midcourse corrections removed what was left.`}</p>
+            <p>${T`Now compare the plan with reality in the lab. For the preset free return, patched conics predicts a periselene near 885 km and a return perigee thousands of kilometres below Earth’s surface; the three-body integration gives 290 km and a 40 km perigee. The planning model gets the Δv and the timing right but the precise geometry wrong, because near the boundary of the sphere both bodies pull comparably hard, which the model ignores. Apollo’s planners used patched conics for the first design, refined the trajectory by numerical integration, and midcourse corrections removed what was left.`}</p>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2><span class="idx">8.7</span>${T`Aiming for a periselene by hand`}</h2>
+          <div class="prose">
+            <p>${T`A transfer aimed at the Moon’s centre hits the Moon. To pass at a chosen periselene you must aim to one side of the centre. The sideways distance between the Moon’s centre and the straight line the spacecraft would follow if the Moon had no gravity is the <b>impact parameter</b> \\(b\\), the aim offset. This section works in two dimensions: the Moon on a circular orbit, the transfer in the same plane.`}</p>
+            <p>${T`Two conservation laws give \\(b\\). Far from the Moon the spacecraft moves at \\(v_\\infty\\) along a line that misses the centre by \\(b\\), so its angular momentum about the Moon is \\(b\\,v_\\infty\\) per kilogram. At periselene the velocity is perpendicular to the radius, so it is \\(r_p\\,v_p\\). Angular momentum is conserved, so the two are equal. Energy is conserved as well and gives \\(v_p\\) (section ${App.sec('moon', 5)}). Put them together:`}</p>
+            <div class="eq">\\[ b\\,v_\\infty = r_p\\,v_p, \\qquad v_p^2 = v_\\infty^2 + \\frac{2\\mu_☾}{r_p} \\qquad\\Longrightarrow\\qquad b = r_p\\sqrt{1 + \\frac{2\\mu_☾}{r_p\\,v_\\infty^2}} \\]</div>
+            ${Sym.where([['b', N`impact parameter: distance from the Moon’s centre to the arrival line, before the Moon’s gravity bends it`, 'm'], 'rpM', 'vinf', 'vp', 'muM'], N`The square root is larger than 1. Gravity pulls the path inward, so you must aim wider than the periselene you want. Put \\(r_p = R_☾\\) and the same formula gives the widest aim that still hits the Moon.`)}
+            <p>${T`Take the lab’s scenario <i>Free return, no midcourse correction</i>, in the patched-conic model: \\(v_\\infty = 1\\,038\\) m/s. A periselene altitude of 110 km means \\(r_p = 1\\,737.4 + 110 = 1\\,847.4\\) km, with \\(\\mu_☾ = 4.9028\\times10^{12}\\) m³/s². Then \\(2\\mu_☾/(r_p v_\\infty^2) = 4.92\\) and \\(b = 1\\,847.4\\times\\sqrt{5.92} = 4\\,496\\) km. The same transfer, left alone, passes at 883 km and is aimed 5 541 km from the centre. Any aim with \\(b\\) below 4 339 km hits the Moon, which is 2.5 lunar radii. In patched-conic mode the lab prints both numbers as <i>Aim offset</i> and <i>Impact if b below</i>.`}</p>
+            <p>${T`Now turn a distance into a time. Look from the Moon: it stands still, and the transfer comes in along a line with velocity \\(v_\\infty\\). If the whole transfer arrives a time \\(\\Delta t\\) later, the Moon has moved \\(v_☾\\,\\Delta t\\) further along its orbit, so the line has moved by that distance relative to the Moon. A shift along the line changes nothing. Only the part across the line changes the aim offset, and that part is \\(v_☾\\,\\Delta t\\,\\sin\\theta\\), where \\(\\theta\\) is the angle between the Moon’s velocity and \\(v_\\infty\\), the angle of section ${App.sec('moon', 6)}:`}</p>
+            <div class="eq">\\[ \\Delta b \\approx v_☾\\,\\Delta t\\,\\sin\\theta \\qquad\\Longleftrightarrow\\qquad \\Delta t \\approx \\frac{\\Delta b}{v_☾\\,\\sin\\theta} \\]</div>
+            ${Sym.where([['\\Delta b', N`change of the aim offset you want`, 'm'], ['\\Delta t', N`how much later the transfer reaches the Moon’s orbit, relative to the Moon’s schedule`, 's'], ['v_☾', N`the Moon’s orbital speed, 1.02 km/s`, 'm/s'], ['\\theta', N`angle between the Moon’s velocity and \\(v_\\infty\\)`, N`rad or °`]], N`Timing does nothing when \\(v_\\infty\\) lies along the Moon’s path (sin θ = 0) and works best when it lies across it. For the preset transfer, arriving later makes b smaller.`)}
+            <p>${T`In the preset, \\(\\theta = 129^\\circ\\), so \\(\\sin\\theta = 0.78\\), and \\(v_☾ = 1.0245\\) km/s. To go from 5 541 km to 4 496 km, \\(\\Delta b = -1\\,045\\) km, so \\(\\Delta t = 1\\,045/(1.0245\\times0.78) = 1\\,307\\) s: arrive 22 minutes late, while the Moon covers 1 339 km.`}</p>
+            <p>${T`Nobody delays the Moon. You move the TLI point instead. Moving the burn by \\(\\delta\\varphi\\) along the parking orbit turns the whole transfer by \\(\\delta\\varphi\\) about Earth. At the Moon’s distance \\(D\\) that is a sideways shift \\(D\\,\\delta\\varphi\\), the same as the Moon being \\(v_☾\\Delta t\\) away, so \\(\\delta\\varphi = \\omega_☾\\,\\Delta t\\), with \\(\\omega_☾ = v_☾/D = 2.66\\times10^{-6}\\) rad/s. Here \\(\\delta\\varphi = 0.20^\\circ\\). In a 185 km parking orbit the spacecraft covers 0.068° per second, so the burn must start <b>2.9 seconds earlier</b>. Three seconds of burn timing move the periselene by 700 km. That is why TLI windows are counted in seconds.`}</p>
+            <p>${T`Check this against the patched-conic simulator. Moving the TLI point by −0.200° gives a periselene of 201 km, not 110 km. The straight-line picture is a first estimate: Earth’s pull curves the path, and the geometry changes a little as you shift it. The simulator moves \\(b\\) by 4 845 km per degree of TLI point where the formula gives 5 234 km, about 8% more. A second tool removes that error, as the table below shows.`}</p>
+            <p>${T`<b>Which side?</b> The Moon’s pull turns \\(v_\\infty\\) toward the Moon, and in Earth’s frame the new velocity is the Moon’s velocity plus the turned vector. Pass on the side the Moon is moving toward, ahead of it, and the pull on the spacecraft has a component backward along the Moon’s orbit. The spacecraft loses energy relative to Earth and falls back: this is the free-return side, the side Apollo flew. Pass behind the Moon and the pull is forward: the spacecraft gains energy and the Moon throws it outward. The preset passes ahead of the Moon. In the simulator, a TLI point 1.18° earlier (17 seconds of burn timing) brings \\(b\\) to zero and hits the Moon. At 3° earlier the line is on the other side at 3 678 km periselene, and the spacecraft leaves on an escape path from Earth.`}</p>
+            <p>${T`<b>Midcourse correction by hand.</b> A burn does the same job as a timing change. A velocity change \\(\\delta v\\) applied a time \\(t_{go}\\) before periselene displaces the spacecraft by about \\(\\delta v\\,t_{go}\\), the error growth of module ${Progress.code('mcc')}. Again only the part across \\(v_\\infty\\) counts. Use the time to periselene, not the time to the edge of the sphere: the correction keeps tilting the line while the spacecraft crosses the sphere, 15 hours in this transfer.`}</p>
+            <div class="eq">\\[ \\delta b \\approx \\delta v\\,t_{go}\\,\\sin\\alpha \\qquad\\Longleftrightarrow\\qquad \\delta v \\approx \\frac{\\delta b}{t_{go}\\,\\sin\\alpha}, \\qquad \\sin\\alpha = \\frac{v_☾\\,\\sin\\theta}{v_{sc}} \\]</div>
+            ${Sym.where([['\\delta b', N`change of the aim offset you want`, 'm'], ['\\delta v', N`size of the correction, a burn along the direction of flight`, 'm/s'], ['t_{go}', N`time from the burn to periselene`, 's'], ['\\alpha', N`angle between the burn direction and \\(v_\\infty\\)`, N`rad or °`], ['v_{sc}', N`spacecraft speed relative to Earth near the Moon`, 'm/s']], N`The last relation is the law of sines in the velocity triangle \\(\\vec v_{sc} = \\vec v_\\infty + \\vec v_☾\\): the part of \\(\\vec v_{sc}\\) across \\(\\vec v_\\infty\\) equals the part of \\(\\vec v_☾\\) across it.`)}
+            <p>${T`Take the lab’s MCC time, 26.7 h after launch. Periselene comes at 70.8 h, so \\(t_{go} = 44.1\\) h = 158 700 s. Near the Moon \\(v_{sc} = 923\\) m/s, so \\(\\sin\\alpha = 1\\,024.5\\times0.78/923 = 0.866\\). To change \\(b\\) by −1 045 km: \\(\\delta v = -1\\,045\\,000/(158\\,700\\times0.866) = -7.6\\) m/s. Each metre per second is worth 137 km of aim offset.`}</p>
+            <p>${T`<b>Measure the sensitivity.</b> Flight controllers did not trust a lever arm worked out by hand. They ran the trajectory twice with two nearby burns and took the difference. In the patched-conic simulator, +1 m/s at 26.7 h gives \\(b = 5\\,692\\) km and −1 m/s gives 5 390 km. The sensitivity is (5 692 − 5 390)/2 = 151 km of aim offset per m/s, or 119 km of periselene altitude per m/s. It is 10% above the hand value, which is the size of the error left by the straight-line picture. Then correct linearly: \\(\\delta v = -1\\,045/151 = -6.9\\) m/s. Fly it, measure again, and correct the rest. The burn also changes \\(v_\\infty\\) slightly, so recompute the \\(b\\) you need with the new \\(v_\\infty\\) each pass. The same two-run trick works for the TLI point.`}</p>
+          </div>
+          <div style="overflow-x:auto"><table class="data"><thead><tr><th>${T`Method`}</th><th>${T`TLI point shift`}</th><th>${T`Periselene altitude`}</th><th>${T`MCC at 26.7 h`}</th><th>${T`Periselene altitude`}</th></tr></thead><tbody>
+            <tr><td>${T`Hand geometry`}</td><td>−0.200°</td><td>201 km</td><td>−7.60 m/s</td><td>19 km</td></tr>
+            <tr><td>${T`Measured sensitivity, first pass`}</td><td>−0.216°</td><td>146 km</td><td>−6.91 m/s</td><td>94 km</td></tr>
+            <tr><td>${T`Second pass`}</td><td>−0.226°</td><td>110 km</td><td>−6.76 m/s</td><td>110 km</td></tr>
+          </tbody></table></div>
+          <div class="prose">
+            <p>${T`Every row of the table is a run of the patched-conic simulator of the lab, with the TLI point or the MCC changed alone. The target is a 110 km periselene altitude, and the starting point is 883 km.`}</p>
+            <p>${T`What this tells you about the model. In a pure patched-conic world the hyperbola relation for \\(b\\) is exact. The timing and lever-arm relations are first-order and good to about 10% here, and measuring the sensitivity removes what is left in two passes. In the real three-body Earth–Moon system the patched-conic model is itself a first guess: for the lab’s preset the plan says 883 km and the three-body integration gives 290 km. Use the hand methods to get close, then correct the real trajectory with the same measured-sensitivity method, using the better model and the tracking data.`}</p>
           </div>
         </section>
 
@@ -138,6 +170,36 @@
       Practice.embed(page.querySelector('#practice-slot'), 'moon', 3);
     },
   });
+
+  // practice for the section "Aiming for a periselene by hand" (same topic and label as js/practice.js)
+  const R = String.raw, MUM = 4902.8, RMOON = 1737.4, VMOON = 1.0245;
+  const rnd = (a, b, step = 1) => a + Math.round(Math.random() * ((b - a) / step)) * step;
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const fm = (x, d = 3) => UI.fmt(x, d);
+  const degr = Math.PI / 180;
+  Practice.register('moon', N`Lunar trajectories`, [
+    { title: N`Aim offset for a periselene`, make() {
+      const vinf = rnd(0.8, 1.1, 0.01), h = pick([60, 110, 150, 300]);
+      const rp = RMOON + h, k = 2 * MUM / (rp * vinf * vinf), b = rp * Math.sqrt(1 + k);
+      return { q: T`A spacecraft arrives at the Moon with v∞ = <b>${fm(vinf, 2)} km/s</b>. You want it to pass at a periselene altitude of <b>${h} km</b>. How far from the Moon’s centre must the arrival line be aimed (the impact parameter b)?`, answer: b, unit: 'km',
+        hint: T`Radius first: r_p = R☾ + altitude. Then b = r_p √(1 + 2μ☾/(r_p v∞²)), with μ☾ = 4902.8 km³/s².`,
+        sol: R`\[ r_p = ${fm(RMOON, 1)} + ${h} = ${fm(rp, 1)}\ \mathrm{km},\qquad \frac{2\mu_☾}{r_p v_\infty^2} = \frac{2\times 4902.8}{${fm(rp, 1)}\times ${fm(vinf, 2)}^2} = ${fm(k, 3)} \] \[ b = r_p\sqrt{1 + \frac{2\mu_☾}{r_p v_\infty^2}} = ${fm(rp, 1)}\times\sqrt{${fm(1 + k, 3)}} = ${fm(b, 0)}\ \mathrm{km} \]` + `<p>${T`You aim wider than the periselene you want, because the Moon’s gravity pulls the path inward.`}</p>` };
+    } },
+    { title: N`Timing shift for a given miss`, make() {
+      const db = pick([200, 400, 600, 800, 1000, 1200]), th = pick([40, 60, 90, 120, 140]);
+      const dt = db / (VMOON * Math.sin(th * degr));
+      return { q: T`The Moon moves at 1.0245 km/s. The arrival velocity v∞ makes an angle of <b>${th}°</b> with the Moon’s velocity. By how many minutes must the transfer arrive later (or earlier) to move the aim line by <b>${db} km</b> across the line?`, answer: dt / 60, unit: 'min',
+        hint: T`The Moon moves v☾Δt in that time, and only the part across v∞ counts: Δb = v☾ Δt sin θ.`,
+        sol: R`\[ \Delta t = \frac{\Delta b}{v_☾\sin\theta} = \frac{${db}}{1.0245\times\sin ${th}^\circ} = ${fm(dt, 0)}\ \mathrm{s} = ${fm(dt / 60, 1)}\ \mathrm{min} \]` + `<p>${T`As a shift of the TLI point this is ${fm(2.665e-6 * dt / degr, 3)}°, which a spacecraft in a 185 km parking orbit covers in ${fm(2.665e-6 * dt / degr / 0.06803, 1)} s.`}</p>` };
+    } },
+    { title: N`Midcourse correction for a miss`, make() {
+      const db = pick([40, 80, 120, 200, 300]), tgo = pick([12, 24, 36, 48]), al = pick([50, 60, 75, 90]);
+      const dv = db * 1000 / (tgo * 3600 * Math.sin(al * degr));
+      return { q: T`Tracking shows the spacecraft will pass <b>${db} km</b> from where you want it at periselene. A burn along the direction of flight, <b>${tgo} h</b> before periselene, makes an angle of <b>${al}°</b> with v∞. What Δv corrects the miss?`, answer: dv, unit: 'm/s',
+        hint: T`A burn δv displaces the spacecraft by about δv·t_go, and only the part across v∞ counts: δb = δv t_go sin α.`,
+        sol: R`\[ \delta v = \frac{\delta b}{t_{go}\sin\alpha} = \frac{${db}\,000}{${fm(tgo * 3600, 0)}\times\sin ${al}^\circ} = ${fm(dv, 2)}\ \mathrm{m/s} \]` + `<p>${T`The same burn made later would need more: with a shorter lever arm, each m/s moves the periselene less.`}</p>` };
+    } },
+  ], []);
 
   function mountTLI(root) {
     let model = 'three', other = null;
@@ -257,6 +319,8 @@
           <dt>${T`Hyperbola eccentricity`}</dt><dd>${UI.fmt(c.e, 3)}</dd>
           <dt>${T`Turn angle δ`}</dt><dd>${c.turn != null ? UI.fmt(c.turn * 180 / Math.PI, 1) + '°' : '—'}</dd>
           <dt>${T`Predicted periselene`}</dt><dd>${c.periAlt < 0 ? T`impact` : km(c.periAlt)}</dd>
+          <dt>${T`Aim offset b`}</dt><dd>${UI.fmt(c.rp * Math.sqrt(1 + 2 * C.muM / (c.rp * c.vinf * c.vinf)) / 1000, 0)} km</dd>
+          <dt>${T`Impact if b below`}</dt><dd>${UI.fmt(C.RM * Math.sqrt(1 + 2 * C.muM / (C.RM * c.vinf * c.vinf)) / 1000, 0)} km</dd>
           <dt>${T`Predicted return perigee`}</dt><dd>${km(pc.retAlt)}</dd>`;
       } else if (pc) extra += `<dt class="sub">${T`Patched conics (plan)`}</dt><dt>${T`Moon's SOI`}</dt><dd>${T`never entered`}</dd>`;
       if (tb && pc) extra += `<dt class="sub">${T`Three-body (reality)`}</dt>

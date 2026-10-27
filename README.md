@@ -40,7 +40,7 @@ photographs (public domain, credited and linked to images.nasa.gov) tie each mod
 | Mission Control | Planning a Burn | Maneuver computer: Δv in the prograde/radial frame, burn time, finite burns, PADs |
 | Timing | When to Burn | Phasing clock: phase angle, wait time, TIG on the mission clock |
 | 3D orbits | Plane Changes | Rotatable 3D globe: plane changes as PAD components, combined burns, launch azimuth |
-| Docking | Docking | Docking simulator in the target's orbital frame (Clohessy–Wiltshire), COAS sight, three scenarios |
+| Docking | Docking | Docking simulator in the target's orbital frame (Clohessy–Wiltshire), COAS sight, braking gates from 2 km, four scenarios |
 | TLI → LOI | Going to the Moon | Earth–Moon three-body simulator vs patched conics, free return, MCC solver, LOI |
 | Descent planning | Planning a Powered Descent | Descent planner: DOI, ignition point, braking throttle, hover margin |
 | Descent | Landing on the Moon | Lunar lander with real LM numbers and P66 mode |
@@ -48,7 +48,7 @@ photographs (public domain, credited and linked to images.nasa.gov) tie each mod
 | Entry | Coming Home | Entry corridor explorer with a live corridor map |
 | Capstone | Mission Control | Mission planning desk: Δv budget with margins and RSS dispersions, printable PADs, readback drill, aborts |
 | Ground school | Math Toolkit | Twelve refreshers with interactive widgets |
-| Simulator room | Practice | 94 problem generators with worked solutions, 48 concept questions |
+| Simulator room | Practice | 104 problem generators with worked solutions, 48 concept questions |
 
 ## Languages
 

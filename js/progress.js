@@ -78,6 +78,7 @@
         { id: 'paradox', text: N`Live the Gemini 4 paradox: thrust straight at a target ahead and miss it` },
         { id: 'lunar', text: N`Dock with the ascent stage in lunar orbit` },
         { id: 'blind', text: N`Real mode: dock using only the COAS and the numbers for the last 30 m` },
+        { id: 'terminal', text: N`Terminal phase: fly from 2 km to 100 m without exceeding the braking gates` },
         { id: 'qual', text: N`Qualify: answer 2 docking problems correctly` },
       ],
       debrief: N`Hard dock, {name}. You can now join two spacecraft into one. Next: the long coast to the Moon.`,
@@ -175,7 +176,8 @@
 
   /* ---------- patches (generated SVG) ---------- */
   const GLYPHS = {
-    cannon: '<circle cx="0" cy="6" r="12" class="pg-fill"/><path d="M0 -6 C 14 -6 22 4 20 14 C 18 26 -18 26 -20 14 C -22 2 -12 -6 0 -6" class="pg-line"/><circle cx="0" cy="-6" r="2.4" class="pg-dot"/>',
+    // Newton's cannon: a mountain on a curved planet; the cannonball lands far round, almost past the horizon
+    cannon: '<g transform="translate(0,-5) scale(1.3)"><circle cx="0" cy="12" r="12" class="pg-fill"/><path d="M-4.5 1.2 L0 -7 L4.5 1.2 Z" class="pg-light"/><path d="M0 -7 C 14 -9 21 4 11.6 15.1" class="pg-line pg-acc" style="stroke-width:1.8"/><circle cx="15.3" cy="8.3" r="2.3" class="pg-dot"/></g>',
     ellipse: '<ellipse cx="0" cy="4" rx="22" ry="13" class="pg-line"/><circle cx="-11" cy="4" r="5" class="pg-fill"/><circle cx="20" cy="-3" r="2.4" class="pg-dot"/>',
     rocket: '<path d="M0 -20 C 6 -12 6 4 5 14 L -5 14 C -6 4 -6 -12 0 -20 Z" class="pg-fill"/><path d="M-5 6 L-10 16 L-5 14 M5 6 L10 16 L5 14" class="pg-line"/><path d="M-3 16 L0 25 L3 16" class="pg-dot"/>',
     ascent: '<path d="M-24 22 A 60 60 0 0 1 24 22" class="pg-line" opacity=".4"/><path d="M-14 18 C -12 0 0 -12 22 -14" class="pg-line"/><circle cx="22" cy="-14" r="2.6" class="pg-dot"/>',
@@ -204,12 +206,10 @@
   };
   function patchSVG(mod, earned, size = 96) {
     const m = MODULES[mod];
-    const idx = ORDER.indexOf(mod) + 1;
     return `<svg class="patch ${earned ? 'earned' : 'locked'}" viewBox="-50 -50 100 100" width="${size}" height="${size}" role="img" aria-label="${earned ? T`${m.code} ${T(m.name)} patch` : T`${m.code} ${T(m.name)} patch (not yet earned)`}">
       <circle r="47" class="pt-bg"/><circle r="47" class="pt-ring"/><circle r="40" class="pt-inner"/>
-      <g transform="translate(0,-4) scale(1.05)">${GLYPHS[m.glyph]}</g>
+      <g transform="translate(0,2) scale(1.05)">${GLYPHS[m.glyph]}</g>
       <text y="-27" class="pt-code">${m.code}</text>
-      <text y="36" class="pt-num">${'★'.repeat(Math.min(3, Math.ceil(idx / 3)))}</text>
     </svg>`;
   }
   Progress.patchSVG = patchSVG;

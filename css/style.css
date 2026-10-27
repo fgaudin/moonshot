@@ -311,18 +311,19 @@ table.data input { width: 6.5rem; text-align: right; padding: .35rem .4rem; }
 .patch .pt-ring { fill: none; stroke: var(--line); stroke-width: 3; stroke-dasharray: 4 4; }
 .patch .pt-inner { fill: none; stroke: var(--line); stroke-width: 1; }
 .patch .pt-code { fill: var(--muted); font: 700 10px var(--f-mono); text-anchor: middle; letter-spacing: .1em; }
-.patch .pt-num { fill: var(--muted); font: 9px var(--f-mono); text-anchor: middle; }
 .patch .pg-line { fill: none; stroke: var(--muted); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .patch .pg-fill { fill: var(--line); }
 .patch .pg-dot { fill: var(--muted); }
+.patch .pg-light { fill: var(--muted); }
 .patch.earned .pt-bg { fill: var(--ink); fill: color-mix(in srgb, var(--ink) 80%, #8a5a2b); }   /* a touch of sepia: embroidered-patch feel */
 .patch.earned .pt-ring { stroke: var(--accent); stroke-dasharray: none; stroke-width: 4; }
 .patch.earned .pt-inner { stroke: var(--accent); opacity: .5; }
-.patch.earned .pt-code, .patch.earned .pt-num { fill: var(--accent); }
+.patch.earned .pt-code { fill: var(--accent); }
 .patch.earned .pg-line { stroke: var(--bg); }
 .patch.earned .pg-acc { stroke: var(--accent); }
 .patch.earned .pg-fill { fill: var(--earth); }
 .patch.earned .pg-dot { fill: var(--accent); }
+.patch.earned .pg-light { fill: var(--bg); }
 
 /* home: enrolment, flight record, certificate */
 .enrol { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }

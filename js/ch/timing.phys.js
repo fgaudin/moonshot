@@ -26,13 +26,14 @@
 
   // A scenario: { mu, r1 (chaser), r2 (target), t0 (GET of the fix, s), th1, th2 (angles at t0, rad) }
   P.setup = (sc) => {
+    if (sc.kind === 'ascent') return P.setupAscent(sc);
     const n1 = P.meanMotion(sc.mu, sc.r1), n2 = P.meanMotion(sc.mu, sc.r2);
     const tof = P.hohmannTime(sc.mu, sc.r1, sc.r2), phiReq = P.requiredPhase(sc.mu, sc.r1, sc.r2);
     const phi0 = P.wrapPi(sc.th2 - sc.th1);
     const wait = P.waitTime(phi0, phiReq, n1, n2);
     return { n1, n2, tof, phiReq, phi0, wait, tig: sc.t0 + wait, syn: P.synodic(n1, n2) };
   };
-  P.chaserAngle = (sc, s, t) => sc.th1 + s.n1 * (t - sc.t0);
+  P.chaserAngle = (sc, s, t) => (sc.kind === 'ascent' ? sc.th1 : sc.th1 + s.n1 * (t - sc.t0));
   P.targetAngle = (sc, s, t) => sc.th2 + s.n2 * (t - sc.t0);
 
   // Kepler's equation M = E − e sin E by Newton's method
@@ -45,6 +46,7 @@
   // The flight: chaser coasts on r1, fires an impulsive Hohmann at tig, arrives at r2 after tof and circularizes.
   // Returns the arrival geometry and a position function.
   P.fly = (sc, tig) => {
+    if (sc.kind === 'ascent') return P.flyAscent(sc, tig);
     const s = P.setup(sc);
     const r1 = sc.r1, r2 = sc.r2, up = r2 > r1;
     const at = (r1 + r2) / 2, e = Math.abs(r2 - r1) / (r1 + r2), nt = P.meanMotion(sc.mu, at);
@@ -64,6 +66,41 @@
       return { r, th: thTig + nu - (up ? 0 : Math.PI), phase: 'transfer' };
     };
     return { ...s, tigUsed: tig, tArr, thTig, thArr, thTgtArr, miss, dist, chaser, at, e };
+  };
+
+  // ---- Lifting off from the surface to meet a mother ship (circular, coplanar, surface rotation neglected unless omega) ----
+  // The lander climbs for tAsc, covering the downrange angle thAsc, and is then in the circular orbit of radius R + hLow.
+  // It may coast there for tCoast, then flies a Hohmann transfer (time tH, 180°) up to the mother ship's radius R + hCsm.
+  // phiLift is the angle by which the mother ship must be ahead of the site (in the direction of motion) at liftoff:
+  // the lander arrives at angle thAsc + n_L·tCoast + π, the mother ship moves n_C·(tAsc + tCoast + tH) meanwhile.
+  P.liftoff = (mu, R, hLow, hCsm, tAsc, thAsc, tCoast = 0) => {
+    const rLow = R + hLow, rCsm = R + hCsm, nL = P.meanMotion(mu, rLow), nC = P.meanMotion(mu, rCsm), tH = P.hohmannTime(mu, rLow, rCsm);
+    const phiLift = P.wrapPi(thAsc + nL * tCoast + Math.PI - nC * (tAsc + tCoast + tH));
+    return { rLow, rCsm, nL, nC, tH, phiLift, period: TWO_PI / nC, tTotal: tAsc + tCoast + tH };
+  };
+  // time from a moment when the mother ship is phiNow ahead of the site until it is phiLift ahead (in [0, period)).
+  // omega: angular rate of the site (surface rotation, same sense as the orbit); the angle then changes at n − omega.
+  P.liftoffDelay = (phiLift, phiNow, n, omega = 0) => P.wrap(phiLift - phiNow) / (n - omega);
+
+  P.setupAscent = (sc) => {
+    const L = P.liftoff(sc.mu, sc.R, sc.h1, sc.h2, sc.tAsc, sc.thAsc);
+    const phi0 = P.wrapPi(sc.th2 - sc.th1), wait = P.liftoffDelay(L.phiLift, phi0, L.nC);
+    return { n1: L.nL, n2: L.nC, tof: L.tH, phiReq: L.phiLift, phi0, wait, tig: sc.t0 + wait, syn: L.period };
+  };
+  // Lift off at tL: ascent (straight-line interpolation of radius and angle), then Hohmann from the low orbit.
+  P.flyAscent = (sc, tL) => {
+    const s = P.setupAscent(sc), r1 = sc.r1, r2 = sc.r2, R = sc.R;
+    const at = (r1 + r2) / 2, e = (r2 - r1) / (r1 + r2), nt = P.meanMotion(sc.mu, at);
+    const tH0 = tL + sc.tAsc, thTig = sc.th1 + sc.thAsc, tArr = tH0 + s.tof, thArr = thTig + Math.PI;
+    const thTgtArr = P.targetAngle(sc, s, tArr), miss = P.wrapPi(thTgtArr - thArr), dist = 2 * r2 * Math.abs(Math.sin(miss / 2));
+    const chaser = (t) => {
+      if (t <= tL) return { r: R, th: sc.th1, phase: 'ground' };
+      if (t < tH0) { const u = (t - tL) / sc.tAsc; return { r: R + (r1 - R) * u, th: sc.th1 + sc.thAsc * u * u * (3 - 2 * u), phase: 'ascent' }; }
+      if (t >= tArr) return { r: r2, th: thArr + s.n2 * (t - tArr), phase: 'arrived' };
+      const E = P.kepler(nt * (t - tH0), e), nu = 2 * Math.atan2(Math.sqrt(1 + e) * Math.sin(E / 2), Math.sqrt(1 - e) * Math.cos(E / 2));
+      return { r: at * (1 - e * Math.cos(E)), th: thTig + nu, phase: 'transfer' };
+    };
+    return { ...s, tigUsed: tH0, tArr, thTig, thArr, thTgtArr, miss, dist, chaser, at, e };
   };
 
   // GET strings: "hh:mm:ss" (seconds may have decimals, with a point or a comma) or "hh:mm"; hours may exceed 24
@@ -96,6 +133,7 @@
     above: mk('earth', 900e3, 400e3, 5 * 3600 + 25 * 60, 70, -38),
     long: mk('earth', 250e3, 400e3, 7 * 3600 + 40 * 60, 300, 1.5),
     lunar: mk('moon', 18e3, 111e3, 125 * 3600 + 20 * 60, 150, 31),
+    ascent: { ...mk('moon', 15e3, 110e3, 124 * 3600 + 11 * 60 + 20, 200, 0), kind: 'ascent', tAsc: 420, thAsc: 300e3 / RM },
     tli: mk('earth', 185e3, DEM - RE, 1 * 3600 + 30 * 60, 10, -110),
   };
 
