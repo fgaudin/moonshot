@@ -111,7 +111,7 @@
     };
     const groundAt0 = (x) => { const i = Math.max(0, Math.min(TER.length - 2, Math.floor((x + 600) / 4))); const [x0, y0] = TER[i], [x1, y1] = TER[i + 1]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); };
 
-    let S, running = false, ended = false, keys = {}, calls = [], camG = 0;
+    let S, running = false, ended = false, keys = {}, calls = [], camG = 0, camS = 0;
     const reset = () => {
       S = { t: 0, x: 0, h: 500, vx: 18, vh: -12, m: 8000, prop: 500, pitch: 0, pitchCmd: 0, thr: 40, rodCmd: -1.0, flame: 0 };
       calls = []; ended = false;
@@ -217,20 +217,25 @@
       // the lunar sky is black in daylight, whatever the page theme
       ctx.fillStyle = '#05080d'; ctx.fillRect(0, 0, w, h);
       UI.stars(ctx, w, h * 0.6, { ...K, muted: '#c9d2df' }, 60);
-      const alt = S.h - groundAt(S.x);
-      // camera: zoom in as altitude falls
-      const span = Math.max(160, Math.min(900, alt * 2.2 + 120));
-      const s = Math.min(w / span, (h * 0.7) / (Math.max(alt, 0) + 30));
       camG += (groundAt(S.x) - camG) * 0.05;          // smoothed ground reference, no jumps over the crater
+      // camera: zoom in as altitude falls, from the smoothed ground so craters and throttle bobs don't shake it;
+      // zoom in slowly, zoom out quickly so a climbing lander stays in the frame
+      const alt = Math.max(S.h - camG, 0);
+      const span = Math.max(160, Math.min(900, alt * 2.2 + 120));
+      const target = Math.min(w / span, (h * 0.7) / (alt + 30));
+      if (!camS || S.t === 0) camS = target;
+      const r = Math.log(target / camS), band = 0.12;   // dead band: ignore small changes in the ideal zoom
+      if (Math.abs(r) > band) camS *= Math.exp((r - Math.sign(r) * band) * (r < 0 ? 0.12 : 0.025));
+      const s = camS, half = w / s;            // visible half-width in metres, with margin
       const camX = S.x + (w / s) * 0.12;
       const P = (x, y) => [w / 2 + (x - camX) * s, h * 0.82 - (y - camG) * s];
       // Earth hanging in the black sky
       UI.drawEarth(ctx, w * 0.85, h * 0.14, 14, K);
       // terrain
       ctx.fillStyle = '#8b8d91'; ctx.beginPath();
-      const [sx0] = P(camX - span, 0);
+      const [sx0] = P(camX - half, 0);
       ctx.moveTo(sx0, h);
-      for (let x = camX - span; x <= camX + span; x += Math.max(1, span / 300)) { const [px, py] = P(x, groundAt(x)); ctx.lineTo(px, py); }
+      for (let x = camX - half; x <= camX + half; x += Math.max(1, half / 300)) { const [px, py] = P(x, groundAt(x)); ctx.lineTo(px, py); }
       ctx.lineTo(w * 2, h); ctx.closePath(); ctx.fill();
       // pad
       const [pa, pya] = P(PAD[0], 2), [pb] = P(PAD[1], 2);
