@@ -107,6 +107,12 @@
       alt: N`A V-2 rocket lifting off beside its launch tower in the New Mexico desert`,
       story: N`A V-2 lifts off at White Sands, New Mexico, in 1946. After the war the US Army launched more than sixty of these rockets there, many of them carrying instruments that recorded pressure, temperature and radiation far above the reach of balloons. The method of this module began with flights like this one.`,
     },
+    tracking: {
+      img: 's68-37978', id: 'S68-37978', date: '1968', mission: 'Tracking network',
+      title: N`Ears on the ground`,
+      alt: N`A large dish antenna on a lattice mount above a low station building, hills behind`,
+      story: N`A tracking antenna at NASA’s station near Madrid in 1968. Stations in California, Spain and Australia, spaced roughly a third of the way around the Earth from each other, kept a spacecraft on its way to the Moon in view around the clock. They measured its distance by timing radio signals and its speed along the line of sight from the Doppler shift; Mission Control turned these measurements into the state vector it sent up to the crew.`,
+    },
     j2: {
       img: '6778744', focus: '30% 50%', date: '1967-09-09', mission: 'Saturn V',
       title: N`An engine built for vacuum`,

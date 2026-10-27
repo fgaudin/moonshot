@@ -191,6 +191,8 @@
           </div>
         </section>
 
+        ${Archive.capsule('tracking')}
+
         <section class="section">
           <h2><span class="idx">3.7</span>${T`Three ways to share the work`}</h2>
           <div class="prose">
