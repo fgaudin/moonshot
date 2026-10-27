@@ -75,7 +75,7 @@
       const m = rnd(6500, 9000, 100), res = rnd(100, 300, 10), c = 311 * 9.80665, t = res * c / (m * G);
       return { q: T`The LM hovers with a mass of <b>${f(m, 0)} kg</b> and <b>${res} kg</b> of propellant left (I<sub>sp</sub> = 311 s, g☾ = 1.62 m/s²). How many seconds can it hover? Use the linear formula.`, answer: t, unit: 's', tol: 0.015,
         hint: T`Hovering needs thrust equal to the weight, m g☾. The flow rate is thrust divided by c = I<sub>sp</sub> g₀. Divide the propellant by the flow rate.`,
-        sol: R`\[ \dot m = \frac{m g_\leftmoon}{c},\quad t = \frac{m_{res}}{\dot m} = \frac{m_{res}\,c}{m\,g_\leftmoon} = \frac{${res}\times${f(c, 0)}}{${f(m, 0)}\times${f(G, 2)}} = ${f(t, 0)}\ \mathrm{s} \]` };
+        sol: R`\[ \dot m = \frac{m g_☾}{c},\quad t = \frac{m_{res}}{\dot m} = \frac{m_{res}\,c}{m\,g_☾} = \frac{${res}\times${f(c, 0)}}{${f(m, 0)}\times${f(G, 2)}} = ${f(t, 0)}\ \mathrm{s} \]` };
     } },
     { title: N`Downrange error from a late ignition`, make() {
       const v = rnd(1620, 1700, 5), dt = rnd(3, 12), e = v * dt / 1000;
@@ -143,7 +143,7 @@
           <h2><span class="idx">0.3</span>${T`The last stop: braking altitude`}</h2>
           <div class="prose">
             <p>${T`Close to the ground the lander moves slowly and mostly down. Gravity now acts directly against the stop. If the thrust gives an upward acceleration a, the net deceleration is a − g, and the same distance formula gives the altitude at which to start:`}</p>
-            <div class="eq">\\[ h_{brake} = \\frac{v^2}{2\\,(a - g_\\leftmoon)} \\]</div>
+            <div class="eq">\\[ h_{brake} = \\frac{v^2}{2\\,(a - g_☾)} \\]</div>
             ${Sym.where([['h_{brake}', N`altitude at which the vertical braking must start`, 'm'], 'v', ['a', N`upward acceleration from the engine`, 'm/s²'], 'gM'], N`If a is not larger than g☾, the lander cannot stop: it needs thrust above its own lunar weight.`)}
             <p>${T`With v = 100 m/s and a = 4.0 m/s² the net deceleration is 2.38 m/s², so h = 100²/(2 × 2.38) = 2.1 km. On Earth the same engine could not even hover. This is why a lander on the Moon can be so light.`}</p>
           </div>
@@ -164,7 +164,7 @@
           <h2><span class="idx">0.5</span>${T`The hover margin`}</h2>
           <div class="prose">
             <p>${T`The propellant that remains at the end of the plan is the reserve. A good way to express it is as time: how long could the lander hover? To hover, the thrust equals the weight, F = m g☾. The flow rate is F/c, so:`}</p>
-            <div class="eq">\\[ \\dot m = \\frac{m\\,g_\\leftmoon}{c},\\qquad t_{hover} = \\frac{m_{res}}{\\dot m} = \\frac{m_{res}\\,I_{sp}\\,g_0}{m\\,g_\\leftmoon} \\]</div>
+            <div class="eq">\\[ \\dot m = \\frac{m\\,g_☾}{c},\\qquad t_{hover} = \\frac{m_{res}}{\\dot m} = \\frac{m_{res}\\,I_{sp}\\,g_0}{m\\,g_☾} \\]</div>
             ${Sym.where([['m_{res}', N`propellant left`, 'kg'], ['m', N`mass of the lander now`, 'kg'], 'isp', ['g_0', N`standard gravity, 9.80665`, 'm/s²'], 'gM'], N`This linear form is slightly pessimistic, because the lander gets lighter while it hovers. The error is a few percent for a reserve of 300 kg.`)}
             <p>${T`Example: 200 kg of propellant, a lander of 7 500 kg. Then t = 200 × 3 050/(7 500 × 1.625) = 50 s. On Apollo 11 Mission Control counted the remaining hover time down aloud, with calls at “60 seconds” and “30 seconds”, so that the crew knew how long they had to choose a spot before a land-or-abort decision. This module uses 60 s as the threshold.`}</p>
           </div>
