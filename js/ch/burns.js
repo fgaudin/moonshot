@@ -37,7 +37,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-6 · Mission Control`,
+          eyebrow: T`Training module ${Progress.code('burns')} · Mission Control`,
           title: T`Planning a Burn`,
           lede: T`Mission Control computes, the crew executes. Between them travels a short list of numbers: when to ignite, how much velocity to add in which direction, and how long the engine will run. This module teaches you to produce that list and to fly it.`,
           refs: [T`Sellers · Maneuvering in Space`, T`BMW ch. 3 Basic Orbital Maneuvers`, T`Apollo Operations Handbook, maneuver PADs`],
@@ -47,7 +47,7 @@
         <section class="section" id="theory">
           <h2><span class="idx">6.1</span>${T`What Mission Control sends up`}</h2>
           <div class="prose">
-            <p>${T`In Chapter 5 a burn was an instant kick of so many metres per second. To actually fly one, the crew needs more. On Apollo, the capsule communicator read each burn to the crew as a <b>PAD</b>, a standard form they copied by hand. A maneuver PAD contained:`}</p>
+            <p>${T`In module ${Progress.code('maneuvers')} a burn was an instant kick of so many metres per second. To actually fly one, the crew needs more. On Apollo, the capsule communicator read each burn to the crew as a <b>PAD</b>, a standard form they copied by hand. A maneuver PAD contained:`}</p>
             <ul>
               <li>${T`<b>TIG</b>, the time of ignition, in ground elapsed time;`}</li>
               <li>${T`<b>the Δv</b>, as three components in a frame attached to the spacecraft’s orbit;`}</li>

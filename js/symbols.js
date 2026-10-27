@@ -170,7 +170,7 @@
   Sym.where = (items, note) => {
     const rows = items.map((it) => (typeof it === 'string' ? SYM[it] : it)).filter(Boolean);
     return `<dl class="where"><span class="where-h">${T`where`}</span>${rows.map(([tex, txt, unit]) =>
-      `<dt>\\(${tex}\\)</dt><dd>${T(txt)}${unit ? ` <span class="unit">${unitT(unit)}</span>` : ''}</dd>`).join('')}${note ? `<p class="where-note">${T(note)}</p>` : ''}</dl>`;
+      `<dt>\\(${tex}\\)</dt><dd>${T(txt)}${unit ? ` <span class="unit">${unitT(unit)}</span>` : ''}</dd>`).join('')}${note ? `<p class="where-note">${Array.isArray(note) ? T(...note) : T(note)}</p>` : ''}</dl>`;
   };
 
   /* ---------- TeX pre-filter: wrap Greek letters so MathJax tags them with a class ---------- */

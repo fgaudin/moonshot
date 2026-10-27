@@ -9,7 +9,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-2 · Coast`,
+          eyebrow: T`Training module ${Progress.code('orbits')} · Coast`,
           title: T`Describing Orbits`,
           lede: T`The two-body equation has an exact solution: the conic sections. Energy fixes the orbit’s size, angular momentum its shape, and Kepler’s equation gives the position at any time.`,
           refs: [T`Sellers · Understanding Orbits; Describing Orbits`, T`BMW ch. 1 Two-Body Orbital Mechanics`, T`BMW ch. 2 & 4 Elements; Position vs Time`],

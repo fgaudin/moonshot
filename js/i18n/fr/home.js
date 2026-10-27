@@ -41,8 +41,8 @@ I18N.add('fr', {
   // hero
   'Moonshot Academy · Astronaut Candidate Program': 'Académie Moonshot · Programme de formation des astronautes',
   'How we went<br>to the <em>Moon</em>': 'Comment nous sommes allés<br>sur la <em>Lune</em>',
-  'You have been selected. Between you and the launch pad stand ten training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all ten mission patches and you are <b>go for launch</b>.':
-    'Votre candidature a été retenue. Entre vous et le pas de tir se dressent dix modules de formation : la physique même que les équipages et les contrôleurs de vol d’Apollo ont dû maîtriser, des lois de Newton au bouclier thermique. Chaque module comporte un briefing, un simulateur à piloter et des objectifs à atteindre. Obtenez les dix écussons de mission et vous serez <b>bon pour le lancement</b>.',
+  'You have been selected. Between you and the launch pad stand {$0} training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all {$1} mission patches and you are <b>go for launch</b>.':
+    'Votre candidature a été retenue. Entre vous et le pas de tir se dressent {$0} modules de formation : la physique même que les équipages et les contrôleurs de vol d’Apollo ont dû maîtriser, des lois de Newton au bouclier thermique. Chaque module comporte un briefing, un simulateur à piloter et des objectifs à atteindre. Obtenez les {$1} écussons de mission et vous serez <b>bon pour le lancement</b>.',
   'Your callsign': 'Votre indicatif',
   'e.g. Eagle, or your name': 'p. ex. Eagle, ou votre nom',
   'Candidate': 'Recrue',
@@ -61,8 +61,8 @@ I18N.add('fr', {
   'Flight record: {$0}': 'Carnet de vol : {$0}',
   '{$0} of {$1} objectives · {$2} of {$3} patches': '{$0} objectifs sur {$1} · {$2} écussons sur {$3}',
   'Moonshot Academy · Certificate of training': 'Académie Moonshot · Certificat de formation',
-  'has completed all ten training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared':
-    'a suivi avec succès les dix modules de formation du Programme de formation des astronautes, du canon de Newton à la rentrée atmosphérique, et reçoit par la présente la mention',
+  'has completed all {$0} training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared':
+    'a suivi avec succès les {$0} modules de formation du Programme de formation des astronautes, du canon de Newton à la rentrée atmosphérique, et reçoit par la présente la mention',
   'GO FOR LAUNCH': 'BON POUR LE LANCEMENT',
   'Vega, Chief Flight Instructor': 'Vega, responsable de l’instruction en vol',
   'The modules follow the mission in order. The theory follows Sellers’ <i>Understanding Space</i> for physical intuition and Bate, Mueller &amp; White’s <i>Fundamentals of Astrodynamics</i> (BMW) for the mathematics. Objectives are checked by the simulators themselves; your record is kept in this browser.':

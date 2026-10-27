@@ -26,7 +26,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-7 · Docking`,
+          eyebrow: T`Training module ${Progress.code('docking')} · Docking`,
           title: T`Docking`,
           lede: T`Rendezvous brings two spacecraft within a few hundred metres. Docking closes the last gap, a slow, precise dance where every push lasts forever and orbital mechanics still has a say.`,
           refs: [T`Sellers · Maneuvering in Space (rendezvous)`, T`BMW ch. 3 Basic Orbital Maneuvers`, T`Apollo Operations Handbook, CSM docking system`],
@@ -65,7 +65,7 @@
             <p>${T`Seen from the target, the chaser does not move in straight lines. Both ships orbit the planet, and a small difference in height means a difference in orbital speed. In the target’s frame, the <b>Clohessy–Wiltshire</b> (Hill) equations describe the relative motion for small separations:`}</p>
             <div class="eq">\\[ \\ddot x = -2n\\,\\dot z + a_x, \\qquad \\ddot z = 3n^2 z + 2n\\,\\dot x + a_z \\]</div>
             ${Sym.where([['x', N`distance along the orbit (along-track, the “V-bar”), positive ahead of the target`, 'm'], ['z', N`distance away from the planet (radial, the “R-bar”), positive above the target`, 'm'], ['\\dot x,\\ \\dot z', N`relative velocities (one dot: per second)`, 'm/s'], ['\\ddot x,\\ \\ddot z', N`relative accelerations (two dots)`, 'm/s²'], 'n', ['a_x,\\ a_z', N`acceleration from your own thrusters`, 'm/s²']], N`The extra terms are the orbital effects: 2n·ż and 2n·ẋ couple the two directions (a Coriolis effect), 3n²z pushes you away from the target’s altitude.`)}
-            <p>${T`<b>The Gemini 4 paradox.</b> In June 1965 Jim McDivitt tried to fly his Gemini capsule up to the spent upper stage of his Titan rocket, a few hundred metres ahead. He pointed at it and thrust forward. Thrusting forward raised his orbit, a higher orbit is slower, and the target pulled away. The harder he pushed, the worse it got, and he gave up to save propellant. The fix, used ever since: to catch something ahead, you briefly <i>slow down</i> and drop to a lower, faster orbit (Chapter 5).`}</p>
+            <p>${T`<b>The Gemini 4 paradox.</b> In June 1965 Jim McDivitt tried to fly his Gemini capsule up to the spent upper stage of his Titan rocket, a few hundred metres ahead. He pointed at it and thrust forward. Thrusting forward raised his orbit, a higher orbit is slower, and the target pulled away. The harder he pushed, the worse it got, and he gave up to save propellant. The fix, used ever since: to catch something ahead, you briefly <i>slow down</i> and drop to a lower, faster orbit (module ${Progress.code('maneuvers')}).`}</p>
             <p>${T`The orbital terms grow with \\(n\\) and with time. Over a one-minute final approach in lunar orbit, \\(n t \\approx 0.05\\) rad, so paths look almost straight. Over a 15-minute approach from 1 km out they curve a lot. That is why long-range approaches are planned as orbital manoeuvres and the final 30 m are flown by hand, almost like flying in free space.`}</p>
           </div>
         </section>

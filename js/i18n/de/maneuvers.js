@@ -4,7 +4,7 @@ I18N.add('de', {
   'Orbital Manoeuvres': 'Bahnmanöver',
   'Transfer & rendezvous planner': 'Transfer- und Rendezvous-Planer',
   'Hohmann transfers, plane changes and rendezvous. To catch someone ahead of you, slow down.': 'Hohmann-Transfers, Bahnebenenwechsel und Rendezvous. Wer jemanden vor sich einholen will, muss bremsen.',
-  'Training module TM-5 · Manoeuvres': 'Ausbildungsmodul TM-5 · Bahnmanöver',
+  'Training module {$0} · Manoeuvres': 'Ausbildungsmodul {$0} · Bahnmanöver',
   'A rocket burn changes the velocity at one point, and the orbit through that point changes with it. Changing orbits means choosing where to burn.': 'Ein Triebwerksschub ändert die Geschwindigkeit an einem Punkt, und mit ihr ändert sich die Bahn durch diesen Punkt. Die Bahn wechseln heißt: wählen, wo man zündet.',
   'Sellers · Maneuvering in Space': 'Sellers · Maneuvering in Space',
   'BMW ch. 3 Basic Orbital Maneuvers': 'BMW Kap. 3 Basic Orbital Maneuvers',

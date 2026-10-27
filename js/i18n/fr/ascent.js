@@ -4,7 +4,7 @@ I18N.add('fr', {
   'Getting to Orbit': 'Rejoindre l’orbite',
   'Saturn V ascent': 'Ascension de la Saturn V',
   'Fly the Saturn V into a 185 km parking orbit. Pitch over too early and drag tears you apart; too late and gravity eats your propellant.': 'Pilotez la Saturn V jusqu’à une orbite de parking à 185 km. Basculez trop tôt et la traînée vous met en pièces ; trop tard et la gravité dévore vos ergols.',
-  'Training module TM-4 · Ascent': 'Module de formation TM-4 · Ascension',
+  'Training module {$0} · Ascent': 'Module de formation {$0} · Ascension',
   'Orbit is about speed, not height: 185 km up but 7.8 km/s sideways. The ascent is a compromise between climbing out of the air quickly and turning horizontal early.': 'L’orbite est une affaire de vitesse, pas d’altitude : 185 km de haut, mais 7,8 km/s à l’horizontale. L’ascension est un compromis entre sortir vite de l’atmosphère et s’incliner tôt vers l’horizontale.',
   'Sellers · Getting to Orbit': 'Sellers · Getting to Orbit',
   'BMW ch. 6 Ballistic Missile Trajectories': 'BMW chap. 6 Ballistic Missile Trajectories',

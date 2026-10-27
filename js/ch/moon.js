@@ -20,7 +20,7 @@
       const soi = C.DEM * Math.pow(C.muM / C.muE, 0.4) / 1000;
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-8 · Trans-lunar injection to lunar orbit`,
+          eyebrow: T`Training module ${Progress.code('moon')} · Trans-lunar injection to lunar orbit`,
           title: T`Going to the Moon`,
           lede: T`Three bodies, no closed-form solution, and a target moving at 1 km/s. Apollo’s planners stitched two-body conics together to design the trajectory, then refined it by numerical integration. This module does both.`,
           refs: [T`Sellers · Interplanetary Travel`, T`BMW ch. 7 Lunar Trajectories`, T`BMW ch. 8 Interplanetary Trajectories`],
@@ -52,7 +52,7 @@
           <h2><span class="idx">8.3</span>${T`Lab: fly to the Moon`}</h2>
           <div class="prose"><p>${T`This simulator does not use patched conics. It integrates the planar <b>circular restricted three-body problem</b> numerically: the spacecraft feels Earth and Moon at the same time, and the two bodies circle their common barycentre. Set the TLI burn and its position in the parking orbit. The preset free return was found by searching this simulator for a trajectory passing 290 km behind the Moon and returning to a 40 km vacuum perigee, inside the entry corridor.`}</p>
           <p>${T`The free return is extremely sensitive. A TLI error of <b>0.1 m/s</b>, out of 3 160, moves the return perigee by about a thousand kilometres. No engine is that precise, so Apollo flew <b>midcourse corrections</b> (MCC). The ground tracked the spacecraft by radio Doppler, computed the correction on Mission Control's IBM 360s, and read the burn to the crew. Pick the “no midcourse correction” scenario, then press <i>Mission Control: solve MCC</i>.`}</p>
-          <p>${T`Then switch the physics model to <b>patched conics</b>, the planning model of section 8.1 (and of 8.6 below): one body at a time, switching at the sphere of influence. The other model stays on screen as a dashed ghost, so you can compare the plan with reality for the same burn.`}</p></div>
+          <p>${T`Then switch the physics model to <b>patched conics</b>, the planning model of section ${App.sec('moon', 1)} (and of ${App.sec('moon', 6)} below): one body at a time, switching at the sphere of influence. The other model stays on screen as a dashed ghost, so you can compare the plan with reality for the same burn.`}</p></div>
           <div class="lab tl-lab" id="tl">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Earth–Moon trajectory`}</h3><span class="spacer"></span>
               <div class="seg" id="tl-view" role="group" aria-label="${T`Reference frame`}"><button data-v="inertial" aria-pressed="false">${T`Inertial`}</button><button data-v="rotating" aria-pressed="true">${T`Rotating`}</button><button data-v="moon" aria-pressed="false">${T`Moon close-up`}</button></div>
@@ -117,7 +117,7 @@
         <section class="section">
           <h2><span class="idx">8.6</span>${T`Patched conics by hand`}</h2>
           <div class="prose">
-            <p>${T`Section 8.1 described the patched-conic method in words. Three relations turn it into a pencil-and-paper tool. First, at the edge of the sphere of influence, change frames: the velocity relative to the Moon is the spacecraft’s velocity minus the Moon’s.`}</p>
+            <p>${T`Section ${App.sec('moon', 1)} described the patched-conic method in words. Three relations turn it into a pencil-and-paper tool. First, at the edge of the sphere of influence, change frames: the velocity relative to the Moon is the spacecraft’s velocity minus the Moon’s.`}</p>
             <div class="eq">\\[ \\vec v_\\infty = \\vec v_{sc} - \\vec v_☾, \\qquad v_\\infty^2 = v_{sc}^2 + v_☾^2 - 2\\,v_{sc}\\,v_☾\\cos\\theta \\]</div>
             ${Sym.where([['\\vec v_\\infty', N`velocity relative to the Moon on arrival (its length is the hyperbolic excess speed)`, 'm/s'], ['\\vec v_{sc}', N`spacecraft velocity relative to Earth at the sphere of influence`, 'm/s'], ['\\vec v_☾', N`the Moon’s orbital velocity, about 1.02 km/s`, 'm/s'], ['\\theta', N`angle between the two velocity vectors`, N`rad or °`]], N`The second form is the law of cosines applied to the vector subtraction.`)}
             <p>${T`Inside the sphere the path is a hyperbola around the Moon. Its periselene and v∞ fix its shape, and the shape fixes how far the Moon turns the velocity:`}</p>

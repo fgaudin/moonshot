@@ -9,7 +9,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-10 · Entry & splashdown`,
+          eyebrow: T`Training module ${Progress.code('entry')} · Entry & splashdown`,
           title: T`Coming Home`,
           lede: T`The Command Module arrived at 11 km/s carrying 60 megajoules per kilogram, fourteen times the energy of the same mass of TNT. The atmosphere had to absorb all of it in about ten minutes.`,
           refs: [T`Sellers · Returning from Space: Re-entry`, T`Allen & Eggers, NACA Report 1381 (1958)`],

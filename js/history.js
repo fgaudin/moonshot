@@ -101,6 +101,42 @@
       alt: N`Flight controllers waving small flags and cheering at their consoles`,
       story: N`Flight controllers in the Mission Operations Control Room celebrate the end of Apollo 11: 8 days, 3 hours and 18 minutes after liftoff, the crew is safely aboard the recovery ship.`,
     },
+    v2: {
+      img: '9131496', focus: '50% 30%', date: '1946', mission: 'White Sands',
+      title: N`The first sounding rockets`,
+      alt: N`A V-2 rocket lifting off beside its launch tower in the New Mexico desert`,
+      story: N`A V-2 lifts off at White Sands, New Mexico, in 1946. After the war the US Army launched more than sixty of these rockets there, many of them carrying instruments that recorded pressure, temperature and radiation far above the reach of balloons. The method of this module began with flights like this one.`,
+    },
+    j2: {
+      img: '6778744', focus: '30% 50%', date: '1967-09-09', mission: 'Saturn V',
+      title: N`An engine built for vacuum`,
+      alt: N`A J-2 rocket engine firing in a tall steel test stand, a cloud of steam rolling out at its base`,
+      story: N`A J-2 engine fires in the S-IVB test stand at the Marshall Space Flight Center. It burned liquid hydrogen with liquid oxygen, for a vacuum specific impulse of about 421 s. Five J-2s powered the Saturn V second stage and one the third stage, which restarted in Earth orbit for translunar injection. Its nozzle was shaped for the near-vacuum of the upper atmosphere, where it did all its work.`,
+    },
+    gemini6: {
+      img: 's65-61804', date: '1965-12-15', mission: 'Gemini 6',
+      title: N`Launch on time`,
+      alt: N`Engineers at rows of consoles in a blockhouse, television monitors showing the rocket on its pad`,
+      story: N`The blockhouse at Launch Complex 19 in the final moments of the Gemini 6 countdown. Gemini 7 was already in orbit. To catch it, Gemini 6 had to lift off inside a short window, when the launch site passed under Gemini 7’s orbital plane with the right phase. It did, and the two spacecraft met in orbit the same day: the first rendezvous between two crewed spacecraft.`,
+    },
+    surveyor: {
+      img: 'as12-48-7134', id: 'AS12-48-7134', date: '1969-11-20', mission: 'Apollo 12',
+      title: N`A pinpoint landing`,
+      alt: N`An astronaut beside the spindly Surveyor 3 probe on the lunar surface, the lunar module in the distance behind`,
+      story: N`Pete Conrad inspects Surveyor 3, an uncrewed probe that had landed in the Ocean of Storms two and a half years earlier. The Apollo 12 lunar module stands in the background. Apollo 11 had come down several kilometres from its aim point; Apollo 12 landed about 180 m from the probe, showing that a powered descent could be targeted to a chosen spot.`,
+    },
+    receding: {
+      img: 'as17-152-23311', date: '1972-12-19', mission: 'Apollo 17',
+      title: N`Looking back`,
+      alt: N`The Moon, almost full, against black space`,
+      story: N`The Moon photographed by the Apollo 17 crew during the coast home in December 1972. The trans-Earth injection burn had been made behind the Moon, out of contact with Earth; from then on the trajectory, refined by small midcourse corrections, decided where and when the capsule would meet the atmosphere.`,
+    },
+    flightDirectors: {
+      img: 's72-54881', id: 'S72-54881', date: '1972-12-06', mission: 'Apollo 17',
+      title: N`The flight directors`,
+      alt: N`Three men in shirtsleeves talking beside the flight director’s console in Mission Control`,
+      story: N`Neil Hutchinson, Eugene Kranz and Gerald Griffin at the flight director’s console during the launch of Apollo 17. Flight directors worked the mission in shifts. During a shift the flight director had the final word; each controller in the room in front of him owned one system or one part of the trajectory.`,
+    },
   };
 
   const src = (c) => `img/history/${c.img}.webp`;

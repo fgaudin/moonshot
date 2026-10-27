@@ -1,10 +1,11 @@
 /* Router and chapter registry. Each chapter file calls App.chapter({...}). */
 (function () {
   'use strict';
-  const ORDER = ['home', 'newton', 'orbits', 'rockets', 'ascent', 'maneuvers', 'burns', 'docking', 'moon', 'landing', 'entry', 'toolkit', 'practice', 'reference'];
+  const ORDER = ['home', 'newton', 'orbits', 'navigation', 'rockets', 'sounding', 'ascent', 'launcher', 'maneuvers', 'burns', 'timing', 'planes', 'docking', 'moon', 'descent', 'landing', 'homeward', 'entry', 'mcc', 'toolkit', 'practice', 'reference'];
   const chapters = {};
 
   const App = {
+    ORDER,
     chapters,
     chapter(def) { chapters[def.id] = def; },
     go(id) { location.hash = id; },
@@ -85,6 +86,11 @@
     });
     App.markVisited(c.id);
     Primer.activate(page);
+    // automatic section numbers: "k" part kept, module number from the order
+    if (Progress.MODULES[c.id]) {
+      const n = Progress.code(c.id).replace('TM-', '');
+      page.querySelectorAll('.section > h2 > .idx').forEach((el) => { const m = el.textContent.match(/^\d+\.(\d+)$/); if (m) el.textContent = `${n}.${m[1]}`; });
+    }
     // focus targets: a debrief link into ground school, or ?focus=<element id> (handy for links and screenshots)
     const focus = App.pendingFocus || new URLSearchParams(location.search).get('focus');
     App.pendingFocus = null;
@@ -93,6 +99,15 @@
     if (keepScroll === true) window.scrollTo(0, y);
     else if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
   }
+
+  /* Numbering is computed from the module order: TM-n codes and section numbers n.k.
+     App.sec('moon', 1) → "13.1"; chapter files write their section numbers as "0.k" or any "n.k". */
+  App.sec = (id, k) => `${Progress.code(id).replace('TM-', '')}.${k}`;
+  // a module's own styles, injected once (keeps css/style.css for shared components)
+  App.css = (id, text) => {
+    if (document.getElementById('css-' + id)) return;
+    const st = document.createElement('style'); st.id = 'css-' + id; st.textContent = text; document.head.appendChild(st);
+  };
 
   /* Shared chapter scaffolding */
   App.header = ({ eyebrow, title, lede, refs = [] }) => `

@@ -9,7 +9,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-4 · Ascent`,
+          eyebrow: T`Training module ${Progress.code('ascent')} · Ascent`,
           title: T`Getting to Orbit`,
           lede: T`Orbit is about speed, not height: 185 km up but 7.8 km/s sideways. The ascent is a compromise between climbing out of the air quickly and turning horizontal early.`,
           refs: [T`Sellers · Getting to Orbit`, T`BMW ch. 6 Ballistic Missile Trajectories`],

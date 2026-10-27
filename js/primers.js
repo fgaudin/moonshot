@@ -99,7 +99,7 @@
         N`<p>A velocity only means something <b>relative to</b> something else. On a train at 300 km/h, a coffee cup is at rest relative to you. In lunar orbit both spacecraft move at about 1.6 km/s relative to the Moon, but what matters for docking is their velocity relative to <i>each other</i>, a few centimetres per second.</p>`,
         R`\[ \vec v_{rel} = \vec v_{chaser} - \vec v_{target} \]`,
         N`<p>Subtracting vectors works component by component, like adding, with a minus sign. Two huge, almost identical arrows give a tiny difference arrow, and that small arrow is the one the pilot flies.</p>`,
-        N`<p>Choosing the <b>reference frame</b>, the point of view you measure from, can make a problem simple. Docking is flown in the target’s frame: the target sits still at the origin and only the chaser moves. Arriving at the Moon (Chapter 8) uses the Moon’s frame. The physics is the same; only the description changes. A frame that rotates or accelerates, like the target’s orbiting frame, adds apparent forces such as the Coriolis terms of the Clohessy–Wiltshire equations.</p>`,
+        N`<p>Choosing the <b>reference frame</b>, the point of view you measure from, can make a problem simple. Docking is flown in the target’s frame: the target sits still at the origin and only the chaser moves. Arriving at the Moon ({TM:moon}) uses the Moon’s frame. The physics is the same; only the description changes. A frame that rotates or accelerates, like the target’s orbiting frame, adds apparent forces such as the Coriolis terms of the Clohessy–Wiltshire equations.</p>`,
         N`<p class="try">Try it: two orbital velocities, almost the same, and the tiny difference (shown ×10 000).</p>`,
       ],
       widget: 'relative',
@@ -121,12 +121,14 @@
   let uid = 0;
   const Primer = {
     PRIMERS,
+    // a module adds its own refresher: Primer.register('key', { title, used, html: [N`…`, …], widget: (el) => {…} })
+    register(key, def) { PRIMERS[key] = def; if (def.widget && typeof def.widget === 'function') WIDGETS[key] = def.widget, def.widget = key; },
     // a collapsed refresher box; id lets debriefs and briefings link to it
     box(key, open = false, fixedId = null) {
       const p = PRIMERS[key];
       const id = fixedId || `primer-${key}${open ? '' : '-' + (++uid)}`;
       // prose parts are translated; display TeX without words stays as is
-      const html = p.html.map((part) => (/^\\\[/.test(part) && !part.includes('\\text') ? part : T(part))).join('\n        ');
+      const html = p.html.map((part) => (/^\\\[/.test(part) && !part.includes('\\text') ? part : T(part)).replace(/\{TM:(\w+)\}/g, (m, id) => Progress.code(id))).join('\n        ');
       return `<details class="primer" id="${id}" data-primer="${key}"${open ? ' open' : ''}>
         <summary><span class="primer-tag">${T`Math refresher`}</span><span class="primer-title">${T(p.title)}</span><span class="primer-used">${T`used for: ${T(p.used)}`}</span></summary>
         <div class="primer-body"><div class="prose">\n        ${html}</div><div class="primer-widget"></div></div>
@@ -135,7 +137,7 @@
     // mount widgets lazily, when a box is first opened
     activate(root) {
       root.querySelectorAll('details.primer').forEach((d) => {
-        const mount = () => { if (d.dataset.mounted) return; d.dataset.mounted = '1'; WIDGETS[PRIMERS[d.dataset.primer].widget](d.querySelector('.primer-widget')); };
+        const mount = () => { if (d.dataset.mounted) return; d.dataset.mounted = '1'; const w = WIDGETS[PRIMERS[d.dataset.primer].widget]; if (w) w(d.querySelector('.primer-widget')); };
         if (d.open) mount();
         d.addEventListener('toggle', () => { if (d.open) mount(); });
       });
@@ -405,7 +407,7 @@
   /* ---------------- the Math Toolkit page ---------------- */
   App.chapter({
     id: 'toolkit', phase: N`Ground school`, title: N`Math Toolkit`,
-    blurb: N`Nine short refreshers, from vectors to logarithms, each with something to play with.`,
+    blurb: N`Short refreshers, from vectors to logarithms, each with something to play with.`,
     render(page) {
       page.innerHTML = `
         ${App.header({ eyebrow: T`Training · Ground school`, title: T`Math Toolkit`, lede: T`Everything the modules assume you remember from school, explained again in plain words. These same refreshers appear, folded, where each notion first matters. Open what you need, skip what you know.` })}

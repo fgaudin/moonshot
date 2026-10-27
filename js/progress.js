@@ -7,7 +7,7 @@
   // Texts are marked with N and translated with T where they are displayed.
   const MODULES = {
     newton: {
-      code: 'TM-1', name: N`Falling Around the World`, topic: 'newton', glyph: 'cannon',
+      name: N`Falling Around the World`, topic: 'newton', glyph: 'cannon',
       briefing: N`Welcome to your first module, {name}. Before you touch a rocket you need to understand why things fall, and why an orbit is simply a fall that never hits the ground. Newton worked it out with a cannon on an impossibly tall mountain. Today you get to fire it.`,
       objectives: [
         { id: 'orbit', text: N`Fire a cannonball into orbit around the Earth` },
@@ -17,7 +17,7 @@
       debrief: N`Good shooting, {name}. You now know the two numbers that rule spaceflight: circular speed and escape speed. Next you learn to read the shape of any orbit.`,
     },
     orbits: {
-      code: 'TM-2', name: N`Reading the Ellipse`, topic: 'orbits', glyph: 'ellipse',
+      name: N`Reading the Ellipse`, topic: 'orbits', glyph: 'ellipse',
       briefing: N`In flight, Houston will read you numbers like “one-eleven by three-twelve”. A navigator must see the orbit in those numbers: its size, its shape, where you are on it and when you will be somewhere else. This module teaches you to.`,
       objectives: [
         { id: 'circle', text: N`Design a circular orbit (eccentricity below 0.01) by hand` },
@@ -27,7 +27,7 @@
       debrief: N`You read orbits like a flight dynamics officer now, {name}. Time to meet the machine that puts you on one.`,
     },
     rockets: {
-      code: 'TM-3', name: N`The Rocket Equation`, topic: 'rockets', glyph: 'rocket',
+      name: N`The Rocket Equation`, topic: 'rockets', glyph: 'rocket',
       briefing: N`Every engineer on the program respects one equation more than any other. It explains why your rocket is 110 metres tall to send a 5-tonne capsule home, and why it falls apart into stages on the way up. Learn it well, {name}. It decides what is possible.`,
       objectives: [
         { id: 'single', text: N`See for yourself why a single-stage Saturn V cannot reach orbit` },
@@ -38,7 +38,7 @@
       debrief: N`You can size a rocket on the back of an envelope, {name}. Now ride one.`,
     },
     ascent: {
-      code: 'TM-4', name: N`Riding the Saturn V`, topic: 'ascent', glyph: 'ascent',
+      name: N`Riding the Saturn V`, topic: 'ascent', glyph: 'ascent',
       briefing: N`Eleven minutes and forty seconds. That is how long the ride to orbit lasts, and every second of it is a trade between climbing out of the air and turning sideways to build speed. You will fly the pitch-over yourself. Expect to lose a few rockets, {name}; that is what simulators are for.`,
       objectives: [
         { id: 'fail', text: N`Lose a vehicle: find a pitch-over that ends in disaster` },
@@ -48,7 +48,7 @@
       debrief: N`Parking orbit achieved, {name}. From here on, every change of path is a burn you plan.`,
     },
     maneuvers: {
-      code: 'TM-5', name: N`Changing Orbits`, topic: 'maneuvers', glyph: 'transfer',
+      name: N`Changing Orbits`, topic: 'maneuvers', glyph: 'transfer',
       briefing: N`In orbit, intuition lies. Speed up and you end up slower; to catch someone ahead, you brake. Your lunar module pilot will one day have to find the command module in lunar orbit with no second chance. Plan your transfers carefully, {name}.`,
       objectives: [
         { id: 'geo', text: N`Plan LEO → GEO including the 28.5° plane change for under 4.3 km/s` },
@@ -58,7 +58,7 @@
       debrief: N`Transfers and rendezvous are second nature now, {name}. Next stop: the Moon.`,
     },
     burns: {
-      code: 'TM-6', name: N`When, How Much, Which Way`, topic: 'burns', glyph: 'node',
+      name: N`When, How Much, Which Way`, topic: 'burns', glyph: 'node',
       briefing: N`Until now a burn was a number in an equation. On a real mission it is a time, three numbers and a direction, read up by the capsule communicator and keyed in by the crew. Get one of them wrong and the flight goes wrong. This module trains both ends of that loop, {name}: computing the burn at Mission Control, and flying it in the spacecraft.`,
       objectives: [
         { id: 'circ', text: N`Circularize a 200 × 1 000 km orbit at 1 000 km` },
@@ -70,7 +70,7 @@
       debrief: N`You can plan a burn and fly it, {name}. From here on, every burn of the mission is just another PAD.`,
     },
     docking: {
-      code: 'TM-7', name: N`Two Ships, One Line`, topic: 'docking', glyph: 'docking',
+      name: N`Two Ships, One Line`, topic: 'docking', glyph: 'docking',
       briefing: N`Three hours after launch, coasting away from Earth, your spacecraft must turn around and dock with the lunar module stowed on top of the spent rocket stage. After the landing you will do it again in lunar orbit, with no second chance. Your instinct says: point the noses at each other and push. Space will teach you otherwise, {name}.`,
       objectives: [
         { id: 'tde', text: N`Complete transposition and docking with the LM` },
@@ -83,7 +83,7 @@
       debrief: N`Hard dock, {name}. You can now join two spacecraft into one. Next: the long coast to the Moon.`,
     },
     moon: {
-      code: 'TM-8', name: N`Translunar Navigation`, topic: 'moon', glyph: 'figure8',
+      name: N`Translunar Navigation`, topic: 'moon', glyph: 'figure8',
       briefing: N`Three days of coasting towards a target moving at a kilometre per second. Get the trans-lunar burn right and the Moon itself will swing you home if anything breaks, as it did for Apollo 13. Get it wrong by a tenth of a metre per second and you will need Mission Control. You are in Mission Control today, {name}.`,
       objectives: [
         { id: 'free', text: N`Fly a free return that comes home inside the entry corridor` },
@@ -94,7 +94,7 @@
       debrief: N`You navigated to the Moon and back, {name}. Now the hardest five hundred metres of the whole mission.`,
     },
     landing: {
-      code: 'TM-9', name: N`The Last 500 Metres`, topic: 'landing', glyph: 'lander',
+      name: N`The Last 500 Metres`, topic: 'landing', glyph: 'lander',
       briefing: N`The computer has brought you to low gate, but the landing site is a boulder field. You have the stick, sixty-odd seconds of propellant to spare and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.`,
       objectives: [
         { id: 'land', text: N`Land the Lunar Module safely` },
@@ -104,7 +104,7 @@
       debrief: N`Contact light, {name}. One last test: getting home alive.`,
     },
     entry: {
-      code: 'TM-10', name: N`Threading the Corridor`, topic: 'entry', glyph: 'capsule',
+      name: N`Threading the Corridor`, topic: 'entry', glyph: 'capsule',
       briefing: N`You come home at 11 kilometres per second into a corridor two degrees wide. Too shallow and you skip off into space; too steep and the deceleration crushes you. The only control you have is which way the capsule’s lift points. Find the corridor, {name}.`,
       objectives: [
         { id: 'skip', text: N`Find the overshoot boundary: make a capsule skip out` },
@@ -114,7 +114,12 @@
       debrief: N`Splashdown, {name}. Welcome home.`,
     },
   };
-  const ORDER = Object.keys(MODULES);
+  // module order follows the app's chapter order; codes (TM-n) are computed from it
+  const ORDER = [];
+  const rebuild = () => { ORDER.length = 0; Object.keys(MODULES).sort((a, b) => App.ORDER.indexOf(a) - App.ORDER.indexOf(b)).forEach((k) => ORDER.push(k)); };
+  const withCode = (id) => Object.defineProperty(MODULES[id], 'code', { get: () => 'TM-' + (ORDER.indexOf(id) + 1), configurable: true, enumerable: true });
+  Object.keys(MODULES).forEach(withCode);
+  rebuild();
 
   const load = () => UI.store.get('progress', { name: '', done: {} });
   let state = load();
@@ -123,6 +128,9 @@
 
   const Progress = {
     MODULES, ORDER,
+    code: (id) => (MODULES[id] ? MODULES[id].code : ''),
+    // modules defined in their own chapter file: Progress.register('id', { name, topic, glyph, briefing, objectives, debrief })
+    register(id, def) { MODULES[id] = def; withCode(id); rebuild(); },
     callsign: () => (state.name ? state.name : T('Candidate')),
     setCallsign(n) { state.name = String(n || '').trim().slice(0, 24); save(); },
     isDone: (mod, id) => !!state.done[`${mod}.${id}`],

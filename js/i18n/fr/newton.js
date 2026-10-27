@@ -4,7 +4,7 @@ I18N.add('fr', {
   'Newton & Gravity': 'Newton et la gravitation',
   "Newton's cannon": 'Le canon de Newton',
   'Three laws of motion and one law of gravity. With these Newton predicted the orbit 270 years before Sputnik.': 'Trois lois du mouvement et une loi de la gravitation. Avec elles, Newton a prédit l’orbite 270 ans avant Spoutnik.',
-  'Training module TM-1 · Foundations': 'Module de formation TM-1 · Fondements',
+  'Training module {$0} · Foundations': 'Module de formation {$0} · Fondements',
   'Isaac Newton published the physics of spaceflight in 1687. Every trajectory in this manual, Apollo’s included, is his second law applied to his law of gravitation.': 'Isaac Newton a publié la physique du vol spatial en 1687. Chaque trajectoire de ce manuel, celles d’Apollo comprises, est sa deuxième loi appliquée à sa loi de la gravitation.',
   'Sellers · Understanding Orbits': 'Sellers · Understanding Orbits',
   'BMW §1.2–1.3 The n-body and two-body problems': 'BMW §1.2–1.3 Problème à n corps et problème à deux corps',

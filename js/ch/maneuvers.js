@@ -9,7 +9,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-5 · Manoeuvres`,
+          eyebrow: T`Training module ${Progress.code('maneuvers')} · Manoeuvres`,
           title: T`Orbital Manoeuvres`,
           lede: T`A rocket burn changes the velocity at one point, and the orbit through that point changes with it. Changing orbits means choosing where to burn.`,
           refs: [T`Sellers · Maneuvering in Space`, T`BMW ch. 3 Basic Orbital Maneuvers`],

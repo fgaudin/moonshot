@@ -39,7 +39,7 @@ function dictOf(lang) {
   return { all, byFile };
 }
 
-const SOURCES = () => ['js/app.js', 'js/ui.js', 'js/progress.js', 'js/practice.js', 'js/symbols.js', 'js/primers.js', 'js/history.js', ...fs.readdirSync(path.join(ROOT, 'js/ch')).map((f) => 'js/ch/' + f)]
+const SOURCES = () => ['js/app.js', 'js/ui.js', 'js/progress.js', 'js/practice.js', 'js/symbols.js', 'js/primers.js', 'js/history.js', ...fs.readdirSync(path.join(ROOT, 'js/ch')).filter((f) => f.endsWith('.js')).map((f) => 'js/ch/' + f)]
   .map((f) => path.join(ROOT, f));
 
 const [cmd, a1, ...rest] = process.argv.slice(2);

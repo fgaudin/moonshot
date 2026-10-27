@@ -37,7 +37,7 @@
           <div style="display:flex;flex-direction:column;gap:1.2rem;min-width:0">
             <span class="eyebrow">${T`Moonshot Academy · Astronaut Candidate Program`}</span>
             <h1>${T`How we went<br>to the <em>Moon</em>`}</h1>
-            <p class="lede">${T`You have been selected. Between you and the launch pad stand ten training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all ten mission patches and you are <b>go for launch</b>.`}</p>
+            <p class="lede">${T`You have been selected. Between you and the launch pad stand ${P.ORDER.length} training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all ${P.ORDER.length} mission patches and you are <b>go for launch</b>.`}</p>
             <form class="enrol" id="enrol" autocomplete="off">
               <label for="callsign">${T`Your callsign`}</label>
               <input type="text" id="callsign" maxlength="24" placeholder="${T`e.g. Eagle, or your name`}" value="${P.callsign() === T('Candidate') ? '' : P.callsign().replace(/"/g, '&quot;')}">
@@ -82,7 +82,7 @@
           ${certified ? `<div class="certificate">
             <span class="eyebrow">${T`Moonshot Academy · Certificate of training`}</span>
             <b class="cert-name">${P.callsign()}</b>
-            <p>${T`has completed all ten training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared`}</p>
+            <p>${T`has completed all ${P.ORDER.length} training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared`}</p>
             <b class="cert-go">${T`GO FOR LAUNCH`}</b>
             <span class="mono note">${T`Vega, Chief Flight Instructor`} · ${new Date().toLocaleDateString(I18N.locale(), { day: 'numeric', month: 'long', year: 'numeric' })}</span>
           </div>` : ''}

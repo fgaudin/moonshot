@@ -11,7 +11,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({
-          eyebrow: T`Training module TM-9 · Powered descent & ascent`,
+          eyebrow: T`Training module ${Progress.code('landing')} · Powered descent & ascent`,
           title: T`Landing on the Moon`,
           lede: T`Twelve and a half minutes from 15 km altitude and 1.7 km/s to standstill on the surface, paid for with 2 km/s of Δv. The Moon has no air, so every metre per second comes from the engine.`,
           refs: [T`Sellers · Rockets and Launch Vehicles`, T`Apollo 11 Mission Report (MSC-00171) §5`],
@@ -65,7 +65,7 @@
         <section class="section">
           <h2><span class="idx">9.3</span>${T`Ascent and rendezvous`}</h2>
           <div class="prose">
-            <p>${T`The ascent stage used the descent stage as its launch pad. Its Ascent Propulsion System had one fixed-thrust engine (15.6 kN, I<sub>sp</sub> 311 s) with no throttle and no gimbal. It was built as simply as possible: pressure-fed, with hypergolic propellants that ignite on contact. There was no backup. A 7-minute burn delivered about 1 850 m/s, into a 17 × 83 km orbit. From there, the CSI, CDH and TPI manoeuvres of Chapter 5 brought <i>Eagle</i> back to <i>Columbia</i>.`}</p>
+            <p>${T`The ascent stage used the descent stage as its launch pad. Its Ascent Propulsion System had one fixed-thrust engine (15.6 kN, I<sub>sp</sub> 311 s) with no throttle and no gimbal. It was built as simply as possible: pressure-fed, with hypergolic propellants that ignite on contact. There was no backup. A 7-minute burn delivered about 1 850 m/s, into a 17 × 83 km orbit. From there, the CSI, CDH and TPI manoeuvres of module ${Progress.code('maneuvers')} brought <i>Eagle</i> back to <i>Columbia</i>.`}</p>
           </div>
           <div class="scroll-x" style="max-width:48rem"><table class="data"><thead><tr><th>${T`Lunar Module (Apollo 11)`}</th><th>${T`Mass (kg)`}</th><th>${T`Engine`}</th><th>${T`Thrust`}</th><th>I<sub>sp</sub></th></tr></thead><tbody>
             <tr><td>${T`Descent stage, dry`}</td><td>2 030</td><td rowspan="1">DPS</td><td>${T`45.0 kN, 10–60% + 100%`}</td><td>311 s</td></tr>

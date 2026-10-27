@@ -509,6 +509,12 @@
 
   const Practice = {
     TOPICS, GEN, QUIZ,
+    // a module adds its own practice: Practice.register('topic', N`Topic name`, [generators], [concept questions])
+    register(topic, label, gens = [], quiz = []) {
+      TOPICS[topic] = label;
+      for (const g of gens) GEN.push({ topic, ...g });
+      for (const q of quiz) QUIZ.push({ topic, ...q });
+    },
     // inline set at the end of a chapter: n numeric problems (distinct generators) + one concept question
     embed(container, topic, n = 2) {
       const gens = GEN.filter((g) => g.topic === topic).sort(() => Math.random() - 0.5).slice(0, n);

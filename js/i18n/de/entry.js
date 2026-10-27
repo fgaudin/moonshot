@@ -4,7 +4,7 @@ I18N.add('de', {
   'Coming Home': 'Heimkehr',
   'Entry corridor': 'Wiedereintrittskorridor',
   'Hit the atmosphere at 11 km/s inside a corridor 2° wide. Too shallow and you skip off, too steep and the g-load kills.': 'Triff die Atmosphäre mit 11\u202fkm/s in einem Korridor von 2° Breite. Zu flach, und du prallst ab; zu steil, und die g-Last tötet.',
-  'Training module TM-10 · Entry & splashdown': 'Ausbildungsmodul TM-10 · Wiedereintritt und Wasserung',
+  'Training module {$0} · Entry & splashdown': 'Ausbildungsmodul {$0} · Wiedereintritt und Wasserung',
   'The Command Module arrived at 11 km/s carrying 60 megajoules per kilogram, fourteen times the energy of the same mass of TNT. The atmosphere had to absorb all of it in about ten minutes.': 'Das Kommandomodul kam mit 11\u202fkm/s an und trug 60 Megajoule pro Kilogramm, vierzehnmal so viel Energie wie dieselbe Masse TNT. Die Atmosphäre musste alles in etwa zehn Minuten aufnehmen.',
   'Sellers · Returning from Space: Re-entry': 'Sellers · Returning from Space: Re-entry',
   'Allen & Eggers, NACA Report 1381 (1958)': 'Allen & Eggers, NACA Report 1381 (1958)',

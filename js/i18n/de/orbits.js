@@ -4,7 +4,7 @@ I18N.add('de', {
   'Describing Orbits': 'Umlaufbahnen beschreiben',
   'Orbit designer': 'Bahndesigner',
   'Two conserved quantities, energy and angular momentum, fix every orbit. Kepler’s equation tells you where you are on it.': 'Zwei Erhaltungsgrößen, Energie und Drehimpuls, legen jede Umlaufbahn fest. Die Kepler-Gleichung sagt dir, wo du dich auf ihr befindest.',
-  'Training module TM-2 · Coast': 'Ausbildungsmodul TM-2 · Freiflug',
+  'Training module {$0} · Coast': 'Ausbildungsmodul {$0} · Freiflug',
   'The two-body equation has an exact solution: the conic sections. Energy fixes the orbit’s size, angular momentum its shape, and Kepler’s equation gives the position at any time.': 'Die Zweikörpergleichung hat eine exakte Lösung: die Kegelschnitte. Die Energie legt die Größe der Bahn fest, der Drehimpuls ihre Form, und die Kepler-Gleichung liefert die Position zu jedem Zeitpunkt.',
   'Sellers · Understanding Orbits; Describing Orbits': 'Sellers · Understanding Orbits; Describing Orbits',
   'BMW ch. 1 Two-Body Orbital Mechanics': 'BMW Kap. 1 Bahnmechanik des Zweikörperproblems',

@@ -4,7 +4,7 @@ I18N.add('fr', {
   'Orbital Manoeuvres': 'Manœuvres orbitales',
   'Transfer & rendezvous planner': 'Planificateur de transferts et de rendez-vous',
   'Hohmann transfers, plane changes and rendezvous. To catch someone ahead of you, slow down.': 'Transferts de Hohmann, changements de plan et rendez-vous. Pour rattraper un vaisseau qui vous précède, ralentissez.',
-  'Training module TM-5 · Manoeuvres': 'Module de formation TM-5 · Manœuvres',
+  'Training module {$0} · Manoeuvres': 'Module de formation {$0} · Manœuvres',
   'A rocket burn changes the velocity at one point, and the orbit through that point changes with it. Changing orbits means choosing where to burn.': 'Une poussée modifie la vitesse en un point, et l’orbite qui passe par ce point change avec elle. Changer d’orbite, c’est choisir où allumer le moteur.',
   'Sellers · Maneuvering in Space': 'Sellers · Maneuvering in Space',
   'BMW ch. 3 Basic Orbital Maneuvers': 'BMW chap. 3 Basic Orbital Maneuvers',

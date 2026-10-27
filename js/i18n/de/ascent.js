@@ -4,7 +4,7 @@ I18N.add('de', {
   'Getting to Orbit': 'Der Weg in den Orbit',
   'Saturn V ascent': 'Aufstieg der Saturn V',
   'Fly the Saturn V into a 185 km parking orbit. Pitch over too early and drag tears you apart; too late and gravity eats your propellant.': 'Fliege die Saturn V in eine Parkbahn in 185 km Höhe. Neigst du dich zu früh, zerreißt dich der Luftwiderstand; zu spät, und die Schwerkraft frisst deinen Treibstoff.',
-  'Training module TM-4 · Ascent': 'Ausbildungsmodul TM-4 · Aufstieg',
+  'Training module {$0} · Ascent': 'Ausbildungsmodul {$0} · Aufstieg',
   'Orbit is about speed, not height: 185 km up but 7.8 km/s sideways. The ascent is a compromise between climbing out of the air quickly and turning horizontal early.': 'Beim Orbit geht es um Geschwindigkeit, nicht um Höhe: 185 km hoch, aber 7,8 km/s seitwärts. Der Aufstieg ist ein Kompromiss zwischen schnellem Verlassen der Luft und frühem Übergang in die Horizontale.',
   'Sellers · Getting to Orbit': 'Sellers · Getting to Orbit',
   'BMW ch. 6 Ballistic Missile Trajectories': 'BMW Kap. 6 Ballistic Missile Trajectories',

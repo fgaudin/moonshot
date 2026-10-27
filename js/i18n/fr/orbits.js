@@ -4,7 +4,7 @@ I18N.add('fr', {
   'Describing Orbits': 'Décrire les orbites',
   'Orbit designer': 'Concepteur d’orbites',
   'Two conserved quantities, energy and angular momentum, fix every orbit. Kepler’s equation tells you where you are on it.': 'Deux grandeurs conservées, l’énergie et le moment cinétique, déterminent toute orbite. L’équation de Kepler vous dit où vous vous y trouvez.',
-  'Training module TM-2 · Coast': 'Module de formation TM-2 · Croisière',
+  'Training module {$0} · Coast': 'Module de formation {$0} · Croisière',
   'The two-body equation has an exact solution: the conic sections. Energy fixes the orbit’s size, angular momentum its shape, and Kepler’s equation gives the position at any time.': 'L’équation du problème à deux corps a une solution exacte\u202f: les coniques. L’énergie fixe la taille de l’orbite, le moment cinétique sa forme, et l’équation de Kepler donne la position à tout instant.',
   'Sellers · Understanding Orbits; Describing Orbits': 'Sellers · Understanding Orbits\u202f; Describing Orbits',
   'BMW ch. 1 Two-Body Orbital Mechanics': 'BMW chap. 1 Mécanique orbitale à deux corps',
