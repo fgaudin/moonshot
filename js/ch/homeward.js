@@ -11,7 +11,7 @@
   const deg = 180 / Math.PI;
 
   Progress.register('homeward', {
-    name: N`Planning the Return`, topic: 'homeward', glyph: 'transfer',
+    name: N`Planning the Return`, topic: 'homeward', glyph: 'homeward',
     briefing: N`The landing is done, {name}, and the hardest burn of the flight is still ahead. There is no second chance at trans-Earth injection: the engine fires once, behind the Moon, out of radio contact. In this module you work the patched conics backwards, from the Earth entry corridor to the burn in lunar orbit. You choose the speed, the place and the revolution, and you learn how little room for error the corridor leaves.`,
     objectives: [
       { id: 'dv', text: N`Nominal return: execute a trans-Earth injection with the Δv from your own hand calculation (within 10 m/s)` },

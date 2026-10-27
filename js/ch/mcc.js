@@ -8,7 +8,7 @@
 
   /* ---------------- Progress and practice ---------------- */
   Progress.register('mcc', {
-    name: N`Mission Control`, topic: 'mcc', glyph: 'node',
+    name: N`Mission Control`, topic: 'mcc', glyph: 'console',
     briefing: N`Every maneuver you flew in this course was computed by someone, checked by someone else and read to a crew over a radio. Today you sit on both sides of that loop, {name}. You will build a Δv budget with honest margins, fill in the PADs, and decide an abort with the clock running.`,
     objectives: [
       { id: 'margin', text: N`Fix the heavier-payload budget: at least 5 % margin on every stage` },

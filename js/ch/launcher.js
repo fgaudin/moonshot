@@ -14,7 +14,7 @@
   const TARGET_ALT = 200e3;
 
   Progress.register('launcher', {
-    name: N`Your Own Launcher`, topic: 'launcher', glyph: 'ascent',
+    name: N`Your Own Launcher`, topic: 'launcher', glyph: 'launcher',
     briefing: N`Mission Control does not fly a rocket the way you flew the Saturn V, {name}. It designs the pitch program on the ground, runs it in a simulation, reads the result and adjusts the table. In this module you become the flight dynamics officer of a new vehicle. You will see why an engine pushes harder in vacuum, why the first stage is built for thrust and the upper stage for efficiency, where 9.4 km/s go on the way to orbit, and how a short table of numbers steers a rocket into a circle.`,
     objectives: [
       { id: 'twr', text: N`Design a custom vehicle with liftoff TWR above 1.2, at least 9.5 km/s of vacuum Δv and a payload of at least 1.5 % of liftoff mass` },

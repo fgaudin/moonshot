@@ -14,7 +14,7 @@
   const wrap = (x) => ((x % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
 
   Progress.register('planes', {
-    name: N`Plane Changes`, topic: 'planes', glyph: 'node',
+    name: N`Plane Changes`, topic: 'planes', glyph: 'planes',
     briefing: N`Everything so far happened in one flat plane, {name}. Real orbits are tilted, and the tilt costs propellant. In this module you leave the page: you describe an orbit in three dimensions, tilt it at the cheapest point, write the burn as a PAD with a normal component, and choose the launch azimuth that puts a rocket into the right plane in the first place.`,
     objectives: [
       { id: 'plane', text: N`Change the orbit plane to within 0.1° of the target with a pure plane change at a node` },

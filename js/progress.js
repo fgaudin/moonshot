@@ -185,6 +185,22 @@
     node: '<circle cx="0" cy="4" r="17" class="pg-line"/><circle cx="0" cy="4" r="5" class="pg-fill"/><path d="M17 4 L17 -14" class="pg-line pg-acc"/><path d="M13 -10 L17 -16 L21 -10" class="pg-line pg-acc"/><circle cx="17" cy="4" r="3" class="pg-dot"/>',
     docking: '<path d="M-26 0 L-8 0 L-4 -6 L-4 6 L-8 0" class="pg-fill"/><rect x="-24" y="-7" width="16" height="14" class="pg-fill"/><path d="M-4 0 L2 0" class="pg-line pg-acc"/><path d="M4 -9 L4 9 M4 -6 L10 -6 M4 6 L10 6" class="pg-line"/><rect x="10" y="-9" width="14" height="18" class="pg-dot"/>',
     capsule: '<path d="M-6 -14 L6 -14 L14 8 L-14 8 Z" class="pg-fill"/><path d="M-16 12 A 30 12 0 0 0 16 12" class="pg-line pg-acc"/><path d="M-12 18 A 26 12 0 0 0 12 18" class="pg-line pg-acc" opacity=".6"/>',
+    // tracking dish, its signal, and the spacecraft with its velocity
+    tracking: '<path d="M-24 4 Q -16 20 -2 12 Z" class="pg-fill"/><path d="M-13 12 L-13 19 M-19 19 L-7 19" class="pg-line"/><path d="M-6 2 A 10 10 0 0 1 2 -6 M-2 7 A 17 17 0 0 1 8 -11" class="pg-line" opacity=".6"/><path d="M14 -12 L24 -5" class="pg-line pg-acc"/><circle cx="14" cy="-12" r="3" class="pg-dot"/>',
+    // a vertical flight through thinning layers of air
+    sounding: '<path d="M-24 17 L24 17" class="pg-line"/><path d="M-22 9 L22 9" class="pg-line" opacity=".65"/><path d="M-19 1 L19 1" class="pg-line" opacity=".45"/><path d="M-15 -7 L15 -7" class="pg-line" opacity=".28"/><path d="M0 17 L0 -12" class="pg-line pg-acc"/><circle cx="0" cy="-15" r="3" class="pg-dot"/>',
+    // a two-stage rocket pitched over, its path bending
+    launcher: '<path d="M-22 20 C -18 4 -8 -6 6 -12" class="pg-line" opacity=".5"/><g transform="rotate(55 8 -6)"><path d="M8 -22 C 12 -17 12 -6 11 4 L 5 4 C 4 -6 4 -17 8 -22 Z" class="pg-fill"/><path d="M5 -8 L11 -8" class="pg-line"/><path d="M6 4 L8 10 L10 4" class="pg-dot"/></g>',
+    // a clock face whose hands open the phase angle
+    clock: '<circle cx="0" cy="4" r="18" class="pg-line"/><path d="M0 -14 L0 -11 M18 4 L15 4 M0 22 L0 19 M-18 4 L-15 4" class="pg-line"/><path d="M0 4 L0 -10 M0 4 L11 -5" class="pg-line"/><path d="M0 -8 A 12 12 0 0 1 8 -5" class="pg-line pg-acc"/><circle cx="0" cy="4" r="2.6" class="pg-fill"/>',
+    // two orbital planes crossing at the node
+    planes: '<ellipse cx="0" cy="4" rx="22" ry="8" class="pg-line" opacity=".5"/><ellipse cx="0" cy="4" rx="22" ry="8" transform="rotate(-25 0 4)" class="pg-line pg-acc"/><circle cx="0" cy="4" r="5" class="pg-fill"/><circle cx="18.8" cy="-0.2" r="3" class="pg-dot"/>',
+    // the braking arc from orbit down to a marked site
+    descent: '<path d="M-24 -14 C -4 -14 8 -4 13 13" class="pg-line pg-acc"/><path d="M-24 18 L24 18" class="pg-line" opacity=".5"/><path d="M9 10 L17 18 M17 10 L9 18" class="pg-line"/><circle cx="-22" cy="-14" r="3" class="pg-dot"/>',
+    // from the Moon back to the Earth
+    homeward: '<circle cx="-13" cy="12" r="10" class="pg-fill"/><circle cx="17" cy="-13" r="4.5" class="pg-dot"/><path d="M13 -9 C 10 2 4 9 -2 10" class="pg-line pg-acc"/><path d="M2 5 L-2 10 L4 12" class="pg-line pg-acc"/>',
+    // a row of consoles in the control room
+    console: '<rect x="-23" y="-13" width="13" height="10" class="pg-line"/><rect x="-6.5" y="-13" width="13" height="10" class="pg-line pg-acc"/><rect x="10" y="-13" width="13" height="10" class="pg-line"/><path d="M-25 3 L25 3 L20 14 L-20 14 Z" class="pg-fill"/><circle cx="0" cy="8.5" r="2" class="pg-dot"/>',
   };
   function patchSVG(mod, earned, size = 96) {
     const m = MODULES[mod];

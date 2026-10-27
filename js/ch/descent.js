@@ -12,7 +12,7 @@
   const MU_K = 4902.8, R_K = 1737.4;    // km³/s², km
 
   Progress.register('descent', {
-    name: N`Planning a Powered Descent`, topic: 'descent', glyph: 'lander',
+    name: N`Planning a Powered Descent`, topic: 'descent', glyph: 'descent',
     briefing: N`You will not fly this descent yet, {name}. You will plan it. Where does the engine start, how hard does it push, how much propellant is left to hover, and how far from the site will you land if you ignite five seconds late? Every number can be computed by hand before the simulation checks you.`,
     objectives: [
       { id: 'doi', text: N`Set a descent orbit insertion Δv within 2 m/s of the value that puts periapsis at 15 km` },

@@ -12,7 +12,7 @@
   const deg = 180 / Math.PI;
 
   Progress.register('navigation', {
-    name: N`Where Are We?`, topic: 'navigation', glyph: 'ellipse',
+    name: N`Where Are We?`, topic: 'navigation', glyph: 'tracking',
     briefing: N`Nobody hands you the apoapsis, {name}. You get an altitude, a speed, a climb rate and a clock. In this module you turn those four numbers into an orbit, predict where it leads, and learn how far you can trust the answer. You will also meet the three ways this course divides the work between the crew and Mission Control.`,
     objectives: [
       { id: 'clean', text: N`Find the periapsis and apoapsis of a parking or transfer orbit from exact readings` },

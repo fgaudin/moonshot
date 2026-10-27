@@ -10,7 +10,7 @@
   const fp = (p) => f(p, p >= 1000 ? 0 : p >= 100 ? 1 : p >= 10 ? 2 : 3);
 
   Progress.register('sounding', {
-    name: N`Measuring an Atmosphere`, topic: 'sounding', glyph: 'rocket',
+    name: N`Measuring an Atmosphere`, topic: 'sounding', glyph: 'sounding',
     briefing: N`Every ascent and every entry in this course leans on one thing you have not measured yet: the air, {name}. On a new world nobody hands you a table. You send up sounding rockets, read a pressure gauge on the way, and fit a model to the numbers. In this module you do exactly that on four unknown atmospheres, and you find out how much a good fit depends on how high you fly.`,
     objectives: [
       { id: 'reach', text: N`Launch a rocket yourself that climbs above two scale heights` },

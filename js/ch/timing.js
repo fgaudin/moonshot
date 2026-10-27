@@ -10,7 +10,7 @@
   const rnd = (a, b, step = 1) => a + Math.round(Math.random() * ((b - a) / step)) * step;
 
   Progress.register('timing', {
-    name: N`When to Burn`, topic: 'timing', glyph: 'transfer',
+    name: N`When to Burn`, topic: 'timing', glyph: 'clock',
     briefing: N`A perfect burn at the wrong moment sends you to the right orbit while your target is on the other side of the planet, {name}. In this module you compute when to start a maneuver so that you arrive where the target will be: the required phase angle, the wait, and the ignition time on the mission clock.`,
     objectives: [
       { id: 'phase', text: N`Type the required phase angle for a Hohmann rendezvous, within 1°` },
