@@ -37,7 +37,7 @@ I18N.add('de', {
   'Mountain height': 'Berghöhe',
   'Elevation angle': 'Erhöhungswinkel',
   'From Newton to the two-body equation': 'Von Newton zur Zweikörpergleichung',
-  'Combine the second law with gravitation for a small body \\(m\\) near a large one \\(M\\). Bate, Mueller and White (§1.3) show that if the bodies are spherically symmetric, no other forces act and \\(m \\ll M\\), the motion of \\(m\\) relative to \\(M\\) obeys': 'Kombiniere das zweite Gesetz mit der Gravitation für einen kleinen Körper \\(m\\) in der Nähe eines großen \\(M\\). Bate, Mueller und White (§1.3) zeigen: Sind die Körper kugelsymmetrisch, wirken keine weiteren Kräfte und gilt \\(m \\ll M\\), dann gehorcht die Bewegung von \\(m\\) relativ zu \\(M\\) der Gleichung',
+  'Combine the second law with gravitation for a small body \\(m\\) near a large one \\(M\\). If the bodies are spherically symmetric, no other forces act and \\(m \\ll M\\), then the motion of \\(m\\) relative to \\(M\\) obeys': 'Kombiniere das zweite Gesetz mit der Gravitation für einen kleinen Körper \\(m\\) in der Nähe eines großen \\(M\\). Sind die Körper kugelsymmetrisch, wirken keine weiteren Kräfte und gilt \\(m \\ll M\\), dann gehorcht die Bewegung von \\(m\\) relativ zu \\(M\\) der Gleichung',
   'Read it as: acceleration = μ/r² pointing back toward the planet’s centre. (μ/r³ times the vector r⃗, whose length is r, gives a length of μ/r².)': 'Lies es so: Beschleunigung = μ/r², zum Mittelpunkt des Planeten gerichtet. (μ/r³ mal den Vektor r⃗ mit der Länge r ergibt die Länge μ/r².)',
   'Check yourself': 'Teste dich',
   'Vectors, derivatives, powers of ten.': 'Vektoren, Ableitungen, Zehnerpotenzen.',

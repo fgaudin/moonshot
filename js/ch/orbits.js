@@ -84,42 +84,52 @@
       ], W, H)}</div>
       <figcaption>${T`In the orbit plane: size \\(a\\), shape \\(e\\), and the spacecraft’s place \\(\\nu\\).`}</figcaption></figure>`;
 
-    // (b) plane against the equator, orthographic view from above-front
-    const W2 = 340, H2 = 300, O = [170, 150], R = 125, az = 0, el = 30 * rad, Om = 35 * rad, inc = 50 * rad, om = 60 * rad, ee = 0.3, aa = 100, pp = aa * (1 - ee * ee);
+    // (b) plane against the equator, orthographic view from slightly above, turned so the ascending node faces the viewer
+    // (the inclination is then seen almost at true size). Drawn back to front: southern half, equator disc, northern half.
+    // The equator circle is drawn through the ascending node (radius R), so the two curves visibly cross there.
+    // With 90° < ω < 180° the descending node, at the back, falls just inside the circle.
+    const W2 = 340, H2 = 262, O = [170, 144], az = -125 * rad, el = 20 * rad, Om = 55 * rad, inc = 45 * rad, om = 115 * rad, ee = 0.15, R = 120, pp = R * (1 + ee * Math.cos(om));
     const proj = (q) => { const x1 = q[0] * Math.cos(az) - q[1] * Math.sin(az), y1 = q[0] * Math.sin(az) + q[1] * Math.cos(az); return [O[0] + x1, O[1] - (q[2] * Math.cos(el) + y1 * Math.sin(el))]; };
     const n = [Math.cos(Om), Math.sin(Om), 0], qv = [-Math.sin(Om), Math.cos(Om), 0], m = [Math.cos(inc) * qv[0], Math.cos(inc) * qv[1], Math.sin(inc)];
-    const P = [Math.cos(om) * n[0] + Math.sin(om) * m[0], Math.cos(om) * n[1] + Math.sin(om) * m[1], Math.sin(om) * m[2]];
-    const Q = [-Math.sin(om) * n[0] + Math.cos(om) * m[0], -Math.sin(om) * n[1] + Math.cos(om) * m[1], Math.cos(om) * m[2]];
+    const P = [0, 1, 2].map((k) => Math.cos(om) * n[k] + Math.sin(om) * m[k]), Q = [0, 1, 2].map((k) => -Math.sin(om) * n[k] + Math.cos(om) * m[k]);
     const orb3 = (v) => { const rr = pp / (1 + ee * Math.cos(v)); return [0, 1, 2].map((k) => rr * (Math.cos(v) * P[k] + Math.sin(v) * Q[k])); };
-    const up = [], dn = [];
-    for (let i = 0; i <= 240; i++) { const q = orb3(2 * Math.PI * i / 240); (q[2] >= 0 ? up : dn).push({ i, pt: proj(q) }); }
-    const run = (arr) => { let d = '', last = -9; for (const o of arr) { d += (o.i - last > 1 ? 'M' : 'L') + fx(o.pt[0]) + ',' + fx(o.pt[1]); last = o.i; } return d; };
-    const ring = []; for (let i = 0; i <= 90; i++) ring.push(proj([R * Math.cos(2 * Math.PI * i / 90), R * Math.sin(2 * Math.PI * i / 90), 0]));
-    const orbFill = []; for (let i = 0; i <= 90; i++) orbFill.push(proj(orb3(2 * Math.PI * i / 90)));
     const sc = (v, k) => v.map((x) => x * k), pl = (u, v) => [u[0] + v[0], u[1] + v[1], u[2] + v[2]];
-    const node = orb3(-om), N3 = node, arcPts = (f, from, to, k = 30) => { const o = []; for (let i = 0; i <= k; i++) o.push(proj(f(from + (to - from) * i / k))); return o; };
-    const arcOm = arcPts((t) => sc([Math.cos(t), Math.sin(t), 0], 50), 0, Om);
-    const arcI = arcPts((t) => pl(N3, sc([qv[0] * Math.cos(t), qv[1] * Math.cos(t), Math.sin(t)], 34)), 0, inc);
-    const arcW = arcPts((t) => sc([Math.cos(t) * n[0] + Math.sin(t) * m[0], Math.cos(t) * n[1] + Math.sin(t) * m[1], Math.sin(t) * m[2]], 44), 0, om);
-    const nodeS = proj(N3), periS = proj(orb3(0)), nEnd = proj(sc(n, R)), nEnd2 = proj(sc(n, -R)), xEnd = proj([R, 0, 0]), zEnd = proj([0, 0, 112]);
-    let botS = [0, 0]; for (const o of orbFill) if (o[1] > botS[1]) botS = o;
+    // the northern half runs from the ascending node (ν = −ω) to the descending node (ν = π − ω); closing it draws the line of nodes
+    const half = (v0, v1, k = 90) => { const o = []; for (let i = 0; i <= k; i++) o.push(proj(orb3(v0 + (v1 - v0) * i / k))); return o; };
+    const north = half(-om, Math.PI - om), south = half(Math.PI - om, 2 * Math.PI - om);
+    const ring = []; for (let i = 0; i <= 90; i++) ring.push(proj([R * Math.cos(2 * Math.PI * i / 90), R * Math.sin(2 * Math.PI * i / 90), 0]));
+    const arcPts = (f, from, to, k = 30) => { const o = []; for (let i = 0; i <= k; i++) o.push(proj(f(from + (to - from) * i / k))); return o; };
+    const N3 = orb3(-om), D3 = orb3(Math.PI - om), nodeS = proj(N3), periS = proj(orb3(0));
+    // the i arc: centred on the ascending node, from a point on the equator circle to a point on the orbit, both 30 units away
+    const ch = 30, dist = (u, v) => Math.hypot(u[0] - v[0], u[1] - v[1], u[2] - v[2]), unit = (u) => sc(u, 1 / Math.hypot(...u));
+    const dE = 2 * Math.asin(ch / (2 * R)), E3 = [R * Math.cos(Om + dE), R * Math.sin(Om + dE), 0];
+    let lo = -om, hi = -om + 1; for (let k = 0; k < 40; k++) { const md = (lo + hi) / 2; if (dist(orb3(md), N3) < ch) lo = md; else hi = md; }
+    const u1 = unit(pl(E3, sc(N3, -1))), u2 = unit(pl(orb3(lo), sc(N3, -1))), th = Math.acos(u1[0] * u2[0] + u1[1] * u2[1] + u1[2] * u2[2]);
+    const arcI = arcPts((t) => pl(N3, sc(pl(sc(u1, Math.sin((1 - t) * th)), sc(u2, Math.sin(t * th))), ch / Math.sin(th))), 0, 1);
+    const arcOm = arcPts((t) => sc([Math.cos(t), Math.sin(t), 0], 52), 0, Om);
+    const arcW = arcPts((t) => sc([0, 1, 2].map((k) => Math.cos(t) * n[k] + Math.sin(t) * m[k]), 40), 0, om);
+    const nFar = proj(sc(D3, 1.22)), nNear = proj(sc(N3, 1.1)), xEnd = proj([R, 0, 0]), zEnd = proj([0, 0, 128]);
     const mid = (arr) => arr[Math.floor(arr.length / 2)];
+    const away = (q, k) => { const d = [q[0] - O[0], q[1] - O[1]], l = Math.hypot(d[0], d[1]); return [q[0] + d[0] / l * k, q[1] + d[1] / l * k]; };
+    const head = (tip, from, cls) => { const d = [tip[0] - from[0], tip[1] - from[1]], l = Math.hypot(d[0], d[1]), u = [d[0] / l, d[1] / l]; return `<path class="${cls}" d="${poly([[tip[0] - 9 * u[0] - 4 * u[1], tip[1] - 9 * u[1] + 4 * u[0]], tip, [tip[0] - 9 * u[0] + 4 * u[1], tip[1] - 9 * u[1] - 4 * u[0]]], true)}"/>`; };
     const tilt = `<figure class="fig sub" role="img" aria-label="${T`The orbit plane against the equator: the line of nodes where they cross, the ascending node, the inclination i between the planes, the angle Ω from the reference direction to the ascending node along the equator, and the angle ω from the ascending node to periapsis along the orbit.`}">
       <div class="fig-box"><svg viewBox="0 0 ${W2} ${H2}" aria-hidden="true">
+        <path class="f-pl south" d="${poly(south, true)}"/><path class="f-tr thin f-dash" d="${poly(south)}"/>
         <path class="f-eq" d="${poly(ring, true)}"/>
-        <path class="f-pl" d="${poly(orbFill, true)}"/>
-        <path class="f-mu f-dash" d="M${fx(nEnd2[0])},${fx(nEnd2[1])}L${fx(nEnd[0])},${fx(nEnd[1])}"/>
-        <path class="f-tr thin f-dash" d="${run(dn)}"/><path class="f-tr" d="${run(up)}"/>
-        <path class="f-ink-ln" d="M${O[0]},${O[1]}L${fx(xEnd[0])},${fx(xEnd[1])}"/><path class="f-ink-fill" d="${poly([[xEnd[0] - 9, xEnd[1] - 4], xEnd, [xEnd[0] - 8, xEnd[1] + 5]], true)}"/>
-        <path class="f-mu" d="M${O[0]},${O[1]}L${fx(zEnd[0])},${fx(zEnd[1])}"/><path class="f-mu-fill" d="${poly([[zEnd[0] - 4, zEnd[1] + 9], zEnd, [zEnd[0] + 4, zEnd[1] + 9]], true)}"/>
-        <path class="f-ink-ln" d="${poly(arcOm)}"/><path class="f-ink-ln" d="${poly(arcI)}"/><path class="f-ink-ln" d="${poly(arcW)}"/>
+        <path class="f-pl" d="${poly(north, true)}"/><path class="f-tr" d="${poly(north)}"/>
+        <path class="f-mu f-dash" d="M${fx(nFar[0])},${fx(nFar[1])}L${fx(nNear[0])},${fx(nNear[1])}"/>
+        <path class="f-ink-ln" d="M${O[0]},${O[1]}L${fx(xEnd[0])},${fx(xEnd[1])}"/>${head(xEnd, O, 'f-ink-fill')}
+        <path class="f-mu" d="M${O[0]},${O[1]}L${fx(zEnd[0])},${fx(zEnd[1])}"/>${head(zEnd, O, 'f-mu-fill')}
+        <path class="f-mu" d="M${O[0]},${O[1]}L${fx(periS[0])},${fx(periS[1])}"/>
+        <path class="f-ink-ln" d="${poly(arcOm)}"/><path class="f-ink-ln" d="${poly(arcW)}"/>
+        <path class="f-ac-ln thin" d="${poly(arcI)}"/>
         <circle class="f-earth" cx="${O[0]}" cy="${O[1]}" r="13"/>
         <circle class="f-ac-fill" cx="${fx(nodeS[0])}" cy="${fx(nodeS[1])}" r="4.5"/><circle class="f-ink-fill" cx="${fx(periS[0])}" cy="${fx(periS[1])}" r="3.5"/>
       </svg>${lbs([
-        [xEnd[0] + 2, xEnd[1] + 16, T`reference direction`, 'm r'], [zEnd[0], zEnd[1] - 12, T`north`, 'm'],
-        [nodeS[0] + 46, nodeS[1] - 27, T`ascending node`, 'acc r'], [nEnd2[0], nEnd2[1] + 14, T`line of nodes`, 'm'],
-        [mid(arcOm)[0] + 6, mid(arcOm)[1] + 12, 'Ω', 'ink'], [mid(arcI)[0] - 9, mid(arcI)[1] + 4, 'i', 'ink'], [mid(arcW)[0] - 8, mid(arcW)[1] - 8, 'ω', 'ink'],
-        [periS[0] + 8, periS[1] - 6, T`periapsis`, 'ink l'], [botS[0], botS[1] + 12, T`orbit plane`, 'tr'], [W2 - 26, O[1] + 36, T`equator`, 'm'],
+        [xEnd[0] + 30, xEnd[1] + 15, T`reference direction`, 'm r'], [zEnd[0], zEnd[1] - 11, T`north`, 'm'],
+        [nodeS[0] - 6, nodeS[1] + 13, T`ascending node`, 'acc'], [nFar[0] - 4, nFar[1] - 6, T`line of nodes`, 'm r'],
+        [mid(arcOm)[0], mid(arcOm)[1] + 11, 'Ω', 'ink'], [away(mid(arcI), 0)[0] + 12, mid(arcI)[1] - 4, 'i', 'acc'], [mid(arcW)[0] + 9, mid(arcW)[1] - 4, 'ω', 'ink'],
+        [periS[0] + 8, periS[1] - 6, T`periapsis`, 'ink l'], [north[72][0] - 8, north[72][1] - 4, T`orbit plane`, 'tr r'], [ring[72][0], ring[72][1] - 11, T`equator`, 'm'],
       ], W2, H2)}</div>
       <figcaption>${T`The plane against the equator: tilt \\(i\\), swivel \\(\\Omega\\), and where periapsis lies, \\(\\omega\\). The dashed part of the orbit is south of the equator.`}</figcaption></figure>`;
     return `<div class="fig-pair">${inPlane}${tilt}</div>`;
@@ -147,7 +157,7 @@
     .f-ink-ln { fill: none; stroke: var(--ink); stroke-width: 1.4; } .f-ink-fill { fill: var(--ink); stroke: none; }
     .f-ac-ln { fill: none; stroke: var(--accent); stroke-width: 2.4; } .f-ac-fill { fill: var(--accent); stroke: none; }
     .f-eq { fill: var(--earth); fill-opacity: .1; stroke: var(--muted); stroke-width: 1.2; }
-    .f-pl { fill: var(--trace); fill-opacity: .1; stroke: none; }
+    .f-pl { fill: var(--trace); fill-opacity: .14; stroke: none; } .f-pl.south { fill-opacity: .06; } .f-ac-ln.thin { stroke-width: 1.8; }
     .conic-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: .5rem; }
     .conic { display: flex; flex-direction: column; align-items: center; text-align: center; font: .8rem/1.3 var(--f-mono); }
     .conic svg { max-width: 9rem; }

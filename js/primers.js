@@ -144,42 +144,57 @@
     .primer-fig .t { font: 600 12px var(--f-mono); fill: var(--ink); }
     .primer-fig .tm { font: 500 11px var(--f-mono); fill: var(--muted); }
     .primer-fig .ax { stroke: var(--muted); stroke-width: 1; fill: none; }
-    .primer-fig .gr { stroke: var(--line); stroke-width: 1; fill: none; }`);
+    .primer-fig .gr { stroke: var(--line); stroke-width: 1; fill: none; }
+    .primer-fig .rh-hand > * { fill: var(--panel); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+    .primer-fig .rh-hand > .rh-cuff { fill: var(--line); }
+    .primer-fig .rh-hand > .rh-line { fill: none; stroke-width: 1.1; }`);
 
   // ---- two static drawings used inside refreshers (built at display time so the labels follow the language)
   // Right-hand rule: a along the x axis (right), b along the y axis (away from the viewer), a × b along z (up).
   const rightHandFigure = () => {
-    const O = [120, 188];
+    // left: the vectors on their plane, seen in perspective; right: a thumbs-up right fist, fingers curling the same way
+    const O = [92, 196], ex = 44, ey = 17, tb = Math.atan2(46 * ex, 52 * ey);
+    const ell = (t) => [O[0] + ex * Math.cos(t), O[1] - ey * Math.sin(t)];
+    const curl = []; for (let i = 0; i <= 20; i++) curl.push(ell(0.14 + (tb - 0.3) * i / 20));
+    const H = [300, 154], rx = 62, ry = 15, ring = (t) => [H[0] + rx * Math.cos(t), H[1] + ry * Math.sin(t)];
+    const arc = (t0, t1) => { const o = []; for (let i = 0; i <= 24; i++) o.push(ring(t0 + (t1 - t0) * i / 24)); return o.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(''); };
+    const pl = (pts) => pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ',' + q[1].toFixed(1)).join('');
     return `<figure class="primer-fig">
-      <svg viewBox="0 0 380 250" role="img" aria-label="${T`Drawing of the right-hand rule: the fingers of the right hand point along a, curl towards b, and the thumb points along a × b, perpendicular to both`}">
+      <svg viewBox="0 0 400 260" role="img" aria-label="${T`Drawing of the right-hand rule: the fingers of the right hand point along a, curl towards b, and the thumb points along a × b, perpendicular to both`}">
         <defs>
           <marker id="rh-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker>
           <marker id="rh-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--trace)"/></marker>
           <marker id="rh-c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--good)"/></marker>
           <marker id="rh-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker>
         </defs>
-        <polygon points="60,226 300,226 372,150 132,150" fill="var(--line)" fill-opacity=".35" stroke="var(--line)"/>
-        <text class="tm" x="232" y="168">${T`the plane of a and b`}</text>
-        <!-- the hand: fingers along a, thumb along a × b; each part is drawn twice, a wide ink stroke under a narrower panel-coloured one, to get an outline -->
-        <g stroke-linecap="round" fill="none">
-          ${[[-14, 96], [-3, 106], [8, 100], [19, 84]].map(([dy, len]) => [`<path d="M${O[0] + 20},${O[1] + dy - 6} H${O[0] + len}" stroke="var(--ink)" stroke-width="12"/>`, `<path d="M${O[0] + 20},${O[1] + dy - 6} H${O[0] + len}" stroke="var(--panel)" stroke-width="9.6"/>`].join('')).join('')}
-          <rect x="${O[0] - 16}" y="${O[1] - 24}" width="46" height="46" rx="14" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.2"/>
-          <path d="M${O[0] - 2},${O[1] - 20} V${O[1] - 84}" stroke="var(--ink)" stroke-width="15"/>
-          <path d="M${O[0] - 2},${O[1] - 20} V${O[1] - 84}" stroke="var(--panel)" stroke-width="12.6"/>
-        </g>
-        <!-- vectors -->
-        <line x1="${O[0]}" y1="${O[1]}" x2="${O[0] + 170}" y2="${O[1]}" stroke="var(--accent)" stroke-width="3" marker-end="url(#rh-a)"/>
-        <line x1="${O[0]}" y1="${O[1]}" x2="${O[0] + 82}" y2="${O[1] - 66}" stroke="var(--trace)" stroke-width="3" marker-end="url(#rh-b)"/>
+        <!-- left: the vectors -->
+        <polygon points="14,236 150,236 196,176 60,176" fill="var(--line)" fill-opacity=".35" stroke="var(--line)"/>
+        <text class="tm" x="20" y="252">${T`the plane of a and b`}</text>
+        <line x1="${O[0]}" y1="${O[1]}" x2="${O[0] + 88}" y2="${O[1]}" stroke="var(--accent)" stroke-width="3" marker-end="url(#rh-a)"/>
+        <line x1="${O[0]}" y1="${O[1]}" x2="${O[0] + 52}" y2="${O[1] - 46}" stroke="var(--trace)" stroke-width="3" marker-end="url(#rh-b)"/>
         <line x1="${O[0]}" y1="${O[1]}" x2="${O[0]}" y2="${O[1] - 150}" stroke="var(--good)" stroke-width="3" marker-end="url(#rh-c)"/>
-        <!-- the curl of the fingers, from a towards b -->
-        <path d="M${O[0] + 66},${O[1] - 2} Q${O[0] + 80},${O[1] - 30} ${O[0] + 56},${O[1] - 44}" fill="none" stroke="var(--ink)" stroke-width="1.8" marker-end="url(#rh-k)"/>
-        <text class="t" x="${O[0] + 176}" y="${O[1] + 5}" fill="var(--accent)" style="fill:var(--accent)">a</text>
-        <text class="t" x="${O[0] + 90}" y="${O[1] - 70}" style="fill:var(--trace)">b</text>
-        <text class="t" x="${O[0] + 8}" y="${O[1] - 148}" style="fill:var(--good)">a × b</text>
-        <text class="t" x="${O[0] + 98}" y="${O[1] - 36}">②</text>
-        <text class="t" x="${O[0] + 128}" y="${O[1] + 24}">①</text>
-        <text class="t" x="${O[0] - 24}" y="${O[1] - 100}">③</text>
+        <path d="${pl(curl)}" fill="none" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#rh-k)"/>
         <circle cx="${O[0]}" cy="${O[1]}" r="3" fill="var(--ink)"/>
+        <text class="t" x="${O[0] + 94}" y="${O[1] + 4}" style="fill:var(--accent)">a</text>
+        <text class="t" x="${O[0] + 56}" y="${O[1] - 52}" style="fill:var(--trace)">b</text>
+        <text class="t" x="${O[0] + 10}" y="${O[1] - 140}" style="fill:var(--good)">a × b</text>
+        <line x1="208" y1="24" x2="208" y2="244" stroke="var(--line)" stroke-dasharray="3 4"/>
+        <!-- right: the fist; the back half of the curl arrow goes behind it -->
+        <path d="${arc(Math.PI * 1.04, Math.PI * 1.96)}" fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-dasharray="4 3"/>
+        <line x1="${H[0] - 18}" y1="66" x2="${H[0] - 18}" y2="16" stroke="var(--good)" stroke-width="3" marker-end="url(#rh-c)"/>
+        <g class="rh-hand">
+          <rect x="${H[0] - 34}" y="186" width="58" height="34" rx="4" class="rh-cuff"/>
+          <rect x="${H[0] - 40}" y="112" width="78" height="80" rx="18"/>
+          <path d="M${H[0] - 31},120 C${H[0] - 34},96 ${H[0] - 32},66 ${H[0] - 18},64 C${H[0] - 4},62 ${H[0] - 2},92 ${H[0] + 2},120 Z"/>
+          <path d="M${H[0] - 25},74 C${H[0] - 24},68 ${H[0] - 12},67 ${H[0] - 10},74" class="rh-line"/>
+          ${[0, 1, 2, 3].map((k) => `<rect x="${H[0] + 8}" y="${116 + 18 * k}" width="${44 - 3 * k}" height="19" rx="9.5"/>`).join('')}
+        </g>
+        <path d="${arc(Math.PI * 0.04, Math.PI * 0.96)}" fill="none" stroke="var(--ink)" stroke-width="1.6" marker-start="url(#rh-k)" transform="translate(0 0)"/>
+        <text class="t" x="${H[0] - 6}" y="28" style="fill:var(--good)">${T`thumb: a × b`}</text>
+        <text class="tm" x="${H[0] - 5}" y="244" text-anchor="middle">${T`fingers: from a to b`}</text>
+        <text class="t" x="${O[0] + 52}" y="${O[1] + 28}">①</text>
+        <text class="t" x="${O[0] + 50}" y="${O[1] - 8}">②</text>
+        <text class="t" x="${O[0] - 22}" y="${O[1] - 80}">③</text>
       </svg>
       <figcaption><ol><li>${T`Point the fingers of your right hand along \\(\\vec a\\).`}</li><li>${T`Curl them towards \\(\\vec b\\), through the smaller angle between the two.`}</li><li>${T`Your thumb now points along \\(\\vec a\\times\\vec b\\), perpendicular to the plane of \\(\\vec a\\) and \\(\\vec b\\). Swap the order and the thumb flips: \\(\\vec b\\times\\vec a = -\\vec a\\times\\vec b\\).`}</li></ol></figcaption>
     </figure>`;

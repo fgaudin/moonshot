@@ -37,7 +37,7 @@ I18N.add('fr', {
   'Mountain height': 'Hauteur de la montagne',
   'Elevation angle': 'Angle d’élévation',
   'From Newton to the two-body equation': 'De Newton à l’équation du problème à deux corps',
-  'Combine the second law with gravitation for a small body \\(m\\) near a large one \\(M\\). Bate, Mueller and White (§1.3) show that if the bodies are spherically symmetric, no other forces act and \\(m \\ll M\\), the motion of \\(m\\) relative to \\(M\\) obeys': 'Combinez la deuxième loi avec la gravitation pour un petit corps \\(m\\) proche d’un grand corps \\(M\\). Bate, Mueller et White (§1.3) montrent que si les corps sont à symétrie sphérique, qu’aucune autre force n’agit et que \\(m \\ll M\\), le mouvement de \\(m\\) par rapport à \\(M\\) obéit à',
+  'Combine the second law with gravitation for a small body \\(m\\) near a large one \\(M\\). If the bodies are spherically symmetric, no other forces act and \\(m \\ll M\\), then the motion of \\(m\\) relative to \\(M\\) obeys': 'Combinez la deuxième loi avec la gravitation pour un petit corps \\(m\\) proche d’un grand corps \\(M\\). Si les corps sont à symétrie sphérique, qu’aucune autre force n’agit et que \\(m \\ll M\\), alors le mouvement de \\(m\\) par rapport à \\(M\\) obéit à',
   'Read it as: acceleration = μ/r² pointing back toward the planet’s centre. (μ/r³ times the vector r⃗, whose length is r, gives a length of μ/r².)': 'À lire ainsi\u202f: accélération = μ/r², dirigée vers le centre de la planète. (μ/r³ multiplié par le vecteur r⃗, de longueur r, donne une longueur μ/r².)',
   'Check yourself': 'Vérifiez vos acquis',
   'Vectors, derivatives, powers of ten.': 'Vecteurs, dérivées, puissances de dix.',

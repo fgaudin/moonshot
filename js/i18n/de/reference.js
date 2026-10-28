@@ -63,7 +63,7 @@ I18N.add('de', {
   'Density scale height (model)': 'Skalenhöhe der Dichte (Modell)',
   'exponential atmosphere': 'exponentielle Atmosphäre',
   'Entry interface': 'Eintrittsgrenze',
-  'BMW canonical units': 'Kanonische Einheiten nach BMW',
+  'Canonical units': 'Kanonische Einheiten',
   'Formula sheet': 'Formelsammlung',
   'Gravity': 'Gravitation',
   'Two-body constants': 'Konstanten des Zweikörperproblems',

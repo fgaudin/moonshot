@@ -106,7 +106,7 @@
               ${row(T`Density scale height (model)`, 'H', '7.2 km', T`exponential atmosphere`)}
               ${row(T`Pressure scale height (engine model)`, 'H_p', '7.5 km', T`fit to the lowest 30 km`)}
               ${row(T`Entry interface`, '', '121.92 km', '400 000 ft')}
-              ${row(T`BMW canonical units`, 'DU, TU', '1 DU = 6 378.145 km, 1 TU = 806.81 s', '1 DU/TU = 7.905 km/s')}
+              ${row(T`Canonical units`, 'DU, TU', '1 DU = 6 378.145 km, 1 TU = 806.81 s', '1 DU/TU = 7.905 km/s')}
             </tbody></table></div>
         </section>
 

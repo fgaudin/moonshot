@@ -112,7 +112,7 @@
       const E = 2 * Math.atan(Math.sqrt((1 - e) / (1 + e)) * Math.tan(nu / 2));
       const M = E - e * Math.sin(E), n = Math.sqrt(MU / (a * a * a)), t = M / n / 60;
       return { q: T`On an orbit around Earth with perigee altitude ${hp} km and apogee altitude ${f(ha, 0)} km, how long does a spacecraft take to travel from perigee to a true anomaly of <b>${nuD}°</b>?`, answer: t, unit: 'min', tol: 0.015,
-        hint: T`Find e and a, convert ν to the eccentric anomaly E, then apply Kepler’s equation M = E − e sin E and t = M/n (BMW §4.2).`,
+        hint: T`Find e and a, convert ν to the eccentric anomaly E, then apply Kepler’s equation M = E − e sin E and t = M/n.`,
         sol: R`\[ a = ${f(a, 0)}\ \mathrm{km},\ e = ${f(e, 4)} \] \[ \tan\frac{E}{2} = \sqrt{\frac{1-e}{1+e}}\tan\frac{\nu}{2} \Rightarrow E = ${f(E, 4)}\ \mathrm{rad} \] \[ M = E - e\sin E = ${f(M, 4)},\quad n = \sqrt{\mu/a^3} = ${f(n, 7)}\ \mathrm{rad/s} \] \[ t = M/n = ${f(t * 60, 0)}\ \mathrm{s} = ${f(t, 2)}\ \mathrm{min} \]` };
     } },
 
@@ -571,7 +571,7 @@
     render(page) {
       let topic = UI.store.get('ptopic', 'all');
       page.innerHTML = `
-        ${App.header({ eyebrow: T`Training · Mission simulator`, title: T`Practice`, lede: T`Each problem has fresh numbers. Answers within 1% count as correct (some allow a little more). Use a calculator; the solutions follow the notation of BMW and Sellers.` })}
+        ${App.header({ eyebrow: T`Training · Mission simulator`, title: T`Practice`, lede: T`Each problem has fresh numbers. Answers within 1% count as correct (some allow a little more). Use a calculator; the solutions use the course notation.` })}
         <div class="score" id="score"></div>
         <div class="topics" id="topics"></div>
         <div id="pbox" style="display:flex;flex-direction:column;gap:1rem"></div>
