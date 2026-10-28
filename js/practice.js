@@ -65,7 +65,7 @@
     { topic: 'orbits', title: N`Orbital period`, make() {
       const h = pick([185, 400, 700, 1500, 20200]);
       const P = 2 * Math.PI * Math.sqrt(Math.pow(RE + h, 3) / MU) / 60;
-      return { q: T`What is the period of a circular orbit at <b>${f(h, 0)} km</b> altitude?`, answer: P, unit: 'min',
+      return { q: T`What is the period of a circular orbit <b>around Earth</b> at <b>${f(h, 0)} km</b> altitude?`, answer: P, unit: 'min',
         hint: T`Kepler’s third law: T = 2π√(a³/μ). For a circle, a = r.`,
         sol: R`\[ T = 2\pi\sqrt{\frac{a^3}{\mu}} = 2\pi\sqrt{\frac{${f(RE + h, 0)}^3}{398600}} = ${f(P * 60, 0)}\ \mathrm{s} = ${f(P, 2)}\ \mathrm{min} \]` };
     } },
@@ -73,21 +73,21 @@
       const opts = [{ P: 86164.1, l: N`one sidereal day (23 h 56 min 4 s), the geostationary orbit` }, { P: 43082, l: N`half a sidereal day (GPS-like)` }, { P: 7200, l: N`2 hours` }, { P: 10800, l: N`3 hours` }];
       const o = pick(opts);
       const a = Math.cbrt(MU * Math.pow(o.P / (2 * Math.PI), 2));
-      return { q: T`What altitude gives a circular orbit with a period of <b>${T(o.l)}</b>?`, answer: a - RE, unit: 'km',
+      return { q: T`What altitude above Earth’s surface gives a circular orbit around Earth with a period of <b>${T(o.l)}</b>?`, answer: a - RE, unit: 'km',
         hint: T`Invert Kepler’s third law for a, then subtract Earth’s radius.`,
         sol: R`\[ a = \sqrt[3]{\mu\left(\frac{T}{2\pi}\right)^2} = \sqrt[3]{398600\left(\frac{${f(o.P, 0)}}{2\pi}\right)^2} = ${f(a, 0)}\ \mathrm{km} \;\Rightarrow\; h = ${f(a - RE, 0)}\ \mathrm{km} \]` };
     } },
     { topic: 'orbits', title: N`Eccentricity from apsides`, make() {
       const hp = rnd(160, 600, 5), ha = pick([1000, 2500, 5000, 20000, 35786]);
       const rp = RE + hp, ra = RE + ha, e = (ra - rp) / (ra + rp);
-      return { q: T`An orbit has a perigee altitude of <b>${hp} km</b> and an apogee altitude of <b>${f(ha, 0)} km</b>. What is its eccentricity?`, answer: e, unit: '', tol: 0.01,
+      return { q: T`An orbit around Earth has a perigee altitude of <b>${hp} km</b> and an apogee altitude of <b>${f(ha, 0)} km</b>. What is its eccentricity?`, answer: e, unit: '', tol: 0.01,
         hint: T`Use radii from Earth’s centre: e = (r_a − r_p)/(r_a + r_p).`,
         sol: R`\[ r_p = ${f(rp, 0)},\; r_a = ${f(ra, 0)}\ \mathrm{km},\qquad e = \frac{r_a-r_p}{r_a+r_p} = ${f(e, 4)} \]` };
     } },
     { topic: 'orbits', title: N`Vis-viva at perigee`, make() {
       const hp = rnd(180, 400, 5), ha = pick([2000, 10000, 35786, 100000]);
       const rp = RE + hp, ra = RE + ha, a = (rp + ra) / 2, v = Math.sqrt(MU * (2 / rp - 1 / a));
-      return { q: T`What is the speed at perigee of an orbit with perigee altitude <b>${hp} km</b> and apogee altitude <b>${f(ha, 0)} km</b>?`, answer: v, unit: 'km/s',
+      return { q: T`What is the speed at perigee of an orbit around Earth with perigee altitude <b>${hp} km</b> and apogee altitude <b>${f(ha, 0)} km</b>?`, answer: v, unit: 'km/s',
         hint: T`Find a = (r_p + r_a)/2, then use the energy equation (vis-viva): v² = μ(2/r − 1/a).`,
         sol: R`\[ a = \frac{${f(rp, 0)}+${f(ra, 0)}}{2} = ${f(a, 0)}\ \mathrm{km},\quad v_p = \sqrt{\mu\left(\frac{2}{r_p}-\frac{1}{a}\right)} = ${f(v, 3)}\ \mathrm{km/s} \]` };
     } },
@@ -95,14 +95,14 @@
       const hp = rnd(200, 500, 10), ha = pick([5000, 20000, 35786]);
       const rp = RE + hp, ra = RE + ha, a = (rp + ra) / 2;
       const vp = Math.sqrt(MU * (2 / rp - 1 / a)), va = vp * rp / ra;
-      return { q: T`A satellite passes perigee (altitude ${hp} km) at <b>${f(vp, 3)} km/s</b>. Its apogee altitude is ${f(ha, 0)} km. How fast does it move at apogee?`, answer: va, unit: 'km/s',
+      return { q: T`A satellite in orbit around Earth passes perigee (altitude ${hp} km) at <b>${f(vp, 3)} km/s</b>. Its apogee altitude is ${f(ha, 0)} km. How fast does it move at apogee?`, answer: va, unit: 'km/s',
         hint: T`At both apsides the velocity is perpendicular to the radius, and h = r v is conserved.`,
         sol: R`\[ r_p v_p = r_a v_a \;\Rightarrow\; v_a = v_p\frac{r_p}{r_a} = ${f(vp, 3)}\times\frac{${f(rp, 0)}}{${f(ra, 0)}} = ${f(va, 3)}\ \mathrm{km/s} \]` };
     } },
     { topic: 'orbits', title: N`Specific mechanical energy`, make() {
       const h = rnd(200, 2000, 50), v = rnd(7.0, 10.5, 0.1);
       const r = RE + h, eps = v * v / 2 - MU / r;
-      return { q: T`A spacecraft at ${h} km altitude moves at <b>${f(v, 1)} km/s</b>. What is its specific mechanical energy? Is it bound to Earth?`, answer: eps, unit: 'km²/s² (MJ/kg)',
+      return { q: T`A spacecraft at ${h} km altitude above Earth moves at <b>${f(v, 1)} km/s</b>. What is its specific mechanical energy? Is it bound to Earth?`, answer: eps, unit: 'km²/s² (MJ/kg)',
         hint: T`ε = v²/2 − μ/r. A negative value means a closed (elliptical) orbit.`,
         sol: R`\[ \varepsilon = \frac{v^2}{2}-\frac{\mu}{r} = \frac{${f(v, 1)}^2}{2}-\frac{398600}{${f(r, 0)}} = ${f(eps, 3)}\ \mathrm{km^2/s^2} \]` + `<p>${eps < 0 ? T`Negative, so the orbit is an ellipse and the spacecraft is bound to Earth.` : T`Positive, so the path is a hyperbola and the spacecraft escapes.`}</p>` };
     } },
@@ -111,7 +111,7 @@
       const rp = RE + hp, ra = RE + ha, a = (rp + ra) / 2, e = (ra - rp) / (ra + rp), nu = nuD * deg;
       const E = 2 * Math.atan(Math.sqrt((1 - e) / (1 + e)) * Math.tan(nu / 2));
       const M = E - e * Math.sin(E), n = Math.sqrt(MU / (a * a * a)), t = M / n / 60;
-      return { q: T`On an orbit with perigee altitude ${hp} km and apogee altitude ${f(ha, 0)} km, how long does a spacecraft take to travel from perigee to a true anomaly of <b>${nuD}°</b>?`, answer: t, unit: 'min', tol: 0.015,
+      return { q: T`On an orbit around Earth with perigee altitude ${hp} km and apogee altitude ${f(ha, 0)} km, how long does a spacecraft take to travel from perigee to a true anomaly of <b>${nuD}°</b>?`, answer: t, unit: 'min', tol: 0.015,
         hint: T`Find e and a, convert ν to the eccentric anomaly E, then apply Kepler’s equation M = E − e sin E and t = M/n (BMW §4.2).`,
         sol: R`\[ a = ${f(a, 0)}\ \mathrm{km},\ e = ${f(e, 4)} \] \[ \tan\frac{E}{2} = \sqrt{\frac{1-e}{1+e}}\tan\frac{\nu}{2} \Rightarrow E = ${f(E, 4)}\ \mathrm{rad} \] \[ M = E - e\sin E = ${f(M, 4)},\quad n = \sqrt{\mu/a^3} = ${f(n, 7)}\ \mathrm{rad/s} \] \[ t = M/n = ${f(t * 60, 0)}\ \mathrm{s} = ${f(t, 2)}\ \mathrm{min} \]` };
     } },
@@ -191,7 +191,7 @@
     { topic: 'ascent', title: N`Δv to reach orbit`, make() {
       const h = pick([185, 200, 300]), lossG = rnd(1100, 1500, 50), lossD = rnd(40, 150, 10), lat = 28.5;
       const vc = Math.sqrt(MU / (RE + h)) * 1000, rot = 465.1 * Math.cos(lat * deg), dv = vc + lossG + lossD - rot;
-      return { q: T`A launcher heads due east from 28.5° N into a ${h} km circular orbit. It suffers <b>${lossG} m/s</b> of gravity loss and <b>${lossD} m/s</b> of drag loss. Ignoring steering losses, what Δv must the vehicle supply?`, answer: dv, unit: 'm/s',
+      return { q: T`A launcher heads due east from 28.5° N into a ${h} km circular orbit around Earth. It suffers <b>${lossG} m/s</b> of gravity loss and <b>${lossD} m/s</b> of drag loss. Ignoring steering losses, what Δv must the vehicle supply?`, answer: dv, unit: 'm/s',
         hint: T`Orbital speed plus the losses, minus the speed Earth’s rotation gives you for free.`,
         sol: R`\[ \Delta v = v_c + \Delta v_{grav} + \Delta v_{drag} - v_{rot} = ${f(vc, 0)} + ${lossG} + ${lossD} - ${f(rot, 0)} = ${f(dv, 0)}\ \mathrm{m/s} \]` };
     } },
@@ -209,21 +209,21 @@
       const r1 = RE + h1, r2 = RE + h2, at = (r1 + r2) / 2;
       const v1 = Math.sqrt(MU / r1), v2 = Math.sqrt(MU / r2), vt1 = Math.sqrt(MU * (2 / r1 - 1 / at)), vt2 = Math.sqrt(MU * (2 / r2 - 1 / at));
       const dv = (vt1 - v1) + (v2 - vt2);
-      return { q: T`What total Δv does a Hohmann transfer need from a <b>${h1} km</b> circular orbit to a <b>${f(h2, 0)} km</b> circular orbit (coplanar)?`, answer: dv, unit: 'km/s',
+      return { q: T`What total Δv does a Hohmann transfer around Earth need from a <b>${h1} km</b> circular orbit to a <b>${f(h2, 0)} km</b> circular orbit (coplanar)?`, answer: dv, unit: 'km/s',
         hint: T`Transfer ellipse a = (r₁ + r₂)/2. Burn 1 at perigee: v_t1 − v₁. Burn 2 at apogee: v₂ − v_t2.`,
         sol: R`\[ a_t = ${f(at, 0)}\ \mathrm{km},\quad v_1 = ${f(v1, 3)},\ v_{t1} = ${f(vt1, 3)},\ v_{t2} = ${f(vt2, 3)},\ v_2 = ${f(v2, 3)}\ \mathrm{km/s} \] \[ \Delta v = (${f(vt1, 3)}-${f(v1, 3)}) + (${f(v2, 3)}-${f(vt2, 3)}) = ${f(dv, 3)}\ \mathrm{km/s} \]` };
     } },
     { topic: 'maneuvers', title: N`Hohmann time of flight`, make() {
       const h1 = pick([185, 400]), h2 = pick([5000, 20200, 35786, 384400 - RE]);
       const at = (2 * RE + h1 + h2) / 2, t = Math.PI * Math.sqrt(at * at * at / MU) / 3600;
-      return { q: T`How long does a Hohmann transfer take from a ${h1} km orbit to a circular orbit at radius <b>${f(RE + h2, 0)} km</b>?`, answer: t, unit: 'h',
+      return { q: T`How long does a Hohmann transfer around Earth take from a ${h1} km orbit to a circular orbit at radius <b>${f(RE + h2, 0)} km</b>?`, answer: t, unit: 'h',
         hint: T`Half the period of the transfer ellipse.`,
         sol: R`\[ \mathrm{TOF} = \pi\sqrt{\frac{a_t^3}{\mu}} = \pi\sqrt{\frac{${f(at, 0)}^3}{398600}} = ${f(t * 3600, 0)}\ \mathrm{s} = ${f(t, 2)}\ \mathrm{h} \]` };
     } },
     { topic: 'maneuvers', title: N`Simple plane change`, make() {
       const h = pick([185, 400, 35786]), di = pick([1, 5, 10, 28.5]);
       const v = Math.sqrt(MU / (RE + h)), dv = 2 * v * Math.sin(di * deg / 2);
-      return { q: T`How much Δv does it take to rotate a <b>${f(h, 0)} km</b> circular orbit's plane by <b>${dec(di)}°</b> without changing its size?`, answer: dv, unit: 'km/s',
+      return { q: T`How much Δv does it take to rotate a <b>${f(h, 0)} km</b> circular orbit's plane around Earth by <b>${dec(di)}°</b> without changing its size?`, answer: dv, unit: 'km/s',
         hint: T`The velocity keeps its magnitude but turns through Δi: Δv = 2v sin(Δi/2).`,
         sol: R`\[ v = ${f(v, 3)}\ \mathrm{km/s},\quad \Delta v = 2v\sin\frac{\Delta i}{2} = ${f(dv, 3)}\ \mathrm{km/s} \]` + `<p>${T`Plane changes are expensive in low orbit. That is one reason Apollo launch windows were planned so carefully.`}</p>` };
     } },
@@ -241,7 +241,7 @@
     { topic: 'burns', title: N`Circularization burn`, make() {
       const hp = pick([200, 250, 300]), ha = pick([800, 1000, 1500, 2000]);
       const rp = RE + hp, ra = RE + ha, a = (rp + ra) / 2, va = Math.sqrt(MU * (2 / ra - 1 / a)), vc = Math.sqrt(MU / ra), dv = (vc - va) * 1000;
-      return { q: T`Your orbit is ${hp} × ${f(ha, 0)} km. What prograde Δv at apoapsis makes it circular at ${f(ha, 0)} km?`, answer: dv, unit: 'm/s',
+      return { q: T`Your orbit around Earth is ${hp} × ${f(ha, 0)} km. What prograde Δv at apoapsis makes it circular at ${f(ha, 0)} km?`, answer: dv, unit: 'm/s',
         hint: T`At apoapsis the velocity is horizontal, so the burn is pure prograde: circular speed minus the current speed, both from vis-viva.`,
         sol: R`\[ v_a = \sqrt{\mu\left(\frac{2}{r_a}-\frac{1}{a}\right)} = ${f(va, 4)},\quad v_c = \sqrt{\frac{\mu}{r_a}} = ${f(vc, 4)}\ \mathrm{km/s} \] \[ \Delta v_P = v_c - v_a = ${f(dv, 1)}\ \mathrm{m/s},\quad \Delta v_R = 0 \]` };
     } },
@@ -317,7 +317,7 @@
     { topic: 'moon', title: N`Trans-lunar injection`, make() {
       const h = pick([167, 185, 190]), ra = pick([384400, 400000, 370000]);
       const rp = RE + h, a = (rp + ra) / 2, vc = Math.sqrt(MU / rp), vp = Math.sqrt(MU * (2 / rp - 1 / a));
-      return { q: T`Apollo coasted in a <b>${h} km</b> circular parking orbit. Using a two-body Hohmann approximation, what TLI Δv raises apogee to <b>${f(ra, 0)} km</b> from Earth's centre?`, answer: vp - vc, unit: 'km/s',
+      return { q: T`Apollo coasted in a <b>${h} km</b> circular Earth parking orbit. Using a two-body Hohmann approximation, what TLI Δv raises apogee to <b>${f(ra, 0)} km</b> from Earth's centre?`, answer: vp - vc, unit: 'km/s',
         hint: T`Perigee speed of the transfer ellipse minus circular speed.`,
         sol: R`\[ v_c = \sqrt{\mu/r_p} = ${f(vc, 3)},\quad v_p = \sqrt{\mu\left(\frac{2}{r_p}-\frac{1}{a}\right)} = ${f(vp, 3)}\ \mathrm{km/s} \] \[ \Delta v_{TLI} = ${f(vp - vc, 3)}\ \mathrm{km/s} \]` + `<p>${T`Apollo 11's real TLI was 3.18 km/s; the Moon's own gravity is why patched conics or numerical integration are needed for the details.`}</p>` };
     } },
@@ -447,6 +447,37 @@
 
   const parseNum = (s) => parseFloat(String(s).replace(/\s|\u202f/g, '').replace(',', '.'));
 
+  // Constants panel: the same numbers as the Reference page, taken from Phys.C (text built when first opened, so it follows the language)
+  App.css('practice-constants', `
+    .consts { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: .5rem .8rem .6rem; margin-top: .7rem; }
+    .consts table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    .consts td { padding: .22rem .5rem .22rem 0; border-top: 1px solid var(--line); vertical-align: baseline; }
+    .consts tr:first-child td { border-top: 0; }
+    .consts td:nth-child(2) { font-family: var(--f-mono); color: var(--accent); white-space: nowrap; }
+    .consts td:last-child { font-family: var(--f-mono); text-align: right; white-space: nowrap; padding-right: 0; }
+    .consts .consts-note { margin: .45rem 0 0; font-size: .78rem; color: var(--muted); }
+    @media (max-width: 520px) { .consts table { font-size: .76rem; } .consts td:first-child { min-width: 7.5rem; } }`);
+  function constantsHTML() {
+    const C = Phys.C, S = '\u202f';
+    // group digits in threes with a narrow no-break space, as on the Reference page
+    const grp = (x, d, dec3 = false) => { const [i, fr = ''] = x.toFixed(d).split('.'); return i.replace(/\B(?=(\d{3})+$)/g, S) + (fr ? '.' + (dec3 ? fr.replace(/(\d{3})(?=\d)/g, '$1' + S) : fr) : ''); };
+    const rows = [
+      [T`Earth gravitational parameter`, 'μ⊕', grp(C.muE / 1e9, 4) + ' km³/s²'],
+      [T`Earth equatorial radius`, 'R⊕', grp(C.RE / 1e3, 3) + ' km'],
+      [T`Moon gravitational parameter`, 'μ☾', grp(C.muM / 1e9, 2) + ' km³/s²'],
+      [T`Moon mean radius`, 'R☾', grp(C.RM / 1e3, 1) + ' km'],
+      [T`Standard gravity`, 'g₀', grp(C.g0, 5) + ' m/s²'],
+      [T`Moon surface gravity`, 'g☾', grp(C.muM / (C.RM * C.RM), 3) + ' m/s²'],
+      [T`Mean Earth–Moon distance`, 'D', grp(C.DEM / 1e3, 0) + ' km'],
+      [T`Moon orbital speed (mean)`, '', '≈ ' + grp(Math.sqrt(C.muE / C.DEM) / 1e3, 2) + ' km/s'],
+      [T`Earth sidereal rotation rate (relative to the stars)`, 'ω⊕', grp(C.omegaE * 1e5, 7, true) + ' × 10⁻⁵ rad/s'],
+      [T`Sea-level air density`, 'ρ₀', grp(C.rho0, 3) + ' kg/m³'],
+      [T`Density scale height (model)`, 'H', grp(C.H / 1e3, 1) + ' km'],
+    ];
+    return `<table>${rows.map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${UI.dec(r[2])}</td></tr>`).join('')}</table>
+      <p class="consts-note">${T`The same values as on the <a href="#reference">Reference</a> page.`}</p>`;
+  }
+
   function problemCard(gen, onDone) {
     const p = gen.make();
     const tol = p.tol ?? 0.01;
@@ -460,9 +491,11 @@
           <button class="btn primary" type="submit">${T`Check`}</button>
           <button class="btn" type="button" data-a="hint">${T`Hint`}</button>
           <button class="btn" type="button" data-a="sol">${T`Solution`}</button>
+          <button class="btn" type="button" data-a="const" aria-expanded="false">${T`Constants`}</button>
           <button class="btn" type="button" data-a="new">${T`New problem ↻`}</button>
         </form>
         <div class="verdict" aria-live="polite"></div>
+        <div class="consts" hidden></div>
         <div class="note hint" hidden>${p.hint}</div>
         <div class="solution" hidden>${p.sol}<p class="mono" style="margin:0">${T`Answer: <b>${f(p.answer, Math.abs(p.answer) < 10 ? 3 : Math.abs(p.answer) < 1000 ? 1 : 0)} ${p.unit}</b> (tolerance ±${dec((tol * 100).toFixed(1))}%)`}</p></div>
       </div>`);
@@ -480,6 +513,11 @@
     el.addEventListener('click', (e) => {
       const a = e.target.dataset && e.target.dataset.a;
       if (a === 'hint') el.querySelector('.hint').hidden = false;
+      if (a === 'const') {
+        const box = el.querySelector('.consts'), open = box.hidden;
+        if (open && !box.innerHTML) box.innerHTML = constantsHTML();
+        box.hidden = !open; e.target.setAttribute('aria-expanded', String(open));
+      }
       if (a === 'sol') { el.querySelector('.solution').hidden = false; UI.typeset(el.querySelector('.solution')); if (!answered) { record(gen.topic, false); answered = true; onDone && onDone(); } }
       if (a === 'new') { const n = problemCard(pickGen(gen.topic), onDone); el.replaceWith(n); UI.typeset(n); }
     });

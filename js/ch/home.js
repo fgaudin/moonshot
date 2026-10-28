@@ -32,6 +32,11 @@
           <span class="meter" aria-label="${T`${n} of ${all} objectives`}"><i style="width:${100 * n / all}%"></i></span><span class="pc-sub">${T`${n}/${all} objectives`}</span></span></a>`;
       }).join('');
       const certified = tot.patches === mods.length;
+      // the entry buttons appear twice, under the hero and again at the foot of the page
+      const entryButtons = `
+              <a class="btn primary" href="#${next || 'practice'}">${next ? (tot.d ? T`Continue: ${nextMod.code} ${T(nextMod.name)} →` : T`Report for training: ${nextMod.code} →`) : T`Keep your skills sharp →`}</a>
+              <a class="btn" href="#toolkit">${T`Ground school (math refreshers)`}</a>
+              <a class="btn" href="#practice">${T`Simulator room`}</a>`;
       page.innerHTML = `
         <section class="hero">
           <div style="display:flex;flex-direction:column;gap:1.2rem;min-width:0">
@@ -44,11 +49,7 @@
               <button class="btn" type="submit">${T`Save`}</button>
               <span class="note" id="enrol-msg" aria-live="polite"></span>
             </form>
-            <div class="btn-row">
-              <a class="btn primary" href="#${next || 'practice'}">${next ? (tot.d ? T`Continue: ${nextMod.code} ${T(nextMod.name)} →` : T`Report for training: ${nextMod.code} →`) : T`Keep your skills sharp →`}</a>
-              <a class="btn" href="#toolkit">${T`Ground school (math refreshers)`}</a>
-              <a class="btn" href="#practice">${T`Simulator room`}</a>
-            </div>
+            <div class="btn-row">${entryButtons}</div>
           </div>
           <figure style="margin:0;display:flex;flex-direction:column;gap:.5rem;align-items:center;min-width:0">
             <div class="stage-hero"><canvas id="hero-cv" aria-label="${T`Animated free-return trajectory from the Earth around the Moon and back, in the rotating Earth–Moon frame`}"></canvas></div>
@@ -99,6 +100,11 @@
           </div>
           <p class="note">${T`Approximate values from the Apollo 11 Mission Report. GET is ground elapsed time from liftoff, 16 July 1969, 13:32 UTC (Coordinated Universal Time).`}</p>
           <p class="note">${T`<b>Who flies what.</b> CSM: command and service module, the crew’s ship to the Moon and back; its main engine is the SPS (service propulsion system) and its small attitude thrusters the RCS (reaction control system). LM: lunar module, the lander; DPS and APS are its descent and ascent engines. S-IVB: the third stage of the Saturn V. TLI, LOI and TEI are the burns that leave Earth orbit, enter lunar orbit and leave it again.`}</p>
+        </section>
+
+        <section class="section" id="go">
+          <h2><span class="idx">▸</span>${T`Ready to start?`}</h2>
+          <div class="btn-row">${entryButtons}</div>
         </section>
 
         <section class="section">

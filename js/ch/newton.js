@@ -2,6 +2,7 @@
 (function () {
   'use strict';
   const { C } = Phys;
+  const ESC_TOL = 0.001;   // within 0.1% of escape speed (about 11 m/s in low orbit) counts as exactly escape speed
 
   App.chapter({
     id: 'newton', phase: N`Foundations`, title: N`Newton & Gravity`, lab: N`Newton's cannon`,
@@ -20,11 +21,14 @@
           <h2><span class="idx">1.1</span>${T`The three laws of motion`}</h2>
           <div class="prose">
             <p>${T`<b>First law, inertia.</b> A body keeps its velocity, constant speed in a straight line, unless an external force acts on it. A spacecraft coasting between Earth and Moon needs no engine to keep moving. It needs an engine only to <i>change</i> its motion.`}</p>
+            <p>${T`<b>Momentum.</b> Before the second law, one new quantity. The momentum of a body is its mass times its velocity. It measures how hard the body is to stop: a heavy body, or a fast one, has a lot of it.`}</p>
+            <div class="eq">\\[ \\vec p = m\\,\\vec v \\]</div>
+            ${Sym.where([['\\vec p', N`momentum: mass times velocity. A vector, so it points the way the body moves`, 'kg·m/s'], 'm', 'vecv'], N`The unit kg·m/s is the same as N·s. A 1 kg ball at 1 m/s has a momentum of 1 kg·m/s; a 45 t spacecraft at 7.8 km/s has about 3.5 × 10⁸ kg·m/s.`)}
             <p>${T`<b>Second law.</b> The rate of change of momentum equals the applied force:`}</p>
             <div class="eq">\\[ \\vec F = \\frac{d}{dt}\\left(m\\vec v\\right) \\quad\\Longrightarrow\\quad \\vec F = m\\,\\vec a \\;\\; ${T`\\text{(constant mass)}`} \\]</div>
             ${Sym.where(['vecF', 'ddt', 'm', 'vecv', 'veca'], N`Read it as: force = mass × acceleration. Push twice as hard and a body speeds up twice as fast.`)}
             ${Primer.box('vectors', false, 'refresher') + Primer.box('derivative')}
-            <p>${T`A rocket's mass is <i>not</i> constant; it throws away about 13 tonnes of propellant every second at liftoff. Working this law with changing mass gives the rocket equation (Phase 3).`}</p>
+            <p>${T`A rocket's mass is <i>not</i> constant; it throws away about 13 tonnes of propellant every second at liftoff. Working this law with changing mass gives the rocket equation (module ${Progress.code('rockets')}, section ${App.sec('rockets', 3)}).`}</p>
             <p>${T`<b>Third law, action and reaction.</b> When the engine pushes exhaust backward, the exhaust pushes the engine forward with an equal and opposite force. A rocket needs no air to push against, which is why it works in a vacuum.`}</p>
           </div>
         </section>
@@ -61,7 +65,7 @@
               <div class="btn-row"><button class="btn" data-v="7.85" data-kind="circular">${T`Circular`}</button><button class="btn" data-v="11.1" data-kind="escape">${T`Escape`}</button><button class="btn" id="cn-clear">${T`Clear traces`}</button><button class="btn primary" id="cn-fire">${T`Fire ▸`}</button></div></div>
             <div class="stage" style="min-height:440px"><canvas id="cn-cv" aria-label="${T`Earth with a cannon on a mountain and the trajectory of the shot`}"></canvas><div class="overlay" id="cn-ov"></div><div class="badge" id="cn-badge"></div></div>
             <div class="controls">
-              ${UI.slider({ id: 'cn-v', label: T`Muzzle speed`, min: 0, max: 12.5, step: 0.05, value: 7.2, unit: 'km/s' })}
+              ${UI.slider({ id: 'cn-v', label: T`Muzzle speed`, min: 0, max: 12.5, step: 0.01, value: 7.2, unit: 'km/s' })}
               ${UI.slider({ id: 'cn-h', label: T`Mountain height`, min: 0, max: 3000, step: 10, value: 300, unit: 'km' })}
               ${UI.slider({ id: 'cn-a', label: T`Elevation angle`, min: -20, max: 60, step: 0.5, value: 0, unit: '°' })}
               <dl class="readout" id="cn-ro"></dl>
@@ -75,7 +79,7 @@
             <p>${T`Combine the second law with gravitation for a small body \\(m\\) near a large one \\(M\\). Bate, Mueller and White (§1.3) show that if the bodies are spherically symmetric, no other forces act and \\(m \\ll M\\), the motion of \\(m\\) relative to \\(M\\) obeys`}</p>
             <div class="eq">\\[ \\ddot{\\vec r} + \\frac{\\mu}{r^3}\\,\\vec r = \\vec 0 \\]</div>
             ${Sym.where(['rddot', 'vecr', 'r', 'mu'], N`Read it as: acceleration = μ/r² pointing back toward the planet’s centre. (μ/r³ times the vector r⃗, whose length is r, gives a length of μ/r².)`)}
-            <p>${T`This is the <b>two-body equation of motion</b>, the starting point of Phase 2. A sphere's gravity acts as if all its mass sat at the centre; Newton proved this shell theorem and needed calculus, which he invented, to do it. Real missions add perturbations: Earth's oblateness (its slight bulge at the equator, measured by the coefficient \\(J_2\\)), the Sun and Moon, drag, solar pressure. Over a few orbits two-body motion describes the trajectory well. Over days the perturbations add up, which is why spacecraft are tracked and their orbits corrected.`}</p>
+            <p>${T`This is the <b>two-body equation of motion</b>, the starting point of module ${Progress.code('orbits')}. A sphere's gravity acts as if all its mass sat at the centre; Newton proved this shell theorem and needed calculus, which he invented, to do it. Real missions add perturbations: Earth's oblateness (its slight bulge at the equator, measured by the coefficient \\(J_2\\)), the Sun and Moon, drag, solar pressure. Over a few orbits two-body motion describes the trajectory well. Over days the perturbations add up, which is why spacecraft are tracked and their orbits corrected.`}</p>
           </div>
         </section>
 
@@ -105,8 +109,15 @@
       let y = [0, r0, spd * Math.cos(phi), spd * Math.sin(phi)];
       const f = (t, s) => { const r3 = Math.pow(s[0] * s[0] + s[1] * s[1], 1.5); return [s[2], s[3], -C.muE * s[0] / r3, -C.muE * s[1] / r3]; };
       const pts = [[y[0], y[1], 0]];
-      let t = 0, ang = 0, prevA = Math.atan2(y[0], y[1]), outcome = 'orbit', impactT = null;
-      const tMax = el.e < 1 ? Math.min(el.T * 1.001, 3 * 86400) : 2 * 86400;
+      // The kind of path follows from the speed alone: the energy is negative below escape speed (an ellipse, a circle
+      // being the special case), zero at escape speed (a parabola) and positive above it (a hyperbola). Escape speed is
+      // computed from the launch radius (Earth's radius plus the mountain), the same radius as the readout.
+      const vc = Math.sqrt(C.muE / r0), ve = Math.sqrt(2 * C.muE / r0);
+      const kind = spd > ve * (1 + ESC_TOL) ? 'hyperbola' : spd >= ve * (1 - ESC_TOL) ? 'parabola' : 'ellipse';
+      // an ellipse is followed for one full revolution, however long it takes (it must be seen to close);
+      // an open path stops once it is far away, or after 2 days
+      let t = 0, ang = 0, prevA = Math.atan2(y[0], y[1]), outcome = kind === 'ellipse' ? 'orbit' : 'escape', impactT = null;
+      const tMax = kind === 'ellipse' ? el.T * 1.001 : 2 * 86400;
       while (t < tMax) {
         const r = Math.hypot(y[0], y[1]);
         const dt = Math.max(1, 0.01 * Math.pow(r, 1.5) / Math.sqrt(C.muE));
@@ -116,12 +127,12 @@
         ang += da; prevA = a;
         pts.push([y[0], y[1], t]);
         if (Math.hypot(y[0], y[1]) < C.RE) { outcome = 'impact'; impactT = t; break; }
-        if (Math.hypot(y[0], y[1]) > 60 * C.RE) { outcome = 'escape'; break; }
-        if (Math.abs(ang) >= 2 * Math.PI) break;
+        if (Math.hypot(y[0], y[1]) > (kind === 'ellipse' ? 400 : 60) * C.RE) break;
+        if (kind === 'ellipse' && Math.abs(ang) >= 2 * Math.PI) break;
       }
-      if (outcome === 'orbit' && el.e >= 1) outcome = 'escape';
       if (outcome === 'orbit' && el.rp < C.RE) outcome = 'impact';
-      return { el, pts, outcome, impactT, range: Math.abs(ang) * C.RE, r0, spd, vc: Math.sqrt(C.muE / r0), ve: Math.sqrt(2 * C.muE / r0) };
+      const tEnd = pts[pts.length - 1][2];
+      return { el, pts, kind, outcome, impactT, range: Math.abs(ang) * C.RE, r0, spd, vc, ve, warp: Math.max(600, tEnd / 45) };
     }
 
     const fmts = { 'cn-v': (x) => x.toFixed(2), 'cn-h': (x) => x.toFixed(0), 'cn-a': (x) => x.toFixed(1) };
@@ -129,11 +140,12 @@
 
     function renderInfo() {
       const { el, outcome, r0, spd, vc, ve } = info;
-      const type = outcome === 'impact' ? T`Suborbital` : el.e >= 1 ? (Math.abs(el.e - 1) < 0.005 ? T`Parabolic` : T`Hyperbolic`)
+      const open = info.kind !== 'ellipse';
+      const type = outcome === 'impact' ? (open ? T`Hits the ground` : T`Suborbital`) : info.kind === 'hyperbola' ? T`Hyperbolic` : info.kind === 'parabola' ? T`Parabolic`
         : el.e < 0.005 ? T`Circular orbit` : T`Elliptical orbit`;
       const b = root.querySelector('#cn-badge');
       b.textContent = type;
-      b.className = 'badge ' + (outcome === 'impact' ? 'bad' : el.e >= 1 ? 'warn' : 'good');
+      b.className = 'badge ' + (outcome === 'impact' ? 'bad' : open ? 'warn' : 'good');
       const km = (m) => UI.fmt(m / 1000, 0);
       root.querySelector('#cn-ro').innerHTML = `
         <dt>${T`Speed v`}</dt><dd class="hl">${UI.fmt(spd / 1000, 3)} km/s</dd>
@@ -144,8 +156,8 @@
         <dt>${T`Energy ε = v²/2 − μ/r`}</dt><dd>${UI.fmt(el.eps / 1e6, 2)} MJ/kg</dd>
         <dt>${T`Eccentricity e`}</dt><dd>${UI.fmt(el.e, 4)}</dd>
         <dt>${T`Perigee altitude`}</dt><dd>${el.rp < C.RE ? T`below surface` : km(el.rp - C.RE) + ' km'}</dd>
-        <dt>${T`Apogee altitude`}</dt><dd>${el.e >= 1 ? '∞' : km(el.ra - C.RE) + ' km'}</dd>
-        <dt>${outcome === 'impact' ? T`Ground range` : T`Period`}</dt><dd>${outcome === 'impact' ? km(info.range) + ' km' : el.e < 1 ? UI.fmtTime(el.T) : '—'}</dd>`;
+        <dt>${T`Apogee altitude`}</dt><dd>${open ? '∞' : km(el.ra - C.RE) + ' km'}</dd>
+        <dt>${outcome === 'impact' ? T`Ground range` : T`Period`}</dt><dd>${outcome === 'impact' ? km(info.range) + ' km' : !open ? UI.fmtTime(el.T) : '—'}</dd>`;
     }
 
     view.draw = (ctx, w, h) => {
@@ -178,11 +190,15 @@
         ctx.fillStyle = K.accent; ctx.beginPath(); ctx.arc(x, y, 4, 0, 7); ctx.fill();
       }
       const ov = root.querySelector('#cn-ov');
-      ov.innerHTML = shot ? `t = ${UI.fmtTime(shot.pts[shot.i][2])}<br>${T`time warp ×600`}` : T`dashed: predicted path<br>rings: 1 000, 5 000, 10 000 km altitude`;
+      // a bound orbit whose far end lies outside the picture is still an ellipse: say so instead of leaving a curve that looks open
+      const reach = (h - cy) / s;   // how far the picture extends from Earth's centre, on the side away from the cannon
+      const far = info && info.kind === 'ellipse' && info.outcome === 'orbit' && info.el.ra > reach
+        ? `<br>${T`This is an ellipse: its apogee, ${UI.fmt((info.el.ra - C.RE) / 1000, 0)} km up, lies beyond this view.`}` : '';
+      ov.innerHTML = (shot ? `t = ${UI.fmtTime(shot.pts[shot.i][2])}<br>${T`time warp ×${UI.fmt(Math.round(info.warp), 0)}`}` : T`dashed: predicted path<br>rings: 1 000, 5 000, 10 000 km altitude`) + far;
     };
 
     const fire = () => {
-      shot = { pts: info.pts, i: 0, clock: 0 };
+      shot = { pts: info.pts, i: 0, clock: 0, warp: info.warp };
       if (info.outcome === 'orbit') Progress.done('newton', 'orbit');
       if (info.outcome === 'escape') Progress.done('newton', 'escape');
     };
@@ -190,12 +206,12 @@
     root.querySelector('#cn-clear').addEventListener('click', () => { traces.length = 0; view.redraw(); });
     root.querySelectorAll('[data-v]').forEach((b) => b.addEventListener('click', () => {
       const h = ctl.read()['cn-h'] * 1000, r = C.RE + h;
-      const vv = b.dataset.kind === 'circular' ? Math.sqrt(C.muE / r) : Math.sqrt(2 * C.muE / r) * 1.0005;
+      const vv = b.dataset.kind === 'circular' ? Math.sqrt(C.muE / r) : Math.sqrt(2 * C.muE / r);
       ctl.set('cn-v', (vv / 1000).toFixed(2)); ctl.set('cn-a', 0); ctl.update();
     }));
     UI.loop((dt) => {
       if (!shot) return;
-      shot.clock += dt * 600;
+      shot.clock += dt * shot.warp;
       while (shot.i < shot.pts.length - 1 && shot.pts[shot.i + 1][2] <= shot.clock) shot.i++;
       if (shot.i >= shot.pts.length - 1) {
         traces.push(shot.pts); if (traces.length > 7) traces.shift();

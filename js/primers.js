@@ -15,6 +15,7 @@
         N`<p><b>Adding</b> vectors means putting them tip to tail, which is the same as adding the components: \\(\\vec a + \\vec b = (a_x + b_x,\\ a_y + b_y)\\). That is how a rocket burn works: the new velocity is the old velocity plus the Δv arrow.</p>`,
         N`<p><b>Dot product</b>, a number: \\(\\vec a\\cdot\\vec b = a_x b_x + a_y b_y = |\\vec a|\\,|\\vec b|\\cos\\theta\\). It measures how much two arrows point the same way: maximal when parallel, zero when perpendicular, negative when opposed.</p>`,
         N`<p><b>Cross product</b>, a new vector perpendicular to both, of length \\(|\\vec a|\\,|\\vec b|\\sin\\theta\\). Its direction follows the right-hand rule (fingers from \\(\\vec a\\) to \\(\\vec b\\), thumb gives the direction). For two arrows in the screen’s plane it points straight out of or into the screen. Orbits use it for the angular momentum \\(\\vec h = \\vec r \\times \\vec v\\), which points perpendicular to the orbit plane.</p>`,
+        () => rightHandFigure(),
         N`<p class="try">Try it: drag the two arrow tips.</p>`,
       ],
       widget: 'vectors',
@@ -37,6 +38,11 @@
       used: N('Gravity’s inverse square, Kepler’s third law, the sphere of influence'),
       html: [
         N`<p><b>Scientific notation</b> writes huge and tiny numbers as a number times a power of ten: Earth’s mass is \\(5.97\\times10^{24}\\) kg, and \\(G = 6.674\\times10^{-11}\\). Multiplying adds exponents, \\(10^a\\times10^b = 10^{a+b}\\); dividing subtracts them.</p>`,
+        N`<p><b>Converting units.</b> A prefix is a power of ten: \\(1\\ \\mathrm{km} = 10^{3}\\ \\mathrm{m}\\). From metres to kilometres the number gets 1000 times smaller, so <b>the exponent goes down by 3</b>: \\(6.378\\times10^{6}\\ \\mathrm{m} = 6.378\\times10^{3}\\ \\mathrm{km}\\). From kilometres to metres it goes up by 3.</p>`,
+        N`<p>A squared or cubed unit carries the conversion factor squared or cubed. Raising a power of ten to a power multiplies the exponents, \\((10^a)^n = 10^{a\\times n}\\):</p>`,
+        R`\[ \begin{aligned} 1\ \mathrm{km^2} &= (10^{3})^2\ \mathrm{m^2} = 10^{6}\ \mathrm{m^2} \\ 1\ \mathrm{km^3} &= (10^{3})^3\ \mathrm{m^3} = 10^{9}\ \mathrm{m^3} \end{aligned} \]`,
+        N`<p>So going from m² to km² the exponent goes down by \\(3\\times2 = 6\\), and from m³ to km³ it goes down by \\(3\\times3 = 9\\). The same exponent shift applies to every unit in a ratio, one at a time: m³/s² → km³/s² shifts by 9, and the seconds are untouched.</p>`,
+        N`<p><b>Worked example.</b> Earth’s gravitational parameter is \\(\\mu_\\oplus = 3.986\\times10^{14}\\ \\mathrm{m^3/s^2}\\). The cubic metres become cubic kilometres, so subtract 9 from the exponent: \\(\\mu_\\oplus = 3.986\\times10^{14-9} = 3.986\\times10^{5}\\ \\mathrm{km^3/s^2}\\), which is 398 600 km³/s². Check the other way: 1 km³ is a huge volume of 10⁹ m³, so the same quantity counted in km³ must be a much smaller number.</p>`,
         N`<p><b>Powers.</b> \\(r^2 = r\\times r\\), \\(r^3 = r\\times r\\times r\\), \\(r^{-2} = 1/r^2\\). <b>Roots are fractional powers</b>: \\(\\sqrt{x} = x^{1/2}\\), \\(\\sqrt[3]{x} = x^{1/3}\\), and \\(x^{2/5}\\) means “take the fifth root, then square”. Calculators have an \\(x^y\\) key for this.</p>`,
         N`<p><b>Inverse square law.</b> Gravity falls off as \\(1/r^2\\): twice as far gives a quarter of the pull, ten times as far gives one hundredth. Remember that \\(r\\) is measured from the <i>centre</i> of the planet.</p>`,
         N`<p class="try">Try it: move away from Earth and watch gravity fade.</p>`,
@@ -85,8 +91,8 @@
       used: N('Every orbit: a, e, periapsis, apoapsis'),
       html: [
         N`<p>Pin two drawing pins in a board, loop a string around them and trace with a pencil keeping the string tight: you draw an <b>ellipse</b>. The pins are the two <b>foci</b>. For every point, the distances to the two foci add up to the same length, \\(2a\\), where \\(a\\) is the <b>semi-major axis</b>.</p>`,
-        N`<p>The <b>eccentricity</b> \\(e = c/a\\) says how far the foci are from the centre (\\(c\\)): 0 for a circle, close to 1 for a long thin ellipse. A planet sits at one focus; the other is empty. The closest and farthest points are</p>`,
-        R`\[ r_p = a(1-e), \qquad r_a = a(1+e), \qquad b = a\sqrt{1-e^2} \]`,
+        N`<p>Let \\(c\\) be the distance from the <b>centre</b> of the ellipse to <i>one</i> focus: the two foci sit at \\(+c\\) and \\(-c\\) on the long axis, \\(2c\\) apart. The <b>eccentricity</b> compares \\(c\\) with the semi-major axis, \\(e = c/a\\), so \\(c = a\\,e\\). It is 0 for a circle (both foci at the centre) and close to 1 for a long thin ellipse. A planet sits at one focus; the other is empty. The closest and farthest points, and the semi-minor axis \\(b\\), are</p>`,
+        R`\[ \begin{aligned} c &= a\,e, & b &= a\sqrt{1-e^2} \\ r_p &= a(1-e), & r_a &= a(1+e) \end{aligned} \]`,
         N`<p>Circles, ellipses, parabolas and hyperbolas are all <b>conic sections</b>, the curves you get by slicing a cone at different angles. Newton’s gravity produces exactly these four shapes, and nothing else.</p>`,
         N`<p class="try">Try it: change the eccentricity; the two string lengths always add to 2a.</p>`,
       ],
@@ -109,13 +115,103 @@
       used: N('Kepler’s equation, finding free-return trajectories'),
       html: [
         N`<p>Some equations cannot be rearranged to isolate the unknown. Kepler’s equation \\(M = E - e\\sin E\\) is the classic one: given \\(M\\), no formula gives \\(E\\) directly.</p>`,
-        N`<p>So guess, check, and improve. <b>Newton’s method</b> writes the problem as \\(f(E) = E - e\\sin E - M = 0\\) and corrects the guess using the slope of \\(f\\):</p>`,
-        R`\[ E_{k+1} = E_k - \frac{f(E_k)}{f'(E_k)} = E_k - \frac{E_k - e\sin E_k - M}{1 - e\cos E_k} \]`,
+        N`<p>So guess, check, and improve. <b>Newton’s method</b> writes the problem as \\(f(E) = E - e\\sin E - M = 0\\): we look for the \\(E\\) where the function \\(f\\) crosses zero. The value \\(f(E_k)\\) of a guess is its <b>error</b>. The method corrects the guess using the slope of \\(f\\):</p>`,
+        R`\[ E_{k+1} = E_k - \frac{f(E_k)}{f'(E_k)} \]`,
+        R`\[ E_{k+1} = E_k - \frac{E_k - e\sin E_k - M}{1 - e\cos E_k} \]`,
+        N`<p><b>What is the slope?</b> Plot \\(f\\) against \\(E\\). At the guess \\(E_k\\) the curve has a height, \\(f(E_k)\\), and a steepness. The steepness is the slope \\(f'(E_k)\\): how much \\(f\\) rises when \\(E\\) grows by one unit, right there. It is the derivative of \\(f\\) (see the derivatives refresher), and it is the slope of the <b>tangent</b>, the straight line that touches the curve at that point.</p>`,
+        N`<p><b>Computing it for Kepler’s equation.</b> Differentiate \\(f\\) one term at a time: \\(E\\) grows at rate 1; \\(e\\sin E\\) changes at rate \\(e\\cos E\\) (the derivative of sine is cosine, and \\(e\\) is a constant factor); \\(M\\) is a fixed number and does not change at all, rate 0.</p>`,
+        R`\[ \begin{aligned} f(E) &= E - e\sin E - M \\ f'(E) &= 1 - e\cos E \end{aligned} \]`,
+        N`<p><b>Why the correction is f/f′.</b> Replace the curve by its tangent at \\(E_k\\): a straight line through the point \\((E_k,\\ f(E_k))\\) with slope \\(f'(E_k)\\). Slope means rise over run, so to bring the height \\(f\\) down to zero we must move by a run of \\(f/f'\\) along \\(E\\), in the direction that lowers the height, hence the minus sign. The line meets zero at \\(E_{k+1}\\), usually much closer to the true crossing than \\(E_k\\) was. Then repeat from there.</p>`,
+        () => tangentFigure(),
+        N`<p><b>Worked step</b> for \\(e = 0.5\\) and \\(M = 1\\) rad, starting from \\(E_0 = 1\\): the error is \\(f(E_0) = 1 - 0.5\\sin 1 - 1 = -0.4207\\), the slope is \\(f'(E_0) = 1 - 0.5\\cos 1 = 0.7298\\), so \\(E_1 = 1 - (-0.4207)/0.7298 = 1.5765\\) rad. One more step gives 1.5002 and the next 1.4987, correct to four decimals.</p>`,
         N`<p>Each step roughly doubles the number of correct digits; three or four steps are enough. The Apollo Guidance Computer, the simulators in this manual and the “solve MCC” button all work this way: guess, measure the error, correct.</p>`,
         N`<p class="try">Try it: watch the guesses converge.</p>`,
       ],
       widget: 'iteration',
     },
+  };
+
+  App.css('primers-extra', `
+    .pw .pw-ro { grid-template-columns: minmax(0, 1fr) auto; gap: .35rem .8rem; }
+    .pw .pw-ro dt { overflow-wrap: anywhere; }
+    .pw .pw-ro dd { white-space: nowrap; }
+    .pw { grid-template-columns: minmax(0, 1fr) 17rem; }
+    @media (max-width: 760px) { .pw { grid-template-columns: minmax(0, 1fr); } }
+    .primer-fig { margin: .2rem 0; display: flex; flex-direction: column; gap: .4rem; max-width: 30rem; }
+    .primer-fig > svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+    .primer-fig figcaption { font-size: .86rem; line-height: 1.45; color: var(--muted); }
+    .primer-fig figcaption ol { margin: .2rem 0 0; padding-left: 1.3rem; }
+    .primer-fig .t { font: 600 12px var(--f-mono); fill: var(--ink); }
+    .primer-fig .tm { font: 500 11px var(--f-mono); fill: var(--muted); }
+    .primer-fig .ax { stroke: var(--muted); stroke-width: 1; fill: none; }
+    .primer-fig .gr { stroke: var(--line); stroke-width: 1; fill: none; }`);
+
+  // ---- two static drawings used inside refreshers (built at display time so the labels follow the language)
+  // Right-hand rule: a along the x axis (right), b along the y axis (away from the viewer), a × b along z (up).
+  const rightHandFigure = () => {
+    const O = [120, 188];
+    return `<figure class="primer-fig">
+      <svg viewBox="0 0 380 250" role="img" aria-label="${T`Drawing of the right-hand rule: the fingers of the right hand point along a, curl towards b, and the thumb points along a × b, perpendicular to both`}">
+        <defs>
+          <marker id="rh-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker>
+          <marker id="rh-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--trace)"/></marker>
+          <marker id="rh-c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--good)"/></marker>
+          <marker id="rh-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker>
+        </defs>
+        <polygon points="60,226 300,226 372,150 132,150" fill="var(--line)" fill-opacity=".35" stroke="var(--line)"/>
+        <text class="tm" x="232" y="168">${T`the plane of a and b`}</text>
+        <!-- the hand: fingers along a, thumb along a × b; each part is drawn twice, a wide ink stroke under a narrower panel-coloured one, to get an outline -->
+        <g stroke-linecap="round" fill="none">
+          ${[[-14, 96], [-3, 106], [8, 100], [19, 84]].map(([dy, len]) => [`<path d="M${O[0] + 20},${O[1] + dy - 6} H${O[0] + len}" stroke="var(--ink)" stroke-width="12"/>`, `<path d="M${O[0] + 20},${O[1] + dy - 6} H${O[0] + len}" stroke="var(--panel)" stroke-width="9.6"/>`].join('')).join('')}
+          <rect x="${O[0] - 16}" y="${O[1] - 24}" width="46" height="46" rx="14" fill="var(--panel)" stroke="var(--ink)" stroke-width="1.2"/>
+          <path d="M${O[0] - 2},${O[1] - 20} V${O[1] - 84}" stroke="var(--ink)" stroke-width="15"/>
+          <path d="M${O[0] - 2},${O[1] - 20} V${O[1] - 84}" stroke="var(--panel)" stroke-width="12.6"/>
+        </g>
+        <!-- vectors -->
+        <line x1="${O[0]}" y1="${O[1]}" x2="${O[0] + 170}" y2="${O[1]}" stroke="var(--accent)" stroke-width="3" marker-end="url(#rh-a)"/>
+        <line x1="${O[0]}" y1="${O[1]}" x2="${O[0] + 82}" y2="${O[1] - 66}" stroke="var(--trace)" stroke-width="3" marker-end="url(#rh-b)"/>
+        <line x1="${O[0]}" y1="${O[1]}" x2="${O[0]}" y2="${O[1] - 150}" stroke="var(--good)" stroke-width="3" marker-end="url(#rh-c)"/>
+        <!-- the curl of the fingers, from a towards b -->
+        <path d="M${O[0] + 66},${O[1] - 2} Q${O[0] + 80},${O[1] - 30} ${O[0] + 56},${O[1] - 44}" fill="none" stroke="var(--ink)" stroke-width="1.8" marker-end="url(#rh-k)"/>
+        <text class="t" x="${O[0] + 176}" y="${O[1] + 5}" fill="var(--accent)" style="fill:var(--accent)">a</text>
+        <text class="t" x="${O[0] + 90}" y="${O[1] - 70}" style="fill:var(--trace)">b</text>
+        <text class="t" x="${O[0] + 8}" y="${O[1] - 148}" style="fill:var(--good)">a × b</text>
+        <text class="t" x="${O[0] + 98}" y="${O[1] - 36}">②</text>
+        <text class="t" x="${O[0] + 128}" y="${O[1] + 24}">①</text>
+        <text class="t" x="${O[0] - 24}" y="${O[1] - 100}">③</text>
+        <circle cx="${O[0]}" cy="${O[1]}" r="3" fill="var(--ink)"/>
+      </svg>
+      <figcaption><ol><li>${T`Point the fingers of your right hand along \\(\\vec a\\).`}</li><li>${T`Curl them towards \\(\\vec b\\), through the smaller angle between the two.`}</li><li>${T`Your thumb now points along \\(\\vec a\\times\\vec b\\), perpendicular to the plane of \\(\\vec a\\) and \\(\\vec b\\). Swap the order and the thumb flips: \\(\\vec b\\times\\vec a = -\\vec a\\times\\vec b\\).`}</li></ol></figcaption>
+    </figure>`;
+  };
+  // Newton's method on Kepler's equation for e = 0.5, M = 1 rad: the tangent at the guess E₀ meets the zero line at E₁
+  const tangentFigure = () => {
+    const e = 0.5, M = 1, E0 = 1, fE = (E) => E - e * Math.sin(E) - M, dE = (E) => 1 - e * Math.cos(E);
+    const x0 = 0.6, x1 = 2.1, X = (E) => 50 + (E - x0) / (x1 - x0) * 300, Y = (v) => 100 - v * 80;
+    const E1 = E0 - fE(E0) / dE(E0);
+    let d = '';
+    for (let E = x0; E <= x1 + 1e-9; E += 0.02) d += (d ? 'L' : 'M') + X(E).toFixed(1) + ',' + Y(fE(E)).toFixed(1);
+    const tl = (E) => fE(E0) + dE(E0) * (E - E0);
+    return `<figure class="primer-fig">
+      <svg viewBox="0 0 380 200" role="img" aria-label="${T`Graph of f(E) against E, crossing zero near E = 1.5. From the guess E₀ = 1 a tangent line is drawn; it meets the zero line at E₁ = 1.58, closer to the crossing than E₀`}">
+        <defs><marker id="nt-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+        <line class="ax" x1="30" y1="${Y(0)}" x2="368" y2="${Y(0)}"/>
+        <text class="tm" x="350" y="${Y(0) - 6}" text-anchor="end">E</text>
+        <path d="${d}" fill="none" stroke="var(--trace)" stroke-width="2.4"/>
+        <line x1="${X(E0 - 0.3)}" y1="${Y(tl(E0 - 0.3))}" x2="${X(E1 + 0.12)}" y2="${Y(tl(E1 + 0.12))}" stroke="var(--accent)" stroke-width="1.8"/>
+        <line class="gr" x1="${X(E0)}" y1="${Y(0)}" x2="${X(E0)}" y2="${Y(fE(E0))}" stroke-dasharray="3 3"/>
+        <line class="gr" x1="${X(E1)}" y1="${Y(0)}" x2="${X(E1)}" y2="${Y(fE(E1))}" stroke-dasharray="3 3"/>
+        <circle cx="${X(E0)}" cy="${Y(fE(E0))}" r="4" fill="var(--ink)"/>
+        <circle cx="${X(E1)}" cy="${Y(0)}" r="4" fill="var(--accent)"/>
+        <text class="t" x="${X(E0)}" y="${Y(0) - 8}" text-anchor="middle">E₀</text>
+        <text class="t" x="${X(E1)}" y="${Y(0) + 17}" text-anchor="middle" style="fill:var(--accent)">E₁</text>
+        <text class="tm" x="${X(E0) - 7}" y="${Y(fE(E0) / 2) + 4}" text-anchor="end">f(E₀)</text>
+        <text class="tm" x="${X(1.25)}" y="${Y(tl(1.25)) + 20}" style="fill:var(--accent)">${T`tangent, slope f′(E₀)`}</text>
+        <text class="tm" x="${X(1.62)}" y="${Y(fE(1.9)) - 8}" style="fill:var(--trace)">f(E)</text>
+        <path d="M${X(E0) + 6},${Y(0) - 26} H${X(E1) - 6}" stroke="var(--ink)" stroke-width="1.4" marker-end="url(#nt-a)" fill="none"/>
+        <text class="tm" x="${(X(E0) + X(E1)) / 2}" y="${Y(0) - 31}" text-anchor="middle">−f/f′</text>
+      </svg>
+    </figure>`;
   };
 
   let uid = 0;
@@ -128,7 +224,7 @@
       const p = PRIMERS[key];
       const id = fixedId || `primer-${key}${open ? '' : '-' + (++uid)}`;
       // prose parts are translated; display TeX without words stays as is
-      const html = p.html.map((part) => (/^\\\[/.test(part) && !part.includes('\\text') ? part : T(part)).replace(/\{TM:(\w+)\}/g, (m, id) => Progress.code(id))).join('\n        ');
+      const html = p.html.map((part) => (typeof part === 'function' ? part() : /^\\\[/.test(part) && !part.includes('\\text') ? part : T(part)).replace(/\{TM:(\w+)\}/g, (m, id) => Progress.code(id))).join('\n        ');
       return `<details class="primer" id="${id}" data-primer="${key}"${open ? ' open' : ''}>
         <summary><span class="primer-tag">${T`Math refresher`}</span><span class="primer-title">${T(p.title)}</span><span class="primer-used">${T`used for: ${T(p.used)}`}</span></summary>
         <div class="primer-body"><div class="prose">\n        ${html}</div><div class="primer-widget"></div></div>
@@ -182,7 +278,15 @@
         const th = Math.acos(Math.max(-1, Math.min(1, dot / (la * lb || 1)))) * 180 / Math.PI;
         ro.innerHTML = `<dt>a</dt><dd>(${f(A.x, 1)}, ${f(A.y, 1)})</dd><dt>b</dt><dd>(${f(B.x, 1)}, ${f(B.y, 1)})</dd>
           <dt>a + b</dt><dd>(${f(S.x, 1)}, ${f(S.y, 1)})</dd><dt>|a|, |b|</dt><dd>${f(la)}, ${f(lb)}</dd>
-          <dt>${T`angle θ`}</dt><dd>${f(th, 1)}°</dd><dt>a · b</dt><dd class="hl">${f(dot)}</dd><dt>${T`a × b (out of screen)`}</dt><dd class="hl">${f(cross)}</dd>`;
+          <dt>${T`angle θ`}</dt><dd>${f(th, 1)}°</dd><dt>a · b</dt><dd class="hl">${f(dot)}</dd><dt>a × b</dt><dd class="hl">${f(cross)}</dd><dt>${T`a × b points`}</dt><dd>${cross > 1e-9 ? T`out of the screen` : cross < -1e-9 ? T`into the screen` : T`zero (parallel)`}</dd>`;
+        // the symbol for an arrow pointing at you (dot) or away from you (cross), as in textbooks
+        const sx = 16, sy = 18; ctx.strokeStyle = K.good; ctx.fillStyle = K.good; ctx.lineWidth = 1.5;
+        if (Math.abs(cross) > 1e-9) {
+          ctx.beginPath(); ctx.arc(sx, sy, 8, 0, 7); ctx.stroke();
+          if (cross > 0) { ctx.beginPath(); ctx.arc(sx, sy, 2.6, 0, 7); ctx.fill(); }
+          else { ctx.beginPath(); ctx.moveTo(sx - 4.5, sy - 4.5); ctx.lineTo(sx + 4.5, sy + 4.5); ctx.moveTo(sx + 4.5, sy - 4.5); ctx.lineTo(sx - 4.5, sy + 4.5); ctx.stroke(); }
+        }
+        ctx.font = `11px ${K.mono}`; ctx.textAlign = 'left'; ctx.fillText('a × b: ' + (cross > 1e-9 ? T`out of the screen` : cross < -1e-9 ? T`into the screen` : T`zero (parallel)`), sx + 14, sy + 4);
       });
       const toV = (e) => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left - geo.ox) / geo.s, y: -(e.clientY - r.top - geo.oy) / geo.s }; };
       cv.addEventListener('pointerdown', (e) => { const p = toV(e); drag = Math.hypot(p.x - A.x, p.y - A.y) < Math.hypot(p.x - B.x, p.y - B.y) ? A : B; cv.setPointerCapture(e.pointerId); });
@@ -226,24 +330,24 @@
       const view = UI.canvas(cv, (ctx, w, h) => {
         const K = UI.tok();
         ctx.clearRect(0, 0, w, h);
-        const s = Math.min((w - 150) / 11, h * 0.3), ox = s + 12, cy = h * 0.42;
+        const s = Math.min((w - 180) / 11, h * 0.3), ox = s + 12, cy = h * 0.4;
         UI.drawEarth(ctx, ox, cy, s, K);
         ctx.fillStyle = K.accent; ctx.beginPath(); ctx.arc(ox + k * s, cy, 5, 0, 7); ctx.fill();
         ctx.font = `11px ${K.mono}`; ctx.fillStyle = K.muted; ctx.textAlign = 'center';
-        for (let i = 1; i <= 10; i++) ctx.fillText(i + 'R', ox + i * s, cy + s + 18);
-        // bars: 1/r and 1/r²
-        const bw = 26, base = h - 16, H = h * 0.32;
-        ctx.textAlign = 'left';
-        ctx.fillStyle = K.trace; ctx.fillRect(w - 110, base - H / k, bw, H / k);
-        ctx.fillStyle = K.accent; ctx.fillRect(w - 70, base - H / (k * k), bw, H / (k * k));
-        ctx.fillStyle = K.muted; ctx.fillText('1/r', w - 108, base - H - 6); ctx.fillText('1/r²', w - 68, base - H - 6);
-        ctx.strokeStyle = K.line; ctx.strokeRect(w - 110, base - H, bw, H); ctx.strokeRect(w - 70, base - H, bw, H);
+        for (let i = 1; i <= 10; i++) ctx.fillText(String(i), ox + i * s, cy + s + 18);
+        ctx.textAlign = 'left'; ctx.fillText(T`r in Earth radii R⊕`, 8, cy + s + 38);
+        // bars: 1/r and 1/r², kept clear of the scale on narrow screens
+        const bw = 26, base = h - 16, H = h * 0.32, b1 = w - 96, b2 = w - 56;
+        ctx.fillStyle = K.trace; ctx.fillRect(b1, base - H / k, bw, H / k);
+        ctx.fillStyle = K.accent; ctx.fillRect(b2, base - H / (k * k), bw, H / (k * k));
+        ctx.fillStyle = K.muted; ctx.fillText('1/r', b1 + 2, base - H - 6); ctx.fillText('1/r²', b2 + 2, base - H - 6);
+        ctx.strokeStyle = K.line; ctx.strokeRect(b1, base - H, bw, H); ctx.strokeRect(b2, base - H, bw, H);
       });
       const inp = side.querySelector('input'), out = side.querySelector('output');
       const upd = () => {
         k = +inp.value; out.textContent = `${f(k, 2)} R⊕`;
         const r = k * 6378;
-        ro.innerHTML = `<dt>r</dt><dd>${f(r, 0)} km</dd><dt>${T`altitude`}</dt><dd>${f(r - 6378, 0)} km</dd><dt>${T`1/r² vs surface`}</dt><dd>1/${f(k * k, 2)}</dd><dt>${T`gravity g`}</dt><dd class="hl">${f(9.807 / (k * k), 3)} m/s²</dd><dt>${T`in scientific notation`}</dt><dd>${UI.dec((r * 1000).toExponential(3).replace('e+', ' × 10^'))} m</dd>`;
+        ro.innerHTML = `<dt>r</dt><dd>${f(r, 0)} km</dd><dt>${T`altitude`}</dt><dd>${f(r - 6378, 0)} km</dd><dt>${T`1/r² vs surface`}</dt><dd>1/${f(k * k, 2)}</dd><dt>${T`gravity g`}</dt><dd class="hl">${f(9.807 / (k * k), 3)} m/s²</dd><dt>${T`r in scientific notation`}</dt><dd>${(([m, x]) => UI.dec(m) + ' × 10<sup>' + x + '</sup>')((r * 1000).toExponential(3).split('e+'))} m</dd>`;
         view.redraw();
       };
       inp.addEventListener('input', upd); upd();
@@ -334,18 +438,30 @@
       const view = UI.canvas(cv, (ctx, w, h) => {
         const K = UI.tok();
         ctx.clearRect(0, 0, w, h);
-        const a = Math.min(w * 0.42, h * 0.42 / Math.max(0.3, Math.sqrt(1 - e * e))), b = a * Math.sqrt(1 - e * e), c = a * e, cx = w / 2, cy = h / 2;
+        // keep room on each side for the apsis names, and above and below for the labels of the foci
+        const cy = h * 0.46, a = Math.min(w / 2 - 74, (Math.min(cy, h - cy) - 14) / Math.max(0.3, Math.sqrt(1 - e * e))), b = a * Math.sqrt(1 - e * e), c = a * e, cx = w / 2;
         ctx.strokeStyle = K.trace; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(cx, cy, a, b, 0, 0, 7); ctx.stroke();
         const px = cx + a * Math.cos(ang), py = cy - b * Math.sin(ang);
         ctx.strokeStyle = K.accent; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(cx - c, cy); ctx.lineTo(px, py); ctx.lineTo(cx + c, cy); ctx.stroke();
         UI.drawEarth(ctx, cx - c, cy, 7, K);
         ctx.strokeStyle = K.muted; ctx.beginPath(); ctx.arc(cx + c, cy, 4, 0, 7); ctx.stroke();
         ctx.fillStyle = K.ink; ctx.beginPath(); ctx.arc(px, py, 4, 0, 7); ctx.fill();
-        ctx.font = `11px ${K.mono}`; ctx.fillStyle = K.muted; ctx.textAlign = 'center';
-        ctx.fillText(T`periapsis`, cx - a, cy + 16); ctx.fillText(T`apoapsis`, cx + a, cy + 16); ctx.fillText(T`empty focus`, cx + c, cy - 10);
         ctx.strokeStyle = K.line; ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(cx - a, cy); ctx.lineTo(cx + a, cy); ctx.stroke(); ctx.setLineDash([]);
+        // labels get a halo in the panel colour so a line passing behind them does not cut the letters
+        const label = (txt, x, y, align, color) => { ctx.textAlign = align; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.strokeStyle = K.panel; ctx.strokeText(txt, x, y); ctx.fillStyle = color; ctx.fillText(txt, x, y); };
+        ctx.font = `11px ${K.mono}`;
+        label(T`periapsis`, cx - a - 8, cy + 4, 'right', K.muted); label(T`apoapsis`, cx + a + 8, cy + 4, 'left', K.muted);
+        // the centre and the distance c from it to the empty focus
+        ctx.strokeStyle = K.muted; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(cx - 4, cy); ctx.lineTo(cx + 4, cy); ctx.moveTo(cx, cy - 4); ctx.lineTo(cx, cy + 4); ctx.stroke();
+        if (c > 6) {
+          const yy = cy + 24;
+          ctx.strokeStyle = K.good; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(cx, yy); ctx.lineTo(cx + c, yy); ctx.moveTo(cx, yy - 5); ctx.lineTo(cx, yy + 5); ctx.moveTo(cx + c, yy - 5); ctx.lineTo(cx + c, yy + 5); ctx.stroke();
+          label('c', cx + c / 2, yy + 16, 'center', K.good);
+        }
+        label(T`empty focus`, cx + c, cy - 11, 'center', K.muted);
         const d1 = Math.hypot(px - (cx - c), py - cy) / a, d2 = Math.hypot(px - (cx + c), py - cy) / a;
-        ro.innerHTML = `<dt>${T`a (semi-major axis)`}</dt><dd>1</dd><dt>b = a√(1−e²)</dt><dd>${f(Math.sqrt(1 - e * e), 3)}</dd><dt>r_p = a(1−e)</dt><dd>${f(1 - e, 3)}</dd><dt>r_a = a(1+e)</dt><dd>${f(1 + e, 3)}</dd><dt>${T`string: d₁ + d₂`}</dt><dd class="hl">${f(d1, 3)} + ${f(d2, 3)} = ${f(d1 + d2, 3)}</dd>`;
+        ro.innerHTML = `<dt>${T`a (semi-major axis)`}</dt><dd>1</dd><dt>${T`c = ae (centre to focus)`}</dt><dd>${f(e, 3)}</dd><dt>b = a√(1−e²)</dt><dd>${f(Math.sqrt(1 - e * e), 3)}</dd><dt>r_p = a(1−e)</dt><dd>${f(1 - e, 3)}</dd><dt>r_a = a(1+e)</dt><dd>${f(1 + e, 3)}</dd><dt>${T`string: d₁ + d₂`}</dt><dd class="hl">${f(d1, 3)} + ${f(d2, 3)} = ${f(d1 + d2, 3)}</dd>`;
       });
       const inp = side.querySelector('input'), out = side.querySelector('output');
       inp.addEventListener('input', () => { e = +inp.value; out.textContent = f(e, 2); view.redraw(); });
@@ -393,10 +509,11 @@
         let E = e < 0.8 ? M : Math.PI, rows = '';
         for (let k = 0; k < 7; k++) {
           const fE = E - e * Math.sin(E) - M;
-          rows += `<tr><td>${k}</td><td>${f(E * 180 / Math.PI, 6)}°</td><td>${fE === 0 ? '0' : UI.dec(fE.toExponential(2))}</td></tr>`;
-          E = E - fE / (1 - e * Math.cos(E));
+          const dfE = 1 - e * Math.cos(E), sci = (x) => (x === 0 ? '0' : UI.dec(x.toExponential(2)));
+          rows += `<tr><td>${k}</td><td>${f(E * 180 / Math.PI, 6)}°</td><td>${sci(fE)}</td><td>${f(dfE, 4)}</td><td>${sci(fE / dfE)}</td></tr>`;
+          E = E - fE / dfE;
         }
-        tab.innerHTML = `<thead><tr><th>${T`step k`}</th><th>${T`guess E_k`}</th><th>${T`error f(E_k)`}</th></tr></thead><tbody>${rows}</tbody>`;
+        tab.innerHTML = `<thead><tr><th>${T`step k`}</th><th>${T`guess E_k`}</th><th>${T`error f(E_k)`}</th><th>${T`slope f′(E_k)`}</th><th>${T`correction f/f′`}</th></tr></thead><tbody>${rows}</tbody>`;
         const nu = Phys.trueFromEcc(E, e) * 180 / Math.PI;
         ro.innerHTML = `<dt>${T`solution E`}</dt><dd class="hl">${f(E * 180 / Math.PI, 4)}°</dd><dt>${T`true anomaly ν`}</dt><dd>${f((nu + 360) % 360, 2)}°</dd><dt>${T`first guess`}</dt><dd>${e < 0.8 ? 'E₀ = M' : 'E₀ = π'}</dd>`;
       };
