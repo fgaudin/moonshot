@@ -23,7 +23,8 @@
         if (!c) continue;
         if (id === 'toolkit') html += `<li class="sep">${T`Training`}</li>`;
         const m = Progress.MODULES[id];
-        const state = m ? (Progress.complete(id) ? 'done' : Progress.count(id) ? 'started' : '') : '';
+        // pre-launch counts as done once the candidate has entered a callsign
+        const state = m ? (Progress.complete(id) ? 'done' : Progress.count(id) ? 'started' : '') : id === 'home' && Progress.hasCallsign() ? 'done' : '';
         const label = m ? `${m.code} · ${T(c.phase)}` : T(c.phase);
         const cur = (location.hash || '#home').slice(1) === id ? ' aria-current="page"' : '';
         html += `<li><a href="#${id}" data-id="${id}" class="${state}"${cur}><span class="phase">${label}</span><span class="ttl">${T(c.title)}</span></a></li>`;

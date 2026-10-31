@@ -133,6 +133,7 @@
     // modules defined in their own chapter file: Progress.register('id', { name, topic, glyph, briefing, objectives, debrief })
     register(id, def) { MODULES[id] = def; withCode(id); rebuild(); },
     callsign: () => (state.name ? state.name : T('Candidate')),
+    hasCallsign: () => !!state.name,
     setCallsign(n) { state.name = String(n || '').trim().slice(0, 24); save(); },
     isDone: (mod, id) => !!state.done[`${mod}.${id}`],
     count(mod) { const m = MODULES[mod]; return m ? m.objectives.filter((o) => Progress.isDone(mod, o.id)).length : 0; },

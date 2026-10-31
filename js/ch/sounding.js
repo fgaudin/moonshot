@@ -9,6 +9,36 @@
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
   const fp = (p) => f(p, p >= 1000 ? 0 : p >= 100 ? 1 : p >= 10 ? 2 : 3);
 
+  /* ---------- figure and derivation helper (the .fig and details.deriv styles come from js/ch/orbits.js) ---------- */
+  const deriv = (what, body) => `<details class="deriv"><summary><span class="dv-tag">${T`Show the derivation`}</span><span class="dv-what">${what}</span></summary><div class="dv-body">${body}</div></details>`;
+  const lbs = (list, W, H) => list.map(([x, y, t, c]) => `<span class="lb ${c || ''}" style="left:${(100 * x / W).toFixed(2)}%;top:${(100 * y / H).toFixed(2)}%">${t}</span>`).join('');
+  // the same atmosphere twice: pressure against altitude (a curve), then ln p against altitude (a straight line)
+  function figAtmos() {
+    const W = 320, H = 190, x0 = 50, yb = 156, yt = 22, xr = 305, Hp = 80, top = 134;
+    const axes = `<path class="f-mu" d="M${x0},${yt - 8}V${yb}H${xr}"/>`;
+    const curve = []; for (let i = 0; i <= 60; i++) { const x = 245 * i / 60; curve.push([x0 + x, yb - top * Math.exp(-x / Hp)]); }
+    const pts = curve.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ',' + q[1].toFixed(1)).join('');
+    const ye = yb - top / Math.E;
+    const a = `<figure class="fig sub" role="img" aria-label="${T`Pressure against altitude is a curve that falls by the same fraction at every step up. After one scale height H the pressure is the surface pressure divided by e.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${axes}
+        <path class="f-mu f-dash" d="M${x0},${ye.toFixed(1)}H${x0 + Hp}V${yb}"/>
+        <path class="f-tr" d="${pts}"/>
+        <circle class="f-ac-fill" cx="${x0}" cy="${yb - top}" r="3.5"/><circle class="f-ac-fill" cx="${x0 + Hp}" cy="${ye.toFixed(1)}" r="3.5"/>
+      </svg>${lbs([[x0 - 6, yb - top, 'p₀', 'ink r'], [x0 - 6, ye, 'p₀/e', 'm r'], [x0 + Hp, yb + 12, 'H', 'acc'], [x0, yt - 18, 'p', 'm'], [xr - 4, yb + 12, 'h', 'm']], W, H)}</div>
+      <figcaption>${T`Pressure \\(p\\) against altitude \\(h\\): after every climb of \\(H\\) the pressure is divided by \\(e\\) (a loss of 63 %).`}</figcaption></figure>`;
+    const k = 30 / Hp, yl = (x) => 46 + k * x;   // 30 px of ln p per scale height
+    const dots = [[22, .06], [56, -.07], [98, .05], [140, -.04], [186, .08], [232, -.06]].map(([x, d]) => `<circle class="f-ink-fill" cx="${x0 + x}" cy="${(yl(x) + d * 30).toFixed(1)}" r="2.6"/>`).join('');
+    const tx = 70, tri = `M${x0 + tx},${yl(tx).toFixed(1)}H${x0 + tx + Hp}V${yl(tx + Hp).toFixed(1)}`;
+    const b = `<figure class="fig sub" role="img" aria-label="${T`The natural logarithm of the pressure against altitude is a straight line. Its slope is minus one over the scale height: over a climb of H the line drops by exactly 1. Measured points scatter around it.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${axes}
+        <path class="f-tr" d="M${x0},${yl(0).toFixed(1)}L${x0 + 245},${yl(245).toFixed(1)}"/>
+        <path class="f-ac-ln thin" d="${tri}"/>${dots}
+        <circle class="f-ac-fill" cx="${x0}" cy="${yl(0).toFixed(1)}" r="3.5"/>
+      </svg>${lbs([[x0 - 6, yl(0), 'ln p₀', 'ink r'], [x0 + tx + Hp / 2, yl(tx) - 11, 'H', 'acc'], [x0 + tx + Hp + 6, (yl(tx) + yl(tx + Hp)) / 2, '1', 'acc l'], [x0, yt - 18, 'ln p', 'm'], [xr - 4, yb + 12, 'h', 'm']], W, H)}</div>
+      <figcaption>${T`The same atmosphere as \\(\\ln p\\) against \\(h\\): a straight line of slope \\(-1/H\\), the triangle showing a drop of 1 over a climb of \\(H\\). The dots are noisy gauge readings; the fit draws the line through them.`}</figcaption></figure>`;
+    return `<div class="fig-pair">${a}${b}</div>`;
+  }
+
   Progress.register('sounding', {
     name: N`Measuring an Atmosphere`, topic: 'sounding', glyph: 'sounding',
     briefing: N`Every ascent and every entry in this course leans on one thing you have not measured yet: the air, {name}. On a new world nobody hands you a table. You send up sounding rockets, read a pressure gauge on the way, and fit a model to the numbers. In this module you do exactly that on four unknown atmospheres, and you find out how much a good fit depends on how high you fly.`,
@@ -60,7 +90,7 @@
     { title: N`Air density from the coast deceleration`, make() {
       const beta = rnd(1500, 3500, 100), g = 9.81, v = rnd(250, 600, 10), rho0 = rnd(30, 120, 1) / 100;
       const a = Math.round(-(g + rho0 * v * v / (2 * beta)) * 10) / 10, rho = 2 * beta * (-a - g) / (v * v);
-      return { q: T`A rocket coasts upward at <b>${f(v, 0)} m/s</b>. Its ballistic coefficient is <b>${f(beta, 0)} kg/m²</b>. The tracking radar measures an acceleration of <b>${f(a, 1)} m/s²</b> (negative: slowing down). Take g = 9.81 m/s². What is the air density?`, answer: rho, unit: 'kg/m³', tol: 0.03,
+      return { q: T`A rocket coasts upward above Earth at <b>${f(v, 0)} m/s</b>. Its ballistic coefficient is <b>${f(beta, 0)} kg/m²</b>. The tracking radar measures an acceleration of <b>${f(a, 1)} m/s²</b> (negative: slowing down). Take g = 9.81 m/s². What is the air density?`, answer: rho, unit: 'kg/m³', tol: 0.03,
         hint: T`Drag deceleration = |a| − g = ρv²/(2β). Solve for ρ.`,
         sol: R`\[ \frac{D}{m} = |a| - g = ${f(-a, 1)} - ${f(g, 2)} = ${f(-a - g, 2)}\ \mathrm{m/s^2},\qquad \rho = \frac{2\beta\,(|a|-g)}{v^2} = \frac{2\times ${f(beta, 0)}\times ${f(-a - g, 2)}}{${f(v, 0)}^2} = ${f(rho, 3)}\ \mathrm{kg/m^3} \]` };
     } },
@@ -89,7 +119,7 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('sounding')} · Sounding`,
           title: T`Measuring an Atmosphere`,
-          lede: T`Before a rocket can be sized for its ascent, or a capsule for its entry, someone has to know how the air thins with height. On a new world nobody knows. This module shows how a handful of sounding rockets, one pressure gauge and a straight-line fit give the answer.`,
+          lede: T`Before a rocket can be sized for its ascent, or a capsule for its entry, someone has to know how the air thins with height. On a new world nobody knows. This module shows how a handful of sounding rockets (small research rockets that fly straight up and come back down), one pressure gauge and a straight-line fit give the answer.`,
           refs: [T`Sellers · Understanding Space`, T`U.S. Standard Atmosphere, 1976 (NOAA, NASA, USAF)`],
         })}
         ${Progress.briefing('sounding', { theory: 'theory', lab: 'sd', math: 'refresher', mathLabel: N`What dp/dh means.` })}
@@ -108,14 +138,24 @@
         <section class="section">
           <h2><span class="idx">5.2</span>${T`The exponential atmosphere`}</h2>
           <div class="prose">
-            <p>${T`The equation has two unknowns, p and ρ. The ideal gas law links them: ρ = pM/(RT), with M the molar mass of the gas and T the temperature. Put it in and the density disappears:`}</p>
+            <p>${T`The equation has two unknowns, p and ρ. The ideal gas law links them: ρ = pM/(RT), with M the molar mass of the gas (kilograms per mole) and T the absolute temperature (kelvin). Put it in and the density disappears:`}</p>
             <div class="eq">\\[ \\frac{dp}{dh} = -\\frac{Mg}{RT}\\,p \\]</div>
             ${Sym.where([['M', N`molar mass of the air (Earth 0.02896 kg/mol)`, 'kg/mol'], ['R', N`universal gas constant 8.314`, 'J/(mol·K)'], ['T', N`temperature of the air (assumed constant for now)`, 'K']], N`In words: the pressure loses the same fraction of itself for every metre climbed.`)}
             <p>${T`A quantity that loses a fixed fraction per step follows an exponential. If T is constant, the solution is:`}</p>
             <div class="eq">\\[ p(h) = p_0\\,e^{-h/H}, \\qquad H = \\frac{RT}{Mg} \\]</div>
             ${Sym.where([['p_0', N`pressure at the datum, h = 0 (the “surface pressure”)`, 'Pa'], ['H', N`scale height: the pressure drops by a factor e = 2.718 (a loss of 63 %) every H of climb`, 'm']], N`Climb 7 H and the pressure has dropped by a factor of about 1 100.`)}
+            ${deriv(T`the exponential atmosphere and the density formula`, `
+              <p>${T`Start from the hydrostatic equation \\(dp/dh = -\\rho g\\) of section ${App.sec('sounding', 1)} and the ideal gas law.`}</p>
+              <ol>
+                <li><p>${T`For \\(n\\) moles of gas in a volume \\(V\\) the ideal gas law is \\(pV = nRT\\). Their mass is \\(m = nM\\), so the density \\(\\rho = m/V\\) is:`}</p><div class="eq">\\[ \\rho = \\frac{pM}{RT} \\]</div></li>
+                <li><p>${T`Put this \\(\\rho\\) into \\(dp/dh = -\\rho g\\), divide both sides by \\(p\\), and call \\(k = Mg/(RT)\\), a constant when \\(T\\) is constant:`}</p><div class="eq">\\[ \\frac{1}{p}\\,\\frac{dp}{dh} = -k \\]</div></li>
+                <li><p>${T`The left side is the rate of change of \\(\\ln p\\) (the chain rule: the rate of change of \\(\\ln p\\) is \\(1/p\\) times that of \\(p\\)). So \\(\\ln p\\) changes by the same amount at every metre of climb: it is a straight line, starting from \\(\\ln p_0\\) at \\(h = 0\\).`}</p><div class="eq">\\[ \\ln p = \\ln p_0 - k\\,h \\]</div></li>
+                <li><p>${T`Take the exponential of both sides (\\(e^{\\ln p} = p\\)). Writing \\(H = 1/k = RT/(Mg)\\) gives the exponential atmosphere:`}</p><div class="eq">\\[ p = p_0\\,e^{-h/H} \\]</div></li>
+                <li><p>${T`The density follows from step 1. Since \\(RT/M = gH\\), \\(\\rho = pM/(RT) = p/(gH)\\): the density falls with height exactly like the pressure.`}</p></li>
+              </ol>`)}
+            ${figAtmos()}
             <p>${T`The scale height is the one number that says how fast an atmosphere thins. Warm air is puffed up and has a large H, heavy gas and strong gravity make H small. The density follows the same law, since ρ = p/(gH).`}</p>
-            <p>${T`For Earth at the surface (T = 288 K, M = 0.02896 kg/mol) the formula gives H = 8.43 km. Yet entry calculations use about 7.2 km, and the whole range is often quoted as 7 to 8.5 km. The reason is the temperature. It is not constant: the air cools with height, down to 217 K at 11 km, where H is only 6.3 km. An exponential fitted to the first 50 km therefore lands between the two, around 7 km. The warm surface value 8.4 km describes only the lowest few kilometres on a warm day.`}</p>
+            <p>${T`For Earth at the surface (T = 288 K, M = 0.02896 kg/mol) the formula gives H = 8.43 km. Yet entry calculations (${Progress.code('entry')}) use about 7.2 km, and the whole range is often quoted as 7 to 8.5 km. The reason is the temperature. It is not constant: the air cools with height, down to 217 K at 11 km, where H is only 6.3 km. An exponential fitted to the first 50 km therefore lands between the two, around 7 km. The warm surface value 8.4 km describes only the lowest few kilometres on a warm day.`}</p>
           </div>
         </section>
 
@@ -123,7 +163,7 @@
           <h2><span class="idx">5.3</span>${T`Real layers, and why the exponential still works`}</h2>
           <div class="prose">
             <p>${T`The real atmosphere is built from layers. In the troposphere (to 11 km) the temperature falls by 6.5 K per kilometre. Above it comes a layer of constant temperature, then a layer that warms, and so on. Inside a layer of constant temperature the exponential is exact. Where the temperature changes, H changes slowly with height, and over any limited range the curve of ln p against h is nearly straight.`}</p>
-            <p>${T`The 1976 U.S. Standard Atmosphere gives 101 325 Pa at sea level, 22 632 Pa at 11 km, 5 475 Pa at 20 km, and 79.8 Pa at 50 km. A single exponential cannot match all four, but a line fitted over the range you care about is good to a few percent. That is why the ascent and entry modules use one scale height: a working model, with its range of validity in mind. The lab has a scenario with the real layers so you can see the line bend.`}</p>
+            <p>${T`The 1976 U.S. Standard Atmosphere gives 101 325 Pa at sea level, 22 632 Pa at 11 km, 5 475 Pa at 20 km, and 79.8 Pa at 50 km. A single exponential cannot match all four, but a line fitted over the range you care about is good to a few percent. That is why the ascent (${Progress.code('ascent')}) and entry (${Progress.code('entry')}) modules use one scale height: a working model, with its range of validity in mind. The lab has a scenario with the real layers so you can see the line bend.`}</p>
             <p>${T`The method does not care which planet it is. Pressure, altitude and gravity are all you need. The gas, its molar mass and its temperature are folded into the fitted H.`}</p>
           </div>
         </section>
@@ -137,8 +177,17 @@
             <p>${T`The <b>least-squares</b> line is the one for which the sum of the squared vertical distances (the residuals) is smallest. With n points, mean altitude h̄ and mean y̅, the slope and intercept are:`}</p>
             <div class="eq">\\[ b = \\frac{\\sum (h_i-\\bar h)(y_i-\\bar y)}{\\sum (h_i-\\bar h)^2}, \\qquad a = \\bar y - b\\,\\bar h, \\qquad H = -\\frac{1}{b}, \\quad p_0 = e^{a} \\]</div>
             ${Sym.where([['h_i,\\ y_i', N`altitude and ln p of sample i`, 'm, —'], ['\\bar h,\\ \\bar y', N`averages of the altitudes and of the ln p values`, 'm, —']], N`The line always passes through the centre of the data (h̄, ȳ). The slope is how y changes with h, averaged over all the points.`)}
+            ${deriv(T`the least-squares slope and intercept`, `
+              <p>${T`The line \\(y = a + b\\,h\\) misses point \\(i\\) by the residual \\(r_i = y_i - a - b\\,h_i\\). We look for the \\(a\\) and \\(b\\) that make \\(S = \\sum r_i^2\\) smallest. At the smallest value, \\(S\\) stops changing when you nudge \\(a\\) alone, and when you nudge \\(b\\) alone.`}</p>
+              <ol>
+                <li><p>${T`Nudging \\(a\\): each squared residual changes at the rate \\(-2r_i\\), so the condition is that the residuals add up to zero:`}</p><div class="eq">\\[ \\sum (y_i - a - b\\,h_i) = 0 \\]</div></li>
+                <li><p>${T`Divide by \\(n\\): the average of the line equals the average of the data, so the line passes through the centre of the data:`}</p><div class="eq">\\[ a = \\bar y - b\\,\\bar h \\]</div></li>
+                <li><p>${T`Nudging \\(b\\): each squared residual changes at the rate \\(-2h_i r_i\\), so:`}</p><div class="eq">\\[ \\sum h_i\\,(y_i - a - b\\,h_i) = 0 \\]</div></li>
+                <li><p>${T`Replace \\(a\\) using step 2. The residuals add up to zero, so you may also subtract \\(\\bar h\\) times their sum from each \\(h_i\\). The condition becomes:`}</p><div class="eq">\\[ \\sum (h_i-\\bar h)\\,\\bigl[(y_i-\\bar y) - b\\,(h_i-\\bar h)\\bigr] = 0 \\]</div></li>
+                <li><p>${T`Solve for \\(b\\). That is the slope formula above.`}</p><div class="eq">\\[ b = \\frac{\\sum (h_i-\\bar h)(y_i-\\bar y)}{\\sum (h_i-\\bar h)^2} \\]</div></li>
+              </ol>`)}
             <p>${T`Example: three readings at 0, 10 and 20 km with ln p = 11.5, 10.2 and 9.1. Then h̄ = 10 km, ȳ = 10.267, Σ(h − h̄)² = 200 km², Σ(h − h̄)(y − ȳ) = −24.0 km. So b = −0.120 per km, H = 8.33 km, a = 11.467 and p₀ = 95 480 Pa. The residuals are +0.033, −0.067 and +0.033.`}</p>
-            <p>${T`The residuals also give the quality of the fit. Their spread is σ = √(Σ r² / (n − 2)), and the slope is uncertain by σ/√Sxx where Sxx = Σ(h − h̄)². In the example σ = 0.082, so b is uncertain by 0.0058 per km, and H by about 0.4 km (5 %). Two lessons follow:`}</p>
+            <p>${T`The residuals also give the quality of the fit. Their spread σ = √(Σ r² / (n − 2)) is the typical size of one residual, and the slope is uncertain by σ/√Sxx where Sxx = Σ(h − h̄)². In the example σ = 0.082, so b is uncertain by 0.0058 per km, and H by about 0.4 km (5 %). Two lessons follow:`}</p>
             <ul>
               <li>${T`<b>More points</b> raise Sxx in proportion to n and cut the error as 1/√n.`}</li>
               <li>${T`<b>A wider altitude range</b> raises Sxx with the <i>square</i> of the spread. Doubling the altitude range halves the error on H. The intercept is also better: p₀ is an extrapolation to h = 0, and the further the data lie from it, the less certain it is.`}</li>
@@ -150,7 +199,7 @@
         <section class="section">
           <h2><span class="idx">5.5</span>${T`Density, dynamic pressure and max-q`}</h2>
           <div class="prose">
-            <p>${T`What a vehicle feels is not the static pressure but the air flowing past it. The density comes from the fit, ρ = p/(gH), and the force from the <b>dynamic pressure</b>:`}</p>
+            <p>${T`What a vehicle feels is not the static pressure but the air flowing past it. The density comes from the fit, ρ = p/(gH), and the force from the <b>dynamic pressure</b>, the pressure the moving air would exert if the vehicle brought it to rest (in pascals):`}</p>
             <div class="eq">\\[ q = \\tfrac12\\,\\rho\\,v^2, \\qquad D = q\\,C_D A \\]</div>
             ${Sym.where([['q', N`dynamic pressure`, 'Pa'], 'rho', ['v', N`speed relative to the air`, 'm/s'], ['D', N`drag force`, 'N'], ['C_D', N`drag coefficient (a shape factor, about 0.3 for a slender rocket)`, '—'], ['A', N`cross-section area facing the flow`, 'm²']])}
             <p>${T`Low in the air the speed is small, high up the density is tiny. The product q peaks somewhere in between. This is <b>max-q</b>, where the structure takes its greatest aerodynamic load. Saturn V passed max-q roughly 80 seconds after liftoff, at about 13 km. The ascent module (${Progress.code('ascent')}) uses the density profile you measure here to find where the rocket should throttle and when the load peaks. The lab reports max-q for every flight.`}</p>
@@ -160,9 +209,15 @@
         <section class="section">
           <h2><span class="idx">5.6</span>${T`Drag as a second instrument`}</h2>
           <div class="prose">
-            <p>${T`After burnout the rocket coasts. Only gravity and drag act. Newton gives, for a body going up at speed v:`}</p>
+            <p>${T`After <b>burnout</b>, when the motor stops, the rocket coasts. Only gravity and drag act. Newton’s second law gives, for a body going up at speed v, with the <b>ballistic coefficient</b> β the mass per unit of drag area (heavy and slim: high β, so drag slows it little):`}</p>
             <div class="eq">\\[ a = -g - \\frac{\\rho v^2}{2\\beta}, \\qquad \\beta = \\frac{m}{C_D A} \\quad\\Longrightarrow\\quad |a| - g = \\frac{\\rho v^2}{2\\beta} \\]</div>
             ${Sym.where([['a', N`acceleration along the flight path from tracking (negative: slowing down)`, 'm/s²'], 'beta'], N`The deceleration beyond gravity is drag. If you know the ballistic coefficient β you can read the density, ρ = 2β(|a| − g)/v². If you know ρ from your fit, the same reading gives β. On the way down the drag pushes up, so the term changes sign.`)}
+            ${deriv(T`the drag deceleration`, `
+              <ol>
+                <li><p>${T`Going up, both gravity and drag pull the rocket back, so Newton’s second law (mass times acceleration equals the total force) reads:`}</p><div class="eq">\\[ m\\,a = -m\\,g - D \\]</div></li>
+                <li><p>${T`Insert the drag force from section ${App.sec('sounding', 5)}, \\(D = \\tfrac12\\rho v^2 C_D A\\), and divide by \\(m\\):`}</p><div class="eq">\\[ a = -g - \\frac{\\rho v^2}{2}\\,\\frac{C_D A}{m} \\]</div></li>
+                <li><p>${T`Since \\(\\beta = m/(C_D A)\\), the last factor is \\(1/\\beta\\). The acceleration is negative, so \\(|a| = -a\\); moving \\(g\\) to the left gives the form above:`}</p><div class="eq">\\[ |a| - g = \\frac{\\rho v^2}{2\\beta} \\]</div></li>
+              </ol>`)}
             <p>${T`Example: β = 2 500 kg/m², v = 300 m/s and a measured |a| of 26.0 m/s² with g = 9.8 m/s². Then ρ = 2 × 2 500 × 16.2 / 90 000 = 0.90 kg/m³. That is the density the pressure gauge says it should be, which makes the two instruments a cross-check.`}</p>
           </div>
         </section>

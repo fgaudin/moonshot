@@ -117,6 +117,7 @@
         P.setCallsign(page.querySelector('#callsign').value);
         page.querySelector('#enrol-msg').textContent = T`Welcome aboard, ${P.callsign()}.`;
         page.querySelector('#record h2').innerHTML = `<span class="idx">★</span>${T`Flight record: ${P.callsign()}`}`;
+        App.refreshRail();
       });
       let armed = false;
       page.querySelector('#reset-prog').addEventListener('click', (e) => {
