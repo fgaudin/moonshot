@@ -135,6 +135,8 @@ mjx-container[display="true"] { margin: .4em 0 !important; max-width: 100%; over
 .where .unit::before { content: "["; } .where .unit::after { content: "]"; }
 .where-note { grid-column: 1 / -1; margin: .2rem 0 0; color: var(--muted); font-style: italic; }
 abbr.gk { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; padding: .15em .2em; margin: -.15em -.2em; }
+abbr.gl { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; }
+.gk-tip .gl-t { display: block; font-weight: 600; margin-bottom: .2rem; }
 mjx-container [class*="gk-"] { cursor: help; }
 mjx-container [class*="gk-"]:hover { fill: var(--accent); }
 .gk-tip {

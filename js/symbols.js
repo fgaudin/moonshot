@@ -29,6 +29,7 @@
     omega: { ch: 'ω', name: N('omega'), say: N('oh-MAY-ga'), use: N('two uses: angular velocity, in rad/s (ω⊕ = Earth’s rotation); argument of periapsis, the angle from the node to periapsis') },
     Omega: { ch: 'Ω', name: N('capital omega'), say: N('oh-MAY-ga'), use: N('right ascension of the ascending node: where the orbit plane crosses the equator') },
     infty: { ch: '∞', name: N('infinity'), say: '', use: N('v∞ is the speed left over “at infinity”, far from the body: the hyperbolic excess speed') },
+    partial: { ch: '∂', name: N('partial d (a rounded d, not Greek)'), say: '', use: N('partial derivative: ∂y/∂x is how fast y changes with x while every other input is held fixed') },
     oplus: { ch: '⊕', name: N('Earth symbol'), say: '', use: N('astronomical symbol for Earth: R⊕ is Earth’s radius, μ⊕ its gravitational parameter') },
     moon: { ch: '☾', name: N('Moon symbol'), say: '', use: N('astronomical symbol for the Moon: g☾ is lunar gravity, μ☾ its gravitational parameter') },
     int: { ch: '∫', name: N('integral sign'), say: '', use: N('“add up over time”: ∫ x dt is the total of x accumulated second by second, like summing x × (small time step) along the whole flight') },
@@ -174,7 +175,7 @@
   };
 
   /* ---------- TeX pre-filter: wrap Greek letters so MathJax tags them with a class ---------- */
-  const TEX_RE = /\\(alpha|beta|gamma|Gamma|delta|Delta|varepsilon|epsilon|eta|theta|lambda|mu|nu|pi|rho|sigma|Sigma|sum|tau|phi|varphi|omega|Omega|infty|oplus|int)(?![a-zA-Z])/g;
+  const TEX_RE = /\\(alpha|beta|gamma|Gamma|delta|Delta|varepsilon|epsilon|eta|theta|lambda|mu|nu|pi|rho|sigma|Sigma|sum|tau|phi|varphi|omega|Omega|infty|oplus|partial|int)(?![a-zA-Z])/g;
   Sym.texFilter = (tex) => (window.I18N && I18N.decimalComma() ? tex.replace(/(\d),(\d)/g, '$1{,}$2') : tex).replace(TEX_RE, (m0, name) => `{\\class{gk-${name}}{\\${name}}}`).replace(/☾/g, '{\\class{gk-moon}{☾}}');
 
   /* ---------- HTML text: wrap Greek characters in <abbr data-gk> ---------- */
@@ -209,13 +210,15 @@
       n.parentNode.replaceChild(frag, n);
     }
   }
+  // glossary words first (js/glossary.js), then the Greek letters
+  const tag = (el) => { if (window.Gloss) Gloss.wrap(el); wrapText(el); };
   Sym.observe = (root) => {
-    wrapText(root);
+    tag(root);
     const mo = new MutationObserver((muts) => {
       mo.disconnect();
       for (const m of muts) for (const n of m.addedNodes) {
-        if (n.nodeType === 1) wrapText(n);
-        else if (n.nodeType === 3 && n.parentNode) wrapText(n.parentNode);
+        if (n.nodeType === 1) tag(n);
+        else if (n.nodeType === 3 && n.parentNode) tag(n.parentNode);
       }
       mo.observe(root, { childList: true, subtree: true });
     });
@@ -247,12 +250,20 @@
     const m = c && c.match(/gk-(\w+)/);
     return m && m[1];
   };
-  const findTarget = (t) => (t && t.closest ? t.closest('abbr.gk, [class*="gk-"]') : null);
+  const findTarget = (t) => (t && t.closest ? t.closest('abbr.gk, abbr.gl, [class*="gk-"]') : null);
   function show(el) {
-    const k = keyOf(el), g = GREEK[k];
-    if (!g) return;
+    let html;
+    if (el.classList && el.classList.contains('gl')) {
+      const e = window.Gloss && Gloss.entry(el.dataset.gl);
+      if (!e) return;
+      html = `<span class="gl-t">${T(e.term)}</span>${T(e.def)}`;
+    } else {
+      const g = GREEK[keyOf(el)];
+      if (!g) return;
+      html = `<b>${g.ch}</b> <span class="nm">${T(g.name)}</span>${g.say ? ` <span class="say">${T(g.say)}</span>` : ''}<br>${T(g.use)}`;
+    }
     if (!tip) { tip = document.createElement('div'); tip.className = 'gk-tip'; tip.setAttribute('role', 'tooltip'); document.body.appendChild(tip); }
-    tip.innerHTML = `<b>${g.ch}</b> <span class="nm">${T(g.name)}</span>${g.say ? ` <span class="say">${T(g.say)}</span>` : ''}<br>${T(g.use)}`;
+    tip.innerHTML = html;
     tip.hidden = false;
     const r = el.getBoundingClientRect();
     const tw = Math.min(300, window.innerWidth - 24);

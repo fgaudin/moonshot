@@ -452,8 +452,12 @@
           label('c', cx + c / 2, yy + 16, 'center', K.good);
         }
         label(T`empty focus`, cx + c, cy - 11, 'center', K.muted);
+        // the semi-major axis a: from the centre to the end of the long axis (towards periapsis, where the empty focus label is not)
+        const ya = cy - Math.min(b * 0.45, 26);
+        ctx.strokeStyle = K.ink; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(cx - a, ya); ctx.lineTo(cx, ya); ctx.moveTo(cx - a, ya - 5); ctx.lineTo(cx - a, ya + 5); ctx.moveTo(cx, ya - 5); ctx.lineTo(cx, ya + 5); ctx.stroke();
+        label('a', cx - a / 2, ya - 7, 'center', K.ink);
         const d1 = Math.hypot(px - (cx - c), py - cy) / a, d2 = Math.hypot(px - (cx + c), py - cy) / a;
-        ro.innerHTML = `<dt>${T`a (semi-major axis)`}</dt><dd>1</dd><dt>${T`c = ae (centre to focus)`}</dt><dd>${f(e, 3)}</dd><dt>b = a√(1−e²)</dt><dd>${f(Math.sqrt(1 - e * e), 3)}</dd><dt>r_p = a(1−e)</dt><dd>${f(1 - e, 3)}</dd><dt>r_a = a(1+e)</dt><dd>${f(1 + e, 3)}</dd><dt>${T`string: d₁ + d₂`}</dt><dd class="hl">${f(d1, 3)} + ${f(d2, 3)} = ${f(d1 + d2, 3)}</dd>`;
+        ro.innerHTML = `<dt>${T`a (semi-major axis)`}</dt><dd>1</dd><dt>${T`c = ae (centre to focus)`}</dt><dd>${f(e, 3)}</dd><dt>b = a√(1−e²)</dt><dd>${f(Math.sqrt(1 - e * e), 3)}</dd><dt>r_p = a(1−e)</dt><dd>${f(1 - e, 3)}</dd><dt>r_a = a(1+e)</dt><dd>${f(1 + e, 3)}</dd><dt>${T`d₁ (to the planet)`}</dt><dd>${f(d1, 3)}</dd><dt>${T`d₂ (to the empty focus)`}</dt><dd>${f(d2, 3)}</dd><dt>${T`string d₁ + d₂`}</dt><dd class="hl">${f(d1 + d2, 3)}</dd>`;
       });
       const inp = side.querySelector('input'), out = side.querySelector('output');
       inp.addEventListener('input', () => { e = +inp.value; out.textContent = f(e, 2); view.redraw(); });

@@ -122,4 +122,108 @@
     { term: N`Δv (delta-v)`, aka: N`velocity change`, def: N`Delta-v is the change of velocity a burn produces, in m/s. Every manoeuvre of a mission is priced in delta-v, and the rocket equation turns it into propellant.`, module: 'rockets' },
     { term: N`Δv margin`, aka: N`margin · Δv budget`, def: N`The Δv left in a stage after the planned burns and their 3σ dispersions are paid for, as a percentage of the Δv needed.`, module: 'mcc' },
   ];
+
+  /* ---------- glossary tooltips in the course text ----------
+     The words of each entry (term parts first, then aliases) are looked for in the prose of a page; the first
+     occurrence in each section gets a dotted underline and the definition as a tooltip (shown by js/symbols.js).
+     Words that are too common to be useful as links are listed in STOP. */
+  const AND = { en: ' and ', fr: ' et ', de: ' und ' };
+  const STOP = {
+    en: 'earth moon entry state dot normal radial antinormal target chaser stage staging margin circle ellipse parabola hyperbola focus gravity drag pitch roll yaw attitude plasma inertial impulse docking extraction transposition eagle columbia datum probe drogue captured capture skip abort corridor node vector scalar thrust thrusters phasing flyby oblate lifeboat readback derivative dispersion sigma azimuth gimbal propellants kerosene lift lifts',
+    fr: 'terre lune rentrée état normal normale radial radiale antinormale cible poursuivant marge cercle ellipse parabole hyperbole foyer tangage roulis lacet attitude plasma inertiel impulsion amarrage extraction transposition eagle columbia datum sonde capture capturée rebond abandon couloir nœud vecteur scalaire poussée poids propulseurs phasage survol aplati collationnement dérivée dispersion sigma azimut cardan gimbal ergols kérosène stage staging indicatifs étage étages traînée',
+    de: 'erde mond wiedereintritt zustand normal radial antinormal ziel verfolger reserve kreis ellipse parabel hyperbel brennpunkt nicken rollen gieren lage plasma inertial andocken herausziehen transposition eagle columbia datum fang eingefangen abprallen abbruch korridor knoten vektor skalar schub steuertriebwerke phasierung vorbeiflug abgeplattet rettungsboot rücklesen ableitung streuung sigma azimut gimbal kardanaufhängung treibstoffe kerosin stage staging rufzeichen stufe stufen luftwiderstand',
+  };
+  const PLURAL = { en: '(?:s|es)?', fr: '(?:s|x)?', de: '(?:e|en|n|s|es|er)?' };
+  const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  let cache = null;
+  function matcher() {
+    const lang = (window.I18N && I18N.lang) || 'en';
+    if (cache && cache.lang === lang) return cache;
+    const stop = new Set(STOP[lang].split(' ')), seen = new Map();
+    const phrases = (txt) => {
+      const out = [];
+      const add = (p) => {
+        p = p.trim().replace(/^(the|a|an|le|la|les|l’|der|die|das)\s+/i, '');
+        if (/[\d_()]|-$|^-|^(de|du|des|par|of|von|der) /i.test(p) || (p.match(/\p{L}/gu) || []).length < 3 || stop.has(p.toLowerCase())) return;
+        out.push(p);
+      };
+      for (let part of txt.split(/;|·|\//)) {
+        const paren = part.match(/\(([^)]*)\)/);
+        if (paren) paren[1].split(',').forEach(add);
+        part = part.replace(/\([^)]*\)/g, '');
+        const bits = part.split(AND[lang]);
+        // "Circular and escape velocity" also names "circular velocity"
+        if (lang === 'en' && bits.length === 2 && !/\s/.test(bits[0].trim()) && bits[1].trim().split(/\s+/).length === 2 && !bits[1].toLowerCase().includes(bits[0].trim().toLowerCase())) {
+          add(`${bits[0].trim()} ${bits[1].trim().split(/\s+/)[1]}`); add(bits[1]);     // not the bare adjective
+        } else for (const b of bits) b.split(',').forEach(add);
+      }
+      return out;
+    };
+    // terms first, then aliases: a word that is an entry's own term is never claimed by another entry's alias
+    window.GLOSSARY.forEach((e, i) => phrases(T(e.term)).forEach((p) => { if (!seen.has(p.toLowerCase())) seen.set(p.toLowerCase(), { p, i }); }));
+    window.GLOSSARY.forEach((e, i) => e.aka && phrases(T(e.aka)).forEach((p) => { if (!seen.has(p.toLowerCase())) seen.set(p.toLowerCase(), { p, i }); }));
+    const list = [...seen.values()].sort((a, b) => b.p.length - a.p.length);
+    const strict = (p) => (p.match(/\p{Lu}/gu) || []).length >= 2 || /^\p{Lu}\p{Ll}*\p{Lu}/u.test(p) || p === 'Isp';
+    const alt = (arr) => arr.map((x) => esc(x.p).replace(/[-–‐]/g, '[-–‐]') + PLURAL[lang]).join('|');
+    const strictList = list.filter((x) => strict(x.p)), looseList = list.filter((x) => !strict(x.p));
+    const B = '(?<![\\p{L}\\p{N}])', A = '(?![\\p{L}\\p{N}])';
+    cache = {
+      lang,
+      re: strictList.length ? new RegExp(`${B}(?:${alt(strictList)})${A}`, 'gu') : null,      // acronyms and capitalised names: exact case
+      reI: looseList.length ? new RegExp(`${B}(?:${alt(looseList)})${A}`, 'giu') : null,     // ordinary words: any case
+      find(word, cs) {
+        const w = word.toLowerCase(), pool = cs ? strictList : looseList;
+        const hit = pool.find((x) => w === x.p.toLowerCase() || (w.startsWith(x.p.toLowerCase()) && new RegExp(`^${esc(x.p.toLowerCase())}${PLURAL[lang]}$`, 'u').test(w)));
+        return hit ? hit.i : -1;
+      },
+    };
+    return cache;
+  }
+
+  const SKIP = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT', 'SELECT', 'OPTION', 'MJX-CONTAINER', 'ABBR', 'CANVAS', 'BUTTON', 'A', 'H1', 'H2', 'H3', 'H4', 'LABEL', 'SUMMARY', 'FIGURE', 'CODE', 'DT']);
+  const BOLD = new Set(['B', 'STRONG']);
+  const used = new WeakMap();                 // section element → entries already linked in it
+  function wrap(root) {
+    if (!window.I18N || !root || (root.closest && root.closest('#page') && location.hash === '#reference')) return;
+    const m = matcher();
+    const prose = root.matches && root.matches('.prose') ? [root] : [...(root.querySelectorAll ? root.querySelectorAll('.prose') : [])];
+    if (!prose.length && root.closest) { const p = root.closest('.prose'); if (p) prose.push(root); }
+    for (const pr of prose) {
+      const walker = document.createTreeWalker(pr, NodeFilter.SHOW_TEXT, {
+        acceptNode(n) {
+          for (let p = n.parentNode; p && p !== pr.parentNode; p = p.parentNode) if (SKIP.has(p.nodeName) || (p.classList && (p.classList.contains('eq') || p.classList.contains('where') || p.classList.contains('lab')))) return NodeFilter.FILTER_REJECT;
+          return /\\\(|\\\[/.test(n.nodeValue) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+        },
+      });
+      const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+      for (const n of nodes) {
+        const sec = (n.parentNode.closest && n.parentNode.closest('section')) || pr;
+        if (!used.has(sec)) used.set(sec, new Set());
+        const done = used.get(sec), inBold = BOLD.has(n.parentNode.nodeName);
+        const txt = n.nodeValue, hits = [], taken = [];
+        for (const [re, cs] of [[m.re, true], [m.reI, false]]) {
+          if (!re) continue;
+          re.lastIndex = 0;
+          for (let r; (r = re.exec(txt));) {
+            if (taken.some(([a, b]) => r.index < b && a < r.index + r[0].length)) continue;
+            taken.push([r.index, r.index + r[0].length]);
+            const i = m.find(r[0], cs);
+            if (i >= 0 && !done.has(i)) { done.add(i); if (!inBold) hits.push([r.index, r[0], i]); }
+          }
+        }
+        if (!hits.length) continue;
+        hits.sort((a, b) => a[0] - b[0]);
+        const frag = document.createDocumentFragment(); let last = 0;
+        for (const [at, word, i] of hits) {
+          if (at < last) continue;
+          if (at > last) frag.appendChild(document.createTextNode(txt.slice(last, at)));
+          const a = document.createElement('abbr'); a.className = 'gl'; a.dataset.gl = i; a.textContent = word;
+          frag.appendChild(a); last = at + word.length;
+        }
+        if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+        n.parentNode.replaceChild(frag, n);
+      }
+    }
+  }
+  window.Gloss = { wrap, entry: (i) => window.GLOSSARY[+i] };
 })();

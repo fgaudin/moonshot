@@ -54,6 +54,8 @@ I18N.add('fr', {
   'right ascension of the ascending node: where the orbit plane crosses the equator': 'ascension droite du nœud ascendant : l’endroit où le plan de l’orbite traverse l’équateur',
   'infinity': 'infini',
   'v∞ is the speed left over “at infinity”, far from the body: the hyperbolic excess speed': 'v∞ est la vitesse qui reste « à l’infini », loin du corps : la vitesse hyperbolique d’excès',
+  'partial d (a rounded d, not Greek)': 'd rond (un d arrondi, pas une lettre grecque)',
+  'partial derivative: ∂y/∂x is how fast y changes with x while every other input is held fixed': 'dérivée partielle : ∂y/∂x indique à quelle vitesse y varie avec x quand toutes les autres entrées restent fixes',
   'Earth symbol': 'symbole de la Terre',
   'astronomical symbol for Earth: R⊕ is Earth’s radius, μ⊕ its gravitational parameter': 'symbole astronomique de la Terre : R⊕ est le rayon terrestre, μ⊕ son paramètre gravitationnel',
   'Moon symbol': 'symbole de la Lune',
