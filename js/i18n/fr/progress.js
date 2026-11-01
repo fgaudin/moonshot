@@ -129,4 +129,6 @@ I18N.add('fr', {
   'Design an orbit whose apogee reaches geostationary altitude (35 786 km, where a circular orbit keeps pace with the Earth’s rotation)': 'Concevoir une orbite dont l’apogée atteint l’altitude géostationnaire (35 786 km, où une orbite circulaire suit la rotation de la Terre)',
   'Plan a transfer from low Earth orbit (LEO) to geostationary orbit (GEO) including the 28.5° plane change for under 4.4 km/s': 'Planifier un transfert de l’orbite terrestre basse (LEO) vers l’orbite géostationnaire (GEO), changement de plan de 28,5° compris, pour moins de 4,4 km/s',
   "Terminal phase: fly from 2 km to 100 m without exceeding the braking gates": "Phase terminale : aller de 2 km à 100 m sans dépasser les portes de freinage",
+  "Reset the objectives of this module": "Réinitialiser les objectifs de ce module",
+  "Click again to clear these objectives and the practice score of this module": "Cliquez à nouveau pour effacer ces objectifs et le score d’entraînement de ce module",
 });

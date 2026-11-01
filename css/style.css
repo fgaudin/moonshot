@@ -286,6 +286,9 @@ table.data input { width: 6.5rem; text-align: right; padding: .35rem .4rem; }
 .objectives li.done .box { background: var(--good); border-color: var(--good); }
 .objectives li.done .box::after { content: ""; position: absolute; left: .22rem; top: .02rem; width: .25rem; height: .5rem; border: solid var(--bg); border-width: 0 2px 2px 0; transform: rotate(45deg); }
 .objectives.compact li { font-size: .88rem; }
+.obj-reset { align-self: flex-start; margin: -.2rem 0 0; padding: 0; background: none; border: 0; font: .8rem/1.3 var(--f-body); color: var(--muted); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.obj-reset:hover { color: var(--accent); }
+.obj-reset[hidden] { display: none; }
 .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .6rem; }
 .choice {
   display: flex; flex-direction: column; gap: .2rem; padding: .7rem .85rem; border: 1px solid var(--line); border-radius: 8px;

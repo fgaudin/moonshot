@@ -13,14 +13,45 @@
   const Q_LIMIT = 25e3;                                // max q limit of the objective, Pa
   const TARGET_ALT = 200e3;
 
+  // same engine and air pressure, three bells: under-expanded (small), matched, over-expanded (large)
+  function figExpansion() {
+    const W = 380, H = 196, yt = 40, fx = (n) => n.toFixed(1);
+    const pct = (x, w) => (100 * x / w).toFixed(2) + '%';
+    const lbs = (list) => list.map(([x, y, t, c]) => `<span class="lb ${c || ''}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`).join('');
+    const nozzle = (cx, re, ye) => {
+      const side = (k) => `${fx(cx + k * 14)},10 L${fx(cx + k * 14)},28 Q${fx(cx + k * 14)},36 ${fx(cx + k * 5)},${yt} Q${fx(cx + k * re * 0.85)},${fx(yt + (ye - yt) * 0.35)} ${fx(cx + k * re)},${ye}`;
+      return `<path class="nz-wall" d="M${side(-1)} M${side(1)} M${cx - 14},10 L${cx + 14},10"/>`;
+    };
+    const plume = (cx, re, ye, w) => {   // w: half-width of the plume at the bottom, mid: its widest or narrowest point
+      const yb = 150, ym = ye + (yb - ye) * 0.4, mid = w[0], end = w[1];
+      const half = (k) => `${fx(cx + k * re)},${ye} Q${fx(cx + k * mid)},${fx(ym)} ${fx(cx + k * end)},${yb}`;
+      return `<path class="nz-plume" d="M${half(-1)} L${fx(cx + end)},${yb} Q${fx(cx + mid)},${fx(ym)} ${fx(cx + re)},${ye} Z"/><path class="nz-edge" d="M${half(-1)} M${half(1)}"/>`;
+    };
+    const cols = [[65, 10, 62, [34, 30]], [190, 17, 76, [17, 18]], [315, 27, 92, [10, 16]]];
+    return `<figure class="fig" role="img" aria-label="${T`Three nozzles on the same engine at the same air pressure. The smallest bell is under-expanded: the gas leaves above the air pressure and the plume balloons outwards. The matched bell leaves the gas at the air pressure and the plume stays straight. The largest bell is over-expanded: the gas leaves below the air pressure and the air squeezes the plume inwards.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <defs><linearGradient id="nz-fade" gradientUnits="userSpaceOnUse" x1="0" y1="60" x2="0" y2="150"><stop offset="0" class="nz-s0"/><stop offset="1" class="nz-s1"/></linearGradient><linearGradient id="nz-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="nz-s0"/><stop offset="1" class="nz-s1"/></linearGradient></defs>
+        ${cols.map(([cx, re, ye, w]) => plume(cx, re, ye, w) + nozzle(cx, re, ye)).join('')}
+      </svg>${lbs([
+        [65, 164, T`under-expanded`, 'ink'], [65, 182, '<i>p<sub>e</sub></i> &gt; <i>p<sub>a</sub></i>', 'm'],
+        [190, 164, T`matched`, 'ink'], [190, 182, '<i>p<sub>e</sub></i> = <i>p<sub>a</sub></i>', 'm'],
+        [315, 164, T`over-expanded`, 'ink'], [315, 182, '<i>p<sub>e</sub></i> &lt; <i>p<sub>a</sub></i>', 'm'],
+      ])}</div>
+      <figcaption>${T`Same engine, same air pressure, three bells with growing expansion ratios. The small bell leaves the gas above the air pressure and the plume balloons out. The large bell expands it below the air pressure and the air squeezes the plume in. In vacuum every bell is under-expanded, so upper stages use the largest bells.`}</figcaption></figure>`;
+  }
+  App.css('launcher', `
+    .nz-wall { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+    .nz-plume { fill: url(#nz-fill); stroke: none; } .nz-edge { fill: none; stroke: url(#nz-fade); stroke-width: 1.6; }
+    .nz-s0 { stop-color: var(--accent); stop-opacity: .5; } .nz-s1 { stop-color: var(--accent); stop-opacity: 0; }`);
+
   Progress.register('launcher', {
     name: N`Your Own Launcher`, topic: 'launcher', glyph: 'launcher',
     briefing: N`Mission Control does not fly a rocket the way you flew the Saturn V, {name}. It designs the pitch program on the ground, runs it in a simulation, reads the result and adjusts the table. In this module you become the flight dynamics officer of a new vehicle. You will see why an engine pushes harder in vacuum, why the first stage is built for thrust and the upper stage for efficiency, where 9.4 km/s go on the way to orbit, and how a short table of numbers steers a rocket into a circle.`,
     objectives: [
-      { id: 'twr', text: N`Design a custom vehicle with liftoff TWR above 1.2, at least 9.5 km/s of vacuum Δv and a payload of at least 1.5 % of liftoff mass` },
+      { id: 'twr', text: N`Design a custom vehicle with liftoff TWR above 1.2, at least 9.5 km/s of vacuum Δv and a payload of at least 2.5 % of liftoff mass` },
       { id: 'orbit', text: N`Edit the pitch program yourself until the vehicle reaches an orbit with periapsis above 150 km` },
       { id: 'maxq', text: N`Reach that orbit with a maximum dynamic pressure below 25 kPa` },
-      { id: 'own', text: N`Reach orbit (periapsis above 150 km) with a custom vehicle that you changed yourself` },
+      { id: 'own', text: N`Reach orbit (periapsis above 150 km) with a vehicle that meets the design targets of the first objective` },
       { id: 'qual', text: N`Qualify: answer 2 launcher problems correctly` },
     ],
     debrief: N`You can now read a thrust curve, size the stages of a launcher and tune a pitch table until the periapsis clears the atmosphere, {name}. Next, the manoeuvres that start once you are in orbit.`,
@@ -158,6 +189,7 @@
             ${Sym.where(['Fth', 'mdot', 've', 'pexit', 'pa', 'Ae'], N`The first term is the momentum of the exhaust. The second is the pressure force on the nozzle exit.`)}
             <p>${T`Only <i>p<sub>a</sub></i> changes during the flight. At sea level it is 101 325 Pa. In vacuum it is zero, and the pressure term adds to the thrust. So an engine pushes harder as it climbs. For the F-1 of the Saturn V first stage, about 6.77 MN at sea level and about 7.77 MN in vacuum, the gain is 15 %.`}</p>
             <p>${T`The nozzle is a trade-off. Its <b>expansion ratio</b> is the exit area divided by the throat area. A larger ratio lets the gas expand further, so the exit pressure <i>p<sub>e</sub></i> falls and more of the heat becomes exhaust speed. If <i>p<sub>e</sub></i> is below the air pressure the nozzle is <b>over-expanded</b>: the air pushes the flow in, the pressure term is negative and the flow can separate from the wall. If <i>p<sub>e</sub></i> is above the air pressure the nozzle is <b>under-expanded</b>: the gas leaves with pressure it could still have turned into speed. A first-stage engine is a compromise for the whole climb. A vacuum engine such as the J-2, with a vacuum Isp of about 421 s and a thrust of about 1 MN, can have a very large bell because it never meets dense air.`}</p>
+            ${figExpansion()}
           </div>
         </section>
 
@@ -170,7 +202,7 @@
             <div class="eq">\\[ F(p) = F_{vac} - p\\,A_e,\\qquad I_{sp}(p) = I_{vac} - \\left(I_{vac} - I_{SL}\\right)\\frac{p}{p_0},\\qquad A_e = \\frac{F_{vac} - F_{SL}}{p_0} \\]</div>
             ${Sym.where([['F_{vac},\\ F_{SL}', N`thrust in vacuum and at sea level`, 'N'], ['I_{vac},\\ I_{SL}', N`specific impulse in vacuum and at sea level`, 's'], ['p', N`ambient pressure at the current altitude`, 'Pa'], ['p_0', N`sea-level pressure, 101 325`, 'Pa'], 'Ae'], N`Isp is linear in the pressure because the pressure term is the only one that changes. It is not linear in altitude.`)}
             ${Primer.box('interp', false, 'refresher')}
-            <p>${T`Linear in pressure is not linear in altitude, because pressure falls exponentially. This course uses <i>p</i> = <i>p</i><sub>0</sub> e<sup>−h/7.5 km</sup> for the engines, and an air density that falls with a scale height of 7.2 km for drag. They are two fits of the same real atmosphere, each over the altitudes where it matters: the lowest 30 km for thrust, higher up for drag and entry. In a single isothermal layer they would be equal. You will measure such a scale height from sounding-rocket data in module ${Progress.code('sounding')}. For the F-1 above, at 10 km the pressure is 26 % of sea level, the thrust is 7.77 − 1.00 × 0.26 = 7.51 MN and the Isp is 304 − 41 × 0.26 = 293 s. Most of the gain comes in the first 20 km, which a rocket crosses in about a minute.`}</p>
+            <p>${T`Linear in pressure is not linear in altitude, because pressure falls exponentially. This course uses <i>p</i> = <i>p</i><sub>0</sub> e<sup>−h/7.5 km</sup> for the engines, and an air density that falls with a scale height of 7.2 km for drag. They are two fits of the same real atmosphere, each over the altitudes where it matters: the lowest 30 km for thrust, higher up for drag and entry. In a single isothermal layer they would be equal. You have measured such a scale height from sounding-rocket data in module ${Progress.code('sounding')}. For the F-1 above, at 10 km the pressure is 26 % of sea level, the thrust is 7.77 − 1.00 × 0.26 = 7.51 MN and the Isp is 304 − 41 × 0.26 = 293 s. Most of the gain comes in the first 20 km, which a rocket crosses in about a minute.`}</p>
             <div class="eq">\\[ p(h) = p_0\\,e^{-h/H_p},\\qquad H_p = 7.5\\ \\mathrm{km} \\]</div>
             ${Sym.where([['h', N`altitude above the surface`, 'm'], ['H_p', N`pressure scale height used here`, 'm'], 'p_0'], N`Every 7.5 km the pressure falls by a factor e (2.718). At 30 km it is 1.8 % of sea level.`)}
             <p>${T`<b>TWR during the burn.</b> Module ${Progress.code('rockets')} defined the thrust-to-weight ratio and showed why a first stage lifts off at little more than 1. Here it grows for two reasons at once: the mass falls as propellant burns, and the thrust rises as the air thins, by the pressure term above.`}</p>
@@ -339,12 +371,17 @@
       objectives(veh);
     }
 
+    // checked once the sliders settle, so a value passed while dragging does not count; no preset meets the 2.5 % payload
+    let objTimer = 0;
     function objectives(veh) {
-      const m0 = sum.m0;
-      if (touchedV && sum.twr0 > 1.2 && sum.dvVac >= 9500 && veh.payload / m0 >= 0.015) Progress.done('launcher', 'twr');
-      const orb = res.outcome === 'orbit' && res.perigee > 150e3;
-      if (orb && touchedP) { Progress.done('launcher', 'orbit'); if (res.maxQ.q < Q_LIMIT) Progress.done('launcher', 'maxq'); }
-      if (orb && touchedP && touchedV) Progress.done('launcher', 'own');
+      clearTimeout(objTimer);
+      objTimer = setTimeout(() => {
+        const design = touchedV && sum.twr0 > 1.2 && sum.dvVac >= 9500 && veh.payload / sum.m0 >= 0.025;
+        if (design) Progress.done('launcher', 'twr');
+        const orb = res.outcome === 'orbit' && res.perigee > 150e3;
+        if (orb && touchedP) { Progress.done('launcher', 'orbit'); if (res.maxQ.q < Q_LIMIT) Progress.done('launcher', 'maxq'); }
+        if (orb && touchedP && design) Progress.done('launcher', 'own');
+      }, 600);
     }
 
     function sampleAt(t) {

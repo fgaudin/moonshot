@@ -142,6 +142,13 @@
     nextModule() { return ORDER.find((k) => !Progress.complete(k)) || null; },
     // qualification objectives are recomputed from practice scores at every start, so those go too
     reset() { state = { name: state.name, done: {} }; save(); UI.store.set('stats', {}); },
+    // one module only: its objectives and the practice score of its topic, which would re-earn the qualification
+    resetModule(mod) {
+      for (const k of Object.keys(state.done)) if (k.startsWith(mod + '.')) delete state.done[k];
+      save();
+      const s = UI.store.get('stats', {}); delete s[MODULES[mod].topic]; UI.store.set('stats', s);
+      refreshChecklists();
+    },
 
     // Mark an objective done. Safe to call repeatedly.
     done(mod, id) {
@@ -218,7 +225,7 @@
 
   /* ---------- briefing and debrief panels ---------- */
   function checklist(mod) {
-    return MODULES[mod].objectives.map((o) => `<li data-obj="${mod}.${o.id}" class="${Progress.isDone(mod, o.id) ? 'done' : ''}"><span class="box" aria-hidden="true"></span>${T(o.text)}</li>`).join('');
+    return MODULES[mod].objectives.map((o) => `<li data-obj="${mod}.${o.id}" class="${Progress.isDone(mod, o.id) ? 'done' : ''}"><span class="box" aria-hidden="true"></span><span>${T(o.text)}</span></li>`).join('');
   }
   function refreshChecklists() {
     if (window.App && App.refreshRail) App.refreshRail();
@@ -229,6 +236,7 @@
     document.querySelectorAll('[data-patch-of]').forEach((el) => {
       const m = el.dataset.patchOf; el.innerHTML = patchSVG(m, Progress.complete(m), +el.dataset.size || 72);
     });
+    document.querySelectorAll('[data-reset-obj]').forEach((b) => { b.hidden = !Progress.count(b.dataset.resetObj); });
   }
 
   Progress.briefing = (mod, opts = {}) => {
@@ -250,6 +258,7 @@
         <p class="brief-sign">${T`Vega, Chief Flight Instructor`}</p>
         <h3 class="brief-h">${T`Objectives`}</h3>
         <ul class="objectives">${checklist(mod)}</ul>
+        <button class="obj-reset" data-reset-obj="${mod}" ${Progress.count(mod) ? '' : 'hidden'}>${T`Reset the objectives of this module`}</button>
         ${choices ? `<h3 class="brief-h">${T`How do you want to start?`}</h3><div class="choices">${choices}</div>` : ''}
       </aside>`;
   };
@@ -270,6 +279,15 @@
         </div>
       </aside>`;
   };
+
+  // module reset asks for a second click, like the full reset on the home page
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest && e.target.closest('[data-reset-obj]');
+    if (!b) return;
+    if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = T`Click again to clear these objectives and the practice score of this module`; return; }
+    delete b.dataset.armed; b.textContent = T`Reset the objectives of this module`;
+    Progress.resetModule(b.dataset.resetObj);
+  });
 
   // in-page jumps from briefing choices; topic preselection for the exam; primer deep links
   document.addEventListener('click', (e) => {
