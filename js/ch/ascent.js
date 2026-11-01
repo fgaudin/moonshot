@@ -3,6 +3,41 @@
   'use strict';
   const { C } = Phys;
 
+  /* what a force does to a velocity, depending on the angle between them (inline SVG, .fig styles of js/ch/orbits.js) */
+  function figForceAngle() {
+    const W = 380, H = 118, y0 = 64, L = 46, F = 40, fx = (n) => n.toFixed(1);
+    const pct = (x, w) => (100 * x / w).toFixed(2) + '%';
+    const lbs = (list) => list.map(([x, y, t, c]) => `<span class="lb ${c || ''}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`).join('');
+    const arrow = (x1, y1, x2, y2, cls) => {
+      const a = Math.atan2(y2 - y1, x2 - x1), h = (k) => `${fx(x2 - 9 * Math.cos(a + k))},${fx(y2 - 9 * Math.sin(a + k))}`;
+      return `<path class="${cls}-ln" d="M${fx(x1)},${fx(y1)}L${fx(x2)},${fx(y2)}"/><path class="${cls}-fill" d="M${h(0.4)}L${fx(x2)},${fx(y2)}L${h(-0.4)}Z"/>`;
+    };
+    // a force along the velocity is drawn just above it, so the two arrows do not hide each other
+    const panel = (x0, ang) => { const t = ang * Math.PI / 180, dy = ang === 0 ? -8 : 0;
+      return arrow(x0, y0, x0 + L, y0, 'af-v') + arrow(x0, y0 + dy, x0 + F * Math.cos(t), y0 + dy - F * Math.sin(t), 'af-f') + `<circle class="f-ink-fill" cx="${x0}" cy="${y0}" r="3"/>`; };
+    const a = 35 * Math.PI / 180, x4 = 286, fx4 = x4 + 58 * Math.cos(a), fy4 = y0 - 58 * Math.sin(a);
+    return `<figure class="fig" role="img" aria-label="${T`Four cases of a force acting on a moving body. Along the velocity it speeds the body up; against the velocity it slows it down; at right angles it turns the path without changing the speed; at an angle in between, its part along the velocity changes the speed and its part across the velocity turns the path.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        ${panel(16, 0)}${panel(132, 180)}${panel(206, 90)}
+        ${arrow(x4, y0, x4 + 66, y0, 'af-v')}
+        <path class="f-mu f-dash" d="M${fx(fx4)},${fx(fy4)}L${fx(fx4)},${y0}"/>
+        ${arrow(x4, y0, fx4, y0 + 0.01, 'af-c')}${arrow(x4, y0, x4 + 0.01, fy4, 'af-c')}
+        ${arrow(x4, y0, fx4, fy4, 'af-f')}<circle class="f-ink-fill" cx="${x4}" cy="${y0}" r="3"/>
+        <path class="f-ink-ln" d="M${x4 + 22},${y0}A22,22 0 0 0 ${fx(x4 + 22 * Math.cos(a))},${fx(y0 - 22 * Math.sin(a))}"/>
+      </svg>${lbs([
+        [16 + L + 6, y0, 'v', 'tr l'], [16 + F / 2, y0 - 20, 'F', 'acc'], [8, 104, T`speeds up`, 'm l'],
+        [132 - F / 2, y0 - 12, 'F', 'acc'], [132 + L + 4, y0, 'v', 'tr l'], [130, 104, T`slows down`, 'm'],
+        [206 + 9, y0 - F + 4, 'F', 'acc l'], [206 + L + 4, y0, 'v', 'tr l'], [228, 104, T`turns`, 'm'],
+        [fx4 + 6, fy4 - 4, 'F', 'acc l'], [x4 + 70, y0, 'v', 'tr l'], [x4 + 30, y0 - 9, 'α', 'ink'],
+        [(x4 + fx4) / 2, y0 + 12, 'F cos α', 'ink'], [x4 - 4, (y0 + fy4) / 2, 'F sin α', 'ink r'], [x4 + 33, 104, T`both`, 'm'],
+      ])}</div>
+      <figcaption>${T`Only the part of a force along the velocity changes the speed. The part at right angles bends the path.`}</figcaption></figure>`;
+  }
+  App.css('ascent', `
+    .af-v-ln { fill: none; stroke: var(--trace); stroke-width: 2; } .af-v-fill { fill: var(--trace); }
+    .af-f-ln { fill: none; stroke: var(--accent); stroke-width: 2.4; } .af-f-fill { fill: var(--accent); }
+    .af-c-ln { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 3 3; } .af-c-fill { fill: var(--ink); }`);
+
   App.chapter({
     id: 'ascent', phase: N`Ascent`, title: N`Getting to Orbit`, lab: N`Saturn V ascent`,
     blurb: N`Fly the Saturn V into a 185 km parking orbit. Pitch over too early and drag tears you apart; too late and gravity eats your propellant.`,
@@ -24,6 +59,9 @@
             ${Sym.where([['\\Delta v_{design}', N`total velocity change the rocket must be able to deliver`, 'm/s'], 'vorbit', 'integral', 'g', 'gamma', 'D', 'm', 'Fth', 'alpha', 'vrot'], N`In words: orbital speed + what gravity steals while you climb + what the air steals + what is wasted by not pointing exactly along the path − the free speed from Earth’s spin.`)}
             ${Primer.box('integral', false, 'refresher') + Primer.box('trig')}
             <p>${T`<b>Gravity loss</b> is the thrust spent holding the vehicle up while its path is still steep (\\(\\gamma\\) is the flight-path angle). It is the largest loss, often 1–1.5 km/s, and it is why low thrust-to-weight rockets are inefficient. <b>Drag loss</b> is small for a big rocket, around 40 m/s for the Saturn V, but drag sets the <b>maximum dynamic pressure</b> \\(q = \\tfrac12\\rho v^2\\) that the structure must survive. <b>Steering loss</b> comes from thrust that isn’t aligned with the velocity.`}</p>
+            <p>${T`Why a misaligned thrust is a loss comes down to vectors. A force pointing the same way as the velocity speeds the vehicle up. Pointing the opposite way, it slows it down. At 90° it changes neither the speed nor the energy: it only turns the path. At any angle in between it does both. Its part along the velocity, \(F\cos\alpha\), changes the speed; its part across, \(F\sin\alpha\), turns the path.`}</p>
+            ${figForceAngle()}
+            <p>${T`So only \(F\cos\alpha\) builds speed, and the remaining fraction \(1-\cos\alpha\) of the thrust is the steering loss. That is why it stays small: at 10° off the velocity, \(\cos\alpha = 0.985\) and only 1.5 % of the thrust is lost to turning. Gravity follows the same rule. Its part along the path, \(g\sin\gamma\), is the gravity loss, and its part across the path is what bends the trajectory over in the gravity turn of the next section.`}</p>
             <p>${T`<b>Earth’s rotation</b> gives a launch due east a free \\(\\omega_\\oplus R_\\oplus\\cos\\phi\\): 465 m/s at the equator, 408 m/s at Cape Canaveral (28.5° N). Launch west and you pay it back twice.`}</p>
           </div>
         </section>
