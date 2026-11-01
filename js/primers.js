@@ -81,7 +81,7 @@
         N`<p>The <b>exponential</b> \\(e^x\\), with \\(e \\approx 2.718\\), describes anything that changes by the same <i>percentage</i> per step. Air density falls by the same fraction for every 7.2 km you climb: \\(\\rho = \\rho_0\\,e^{-h/H}\\).</p>`,
         N`<p>The <b>natural logarithm</b> \\(\\ln\\) undoes it: \\(\\ln(e^x) = x\\). It turns multiplication into addition:</p>`,
         R`\[ \ln(ab) = \ln a + \ln b, \qquad \ln\frac{a}{b} = \ln a - \ln b, \qquad \ln a^n = n\ln a \]`,
-        N`<p><b>Why the rocket equation has a log.</b> Burning 10% of your current mass always gives the same Δv, whether the rocket is full or nearly empty. Doubling the mass ratio therefore adds a fixed amount of Δv, \\(c\\ln 2 \\approx 0.69\\,c\\), no matter how big the rocket already is. To gain the same Δv again, you must multiply, not add. That is the “tyranny”.</p>`,
+        N`<p><b>Why the rocket equation has a log.</b> Burning 10% of your current mass always gives the same Δv, whether the rocket is full or nearly empty. Doubling the mass ratio therefore adds a fixed amount of Δv, \\(c\\ln 2 \\approx 0.69\\,c\\), no matter how big the rocket already is. Here \\(c\\) is the engine’s effective exhaust velocity, from the rocket equation \\(\\Delta v = c\\ln(m_0/m_f)\\). To gain the same Δv again, you must multiply, not add. That is the “tyranny”.</p>`,
         N`<p class="try">Try it: each doubling of the mass ratio adds the same Δv.</p>`,
       ],
       widget: 'log',

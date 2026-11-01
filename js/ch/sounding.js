@@ -39,6 +39,23 @@
     return `<div class="fig-pair">${a}${b}</div>`;
   }
 
+  // what a residual is: the vertical gap between each measured point and the fitted line
+  function figResiduals() {
+    const W = 320, H = 200, x0 = 30, yb = 182, line = (x) => 34 + 0.42 * (x - x0);
+    const pts = [[52, 11], [88, -14], [126, 8], [164, -6], [204, 15], [246, -10], [284, 5]];
+    const k = 4;   // the point drawn with its label
+    const bars = pts.map(([x, d], i) => `<path class="${i === k ? 'f-ac-ln thin' : 'f-mu'}" d="M${x},${line(x).toFixed(1)}V${(line(x) + d).toFixed(1)}"/>`).join('');
+    const dots = pts.map(([x, d]) => `<circle class="f-ink-fill" cx="${x}" cy="${(line(x) + d).toFixed(1)}" r="3.2"/>`).join('');
+    const [xk, dk] = pts[k];
+    return `<figure class="fig" role="img" aria-label="${T`Measured points scattered around a fitted straight line. Each point is joined to the line by a short vertical bar: that gap is the residual of the point.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <path class="f-mu" d="M${x0},8V${yb}H${W - 8}"/>
+        <path class="f-tr" d="M${x0},${line(x0)}L${W - 14},${line(W - 14).toFixed(1)}"/>${bars}${dots}
+      </svg>${lbs([[xk - 8, line(xk) + dk / 2, T`residual r<sub>i</sub>`, 'acc r'], [W - 12, yb + 11, 'h', 'm r'], [x0 + 6, 10, 'ln p', 'm l'],
+        [W - 12, line(W - 14) + 16, T`fitted line`, 'tr r'], [pts[1][0], line(pts[1][0]) + pts[1][1] - 13, T`measured point`, 'ink']], W, H)}</div>
+      <figcaption>${T`Each bar is a residual: measured value minus the value the line gives at the same altitude. Least squares picks the line that makes the sum of the squared bars as small as possible.`}</figcaption></figure>`;
+  }
+
   Progress.register('sounding', {
     name: N`Measuring an Atmosphere`, topic: 'sounding', glyph: 'sounding',
     briefing: N`Every ascent and every entry in this course leans on one thing you have not measured yet: the air, {name}. On a new world nobody hands you a table. You send up sounding rockets, read a pressure gauge on the way, and fit a model to the numbers. In this module you do exactly that on four unknown atmospheres, and you find out how much a good fit depends on how high you fly.`,
@@ -95,11 +112,20 @@
         sol: R`\[ \frac{D}{m} = |a| - g = ${f(-a, 1)} - ${f(g, 2)} = ${f(-a - g, 2)}\ \mathrm{m/s^2},\qquad \rho = \frac{2\beta\,(|a|-g)}{v^2} = \frac{2\times ${f(beta, 0)}\times ${f(-a - g, 2)}}{${f(v, 0)}^2} = ${f(rho, 3)}\ \mathrm{kg/m^3} \]` };
     } },
   ], [
-    { q: N`Why do we fit a straight line to ln p against h, rather than fit p against h directly?`, opts: [N`The model p = p₀e^(−h/H) becomes a straight line in ln p, and a gauge error is a percentage of the reading, which makes the scatter in ln p even`, N`Because ln p is easier to print in a table`, N`Because pressure is negative at high altitude`, N`Because a straight line always passes through every point`], a: 0, why: N`Taking the logarithm turns the exponential into ln p = ln p₀ − h/H: slope −1/H, intercept ln p₀. Gauge errors are proportional to the reading, so every point has about the same error in ln p. Fitting p directly would let the few large low-altitude values dominate.` },
-    { q: N`A sounding rocket reaches only half a scale height. What is the main problem for the fit?`, opts: [N`The pressure barely changes over that range, so noise hides the slope and H is poorly known`, N`The pressure is too low to read`, N`The atmosphere is no longer exponential`, N`Nothing: a short flight is as good as a long one`], a: 0, why: N`The uncertainty of the slope is σ/√Sxx, and Sxx grows with the square of the altitude spread. Over half a scale height the pressure drops only about 40 %, a few times the noise. A flight over several scale heights spans a factor of a hundred or more.` },
-    { q: N`Dynamic pressure q = ½ρv² peaks at max-q during an ascent, then falls although the rocket keeps accelerating. Why?`, opts: [N`The density falls faster than the speed squared grows`, N`The engine throttles back`, N`Drag stops acting above 11 km`, N`The speed starts to decrease`], a: 0, why: N`Low in the atmosphere the speed is small and the density large. As the rocket climbs, v² grows slowly, while ρ shrinks by a factor e every scale height. The product rises, peaks, then drops: that peak is max-q.` },
+    { q: N`Why do we fit a straight line to ln p against h, rather than fit p against h directly?`, opts: [N`The model becomes a line in ln p, and percentage noise becomes even scatter`, N`Logarithms are easier to read from a table than large pressures`, N`High up, the pressure is too small to plot directly`, N`A straight line can always be made to pass through every point`], a: 0, why: N`Taking the logarithm turns the exponential into ln p = ln p₀ − h/H: slope −1/H, intercept ln p₀. Gauge errors are proportional to the reading, so every point has about the same error in ln p. Fitting p directly would let the few large low-altitude values dominate.` },
+    { q: N`A sounding rocket reaches only half a scale height. What is the main problem for the fit?`, opts: [N`The pressure barely changes, so the noise hides the slope`, N`The pressure is too low for the gauge to read`, N`Powered samples cannot be used in the fit`, N`Nothing: a short flight fixes H as well as a long one`], a: 0, why: N`The uncertainty of the slope is σ/√Sxx, and Sxx grows with the square of the altitude spread. Over half a scale height the pressure drops only about 40 %, a few times the noise. A flight over several scale heights spans a factor of a hundred or more.` },
+    { q: N`Dynamic pressure q = ½ρv² peaks at max-q during an ascent, then falls although the rocket keeps accelerating. Why?`, opts: [N`The density falls faster than the speed squared grows`, N`The engines throttle back to protect the structure`, N`The rocket pitches over, so less speed is vertical`, N`The rocket starts to slow down as the air thins`], a: 0, why: N`Low in the atmosphere the speed is small and the density large. As the rocket climbs, v² grows slowly, while ρ shrinks by a factor e every scale height. The product rises, peaks, then drops: that peak is max-q.` },
   ]);
   registerPractice();
+
+  // the telemetry table scrolls vertically while samples come in (header kept in view); it gets the widest of the
+  // three control columns and compact cells so that it never needs to scroll sideways
+  App.css('sounding', `
+    #sd-tab thead th { position: sticky; top: 0; background: var(--panel); }
+    #sd-tab table.data th, #sd-tab table.data td { padding: .35rem .3rem; letter-spacing: 0; }
+    #sd .mc-fields { grid-template-columns: minmax(0, 1fr); }
+    @media (min-width: 1381px) { #sd .tl-groups { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr) minmax(0, 1fr); } }
+    @media (min-width: 961px) and (max-width: 1380px) { #sd .tl-groups { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } #sd .tl-group:nth-child(2) { grid-column: 1 / -1; grid-row: 2; } }`);
 
   /* ---------------- Lab scenarios ---------------- */
   const SCEN = {
@@ -109,7 +135,7 @@
     std: { label: N`Earth, real layers`, task: N`The 1976 U.S. Standard Atmosphere. No single exponential is exact here: the best fit depends on the altitudes you sample.` },
   };
   const SCEN_KEYS = Object.keys(SCEN);
-  const MOTOR_LABEL = { small: N`Small motor (25 kg, 3 s burn)`, medium: N`Medium motor (70 kg, 8 s burn)`, large: N`Large motor (200 kg, 20 s burn)` };
+  const MOTOR_LABEL = { small: N`Small (25 kg, burns 3 s)`, medium: N`Medium (70 kg, burns 8 s)`, large: N`Large (200 kg, burns 20 s)` };
 
   App.chapter({
     id: 'sounding', phase: N`Sounding`, title: N`Measuring an Atmosphere`, lab: N`Sounding range`,
@@ -154,7 +180,7 @@
                 <li><p>${T`The density follows from step 1. Since \\(RT/M = gH\\), \\(\\rho = pM/(RT) = p/(gH)\\): the density falls with height exactly like the pressure.`}</p></li>
               </ol>`)}
             ${figAtmos()}
-            <p>${T`The scale height is the one number that says how fast an atmosphere thins. Warm air is puffed up and has a large H, heavy gas and strong gravity make H small. The density follows the same law, since ρ = p/(gH).`}</p>
+            <p>${T`The scale height is the one number that says how fast an atmosphere thins. Warm air is puffed up and has a large H, heavy gas and strong gravity make H small. The density follows the same law, since \\(\\rho = p/(gH)\\).`}</p>
             <p>${T`For Earth at the surface (T = 288 K, M = 0.02896 kg/mol) the formula gives H = 8.43 km. Yet entry calculations (${Progress.code('entry')}) use about 7.2 km, and the whole range is often quoted as 7 to 8.5 km. The reason is the temperature. It is not constant: the air cools with height, down to 217 K at 11 km, where H is only 6.3 km. An exponential fitted to the first 50 km therefore lands between the two, around 7 km. The warm surface value 8.4 km describes only the lowest few kilometres on a warm day.`}</p>
           </div>
         </section>
@@ -174,6 +200,8 @@
             <p>${T`A gauge on a rocket gives pairs (h<sub>i</sub>, p<sub>i</sub>), each with an error of a few percent. Take the logarithm and the model is a line, y = a + b·h, with y = ln p:`}</p>
             <div class="eq">\\[ \\ln p = \\ln p_0 - \\frac{h}{H} \\quad\\Longrightarrow\\quad b = -\\frac{1}{H}, \\qquad a = \\ln p_0 \\]</div>
             ${Sym.where([['a', N`intercept of the line: ln p₀`, '—'], ['b', N`slope of the line: −1/H`, '1/m']], N`Pressure noise is a percentage of the reading, so ln p has the same error at every altitude. That is a second reason for the logarithm.`)}
+            <p>${T`No straight line passes exactly through noisy points. The <b>residual</b> of a point is how far it sits above (+) or below (−) the line, measured straight up: the measured ln p minus the ln p the line gives at that altitude. A good line leaves small residuals, scattered at random on both sides. A pattern, such as all positive in the middle and negative at both ends, says the model itself is wrong.`}</p>
+            ${figResiduals()}
             <p>${T`The <b>least-squares</b> line is the one for which the sum of the squared vertical distances (the residuals) is smallest. With n points, mean altitude h̄ and mean y̅, the slope and intercept are:`}</p>
             <div class="eq">\\[ b = \\frac{\\sum (h_i-\\bar h)(y_i-\\bar y)}{\\sum (h_i-\\bar h)^2}, \\qquad a = \\bar y - b\\,\\bar h, \\qquad H = -\\frac{1}{b}, \\quad p_0 = e^{a} \\]</div>
             ${Sym.where([['h_i,\\ y_i', N`altitude and ln p of sample i`, 'm, —'], ['\\bar h,\\ \\bar y', N`averages of the altitudes and of the ln p values`, 'm, —']], N`The line always passes through the centre of the data (h̄, ȳ). The slope is how y changes with h, averaged over all the points.`)}
@@ -191,6 +219,7 @@
             <ul>
               <li>${T`<b>More points</b> raise Sxx in proportion to n and cut the error as 1/√n.`}</li>
               <li>${T`<b>A wider altitude range</b> raises Sxx with the <i>square</i> of the spread. Doubling the altitude range halves the error on H. The intercept is also better: p₀ is an extrapolation to h = 0, and the further the data lie from it, the less certain it is.`}</li>
+              <li>${T`<b>Two limits.</b> The range ends where the pressure falls below what the gauge can read: above that height a taller flight brings back nothing. And a faster rocket crosses the readable layer in less time, so at a fixed sampling rate it returns fewer points. Range and number of points both count, through Sxx.`}</li>
             </ul>
             ${Primer.box('log')}
           </div>
@@ -199,7 +228,7 @@
         <section class="section">
           <h2><span class="idx">5.5</span>${T`Density, dynamic pressure and max-q`}</h2>
           <div class="prose">
-            <p>${T`What a vehicle feels is not the static pressure but the air flowing past it. The density comes from the fit, ρ = p/(gH), and the force from the <b>dynamic pressure</b>, the pressure the moving air would exert if the vehicle brought it to rest (in pascals):`}</p>
+            <p>${T`What a vehicle feels is not the static pressure but the air flowing past it. The density comes from the fit, \\(\\rho = p/(gH)\\), and the force from the <b>dynamic pressure</b>, the pressure the moving air would exert if the vehicle brought it to rest (in pascals):`}</p>
             <div class="eq">\\[ q = \\tfrac12\\,\\rho\\,v^2, \\qquad D = q\\,C_D A \\]</div>
             ${Sym.where([['q', N`dynamic pressure`, 'Pa'], 'rho', ['v', N`speed relative to the air`, 'm/s'], ['D', N`drag force`, 'N'], ['C_D', N`drag coefficient (a shape factor, about 0.3 for a slender rocket)`, '—'], ['A', N`cross-section area facing the flow`, 'm²']])}
             <p>${T`Low in the air the speed is small, high up the density is tiny. The product q peaks somewhere in between. This is <b>max-q</b>, where the structure takes its greatest aerodynamic load. Saturn V passed max-q roughly 80 seconds after liftoff, at about 13 km. The ascent module (${Progress.code('ascent')}) uses the density profile you measure here to find where the rocket should throttle and when the load peaks. The lab reports max-q for every flight.`}</p>
@@ -219,6 +248,7 @@
                 <li><p>${T`Since \\(\\beta = m/(C_D A)\\), the last factor is \\(1/\\beta\\). The acceleration is negative, so \\(|a| = -a\\); moving \\(g\\) to the left gives the form above:`}</p><div class="eq">\\[ |a| - g = \\frac{\\rho v^2}{2\\beta} \\]</div></li>
               </ol>`)}
             <p>${T`Example: β = 2 500 kg/m², v = 300 m/s and a measured |a| of 26.0 m/s² with g = 9.8 m/s². Then ρ = 2 × 2 500 × 16.2 / 90 000 = 0.90 kg/m³. That is the density the pressure gauge says it should be, which makes the two instruments a cross-check.`}</p>
+            <p>${T`<b>Reading β from the lab.</b> Turned round, the same equation gives \\(\\beta = \\rho v^2 / (2(|a| - g))\\), with \\(\\rho = p/(gH)\\) from that sample’s pressure and your fitted H. β is constant only while the mass and C<sub>D</sub> are. After burnout the mass no longer changes, and the lab keeps C<sub>D</sub> fixed, so every coasting sample has the same β. On a real rocket C<sub>D</sub> rises near the speed of sound, so β drifts during the coast. Not every sample measures it equally well, though. High up, the drag deceleration |a| − g is tiny next to the accelerometer noise (±0.05 m/s²), and β comes out far off. Use the coasting samples just after burnout, low and fast, where |a| − g is largest, and average a few of them.`}</p>
           </div>
         </section>
 
@@ -254,6 +284,7 @@
               <div class="tl-group">
                 <h4>${T`Telemetry`}</h4>
                 <div id="sd-tab" style="max-height:15rem;overflow:auto"></div>
+                <div class="btn-row"><button class="btn" id="sd-csv" disabled>${T`Download CSV`}</button></div>
               </div>
               <div class="tl-group">
                 <h4>${T`Your estimates`}</h4>
@@ -283,6 +314,9 @@
     const $ = (sel) => root.querySelector(sel);
     const num = (id) => { const s = String($(id).value).replace(/\s|\u202f/g, '').replace('−', '-').replace(',', '.'); if (s === '') return NaN; const v = Number(s); return isFinite(v) ? v : NaN; };
     let scenKey = 'earth', take = 0, D = null, FL = null, TM = null, FIT = null, TR = null, ans = null, touched = false, pending = false;
+    // the flight is played back: samples appear as the clock tPlay passes them; done once the last one is in
+    let tPlay = 0, done = false, stopPlay = null;
+    const vis = () => (TM ? TM.samples.filter((x) => x.t <= tPlay) : []);
     const view = UI.canvas($('#sd-cv'), null);
     const mini = UI.canvas($('#sd-ht'), null);
     const hNom = () => D.atm.H || 7500;
@@ -290,7 +324,12 @@
     function newDay() {
       D = Ps.makeDay(scenKey, 100 * (SCEN_KEYS.indexOf(scenKey) + 1) + 7 * take + 3);
       $('#sd-task').textContent = T(SCEN[scenKey].task) + ' ' + T`Surface gravity ${f(D.W.g0, 2)} m/s², radius ${f(D.W.R / 1e3, 0)} km, launch site at ${f(D.W.site / 1e3, 1)} km altitude (the datum h = 0 is below it).`;
-      touched = false; fly();
+      touched = false; FL = TM = FIT = TR = null; ans = null; pending = false; done = false;
+      if (stopPlay) { stopPlay(); stopPlay = null; }
+      ['#sd-H', '#sd-p0', '#sd-beta'].forEach((id) => { $(id).disabled = false; $(id).value = ''; });
+      $('#sd-submit').disabled = true; $('#sd-csv').disabled = true;
+      $('#sd-res').innerHTML = '';
+      renderAll();
     }
 
     function fly() {
@@ -299,36 +338,75 @@
       const s = TM.samples;
       FIT = s.length >= 3 ? Ps.fitAtmos(s.map((x) => x.h), s.map((x) => x.p)) : null;
       TR = Ps.truth(D, s);
-      ans = null; pending = false;
+      ans = null; pending = false; done = false; tPlay = 0;
       ['#sd-H', '#sd-p0', '#sd-beta'].forEach((id) => { $(id).disabled = false; $(id).value = ''; });
-      $('#sd-submit').disabled = false;
+      $('#sd-submit').disabled = true; $('#sd-csv').disabled = true;
       $('#sd-res').innerHTML = '';
+      // about 7 s of playback for the whole flight (instant with reduced motion)
+      const tEnd = Math.max(FL.tEnd, TM.samples.length ? TM.samples[TM.samples.length - 1].t : 0), rate = tEnd / 7;
+      const finish = () => {
+        if (stopPlay) { stopPlay(); stopPlay = null; }
+        tPlay = tEnd; done = true;
+        $('#sd-submit').disabled = !FIT; $('#sd-csv').disabled = !TM.samples.length;
+        renderAll();
+        if (touched && FL.apo.h - D.W.site >= 2 * hNom()) Progress.done('sounding', 'reach');
+      };
+      if (stopPlay) stopPlay();
+      if (UI.reducedMotion()) { finish(); return; }
+      let shown = -1;
+      stopPlay = UI.loop((dt) => {
+        if (!root.isConnected) return;
+        tPlay += dt * rate;
+        if (tPlay >= tEnd) { finish(); return; }
+        const n = vis().length;
+        if (n !== shown) { shown = n; renderAll(); } else { mini.redraw(); }
+      });
       renderAll();
-      if (touched && FL.apo.h - D.W.site >= 2 * hNom()) Progress.done('sounding', 'reach');
+    }
+
+    // the telemetry as a CSV file, with the decimal separator of the page language
+    function downloadCSV() {
+      const comma = I18N.decimalComma(), sep = comma ? ';' : ',', num = (x, d) => { const t = x.toFixed(d); return comma ? t.replace('.', ',') : t; };
+      const rows = [['t_s', 'h_km', 'p_Pa', 'ln_p', 'v_m_s', 'a_m_s2', 'coasting'].join(sep)].concat(TM.samples.map((x) =>
+        [num(x.t, 1), num(x.h / 1e3, 3), num(x.p, 2), num(Math.log(x.p), 5), num(x.v, 2), num(x.a, 3), x.coast ? 1 : 0].join(sep)));
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([rows.join('\r\n') + '\r\n'], { type: 'text/csv;charset=utf-8' }));
+      a.download = `sounding-${scenKey}-day${take + 1}.csv`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     }
 
     function renderAll() {
-      const s = TM.samples, hs = s.map((x) => x.h);
+      if (!FL) {
+        $('#sd-sum').innerHTML = `<p class="note" style="margin:0">${T`Choose a motor and a propellant load, then press Launch.`}</p>`;
+        $('#sd-tab').innerHTML = `<p class="note" style="margin:0">${T`No flight yet.`}</p>`;
+        $('#sd-badge').textContent = T`Atmosphere hidden until you submit`; $('#sd-badge').className = 'badge';
+        $('#sd-ov').innerHTML = ''; view.redraw(); mini.redraw(); return;
+      }
+      const s = vis(), hs = s.map((x) => x.h), now = Ps.stateAt(FL.trace, Math.min(tPlay, FL.tEnd));
       const span = s.length ? (Math.max(...hs) - Math.min(...hs)) / hNom() : 0;
       $('#sd-sum').innerHTML = `<dl class="readout">
-        <dt>${T`Apogee`}</dt><dd class="hl">${f(FL.apo.h / 1e3, 1)} km</dd>
-        <dt>${T`Above the launch site`}</dt><dd>${f((FL.apo.h - D.W.site) / 1e3, 1)} km</dd>
+        ${done ? `<dt>${T`Apogee`}</dt><dd class="hl">${f(FL.apo.h / 1e3, 1)} km</dd><dt>${T`Above the launch site`}</dt><dd>${f((FL.apo.h - D.W.site) / 1e3, 1)} km</dd>`
+          : `<dt>${T`Flight time`}</dt><dd class="hl">${f(tPlay, 0)} s</dd><dt>${T`Altitude now`}</dt><dd>${f(now.h / 1e3, 1)} km</dd>`}
         <dt>${T`Burnout`}</dt><dd>${f(FL.tb, 1)} s</dd>
         <dt>${T`Samples read`}</dt><dd>${s.length} · ${T`every ${f(TM.dt, 0)} s`}</dd>
-        <dt>${T`Altitude span of the data`}</dt><dd>${ans ? T`${f(span, 1)} scale heights` : '?'}</dd>
-        <dt>${T`Max-q`}</dt><dd>${f(FL.maxQ.q / 1e3, 1)} kPa · ${T`at ${f(FL.maxQ.h / 1e3, 1)} km`}</dd></dl>
-        <p class="note" style="margin:.4rem 0 0">${T`The gauge reads down to ${fp(TM.floor)} Pa; higher samples are lost${TM.above ? T` (${TM.above} lost)` : ''}.`}</p>`;
-      $('#sd-tab').innerHTML = `<table class="data" style="font-size:.7rem"><thead><tr><th>t (s)</th><th>h (km)</th><th>p (Pa)</th><th>ln p</th><th>v (m/s)</th><th>a (m/s²)</th></tr></thead><tbody>${s.map((x) =>
+        ${s.length ? `<dt>${T`Samples taken between`}</dt><dd>${f(Math.min(...hs) / 1e3, 1)} ${T`and`} ${f(Math.max(...hs) / 1e3, 1)} km</dd>` : ''}
+        ${ans ? `<dt>${T`That is`}</dt><dd>${T`${f(span, 1)} scale heights`}</dd>` : ''}
+        ${done ? `<dt>${T`Max-q`}</dt><dd>${f(FL.maxQ.q / 1e3, 1)} kPa · ${T`at ${f(FL.maxQ.h / 1e3, 1)} km`}</dd>` : ''}</dl>
+        ${done ? `<p class="note" style="margin:.4rem 0 0">${T`The gauge reads down to ${fp(TM.floor)} Pa; higher samples are lost${TM.above ? T` (${TM.above} lost)` : ''}.`}</p>` : ''}`;
+      const tab = $('#sd-tab');
+      tab.innerHTML = `<table class="data" style="font-size:.7rem"><thead><tr><th>t (s)</th><th>h (km)</th><th>p (Pa)</th><th>ln p</th><th>v (m/s)</th><th>a (m/s²)</th></tr></thead><tbody>${s.map((x) =>
         `<tr${x.coast ? '' : ' style="opacity:.6"'}><td>${f(x.t, 0)}</td><td>${f(x.h / 1e3, 2)}</td><td>${fp(x.p)}</td><td>${f(Math.log(x.p), 3)}</td><td>${f(x.v, 1)}</td><td>${f(x.a, 2)}</td></tr>`).join('')}</tbody></table>
         <p class="note" style="margin:.3rem 0 0">${T`Dimmed rows: powered flight. The other rows are coasting.`}</p>`;
-      $('#sd-badge').textContent = pending ? T`Settings changed: press Launch` : ans ? T`Truth: H = ${f(TR.H / 1e3, 2)} km · p₀ = ${fp(TR.p0)} Pa` : T`Atmosphere hidden until you submit`;
+      if (!done) tab.scrollTop = tab.scrollHeight;
+      $('#sd-badge').textContent = pending ? T`Settings changed: press Launch` : ans ? T`Truth: H = ${f(TR.H / 1e3, 2)} km · p₀ = ${fp(TR.p0)} Pa` : done ? T`Atmosphere hidden until you submit` : T`In flight: reading the gauge`;
       $('#sd-badge').className = 'badge';
       $('#sd-ov').innerHTML = '';
       view.redraw(); mini.redraw();
     }
 
     function submit() {
-      if (ans || !FIT || !(FIT.H > 0)) return;
+      if (ans || !done || !FIT || !(FIT.H > 0)) return;
       const H = num('#sd-H'), p0 = num('#sd-p0'), b = num('#sd-beta');
       if (!isFinite(H) || !isFinite(p0) || H <= 0 || p0 <= 0) { $('#sd-res').innerHTML = `<p class="note">${T`Enter H in kilometres and p₀ in pascals.`}</p>`; return; }
       const okH = Math.abs(H * 1e3 / TR.H - 1) <= 0.05, okP = Math.abs(p0 / TR.p0 - 1) <= 0.06;
@@ -354,17 +432,19 @@
         ${row(T`p₀ (Pa)`, A.p0, A.okP, fp(FIT.p0), fp(TR.p0), 0)}
         ${A.b != null ? row(T`β (kg/m²)`, A.b, A.okB, '', f(D.beta, 0), 0) : `<dt>β</dt><dd>${f(D.beta, 0)} kg/m²</dd>`}
         <dt>${T`Residual scatter σ`}</dt><dd>${f(FIT.sigma * 100, 1)} %</dd></dl>`;
-      html += `<p class="note" style="margin:.4rem 0 0">${T`Your data span ${f(span, 1)} scale heights, so the fit fixes H to about ±${f(100 * dH / (FIT.H / 1e3), 1)} %. ${span < 2 ? T`That is a short flight: fly higher for a tighter slope.` : T`A taller flight spreads the points further and tightens it.`}`}${TR.exact ? '' : ' ' + T`In the layered atmosphere the “truth” is the best exponential through the exact profile at your altitudes.`}</p>`;
+      html += `<p class="note" style="margin:.4rem 0 0">${T`Your data span ${f(span, 1)} scale heights, so the fit fixes H to about ±${f(100 * dH / (FIT.H / 1e3), 1)} %. ${TM.above ? T`Your rocket climbed past the height where the gauge stops reading (${TM.above} samples lost): flying higher would add no data.` : span < 2 ? T`That is a short flight: fly higher for a tighter slope.` : T`Flying higher would still spread the points further, up to the height where the gauge stops reading.`}`}${TR.exact ? '' : ' ' + T`In the layered atmosphere the “truth” is the best exponential through the exact profile at your altitudes.`}</p>`;
       $('#sd-res').innerHTML = html;
     }
 
     view.draw = (ctx, w, h) => {
-      if (!TM) return;
-      const K = UI.tok(), s = TM.samples;
-      if (!s.length) { ctx.clearRect(0, 0, w, h); ctx.fillStyle = K.muted; ctx.font = `12px ${K.mono}`; ctx.textAlign = 'center'; ctx.fillText(T`No readings: the gauge never saw pressure in its range.`, w / 2, h / 2); return; }
-      const xmax = Math.max(...s.map((x) => x.h)) / 1e3 * 1.05;
+      const K = UI.tok();
+      if (!TM) { ctx.clearRect(0, 0, w, h); ctx.fillStyle = K.muted; ctx.font = `12px ${K.mono}`; ctx.textAlign = 'center'; ctx.fillText(T`Press Launch: the samples appear here.`, w / 2, h / 2); return; }
+      const s = vis(), all = TM.samples;
+      if (!all.length) { ctx.clearRect(0, 0, w, h); ctx.fillStyle = K.muted; ctx.font = `12px ${K.mono}`; ctx.textAlign = 'center'; ctx.fillText(T`No readings: the gauge never saw pressure in its range.`, w / 2, h / 2); return; }
+      // axes are sized on the whole flight so they do not jump while the points come in
+      const xmax = Math.max(...all.map((x) => x.h)) / 1e3 * 1.05;
       const y = s.map((x) => Math.log(x.p));
-      const yv = [...y];
+      const yv = all.map((x) => Math.log(x.p));
       const series = [];
       const line = (a, b, color, dash, width) => series.push({ data: [[0, a], [xmax, a - b * xmax * 1e3]], color, dash, width, end: false });
       if (ans) {
@@ -384,19 +464,21 @@
     };
 
     mini.draw = (ctx, w, h) => {
-      if (!FL) return;
-      const K = UI.tok(), tr = FL.trace;
-      const co = UI.chart(ctx, w, h, { series: [{ data: tr.filter((_, i) => i % 3 === 0).map((x) => [x.t, x.h / 1e3]), color: K.trace, end: false }], xMin: 0, yMin: 0, xFmt: (v) => +v.toFixed(0), yFmt: (v) => +v.toFixed(0), xLabel: 's', yLabel: 'km' });
+      const K = UI.tok();
+      if (!FL) { ctx.clearRect(0, 0, w, h); return; }
+      const tr = FL.trace, xMax = FL.tEnd, yMax = FL.apo.h / 1e3 * 1.08;
+      const co = UI.chart(ctx, w, h, { series: [{ data: tr.filter((x, i) => i % 3 === 0 && x.t <= tPlay).map((x) => [x.t, x.h / 1e3]), color: K.trace, end: false }], xMin: 0, xMax, yMin: 0, yMax, xFmt: (v) => +v.toFixed(0), yFmt: (v) => +v.toFixed(0), xLabel: 's', yLabel: 'km' });
       ctx.fillStyle = K.accent;
-      TM.samples.forEach((x) => { ctx.beginPath(); ctx.arc(co.X(x.t), co.Y(x.h / 1e3), 2.2, 0, 7); ctx.fill(); });
+      vis().forEach((x) => { ctx.beginPath(); ctx.arc(co.X(x.t), co.Y(x.h / 1e3), 2.2, 0, 7); ctx.fill(); });
     };
 
     $('#sd-scen').addEventListener('change', (e) => { scenKey = e.target.value; take = 0; newDay(); });
     $('#sd-new').addEventListener('click', () => { take += 1; newDay(); });
     $('#sd-go').addEventListener('click', () => { touched = true; fly(); });
-    ['#sd-motor', '#sd-load'].forEach((id) => $(id).addEventListener('input', () => { pending = true; $('#sd-badge').textContent = T`Settings changed: press Launch`; }));
+    ['#sd-motor', '#sd-load'].forEach((id) => $(id).addEventListener('input', () => { if (!FL) return; pending = true; $('#sd-badge').textContent = T`Settings changed: press Launch`; }));
     UI.bindControls(root, { 'sd-load': (v) => f(v, 0) }, () => {});
     $('#sd-submit').addEventListener('click', submit);
+    $('#sd-csv').addEventListener('click', downloadCSV);
     root.querySelectorAll('#sd-H, #sd-p0, #sd-beta').forEach((el) => el.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); }));
     $('#sd-motor').value = 'medium';
     newDay();

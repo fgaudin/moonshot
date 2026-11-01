@@ -452,8 +452,9 @@ dialog.lightbox p a { font: .72rem var(--f-mono); color: var(--muted); }
 
 /* maneuver computer: burn fields and the PAD card */
 .mc-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem .7rem; }
-.mc-fields label { display: flex; flex-direction: column; gap: .25rem; font: 500 .72rem/1.2 var(--f-mono); color: var(--muted); }
-.mc-fields input { width: 100%; font-size: .9rem; text-align: right; }
+/* a block label, not a flex column: a Greek letter (wrapped for its tooltip) must stay inline with the text */
+.mc-fields label { display: block; font: 500 .72rem/1.2 var(--f-mono); color: var(--muted); }
+.mc-fields input { display: block; width: 100%; margin-top: .25rem; font-size: .9rem; text-align: right; }
 .mc-fields input:disabled { opacity: .5; }
 .pad { display: flex; flex-direction: column; gap: .7rem; }
 .pad-burn { border: 1px dashed var(--line); border-radius: 6px; padding: .5rem .6rem; background: var(--bg); }

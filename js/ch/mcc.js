@@ -79,7 +79,7 @@
       opts: [N`CAPCOM`, N`FIDO`, N`RETRO`, N`EECOM`], a: 2,
       why: N`RETRO, the Retrofire Officer, computed the way home and the aborts. FIDO planned the outbound trajectory and the burns that shape it, and CAPCOM only voiced the result to the crew. EECOM watched the spacecraft’s power and life-support systems.` },
     { q: N`Why does the crew read every PAD back to the CAPCOM?`,
-      opts: [N`The loop is too noisy to hear a PAD otherwise`, N`A single wrong digit can become a burn in the wrong direction, and the readback proves that what was heard is what was sent`, N`It is a tradition without a technical reason`, N`The flight computer cannot store numbers that were not spoken`], a: 1,
+      opts: [N`The loop is often too noisy to hear a PAD clearly the first time`, N`One wrong digit can mean a wrong burn; the readback proves it was heard right`, N`The loop works only if every PAD is echoed back`, N`The computer only accepts numbers that the crew has spoken aloud`], a: 1,
       why: N`Voice links drop and mishear numbers. A readback closes the loop: the sender hears what the receiver wrote and corrects it before the crew loads anything into the computer.` },
     { q: N`Two independent errors, 3 m/s and 4 m/s, act on a burn. What is their combined size?`,
       opts: [N`7 m/s`, N`5 m/s`, N`3.5 m/s`, N`1 m/s`], a: 1,
