@@ -154,7 +154,7 @@
     { title: N`A speed error near circular`, make() {
       const alt = pick([185, 300, 400, 550]), dv = rnd(0.5, 3, 0.5), r = (RE + alt) * 1e3, n = Math.sqrt(mu * 1e9 / (r * r * r));
       const ans = 4 * dv / n / 1e3;
-      return { q: T`A spacecraft is in a nearly circular orbit at <b>${f(alt, 0)} km</b>. Its speed reading is wrong by <b>${f(dv, 1)} m/s</b>. By about how many kilometres does the computed opposite apsis move? Use Δh ≈ 4 Δv / n.`, answer: ans, unit: 'km', tol: 0.05,
+      return { q: T`A spacecraft is in a nearly circular orbit at <b>${f(alt, 0)} km</b> altitude. Its speed reading is wrong by <b>${f(dv, 1)} m/s</b>. By about how many kilometres does the computed opposite apsis move? Use Δh ≈ 4 Δv / n.`, answer: ans, unit: 'km', tol: 0.05,
         hint: T`n = √(μ/r³) is the mean motion in rad/s. Use metres per second and metres, then convert.`,
         sol: R`\[ n = \sqrt{\frac{\mu}{r^3}} = ${f(n * 1e3, 4)}\times10^{-3}\ \mathrm{rad/s},\quad \Delta h \approx \frac{4\,\Delta v}{n} = \frac{4\times${f(dv, 1)}}{${f(n * 1e3, 4)}\times10^{-3}} = ${f(ans * 1e3, 0)}\ \mathrm{m} = ${f(ans, 2)}\ \mathrm{km} \]` };
     } },

@@ -45,47 +45,47 @@
     } },
     { title: N`Hohmann transfer time`, make() {
       const { h1, h2, r1, r2 } = circ(), t = Pt.hohmannTime(muE, r1, r2) / 60, at = (r1 + r2) / 2;
-      return { q: T`A spacecraft transfers by a Hohmann ellipse from a circular orbit at <b>${h1} km</b> to a circular orbit at <b>${h2} km</b> altitude (Earth). How long does the half-ellipse take?`, answer: t, unit: 'min', tol: 0.01,
+      return { q: T`A spacecraft transfers by a Hohmann ellipse from a circular orbit at <b>${h1} km</b> altitude to a circular orbit at <b>${h2} km</b> altitude (Earth). How long does the half-ellipse take?`, answer: t, unit: 'min', tol: 0.01,
         hint: T`The transfer time is half the period of the transfer ellipse, whose semi-major axis is the mean of the two radii (measured from the centre).`,
         sol: R`\[ a_t = \frac{r_1 + r_2}{2} = ${f(at / 1e3, 1)}\ \mathrm{km},\qquad t_t = \pi\sqrt{\frac{a_t^3}{\mu}} = ${f(t * 60, 0)}\ \mathrm{s} = ${f(t, 2)}\ \mathrm{min} \]` };
     } },
     { title: N`Required phase angle`, make() {
       const { h1, h2, r1, r2 } = circ(), tt = Pt.hohmannTime(muE, r1, r2), n2 = Pt.meanMotion(muE, r2), ph = Pt.requiredPhase(muE, r1, r2) * D;
-      return { q: T`A chaser in a circular orbit at <b>${h1} km</b> will transfer to the target’s circular orbit at <b>${h2} km</b> by a Hohmann transfer. By what angle must the target lead the chaser at the moment of the first burn? Give the angle in degrees.`, answer: ph, unit: '°', tol: 0.02,
+      return { q: T`A chaser in a circular orbit at <b>${h1} km</b> altitude will transfer to the target’s circular orbit at <b>${h2} km</b> altitude by a Hohmann transfer. By what angle must the target lead the chaser at the moment of the first burn? Give the angle in degrees.`, answer: ph, unit: '°', tol: 0.02,
         hint: T`During the transfer the chaser travels 180°. The target travels n₂·t<sub>t</sub>. The target must start the difference ahead.`,
         sol: R`\[ t_t = ${f(tt, 0)}\ \mathrm{s},\quad n_2 = ${f(n2 * 1e3, 4)}\times10^{-3}\ \mathrm{rad/s},\quad \varphi = 180^\circ - n_2 t_t = 180^\circ - ${f(n2 * tt * D, 2)}^\circ = ${f(ph, 2)}^\circ \]` };
     } },
     { title: N`Wait for the window`, make() {
       const { h1, h2, r1, r2 } = circ(), n1 = Pt.meanMotion(muE, r1), n2 = Pt.meanMotion(muE, r2), req = Pt.requiredPhase(muE, r1, r2) * D;
       const now = Math.round(req + rnd(15, 110)), wait = Pt.waitTime(now / D, req / D, n1, n2) / 60;
-      return { q: T`A chaser at <b>${h1} km</b> will do a Hohmann transfer to a target at <b>${h2} km</b> (both circular, same plane, same direction). The target is now <b>${now}°</b> ahead of the chaser. How many minutes until the burn?`, answer: wait, unit: 'min', tol: 0.02,
+      return { q: T`A chaser at <b>${h1} km</b> altitude will do a Hohmann transfer to a target at <b>${h2} km</b> altitude (both circular, same plane, same direction). The target is now <b>${now}°</b> ahead of the chaser. How many minutes until the burn?`, answer: wait, unit: 'min', tol: 0.02,
         hint: T`The lower chaser is faster, so the phase angle shrinks at n₁ − n₂. Find the required angle first, then divide the difference by the closing rate.`,
         sol: R`\[ \varphi_{req} = ${f(req, 2)}^\circ,\quad n_1 - n_2 = ${f((n1 - n2) * D * 60, 4)}\ ^\circ/\mathrm{min},\quad t = \frac{${f(now, 0)}^\circ - ${f(req, 2)}^\circ}{n_1 - n_2} = ${f(wait, 1)}\ \mathrm{min} \]` };
     } },
     { title: N`Required phase at liftoff`, make() {
       const hL = rnd(15, 20), hC = rnd(100, 120, 5), tA = rnd(400, 480, 10), dd = rnd(250, 400, 10);
       const L = Pt.liftoff(muM, RM, hL * 1e3, hC * 1e3, tA, dd * 1e3 / RM), ph = L.phiLift * D, nC = L.nC * D * 60;
-      return { q: T`An LM lifts off from the Moon (μ = 4 902.8 km³/s², R = 1 737.4 km). The ascent takes <b>${tA} s</b>, covers <b>${dd} km</b> over the ground and ends in a circular orbit at <b>${hL} km</b>. The LM then flies a Hohmann transfer to the CSM’s circular orbit at <b>${hC} km</b>. Ignore the Moon’s rotation. By what angle must the CSM be ahead of the launch site at liftoff? Give the angle in degrees (negative if it must be behind).`, answer: ph, unit: '°', tol: 0.02,
+      return { q: T`An LM lifts off from the Moon (μ = 4 902.8 km³/s², R = 1 737.4 km). The ascent takes <b>${tA} s</b>, covers <b>${dd} km</b> over the ground and ends in a circular orbit at <b>${hL} km</b> altitude. The LM then flies a Hohmann transfer to the CSM’s circular orbit at <b>${hC} km</b> altitude. Ignore the Moon’s rotation. By what angle must the CSM be ahead of the launch site at liftoff? Give the angle in degrees (negative if it must be behind).`, answer: ph, unit: '°', tol: 0.02,
         hint: T`The LM arrives at θ<sub>asc</sub> + 180° after t<sub>asc</sub> + t<sub>H</sub>. The CSM moves n<sub>C</sub> times that time. It must start the difference behind the arrival point.`,
         sol: R`\[ \theta_{asc} = \frac{${dd}}{1737.4} = ${f(dd / RM * 1e3 * D, 2)}^\circ,\quad t_H = ${f(L.tH, 0)}\ \mathrm{s},\quad n_C = ${f(nC, 4)}\ ^\circ/\mathrm{min} \]\[ \varphi_{lift} = \theta_{asc} + 180^\circ - n_C(t_{asc} + t_H) = ${f(dd / RM * 1e3 * D, 2)}^\circ + 180^\circ - ${f(L.nC * (tA + L.tH) * D, 2)}^\circ = ${f(ph, 2)}^\circ \]` };
     } },
     { title: N`Liftoff time from the overhead pass`, make() {
       const hL = rnd(15, 20), hC = rnd(100, 120, 5), tA = rnd(400, 480, 10), dd = rnd(250, 400, 10), pass = rnd(100, 130) * 3600 + rnd(0, 59) * 60;
       const L = Pt.liftoff(muM, RM, hL * 1e3, hC * 1e3, tA, dd * 1e3 / RM), delay = Pt.liftoffDelay(L.phiLift, 0, L.nC), nC = L.nC * D * 60;
-      return { q: T`An LM on the Moon will lift off for a direct ascent: <b>${tA} s</b> of climb over <b>${dd} km</b> of ground to a circular orbit at <b>${hL} km</b>, then a Hohmann transfer to the CSM at <b>${hC} km</b> (ignore the Moon’s rotation). The CSM passes directly overhead at GET <b>${Pt.fmtGET(pass)}</b>. How many minutes after that pass is liftoff? Give the first liftoff time after the pass.`, answer: delay / 60, unit: 'min', tol: 0.01,
+      return { q: T`An LM on the Moon will lift off for a direct ascent: <b>${tA} s</b> of climb over <b>${dd} km</b> of ground to a circular orbit at <b>${hL} km</b> altitude, then a Hohmann transfer to the CSM at <b>${hC} km</b> altitude (ignore the Moon’s rotation). The CSM passes directly overhead at GET <b>${Pt.fmtGET(pass)}</b>. How many minutes after that pass is liftoff? Give the first liftoff time after the pass.`, answer: delay / 60, unit: 'min', tol: 0.01,
         hint: T`Find φ<sub>lift</sub> first, then bring it into 0° to 360° and divide by the CSM’s rate. The result is less than one CSM period.`,
         sol: R`\[ \varphi_{lift} = ${f(L.phiLift * D, 2)}^\circ \to ${f(Pt.wrap(L.phiLift) * D, 2)}^\circ,\qquad t = \frac{${f(Pt.wrap(L.phiLift) * D, 2)}^\circ}{${f(nC, 4)}\ ^\circ/\mathrm{min}} = ${f(delay / 60, 2)}\ \mathrm{min}\ \Rightarrow\ \mathrm{GET} = ${Pt.fmtGET(pass + delay)} \]` };
     } },
     { title: N`Coast after an imperfect insertion`, make() {
       const hL = rnd(15, 20), hC = rnd(100, 120, 5), ex = rnd(10, 60) / 10;
       const nL = Pt.meanMotion(muM, RM + hL * 1e3) * D * 60, nC = Pt.meanMotion(muM, RM + hC * 1e3) * D * 60, tc = ex / (nL - nC);
-      return { q: T`An LM has reached a circular lunar orbit at <b>${hL} km</b>. The CSM is in a circular orbit at <b>${hC} km</b>. The LM will fly a Hohmann transfer up to it. Navigation shows that the CSM is <b>${f(ex, 1)}°</b> further ahead than the angle required for the transfer to start now. How many minutes must the LM coast in the low orbit before the Hohmann burn?`, answer: tc, unit: 'min', tol: 0.02,
+      return { q: T`An LM has reached a circular lunar orbit at <b>${hL} km</b> altitude. The CSM is in a circular orbit at <b>${hC} km</b> altitude. The LM will fly a Hohmann transfer up to it. Navigation shows that the CSM is <b>${f(ex, 1)}°</b> further ahead than the angle required for the transfer to start now. How many minutes must the LM coast in the low orbit before the Hohmann burn?`, answer: tc, unit: 'min', tol: 0.02,
         hint: T`The LM is in the lower orbit, so it gains on the CSM at the difference of the two rates. Divide the excess angle by that rate.`,
         sol: R`\[ n_L - n_C = ${f(nL, 4)} - ${f(nC, 4)} = ${f(nL - nC, 4)}\ ^\circ/\mathrm{min},\qquad t_c = \frac{${f(ex, 1)}^\circ}{${f(nL - nC, 4)}\ ^\circ/\mathrm{min}} = ${f(tc, 1)}\ \mathrm{min} \]` };
     } },
     { title: N`Synodic period`, make() {
       const h1 = rnd(200, 500, 10), h2 = rnd(600, 1500, 50), n1 = Pt.meanMotion(muE, RE + h1 * 1e3), n2 = Pt.meanMotion(muE, RE + h2 * 1e3), syn = Pt.synodic(n1, n2) / 3600;
-      return { q: T`Two spacecraft orbit the Earth in the same plane and direction, in circular orbits at <b>${h1} km</b> and <b>${h2} km</b>. How many hours pass between two successive moments when they are lined up the same way (the synodic period)?`, answer: syn, unit: 'h', tol: 0.02,
+      return { q: T`Two spacecraft orbit the Earth in the same plane and direction, in circular orbits at <b>${h1} km</b> and <b>${h2} km</b> altitude. How many hours pass between two successive moments when they are lined up the same way (the synodic period)?`, answer: syn, unit: 'h', tol: 0.02,
         hint: T`The phase angle changes by 360° in one synodic period, at the rate n₁ − n₂.`,
         sol: R`\[ n_1 = ${f(n1 * 1e3, 4)}\times10^{-3},\ n_2 = ${f(n2 * 1e3, 4)}\times10^{-3}\ \mathrm{rad/s},\qquad T_{syn} = \frac{2\pi}{n_1 - n_2} = ${f(syn * 3600, 0)}\ \mathrm{s} = ${f(syn, 2)}\ \mathrm{h} \]` };
     } },

@@ -33,7 +33,7 @@
   Practice.register('planes', N`Plane changes`, [
     { title: N`Simple plane change`, make() {
       const h = pick([300, 400, 550, 800, 1500]), di = rnd(3, 30, 1), v = circV(h) * 1000, dv = 2 * v * Math.sin(di * D2R / 2);
-      return { q: T`A spacecraft is in a circular orbit at <b>${f(h, 0)} km</b>. How much Δv does a pure plane change of <b>${di}°</b> cost at a node? (μ = 398 600 km³/s², R = 6 378 km)`, answer: dv, unit: 'm/s', tol: 0.01,
+      return { q: T`A spacecraft is in a circular orbit at <b>${f(h, 0)} km</b> altitude. How much Δv does a pure plane change of <b>${di}°</b> cost at a node? (μ = 398 600 km³/s², R = 6 378 km)`, answer: dv, unit: 'm/s', tol: 0.01,
         hint: T`Speed stays the same, the velocity turns: Δv = 2 v sin(Δi/2). First find the circular speed at r = R + h.`,
         sol: R`\[ v = \sqrt{\frac{\mu}{r}} = ${f(v, 1)}\ \mathrm{m/s},\quad \Delta v = 2v\sin\frac{\Delta i}{2} = 2\times${f(v, 1)}\times\sin ${f(di / 2, 1)}^\circ = ${f(dv, 1)}\ \mathrm{m/s} \]` };
     } },

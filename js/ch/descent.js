@@ -41,7 +41,7 @@
       const hc = pick([100, 110, 120]), hp = pick([12, 15, 18]);
       const ra = R_K + hc, rp = R_K + hp, a = (ra + rp) / 2, vc = Math.sqrt(MU_K / ra), va = Math.sqrt(MU_K * (2 / ra - 1 / a));
       const dv = (vc - va) * 1000;
-      return { q: T`A lander is in a circular lunar orbit at <b>${hc} km</b>. A retrograde burn must lower its periapsis to <b>${hp} km</b>. What Δv does it need? (μ☾ = 4 902.8 km³/s², R☾ = 1 737.4 km; carry six digits, the answer is a small difference.)`, answer: dv, unit: 'm/s', tol: 0.03,
+      return { q: T`A lander is in a circular lunar orbit at <b>${hc} km</b> altitude. A retrograde burn must lower its periapsis to <b>${hp} km</b> altitude. What Δv does it need? (μ☾ = 4 902.8 km³/s², R☾ = 1 737.4 km; carry six digits, the answer is a small difference.)`, answer: dv, unit: 'm/s', tol: 0.03,
         hint: T`The burn happens at the apoapsis of the new ellipse, so the new speed there is the vis-viva speed with a = (r<sub>a</sub> + r<sub>p</sub>)/2. Subtract it from the circular speed.`,
         sol: R`\[ r_a = ${f(ra, 1)}\ \mathrm{km},\ r_p = ${f(rp, 1)}\ \mathrm{km},\ a = ${f(a, 1)}\ \mathrm{km} \]
           \[ v_c = \sqrt{\mu/r_a} = ${f(vc * 1000, 2)}\ \mathrm{m/s},\quad v_a = \sqrt{\mu\left(\tfrac{2}{r_a} - \tfrac{1}{a}\right)} = ${f(va * 1000, 2)}\ \mathrm{m/s} \]

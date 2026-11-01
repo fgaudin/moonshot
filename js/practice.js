@@ -191,7 +191,7 @@
     { topic: 'ascent', title: N`Δv to reach orbit`, make() {
       const h = pick([185, 200, 300]), lossG = rnd(1100, 1500, 50), lossD = rnd(40, 150, 10), lat = 28.5;
       const vc = Math.sqrt(MU / (RE + h)) * 1000, rot = 465.1 * Math.cos(lat * deg), dv = vc + lossG + lossD - rot;
-      return { q: T`A launcher heads due east from 28.5° N into a ${h} km circular orbit around Earth. It suffers <b>${lossG} m/s</b> of gravity loss and <b>${lossD} m/s</b> of drag loss. Ignoring steering losses, what Δv must the vehicle supply?`, answer: dv, unit: 'm/s',
+      return { q: T`A launcher heads due east from 28.5° N into a circular orbit at ${h} km altitude around Earth. It suffers <b>${lossG} m/s</b> of gravity loss and <b>${lossD} m/s</b> of drag loss. Ignoring steering losses, what Δv must the vehicle supply?`, answer: dv, unit: 'm/s',
         hint: T`Orbital speed plus the losses, minus the speed Earth’s rotation gives you for free.`,
         sol: R`\[ \Delta v = v_c + \Delta v_{grav} + \Delta v_{drag} - v_{rot} = ${f(vc, 0)} + ${lossG} + ${lossD} - ${f(rot, 0)} = ${f(dv, 0)}\ \mathrm{m/s} \]` };
     } },
@@ -209,21 +209,21 @@
       const r1 = RE + h1, r2 = RE + h2, at = (r1 + r2) / 2;
       const v1 = Math.sqrt(MU / r1), v2 = Math.sqrt(MU / r2), vt1 = Math.sqrt(MU * (2 / r1 - 1 / at)), vt2 = Math.sqrt(MU * (2 / r2 - 1 / at));
       const dv = (vt1 - v1) + (v2 - vt2);
-      return { q: T`What total Δv does a Hohmann transfer around Earth need from a <b>${h1} km</b> circular orbit to a <b>${f(h2, 0)} km</b> circular orbit (coplanar)?`, answer: dv, unit: 'km/s',
+      return { q: T`What total Δv does a Hohmann transfer around Earth need from a circular orbit at <b>${h1} km</b> altitude to a circular orbit at <b>${f(h2, 0)} km</b> altitude (coplanar)?`, answer: dv, unit: 'km/s',
         hint: T`Transfer ellipse a = (r₁ + r₂)/2. Burn 1 at perigee: v_t1 − v₁. Burn 2 at apogee: v₂ − v_t2.`,
         sol: R`\[ a_t = ${f(at, 0)}\ \mathrm{km},\quad v_1 = ${f(v1, 3)},\ v_{t1} = ${f(vt1, 3)},\ v_{t2} = ${f(vt2, 3)},\ v_2 = ${f(v2, 3)}\ \mathrm{km/s} \] \[ \Delta v = (${f(vt1, 3)}-${f(v1, 3)}) + (${f(v2, 3)}-${f(vt2, 3)}) = ${f(dv, 3)}\ \mathrm{km/s} \]` };
     } },
     { topic: 'maneuvers', title: N`Hohmann time of flight`, make() {
       const h1 = pick([185, 400]), h2 = pick([5000, 20200, 35786, 384400 - RE]);
       const at = (2 * RE + h1 + h2) / 2, t = Math.PI * Math.sqrt(at * at * at / MU) / 3600;
-      return { q: T`How long does a Hohmann transfer around Earth take from a ${h1} km orbit to a circular orbit at radius <b>${f(RE + h2, 0)} km</b>?`, answer: t, unit: 'h',
+      return { q: T`How long does a Hohmann transfer around Earth take from a ${h1} km altitude orbit to a circular orbit at radius <b>${f(RE + h2, 0)} km</b>?`, answer: t, unit: 'h',
         hint: T`Half the period of the transfer ellipse.`,
         sol: R`\[ \mathrm{TOF} = \pi\sqrt{\frac{a_t^3}{\mu}} = \pi\sqrt{\frac{${f(at, 0)}^3}{398600}} = ${f(t * 3600, 0)}\ \mathrm{s} = ${f(t, 2)}\ \mathrm{h} \]` };
     } },
     { topic: 'maneuvers', title: N`Simple plane change`, make() {
       const h = pick([185, 400, 35786]), di = pick([1, 5, 10, 28.5]);
       const v = Math.sqrt(MU / (RE + h)), dv = 2 * v * Math.sin(di * deg / 2);
-      return { q: T`How much Δv does it take to rotate a <b>${f(h, 0)} km</b> circular orbit's plane around Earth by <b>${dec(di)}°</b> without changing its size?`, answer: dv, unit: 'km/s',
+      return { q: T`How much Δv does it take to rotate the plane of a circular orbit at <b>${f(h, 0)} km</b> altitude around Earth by <b>${dec(di)}°</b> without changing its size?`, answer: dv, unit: 'km/s',
         hint: T`The velocity keeps its magnitude but turns through Δi: Δv = 2v sin(Δi/2).`,
         sol: R`\[ v = ${f(v, 3)}\ \mathrm{km/s},\quad \Delta v = 2v\sin\frac{\Delta i}{2} = ${f(dv, 3)}\ \mathrm{km/s} \]` + `<p>${T`Plane changes are expensive in low orbit. That is one reason Apollo launch windows were planned so carefully.`}</p>` };
     } },
@@ -232,7 +232,7 @@
       const r1 = RM + h1, r2 = RM + h2, at = (r1 + r2) / 2;
       const tof = Math.PI * Math.sqrt(at * at * at / MUM), w2 = Math.sqrt(MUM / (r2 * r2 * r2));
       const lead = (Math.PI - w2 * tof) / deg;
-      return { q: T`The LM ascent stage leaves a ${h1} km lunar orbit on a Hohmann transfer to the CSM, which is in a circular orbit at <b>${h2} km</b>. By what angle must the CSM lead the LM when the transfer burn starts? (μ☾ = 4 902.8 km³/s², R☾ = 1 737.4 km)`, answer: lead, unit: '°', tol: 0.02,
+      return { q: T`The LM ascent stage leaves a lunar orbit at ${h1} km altitude on a Hohmann transfer to the CSM, which is in a circular orbit at <b>${h2} km</b> altitude. By what angle must the CSM lead the LM when the transfer burn starts? (μ☾ = 4 902.8 km³/s², R☾ = 1 737.4 km)`, answer: lead, unit: '°', tol: 0.02,
         hint: T`The CSM must arrive at the meeting point at the same time: lead angle = π − ω_target × TOF.`,
         sol: R`\[ \mathrm{TOF} = \pi\sqrt{a_t^3/\mu} = ${f(tof, 0)}\ \mathrm{s},\quad \omega_{CSM} = \sqrt{\mu/r_2^3} = ${f(w2, 6)}\ \mathrm{rad/s} \] \[ \alpha_{lead} = 180^\circ - \omega_{CSM}\,\mathrm{TOF} = ${f(lead, 2)}^\circ \]` };
     } },
@@ -241,7 +241,7 @@
     { topic: 'burns', title: N`Circularization burn`, make() {
       const hp = pick([200, 250, 300]), ha = pick([800, 1000, 1500, 2000]);
       const rp = RE + hp, ra = RE + ha, a = (rp + ra) / 2, va = Math.sqrt(MU * (2 / ra - 1 / a)), vc = Math.sqrt(MU / ra), dv = (vc - va) * 1000;
-      return { q: T`Your orbit around Earth is ${hp} × ${f(ha, 0)} km. What prograde Δv at apoapsis makes it circular at ${f(ha, 0)} km?`, answer: dv, unit: 'm/s',
+      return { q: T`Your orbit around Earth is ${hp} × ${f(ha, 0)} km (perigee and apogee altitudes). What prograde Δv at apoapsis makes it circular at ${f(ha, 0)} km altitude?`, answer: dv, unit: 'm/s',
         hint: T`At apoapsis the velocity is horizontal, so the burn is pure prograde: circular speed minus the current speed, both from vis-viva.`,
         sol: R`\[ v_a = \sqrt{\mu\left(\frac{2}{r_a}-\frac{1}{a}\right)} = ${f(va, 4)},\quad v_c = \sqrt{\frac{\mu}{r_a}} = ${f(vc, 4)}\ \mathrm{km/s} \] \[ \Delta v_P = v_c - v_a = ${f(dv, 1)}\ \mathrm{m/s},\quad \Delta v_R = 0 \]` };
     } },
@@ -317,7 +317,7 @@
     { topic: 'moon', title: N`Trans-lunar injection`, make() {
       const h = pick([167, 185, 190]), ra = pick([384400, 400000, 370000]);
       const rp = RE + h, a = (rp + ra) / 2, vc = Math.sqrt(MU / rp), vp = Math.sqrt(MU * (2 / rp - 1 / a));
-      return { q: T`Apollo coasted in a <b>${h} km</b> circular Earth parking orbit. Using a two-body Hohmann approximation, what TLI Δv raises apogee to <b>${f(ra, 0)} km</b> from Earth's centre?`, answer: vp - vc, unit: 'km/s',
+      return { q: T`Apollo coasted in a circular Earth parking orbit at <b>${h} km</b> altitude. Using a two-body Hohmann approximation, what TLI Δv raises apogee to <b>${f(ra, 0)} km</b> from Earth's centre?`, answer: vp - vc, unit: 'km/s',
         hint: T`Perigee speed of the transfer ellipse minus circular speed.`,
         sol: R`\[ v_c = \sqrt{\mu/r_p} = ${f(vc, 3)},\quad v_p = \sqrt{\mu\left(\frac{2}{r_p}-\frac{1}{a}\right)} = ${f(vp, 3)}\ \mathrm{km/s} \] \[ \Delta v_{TLI} = ${f(vp - vc, 3)}\ \mathrm{km/s} \]` + `<p>${T`Apollo 11's real TLI was 3.18 km/s; the Moon's own gravity is why patched conics or numerical integration are needed for the details.`}</p>` };
     } },

@@ -12,7 +12,7 @@ I18N.add('fr', {
   "Vandenberg": "Vandenberg",
   "Baikonur": "Baïkonour",
   "Plesetsk": "Plessetsk",
-  "A spacecraft is in a circular orbit at <b>{$0} km</b>. How much Δv does a pure plane change of <b>{$1}°</b> cost at a node? (μ = 398 600 km³/s², R = 6 378 km)": "Un vaisseau est sur une orbite circulaire à <b>{$0} km</b>. Combien coûte, en Δv, un changement de plan pur de <b>{$1}°</b> à un nœud ? (μ = 398 600 km³/s², R = 6 378 km)",
+  "A spacecraft is in a circular orbit at <b>{$0} km</b> altitude. How much Δv does a pure plane change of <b>{$1}°</b> cost at a node? (μ = 398 600 km³/s², R = 6 378 km)": "Un vaisseau est sur une orbite circulaire à <b>{$0} km</b> d’altitude. Combien coûte, en Δv, un changement de plan pur de <b>{$1}°</b> à un nœud ? (μ = 398 600 km³/s², R = 6 378 km)",
   "Speed stays the same, the velocity turns: Δv = 2 v sin(Δi/2). First find the circular speed at r = R + h.": "La vitesse reste la même, le vecteur vitesse tourne : Δv = 2 v sin(Δi/2). Calculez d’abord la vitesse circulaire à r = R + h.",
   "PAD normal component": "Composante normale du PAD",
   "A circular orbit has a speed of <b>{$0} m/s</b>. You tilt it by <b>{$1}°</b> with a pure plane change, keeping the speed. What is the size of the normal component of the burn, Δv<sub>N</sub>?": "Une orbite circulaire a une vitesse de <b>{$0} m/s</b>. Vous l’inclinez de <b>{$1}°</b> par un changement de plan pur, en conservant la vitesse. Quelle est la valeur de la composante normale de la poussée, Δv<sub>N</sub> ?",

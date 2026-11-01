@@ -62,7 +62,7 @@
       if (Math.random() < 0.5) {
         const h = [185, 200, 250, 300, 400][rndI(0, 4)], dt = rndI(3, 25), r0 = (C.RE + h * 1e3) / 1e3;
         const n = Math.sqrt(C.muE / Math.pow(r0 * 1e3, 3)), k = ER.lateKmPerS(h * 1e3);
-        return { q: T`A capsule in a circular equatorial orbit at <b>${h} km</b> makes its deorbit burn <b>${dt} s late</b>. By how many kilometres along the equator does splashdown move, relative to the landing site? (The Earth turns at 7.292 × 10⁻⁵ rad/s. R⊕ = 6 378 km, μ = 3.986 × 10¹⁴ m³/s².)`, answer: k * dt, unit: 'km', tol: 0.02,
+        return { q: T`A capsule in a circular equatorial orbit at <b>${h} km</b> altitude makes its deorbit burn <b>${dt} s late</b>. By how many kilometres along the equator does splashdown move, relative to the landing site? (The Earth turns at 7.292 × 10⁻⁵ rad/s. R⊕ = 6 378 km, μ = 3.986 × 10¹⁴ m³/s².)`, answer: k * dt, unit: 'km', tol: 0.02,
           hint: T`A late burn shifts the whole path along the orbit at the orbital angular rate n. The site moves too, at the Earth's rate.`,
           sol: R`\[ n = \sqrt{\mu/r_0^3} = ${fm(n * 1e3, 4)}\times10^{-3}\ \mathrm{rad/s},\qquad (n - \omega_\oplus)R_\oplus = ${fm(k, 2)}\ \mathrm{km/s} \]
             \[ \Delta s = ${fm(k, 2)}\times${dt} = ${fm(k * dt, 1)}\ \mathrm{km} \]` };

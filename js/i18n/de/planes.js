@@ -12,7 +12,7 @@ I18N.add('de', {
   "Vandenberg": "Vandenberg",
   "Baikonur": "Baikonur",
   "Plesetsk": "Plessezk",
-  "A spacecraft is in a circular orbit at <b>{$0} km</b>. How much Δv does a pure plane change of <b>{$1}°</b> cost at a node? (μ = 398 600 km³/s², R = 6 378 km)": "Ein Raumfahrzeug befindet sich auf einer Kreisbahn in <b>{$0} km</b> Höhe. Wie viel Δv kostet ein reiner Bahnebenenwechsel um <b>{$1}°</b> an einem Knoten? (μ = 398 600 km³/s², R = 6 378 km)",
+  "A spacecraft is in a circular orbit at <b>{$0} km</b> altitude. How much Δv does a pure plane change of <b>{$1}°</b> cost at a node? (μ = 398 600 km³/s², R = 6 378 km)": "Ein Raumfahrzeug befindet sich auf einer Kreisbahn in <b>{$0} km</b> Höhe. Wie viel Δv kostet ein reiner Bahnebenenwechsel um <b>{$1}°</b> an einem Knoten? (μ = 398 600 km³/s², R = 6 378 km)",
   "Speed stays the same, the velocity turns: Δv = 2 v sin(Δi/2). First find the circular speed at r = R + h.": "Der Betrag der Geschwindigkeit bleibt gleich, der Vektor dreht sich: Δv = 2 v sin(Δi/2). Bestimme zuerst die Kreisbahngeschwindigkeit bei r = R + h.",
   "PAD normal component": "Normalkomponente des PAD",
   "A circular orbit has a speed of <b>{$0} m/s</b>. You tilt it by <b>{$1}°</b> with a pure plane change, keeping the speed. What is the size of the normal component of the burn, Δv<sub>N</sub>?": "Eine Kreisbahn hat eine Geschwindigkeit von <b>{$0} m/s</b>. Du kippst sie mit einem reinen Bahnebenenwechsel um <b>{$1}°</b> und behältst den Betrag der Geschwindigkeit bei. Wie groß ist die Normalkomponente des Manövers, Δv<sub>N</sub>?",

@@ -28,13 +28,13 @@
   const registerPractice = () => Practice.register('homeward', N`Trans-Earth return`, [
     { title: N`The Moon’s orbital speed`, make() {
       const d = rnd(356, 406, 2) * 1e3, v = Math.sqrt(muE / (d * 1e3));
-      return { q: T`The Moon circles the Earth on a nearly circular orbit at a distance of <b>${f(d, 0)} km</b>. What is its orbital speed? (Earth: μ = 398 600 km³/s²)`, answer: v, unit: 'm/s', tol: 0.01,
+      return { q: T`The Moon circles the Earth on a nearly circular orbit at <b>${f(d, 0)} km</b> from the Earth’s centre. What is its orbital speed? (Earth: μ = 398 600 km³/s²)`, answer: v, unit: 'm/s', tol: 0.01,
         hint: T`Circular speed: v = √(μ/r). Use metres: μ = 3.986 × 10¹⁴ m³/s².`,
         sol: R`\[ v_\mathrm{Moon} = \sqrt{\frac{\mu_\oplus}{D}} = \sqrt{\frac{3.986\times10^{14}}{${f(d * 1e3 / 1e6, 1)}\times10^{6}}} = ${f(v, 1)}\ \mathrm{m/s} \]` };
     } },
     { title: N`Apogee speed of the return ellipse`, make() {
       const hp = rnd(30, 60, 5), h = hand(110, hp);
-      return { q: T`A spacecraft returns on an Earth ellipse with its apogee at the Moon’s distance (384 400 km) and a vacuum perigee at an altitude of <b>${f(hp, 0)} km</b> (R⊕ = 6 378 km). What is its speed at apogee?`, answer: h.va, unit: 'm/s', tol: 0.01,
+      return { q: T`A spacecraft returns on an Earth ellipse with its apogee at the Moon’s distance (384 400 km from the Earth’s centre) and a vacuum perigee at an altitude of <b>${f(hp, 0)} km</b> (R⊕ = 6 378 km). What is its speed at apogee?`, answer: h.va, unit: 'm/s', tol: 0.01,
         hint: T`Semi-major axis a = (r<sub>a</sub> + r<sub>p</sub>)/2, then vis-viva: v² = μ(2/r − 1/a). Or use angular momentum: v<sub>a</sub> = v<sub>p</sub> r<sub>p</sub>/r<sub>a</sub>.`,
         sol: R`\[ r_p = ${f((RE + hp * 1e3) / 1e3, 0)}\ \mathrm{km},\quad a = \frac{r_a + r_p}{2} = ${f(h.a / 1e3, 0)}\ \mathrm{km} \]
           \[ v_a = \sqrt{\mu_\oplus\left(\frac{2}{r_a} - \frac{1}{a}\right)} = ${f(h.va, 1)}\ \mathrm{m/s} \]` };
@@ -54,7 +54,7 @@
     } },
     { title: N`Return time on the ellipse`, make() {
       const hp = rnd(30, 60, 5), h = hand(110, hp), th = h.tof / 3600;
-      return { q: T`A spacecraft returns on an Earth ellipse with its apogee at the Moon’s distance (384 400 km) and a vacuum perigee at <b>${f(hp, 0)} km</b> altitude. How many hours does it take from apogee to perigee? (Half the period.)`, answer: th, unit: 'h', tol: 0.01,
+      return { q: T`A spacecraft returns on an Earth ellipse with its apogee at the Moon’s distance (384 400 km from the Earth’s centre) and a vacuum perigee at <b>${f(hp, 0)} km</b> altitude. How many hours does it take from apogee to perigee? (Half the period.)`, answer: th, unit: 'h', tol: 0.01,
         hint: T`Half the period: T/2 = π √(a³/μ), with a = (r<sub>a</sub> + r<sub>p</sub>)/2. Convert seconds to hours at the end.`,
         sol: R`\[ a = ${f(h.a / 1e3, 0)}\ \mathrm{km},\quad \frac{T}{2} = \pi\sqrt{\frac{a^3}{\mu_\oplus}} = ${f(h.tof, 0)}\ \mathrm{s} = ${f(th, 1)}\ \mathrm{h} \]` };
     } },
