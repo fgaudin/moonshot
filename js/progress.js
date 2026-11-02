@@ -63,7 +63,7 @@
       objectives: [
         { id: 'circ', text: N`Circularize a 200 × 1 000 km orbit at 1 000 km` },
         { id: 'hohmann', text: N`Fly a two-burn Hohmann transfer to a circular 2 000 km orbit` },
-        { id: 'radial', text: N`Fly a radial burn of at least 50 m/s and see what it does to the orbit` },
+        { id: 'radial', text: N`Fly a radial burn of at least 500 m/s and see what it does to the orbit` },
         { id: 'long', text: N`With the small 8 kN stage, reach an apoapsis of 5 000 km (± 100 km) in one burn` },
         { id: 'qual', text: N`Qualify: answer 2 burn-planning problems correctly` },
       ],

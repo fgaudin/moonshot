@@ -558,13 +558,16 @@
       const u = [dvVec[0] / dvMag, dvVec[1] / dvMag];
       const planned = Orbit2D.elems([sPlan[0], sPlan[1], sPlan[2] + dvVec[0], sPlan[3] + dvVec[1]], mu);
       coast(tStart);
-      // finite burn, attitude fixed in space, cut off on accumulated Δv
+      // finite burn cut off on accumulated Δv; the attitude is fixed in space, or with opts.track it keeps
+      // the same angle to the current velocity (prograde stays prograde)
       let dvDone = 0;
-      const burnStart = t, mStart = m;
+      const burnStart = t, mStart = m, cA = b.pro / dvMag, sA = b.rad / dvMag;
       while (dvDone < dvMag - 1e-6 && m > 0) {
         const acc = F / m;
         let dt = Math.min(1, (dvMag - dvDone) / acc);
-        s = rk4(f(u, acc), t, s, dt); t += dt;
+        let uu = u;
+        if (opts.track) { const fc = Orbit2D.frame(s); uu = [cA * fc.pro[0] + sA * fc.rad[0], cA * fc.pro[1] + sA * fc.rad[1]]; }
+        s = rk4(f(uu, acc), t, s, dt); t += dt;
         dvDone += acc * dt; m -= F / ve * dt;
         if (t - trace[trace.length - 1].t >= 2 || dvDone >= dvMag - 1e-6) trace.push({ t, x: s[0], y: s[1], m, burn: i });
       }

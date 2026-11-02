@@ -22,8 +22,8 @@
       task: N`From a circular 300 km orbit, reach a circular 2 000 km orbit with two burns: the first in 5 minutes, the second at the apoapsis of the transfer orbit.`,
       solution: () => { const r1 = RE + 300e3, r2 = RE + 2000e3, at = (r1 + r2) / 2; return [{ when: 'in', minutes: 5, pro: vis(r1, at) - Math.sqrt(mu / r1), rad: 0 }, { when: 'apo', pro: Math.sqrt(mu / r2) - vis(r2, at), rad: 0 }]; } },
     radial: { label: N`Radial burn`, vehicle: 'csm', s0: () => atPeri(300e3, 1500e3),
-      task: N`You are in a 300 × 1 500 km orbit. Burn purely radial (no prograde component) and watch what happens to the periapsis, the apoapsis and the orientation of the orbit.`,
-      solution: () => [{ when: 'in', minutes: 20, pro: 0, rad: 150 }] },
+      task: N`You are in a 300 × 1 500 km orbit. Burn 500 m/s purely radial (no prograde component) and watch what happens to the periapsis, the apoapsis and the orientation of the orbit. Try radial in (negative) first: radial out at this point drives the periapsis into the ground.`,
+      solution: () => [{ when: 'in', minutes: 20, pro: 0, rad: -500 }] },
     long: { label: N`Long burn with a small stage`, vehicle: 'low', s0: () => circ(300e3),
       task: N`With a small 8 kN stage, raise the apoapsis of a circular 300 km orbit to 5 000 km in a single burn. The impulsive Δv will not be enough: find out by how much, and correct it.`,
       solution: () => { const r1 = RE + 300e3, r2 = RE + 5000e3; return [{ when: 'in', minutes: 40, pro: vis(r1, (r1 + r2) / 2) - Math.sqrt(mu / r1), rad: 0 }]; } },
@@ -54,7 +54,8 @@
               <li>${T`<b>the attitude</b> to hold, the <b>burn time</b>, and the engine to use;`}</li>
               <li>${T`<b>the expected result</b>, such as the apoapsis and periapsis after the burn, so the crew could check it.`}</li>
             </ul>
-            <p>${T`The crew entered the numbers into the guidance computer, which pointed the spacecraft, fired the engine and cut it off. Whatever the computer, the information is the same: when, how much, which way, and how long.`}</p>
+            <p>${T`The crew entered the numbers into the guidance computer, which pointed the spacecraft, fired the engine and cut it off. Whatever the computer, the information is the same: when to ignite, how much velocity to add (the Δv), in which direction, and how long the engine will run.`}</p>
+            <p>${T`“How much” is the Δv, not a throttle setting. The Apollo service engine had no throttle: it ran at full thrust, so the burn time follows from the Δv and the mass (see “How long to burn” below). On the PAD the burn time is a prediction and a cross-check. The computer did not stop the engine on the clock: it cut it off when its accelerometers had measured the planned Δv, because the real thrust differs from the nominal one by a percent or so.`}</p>
           </div>
         </section>
 
@@ -69,10 +70,10 @@
               <li>${T`<b>Normal</b>: perpendicular to the orbit plane. It tilts the plane; a separate module covers plane changes.`}</li>
               <li>${T`<b>Radial</b>: in the plane, perpendicular to the velocity. It rotates the orbit around the spacecraft’s position: one apsis rises, the other falls.`}</li>
             </ul>
-            <div class="eq">\\[ \\Delta\\vec v = \\Delta v_P\\,\\hat p + \\Delta v_N\\,\\hat n + \\Delta v_R\\,\\hat r, \\qquad |\\Delta\\vec v| = \\sqrt{\\Delta v_P^2 + \\Delta v_N^2 + \\Delta v_R^2}, \\qquad \\alpha = \\operatorname{atan2}(\\Delta v_R,\\ \\Delta v_P) \\]</div>
+            <div class="eq">\\[ \\begin{gathered} \\Delta\\vec v = \\Delta v_P\\,\\hat p + \\Delta v_N\\,\\hat n + \\Delta v_R\\,\\hat r \\\\ |\\Delta\\vec v| = \\sqrt{\\Delta v_P^2 + \\Delta v_N^2 + \\Delta v_R^2} \\\\ \\alpha = \\operatorname{atan2}(\\Delta v_R,\\ \\Delta v_P) \\end{gathered} \\]</div>
             ${Sym.where([['\\Delta v_P,\\ \\Delta v_N,\\ \\Delta v_R', N`prograde, normal and radial components of the burn`, 'm/s'], ['\\hat p,\\ \\hat n,\\ \\hat r', N`unit vectors of the maneuver frame (length 1, pure directions)`, '—'], ['\\alpha', N`attitude in the orbit plane: how far the thrust points away from prograde, towards radial`, N`rad or °`]], N`The burn magnitude is Pythagoras in three dimensions. The attitude is the angle of the in-plane components; atan2, the two-argument arctangent of calculators and spreadsheets, keeps the quadrant: 0° is prograde, 180° retrograde, +90° radial out, −90° radial in.`)}
             <p>${T`<b>Which “radial”?</b> There are two common conventions for the in-plane axis. Apollo used a <b>local vertical</b> frame (LVLH): straight up from the planet, and horizontal. Many planning tools and simulators use a <b>velocity</b> frame: prograde along the velocity, radial perpendicular to it. The two agree only where the flight-path angle γ is zero, at periapsis and apoapsis. Anywhere else, convert:`}</p>
-            <div class="eq">\\[ \\Delta v_P = \\Delta v_H\\cos\\gamma + \\Delta v_V\\sin\\gamma, \\qquad \\Delta v_R = -\\Delta v_H\\sin\\gamma + \\Delta v_V\\cos\\gamma \\]</div>
+            <div class="eq">\\[ \\begin{aligned} \\Delta v_P &= \\Delta v_H\\cos\\gamma + \\Delta v_V\\sin\\gamma \\\\ \\Delta v_R &= -\\Delta v_H\\sin\\gamma + \\Delta v_V\\cos\\gamma \\end{aligned} \\]</div>
             ${Sym.where([['\\Delta v_H,\\ \\Delta v_V', N`horizontal and vertical (local vertical) components of the same burn`, 'm/s'], 'gamma'], N`A Mission Control that computes in one frame and enters into the other gets a slightly wrong burn. Agree on the frame before you agree on the numbers. This course uses the <b>velocity</b> frame in every lab and on every PAD.`)}
           </div>
         </section>
@@ -81,7 +82,7 @@
           <h2><span class="idx">6.3</span>${T`From the orbit you want to three numbers`}</h2>
           <div class="prose">
             <p>${T`Mission Control works backwards. Decide the velocity you need just after the burn, subtract the velocity you will have just before it, and project the difference onto the axes of the frame:`}</p>
-            <div class="eq">\\[ \\Delta\\vec v = \\vec v_{after} - \\vec v_{before}, \\qquad \\Delta v_P = \\Delta\\vec v\\cdot\\hat p, \\qquad \\Delta v_R = \\Delta\\vec v\\cdot\\hat r, \\qquad \\Delta v_N = \\Delta\\vec v\\cdot\\hat n \\]</div>
+            <div class="eq">\\[ \\begin{aligned} \\Delta\\vec v &= \\vec v_{after} - \\vec v_{before} \\\\ \\Delta v_P &= \\Delta\\vec v\\cdot\\hat p \\\\ \\Delta v_R &= \\Delta\\vec v\\cdot\\hat r \\\\ \\Delta v_N &= \\Delta\\vec v\\cdot\\hat n \\end{aligned} \\]</div>
             ${Sym.where([['\\vec v_{after},\\ \\vec v_{before}', N`velocity vectors just after and just before the burn, at the same point`, 'm/s'], ['\\cdot', N`dot product: the length of one vector along the direction of the other`, '']])}
             ${Primer.box('vectors', false, 'refresher')}
             <p>${T`Three classic cases, all with the formulas you already know:`}</p>
@@ -97,7 +98,7 @@
           <h2><span class="idx">6.4</span>${T`How long to burn`}</h2>
           <div class="prose">
             <p>${T`The engine’s thrust is constant but the spacecraft gets lighter as it burns, so the acceleration grows. The burn time follows from the rocket equation, not from Δv divided by the initial acceleration:`}</p>
-            <div class="eq">\\[ t_b = \\frac{m_0\\,I_{sp}\\,g_0}{F}\\left(1 - e^{-\\Delta v/(I_{sp}\\,g_0)}\\right), \\qquad m_{prop} = m_0\\left(1 - e^{-\\Delta v/(I_{sp}\\,g_0)}\\right) \\]</div>
+            <div class="eq">\\[ \\begin{gathered} t_b = \\frac{m_0\\,I_{sp}\\,g_0}{F}\\left(1 - e^{-\\Delta v/(I_{sp}\\,g_0)}\\right) \\\\ m_{prop} = m_0\\left(1 - e^{-\\Delta v/(I_{sp}\\,g_0)}\\right) \\end{gathered} \\]</div>
             ${Sym.where(['tb', ['m_0', N`mass at ignition`, 'kg'], 'isp', 'g0', 'Fth', 'dv', ['m_{prop}', N`propellant used by the burn`, 'kg']], N`For a 214 m/s burn of the Apollo CSM (28.8 t, 91 kN, 314 s), t_b = 65 s and 1 900 kg of propellant.`)}
             ${Primer.box('log')}
           </div>
@@ -112,12 +113,13 @@
               <li>${T`<b>Finite-burn losses.</b> As the spacecraft moves, the fixed thrust direction drifts away from the ideal one, so part of the Δv is wasted. The loss grows with the burn time compared with the orbital period. Under a few percent of the period it is negligible; for long burns, Mission Control adds Δv or plans the burn in pieces.`}</li>
             </ul>
             <p>${T`In the lab, a small 8 kN stage tries to raise its apoapsis from 300 km to 5 000 km with the impulsive Δv of 947 m/s, an 18-minute burn. Ignited at the burn point it reaches only about 3 760 km; centred on it, about 4 610 km. Getting to 5 000 km takes more Δv than the plan says.`}</p>
+            <p>${T`<b>Why hold a fixed direction?</b> The plan is one Δv vector at the burn point. Pushing along that direction, centred on the burn point, is the closest a finite burn comes to the planned impulse, and it is how Apollo flew most PAD burns: the computer fixed the Δv vector in space at ignition and pushed along it until the accelerometers had measured all of it. The alternative is to turn with the velocity so that the thrust stays prograde. For a long burn that adds more energy, because all the thrust works along the motion: the 8 kN stage then reaches about 4 820 km instead of 4 610 km. But the periapsis also rises, to about 390 km: the result is a different orbit from the one planned. For burns of a few percent of the period, the two methods give the same orbit. Long burns with a precise target use closed-loop guidance, which steers during the burn towards the required orbit; the S-IVB flew the trans-lunar injection this way. The lab lets you compare the first two.`}</p>
           </div>
         </section>
 
         <section class="section">
           <h2><span class="idx">6.6</span>${T`Lab: the maneuver computer`}</h2>
-          <div class="prose"><p>${T`Choose a scenario, compute the burn as Mission Control, then enter it in the maneuver computer: when to burn and the prograde and radial components (this lab is planar, so there is no normal component). The computer works out the attitude, the burn time and the predicted orbit, writes the PAD, and flies the burn as a real finite burn: attitude held fixed in space, cut off when the planned Δv has been delivered. The dashed orbit is the plan; the solid line is what actually happens.`}</p></div>
+          <div class="prose"><p>${T`Choose a scenario, compute the burn as Mission Control, then enter it in the maneuver computer: when to burn and the prograde and radial components (this lab is planar, so there is no normal component). The computer works out the attitude, the burn time and the predicted orbit, writes the PAD, and flies the burn as a real finite burn: attitude held fixed in space (or kept at the same angle to prograde, if you tick that option), cut off when the planned Δv has been delivered. The dashed orbit is the plan; the solid line is what actually happens.`}</p></div>
           <div class="lab tl-lab" id="mc">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Maneuver computer`}</h3><span class="spacer"></span>
               <div class="seg" id="mc-warp" role="group" aria-label="${T`Time warp`}"><button data-v="100" aria-pressed="false">×100</button><button data-v="300" aria-pressed="true">×300</button><button data-v="1000" aria-pressed="false">×1000</button></div>
@@ -138,6 +140,7 @@
                 <p class="note" id="mc-task" style="margin:0"></p>
                 <div class="ctl"><label for="mc-veh"><span>${T`Vehicle`}</span></label><select id="mc-veh">${Object.entries(VEHICLES).map(([k, v]) => `<option value="${k}">${T(v.name)}</option>`).join('')}</select></div>
                 <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="mc-centre" checked> ${T`Centre each burn on its burn point (TIG = burn point − t<sub>b</sub>/2)`}</label>
+                <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="mc-track"> ${T`During the burn, turn with the velocity (attitude kept relative to prograde) instead of holding a fixed direction`}</label>
                 <button class="btn" id="mc-solve">${T`Show Mission Control’s impulsive solution`}</button>
               </div>
               ${[0, 1].map((i) => `
@@ -199,7 +202,8 @@
 
     function run() {
       const sc = SCEN[scenKey], veh = VEHICLES[$('#mc-veh').value];
-      res = Phys.executeBurns({ s0: sc.s0(), mu, m0: veh.m0, F: veh.F, isp: veh.isp, burns: readBurns(), centred: $('#mc-centre').checked });
+      res = Phys.executeBurns({ s0: sc.s0(), mu, m0: veh.m0, F: veh.F, isp: veh.isp, burns: readBurns(), centred: $('#mc-centre').checked, track: $('#mc-track').checked });
+      res.track = $('#mc-track').checked;
       res.start = Orbit2D.elems(sc.s0(), mu);
       tNow = playing ? 0 : res.t;
       checkObjectives(veh);
@@ -211,7 +215,7 @@
       const f = res.final, rp = (f.rp - RE) / 1000, ra = (f.ra - RE) / 1000;
       if (scenKey === 'circ' && f.e < 0.003 && Math.abs(rp - 1000) < 30 && Math.abs(ra - 1000) < 30) Progress.done('burns', 'circ');
       if (scenKey === 'hohmann' && f.e < 0.003 && Math.abs(rp - 2000) < 30 && Math.abs(ra - 2000) < 30) Progress.done('burns', 'hohmann');
-      if (res.burns.some((b) => b.dv >= 50 && Math.abs(Math.sin(b.attitude)) >= 0.9)) Progress.done('burns', 'radial');
+      if (res.burns.some((b) => b.dv >= 500 && Math.abs(Math.sin(b.attitude)) >= 0.9)) Progress.done('burns', 'radial');
       if (scenKey === 'long' && veh === VEHICLES.low && Math.abs(ra - 5000) <= 100) Progress.done('burns', 'long');
     }
 
@@ -266,6 +270,8 @@
       };
       orbit(res.start, K.muted, [2, 4], 1);
       res.burns.forEach((b, i) => orbit(b.planned, i ? K.trace2 : K.accent, [6, 5], 1.4));
+      // the orbit actually flown, once each burn is over, to compare with its plan
+      res.burns.forEach((b, i) => { if (tNow >= b.tEnd) orbit(b.actual, i ? K.trace2 : K.accent, [], 1.2); });
       UI.drawEarth(ctx, cx, cy, RE * s, K);
       // flown path up to now, burns highlighted
       const { i: idx, p: cur } = stateAt(tNow);
@@ -282,8 +288,21 @@
       const [sx, sy] = P(cur.x, cur.y);
       ctx.fillStyle = K.ink; ctx.beginPath(); ctx.arc(sx, sy, 4, 0, 7); ctx.fill();
       const burning = res.burns.find((b) => tNow >= b.tStart && tNow <= b.tEnd);
-      if (burning) UI.arrow(ctx, sx, sy, sx + burning.u[0] * 40, sy - burning.u[1] * 40, K.warn, 2.5);
-      $('#mc-ov').innerHTML = `${T`dashed: planned orbits · thick: engine burning`}<br>${playing ? T`playback ×${warp}` : ''}`;
+      if (burning) {
+        // fixed attitude: the direction set at ignition; tracking: the same angle to the current velocity
+        let u = burning.u;
+        if (res.track && idx > 0) {
+          const a = res.trace[idx - 1], c = res.trace[idx], L = Math.hypot(c.x - a.x, c.y - a.y);
+          if (L > 0) {
+            const pro = [(c.x - a.x) / L, (c.y - a.y) / L];
+            let rad = [pro[1], -pro[0]]; if (rad[0] * c.x + rad[1] * c.y < 0) rad = [-rad[0], -rad[1]];
+            const ca = Math.cos(burning.attitude), sa = Math.sin(burning.attitude);
+            u = [ca * pro[0] + sa * rad[0], ca * pro[1] + sa * rad[1]];
+          }
+        }
+        UI.arrow(ctx, sx, sy, sx + u[0] * 40, sy - u[1] * 40, K.warn, 2.5);
+      }
+      $('#mc-ov').innerHTML = `${T`dashed: planned orbits · thin: orbits flown · thick: engine burning`}<br>${playing ? T`playback ×${warp}` : ''}`;
     };
 
     function updateLive() {
@@ -318,7 +337,7 @@
       playing = true; setPlay(); run();
     });
     $('#mc-solve').addEventListener('click', () => { setBurns(SCEN[scenKey].solution()); touched = false; playing = true; setPlay(); run(); });
-    root.querySelectorAll('.mc-burn select, .mc-burn input, #mc-veh, #mc-centre').forEach((el) => el.addEventListener('change', () => { touched = true; syncFields(); playing = true; setPlay(); run(); }));
+    root.querySelectorAll('.mc-burn select, .mc-burn input, #mc-veh, #mc-centre, #mc-track').forEach((el) => el.addEventListener('change', () => { touched = true; syncFields(); playing = true; setPlay(); run(); }));
 
     UI.loop((dt) => {
       if (!res || !playing) return;
