@@ -28,10 +28,50 @@
     html: [
       N`<p>An angle repeats every 360°. A spacecraft that is 350° ahead of its target is also 10° behind it. Adding or subtracting whole turns changes nothing about the geometry, so a calculation can end with any number of turns attached.</p>`,
       N`<p>To clean it up, add or subtract 360° until the result is in the range you want. “Modulo 360°” means the remainder after removing whole turns: 400° becomes 40°, and −30° becomes 330°. For a <b>signed</b> phase angle, use the range −180° to +180°: positive means the target is ahead, negative means behind.</p>`,
-      R`\[ \varphi \bmod 360^\circ \in [0^\circ, 360^\circ), \qquad -30^\circ \to 330^\circ,\quad 400^\circ \to 40^\circ \]`,
+      R`\[ \phi \bmod 360^\circ \in [0^\circ, 360^\circ), \qquad -30^\circ \to 330^\circ,\quad 400^\circ \to 40^\circ \]`,
       N`<p>The same idea works for time. If the phase angle repeats every synodic period, a wait of 40 hours in a 14-hour cycle is the same as 12 hours. Waiting for the next time the geometry is right never needs more than one cycle.</p>`,
     ],
   });
+
+  /* ---------------- Figure: lunar liftoff, ascent, Hohmann, rendezvous (section 6) ---------------- */
+  App.css('timing', `
+    .f-moon { fill: var(--moon); fill-opacity: .35; stroke: var(--muted); stroke-width: 1; }
+    .f-wn-ln { fill: none; stroke: var(--warn); stroke-width: 1.6; } .f-good-ln { fill: none; stroke: var(--good); stroke-width: 2; }
+    .f-tr-fill { fill: var(--trace); } .fig .lb.wn { color: var(--warn); } .fig .lb.gd { color: var(--good); }`);
+  function figLiftoff() {
+    const W = 400, H = 300, cx = 196, cy = 148, rM = 60, rL = 74, rC = 116, d = Math.PI / 180;
+    const a0 = 200 * d, th = 28 * d, ph = -14 * d, al = a0 + th, ar = al + Math.PI;
+    const fx = (n) => n.toFixed(1), pct = (x, w) => (100 * x / w).toFixed(2) + '%';
+    const P = (r, a, dx = 0, dy = 0) => [cx + r * Math.cos(a) + dx, cy - r * Math.sin(a) + dy], pt = (r, a) => P(r, a).map(fx).join(',');
+    const lbs = (list) => list.map(([[x, y], t, c]) => `<span class="lb ${c || ''}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`).join('');
+    // counterclockwise on screen is sweep flag 0 (y points down)
+    const arc = (r, a1, a2, cls) => `<path class="${cls}" d="M${pt(r, a1)}A${r},${r} 0 ${a2 - a1 > Math.PI ? 1 : 0} 0 ${pt(r, a2)}"/>`;
+    const a = (rL + rC) / 2, b = Math.sqrt(rL * rC);
+    const head = (r, ang, cls) => { const [x, y] = P(r, ang), tx = -Math.sin(ang), ty = -Math.cos(ang), nx = Math.cos(ang), ny = -Math.sin(ang);
+      return `<path class="${cls}" d="M${fx(x + 9 * tx)},${fx(y + 9 * ty)}L${fx(x + 4.5 * nx)},${fx(y + 4.5 * ny)}L${fx(x - 4.5 * nx)},${fx(y - 4.5 * ny)}Z"/>`; };
+    const dot = (r, ang, cls, rad = 3.5) => { const [x, y] = P(r, ang); return `<circle class="${cls}" cx="${fx(x)}" cy="${fx(y)}" r="${rad}"/>`; };
+    const [sx, sy] = P(rM, a0), [ix, iy] = P(rL, al), [kx, ky] = P(rL + 2, a0 + th * 0.3), [gx, gy] = P(rC, ar);
+    const csm = (k) => a0 + ph + (ar - a0 - ph) * k;
+    return `<figure class="fig" role="img" aria-label="${T`Lunar liftoff seen from above the pole. The LM climbs from the site to a low orbit, a short way downrange. From there it flies half an ellipse up to the CSM’s orbit and meets the CSM on the far side, 180° beyond the insertion point. At liftoff the CSM is slightly behind the site; during the ascent and the transfer it covers more than half its orbit to reach the meeting point at the same moment.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <circle class="f-moon" cx="${cx}" cy="${cy}" r="${rM}"/>
+        <circle class="f-mu f-dash" cx="${cx}" cy="${cy}" r="${rL}"/><circle class="f-mu" cx="${cx}" cy="${cy}" r="${rC}"/>
+        <path class="f-mu" d="M${cx},${cy}L${pt(rC, a0)}M${cx},${cy}L${pt(rC, a0 + ph)}M${cx},${cy}L${pt(rL, al)}"/>
+        ${arc(rC - 12, a0 + ph, a0, 'f-wn-ln')}${arc(42, a0, al, 'f-ink-ln')}
+        ${arc(rC, csm(0), csm(0.985), 'f-tr')}${head(rC, csm(0.985), 'f-tr-fill')}
+        <path class="f-ac-ln" d="M${fx(sx)},${fx(sy)}Q${fx(kx)},${fx(ky)} ${fx(ix)},${fx(iy)}"/>
+        <path class="f-ac-ln f-dash" d="M${pt(rL, al)}A${fx(a)},${fx(b)} ${fx(-al / d)} 0 0 ${pt(rC, ar)}"/>
+        ${dot(rM, a0, 'f-ac-fill')}${dot(rL, al, 'f-ac-fill', 3)}${dot(rC, a0 + ph, 'f-tr-fill', 4.5)}
+        <circle class="f-good-ln" cx="${fx(gx)}" cy="${fx(gy)}" r="7"/>
+      </svg>${lbs([
+        [P(rM - 16, a0 - 0.16), T`site`, 'acc'], [P(rL, al, -10, 12), T`insertion`, 'acc r'], [P(rL - 6, a0 + th * 0.55, -14, 0), '<i>t<sub>asc</sub></i>', 'acc r'],
+        [P(rC, a0 + ph, 0, -15), T`CSM at liftoff`, 'tr'], [P(rC, ar, 0, -17), T`rendezvous`, 'gd'],
+        [P(rC - 30, a0 + ph / 2), 'φ<sub>lift</sub>', 'wn'], [P(30, a0 + th * 0.5), 'θ<sub>asc</sub>', ''],
+        [P(rC + 8, al + 2.3), T`Hohmann, <i>t<sub>H</sub></i>`, 'acc l'],
+        [P(rC + 8, csm(0.62)), '<i>n<sub>C</sub></i>·(<i>t<sub>asc</sub></i> + <i>t<sub>H</sub></i>)', 'tr l'],
+      ])}</div>
+      <figcaption>${T`Not to scale (angles exaggerated). The LM climbs over θ<sub>asc</sub> to the low orbit, then flies half an ellipse up to the CSM’s orbit. The CSM starts φ<sub>lift</sub> from the site (here behind it) and goes round to the meeting point in the same time t<sub>asc</sub> + t<sub>H</sub>.`}</figcaption></figure>`;
+  }
 
   /* ---------------- Practice ---------------- */
   const hms = (min) => UI.fmtTime(min * 60);
@@ -53,28 +93,28 @@
       const { h1, h2, r1, r2 } = circ(), tt = Pt.hohmannTime(muE, r1, r2), n2 = Pt.meanMotion(muE, r2), ph = Pt.requiredPhase(muE, r1, r2) * D;
       return { q: T`A chaser in a circular orbit at <b>${h1} km</b> altitude will transfer to the target’s circular orbit at <b>${h2} km</b> altitude by a Hohmann transfer. By what angle must the target lead the chaser at the moment of the first burn? Give the angle in degrees.`, answer: ph, unit: '°', tol: 0.02,
         hint: T`During the transfer the chaser travels 180°. The target travels n₂·t<sub>t</sub>. The target must start the difference ahead.`,
-        sol: R`\[ t_t = ${f(tt, 0)}\ \mathrm{s},\quad n_2 = ${f(n2 * 1e3, 4)}\times10^{-3}\ \mathrm{rad/s},\quad \varphi = 180^\circ - n_2 t_t = 180^\circ - ${f(n2 * tt * D, 2)}^\circ = ${f(ph, 2)}^\circ \]` };
+        sol: R`\[ t_t = ${f(tt, 0)}\ \mathrm{s},\quad n_2 = ${f(n2 * 1e3, 4)}\times10^{-3}\ \mathrm{rad/s},\quad \phi = 180^\circ - n_2 t_t = 180^\circ - ${f(n2 * tt * D, 2)}^\circ = ${f(ph, 2)}^\circ \]` };
     } },
     { title: N`Wait for the window`, make() {
       const { h1, h2, r1, r2 } = circ(), n1 = Pt.meanMotion(muE, r1), n2 = Pt.meanMotion(muE, r2), req = Pt.requiredPhase(muE, r1, r2) * D;
       const now = Math.round(req + rnd(15, 110)), wait = Pt.waitTime(now / D, req / D, n1, n2) / 60;
       return { q: T`A chaser at <b>${h1} km</b> altitude will do a Hohmann transfer to a target at <b>${h2} km</b> altitude (both circular, same plane, same direction). The target is now <b>${now}°</b> ahead of the chaser. How many minutes until the burn?`, answer: wait, unit: 'min', tol: 0.02,
         hint: T`The lower chaser is faster, so the phase angle shrinks at n₁ − n₂. Find the required angle first, then divide the difference by the closing rate.`,
-        sol: R`\[ \varphi_{req} = ${f(req, 2)}^\circ,\quad n_1 - n_2 = ${f((n1 - n2) * D * 60, 4)}\ ^\circ/\mathrm{min},\quad t = \frac{${f(now, 0)}^\circ - ${f(req, 2)}^\circ}{n_1 - n_2} = ${f(wait, 1)}\ \mathrm{min} \]` };
+        sol: R`\[ \phi_{req} = ${f(req, 2)}^\circ,\quad n_1 - n_2 = ${f((n1 - n2) * D * 60, 4)}\ ^\circ/\mathrm{min},\quad t = \frac{${f(now, 0)}^\circ - ${f(req, 2)}^\circ}{n_1 - n_2} = ${f(wait, 1)}\ \mathrm{min} \]` };
     } },
     { title: N`Required phase at liftoff`, make() {
       const hL = rnd(15, 20), hC = rnd(100, 120, 5), tA = rnd(400, 480, 10), dd = rnd(250, 400, 10);
       const L = Pt.liftoff(muM, RM, hL * 1e3, hC * 1e3, tA, dd * 1e3 / RM), ph = L.phiLift * D, nC = L.nC * D * 60;
       return { q: T`An LM lifts off from the Moon (μ = 4 902.8 km³/s², R = 1 737.4 km). The ascent takes <b>${tA} s</b>, covers <b>${dd} km</b> over the ground and ends in a circular orbit at <b>${hL} km</b> altitude. The LM then flies a Hohmann transfer to the CSM’s circular orbit at <b>${hC} km</b> altitude. Ignore the Moon’s rotation. By what angle must the CSM be ahead of the launch site at liftoff? Give the angle in degrees (negative if it must be behind).`, answer: ph, unit: '°', tol: 0.02,
         hint: T`The LM arrives at θ<sub>asc</sub> + 180° after t<sub>asc</sub> + t<sub>H</sub>. The CSM moves n<sub>C</sub> times that time. It must start the difference behind the arrival point.`,
-        sol: R`\[ \theta_{asc} = \frac{${dd}}{1737.4} = ${f(dd / RM * 1e3 * D, 2)}^\circ,\quad t_H = ${f(L.tH, 0)}\ \mathrm{s},\quad n_C = ${f(nC, 4)}\ ^\circ/\mathrm{min} \]\[ \varphi_{lift} = \theta_{asc} + 180^\circ - n_C(t_{asc} + t_H) = ${f(dd / RM * 1e3 * D, 2)}^\circ + 180^\circ - ${f(L.nC * (tA + L.tH) * D, 2)}^\circ = ${f(ph, 2)}^\circ \]` };
+        sol: R`\[ \theta_{asc} = \frac{${dd}}{1737.4} = ${f(dd / RM * 1e3 * D, 2)}^\circ,\quad t_H = ${f(L.tH, 0)}\ \mathrm{s},\quad n_C = ${f(nC, 4)}\ ^\circ/\mathrm{min} \]\[ \phi_{lift} = \theta_{asc} + 180^\circ - n_C(t_{asc} + t_H) = ${f(dd / RM * 1e3 * D, 2)}^\circ + 180^\circ - ${f(L.nC * (tA + L.tH) * D, 2)}^\circ = ${f(ph, 2)}^\circ \]` };
     } },
     { title: N`Liftoff time from the overhead pass`, make() {
       const hL = rnd(15, 20), hC = rnd(100, 120, 5), tA = rnd(400, 480, 10), dd = rnd(250, 400, 10), pass = rnd(100, 130) * 3600 + rnd(0, 59) * 60;
       const L = Pt.liftoff(muM, RM, hL * 1e3, hC * 1e3, tA, dd * 1e3 / RM), delay = Pt.liftoffDelay(L.phiLift, 0, L.nC), nC = L.nC * D * 60;
       return { q: T`An LM on the Moon will lift off for a direct ascent: <b>${tA} s</b> of climb over <b>${dd} km</b> of ground to a circular orbit at <b>${hL} km</b> altitude, then a Hohmann transfer to the CSM at <b>${hC} km</b> altitude (ignore the Moon’s rotation). The CSM passes directly overhead at GET <b>${Pt.fmtGET(pass)}</b>. How many minutes after that pass is liftoff? Give the first liftoff time after the pass.`, answer: delay / 60, unit: 'min', tol: 0.01,
         hint: T`Find φ<sub>lift</sub> first, then bring it into 0° to 360° and divide by the CSM’s rate. The result is less than one CSM period.`,
-        sol: R`\[ \varphi_{lift} = ${f(L.phiLift * D, 2)}^\circ \to ${f(Pt.wrap(L.phiLift) * D, 2)}^\circ,\qquad t = \frac{${f(Pt.wrap(L.phiLift) * D, 2)}^\circ}{${f(nC, 4)}\ ^\circ/\mathrm{min}} = ${f(delay / 60, 2)}\ \mathrm{min}\ \Rightarrow\ \mathrm{GET} = ${Pt.fmtGET(pass + delay)} \]` };
+        sol: R`\[ \phi_{lift} = ${f(L.phiLift * D, 2)}^\circ \to ${f(Pt.wrap(L.phiLift) * D, 2)}^\circ,\qquad t = \frac{${f(Pt.wrap(L.phiLift) * D, 2)}^\circ}{${f(nC, 4)}\ ^\circ/\mathrm{min}} = ${f(delay / 60, 2)}\ \mathrm{min}\ \Rightarrow\ \mathrm{GET} = ${Pt.fmtGET(pass + delay)} \]` };
     } },
     { title: N`Coast after an imperfect insertion`, make() {
       const hL = rnd(15, 20), hC = rnd(100, 120, 5), ex = rnd(10, 60) / 10;
@@ -132,9 +172,9 @@
             <div class="eq">\\[ n = \\sqrt{\\frac{\\mu}{a^3}} = \\frac{2\\pi}{T} \\]</div>
             ${Sym.where(['n', 'mu', 'a', 'T'], N`For a circular orbit a is the radius from the centre of the planet (surface radius plus altitude).`)}
             <p>${T`At 200 km the Earth gives 4.068° per minute (period 88.5 min); at 700 km, 3.645° per minute (98.8 min). The higher spacecraft is slower in speed and slower in angle. Two spacecraft at different heights therefore drift apart or together at the difference of their rates. Measure the <b>phase angle</b> φ from the chaser to the target, in the direction of motion: positive when the target is ahead.`}</p>
-            <div class="eq">\\[ \\varphi = \\theta_{target} - \\theta_{chaser}, \\qquad \\dot\\varphi = n_{target} - n_{chaser} \\]</div>
-            ${Sym.where([['\\varphi', N`phase angle: how far the target is ahead of the chaser, seen from the centre (negative: behind)`, 'rad or °'], ['\\theta', N`angular position of each spacecraft around the planet`, 'rad or °'], ['\\dot\\varphi', N`rate of change of the phase angle`, 'rad/s'], ['n', N`mean motion of each orbit`, 'rad/s']], N`A dot over a letter means “change per second”.`)}
-            <p>${T`This is why the <b>lower orbit catches up</b>. If the chaser is below the target, n<sub>chaser</sub> is larger, so φ shrinks: the target ahead is slowly approached. If the chaser is above, φ grows: a target behind slowly falls further behind and a target ahead pulls away, until a full turn comes round.`}</p>
+            <div class="eq">\\[ \\phi = \\theta_{target} - \\theta_{chaser}, \\qquad \\dot\\phi = n_{target} - n_{chaser} \\]</div>
+            ${Sym.where([['\\phi', N`phase angle: how far the target is ahead of the chaser, seen from the centre (negative: behind)`, 'rad or °'], ['\\theta', N`angular position of each spacecraft around the planet`, 'rad or °'], ['\\dot\\phi', N`rate of change of the phase angle`, 'rad/s'], ['n', N`mean motion of each orbit`, 'rad/s']], N`A dot over a letter means “change per second”.`)}
+            <p>${T`This is why the <b>lower orbit catches up</b>. If the chaser is below the target, n<sub>chaser</sub> is larger, so φ shrinks: the chaser closes on a target ahead. If the chaser is above, the target is the faster one and φ grows: a target behind catches up, and a target ahead pulls away, and only after most of a turn comes up from behind.`}</p>
             ${Primer.box('wrap', false, 'refresher')}
           </div>
         </section>
@@ -143,8 +183,8 @@
           <h2><span class="idx">0.2</span>${T`The phase angle a Hohmann transfer needs`}</h2>
           <div class="prose">
             <p>${T`Module ${Progress.code('maneuvers')} (section ${App.sec('maneuvers', 1)}) gave the transfer ellipse and its time. The chaser fires, flies half the ellipse (180° of angle) and arrives at the other apsis after the transfer time. The target must be exactly there at that moment. During the flight the target moves n<sub>t</sub>·t<sub>t</sub>, so at the burn it must be ahead of the chaser by the rest:`}</p>
-            <div class="eq">\\[ t_t = \\pi\\sqrt{\\frac{a_t^3}{\\mu}}, \\qquad a_t = \\frac{r_1 + r_2}{2}, \\qquad \\varphi_{req} = \\pi - n_{target}\\,t_t \\]</div>
-            ${Sym.where([['t_t', N`transfer time: half the period of the transfer ellipse`, 's'], 'at', 'r1', 'r2', ['\\varphi_{req}', N`phase angle needed at the burn (target minus chaser, in the direction of motion)`, 'rad'], ['n_{target}', N`mean motion of the target’s orbit (the orbit being flown to)`, 'rad/s']], N`The same formula serves a transfer down: n<sub>target</sub> is then the faster rate of the lower orbit and φ<sub>req</sub> comes out negative.`)}
+            <div class="eq">\\[ t_t = \\pi\\sqrt{\\frac{a_t^3}{\\mu}}, \\qquad a_t = \\frac{r_1 + r_2}{2}, \\qquad \\phi_{req} = \\pi - n_{target}\\,t_t \\]</div>
+            ${Sym.where([['t_t', N`transfer time: half the period of the transfer ellipse`, 's'], 'at', 'r1', 'r2', ['\\phi_{req}', N`phase angle needed at the burn (target minus chaser, in the direction of motion)`, 'rad'], ['n_{target}', N`mean motion of the target’s orbit (the orbit being flown to)`, 'rad/s']], N`The same formula serves a transfer down: n<sub>target</sub> is then the faster rate of the lower orbit and φ<sub>req</sub> comes out negative.`)}
             <p>${T`Example, from 200 km up to 700 km: t<sub>t</sub> = 46.79 min. The target moves 3.645° per minute × 46.79 min = 170.55°. So φ<sub>req</sub> = 180° − 170.55° = 9.45°. The target is only 9.45° ahead at the burn, about 1 000 km along the orbit.`}</p>
             <p>${T`Going down (chaser above), the same formula gives a negative angle. At 900 km down to 400 km, φ<sub>req</sub> = −10.05°: the target must be a little <i>behind</i>, because it is the faster one and the chaser needs to arrive where it will be.`}</p>
           </div>
@@ -154,8 +194,8 @@
           <h2><span class="idx">0.3</span>${T`How long to wait`}</h2>
           <div class="prose">
             <p>${T`Measure the phase angle now, φ<sub>now</sub>. It moves at φ̇ = n<sub>target</sub> − n<sub>chaser</sub>, a constant rate, so the time until it equals φ<sub>req</sub> is a division. The result must be positive and less than one cycle; if the geometry has just passed, the next chance comes one full cycle later, the <b>synodic period</b>:`}</p>
-            <div class="eq">\\[ t_{wait} = \\frac{\\varphi_{now} - \\varphi_{req}}{n_{chaser} - n_{target}} \\bmod T_{syn}, \\qquad T_{syn} = \\frac{2\\pi}{|n_{chaser} - n_{target}|} \\]</div>
-            ${Sym.where([['t_{wait}', N`time from the measurement until the burn`, 's'], ['\\varphi_{now}', N`phase angle at the measurement`, 'rad'], ['T_{syn}', N`synodic period: time between two identical geometries`, 's']], N`Do the subtraction in angle, then add or subtract whole turns (360°) until the angle lies in [0°, 360°) before dividing. Chaser above the target: swap the roles, so the numerator is φ<sub>req</sub> − φ<sub>now</sub>, because φ then grows.`)}
+            <div class="eq">\\[ t_{wait} = \\frac{\\phi_{now} - \\phi_{req}}{n_{chaser} - n_{target}} \\bmod T_{syn}, \\qquad T_{syn} = \\frac{2\\pi}{|n_{chaser} - n_{target}|} \\]</div>
+            ${Sym.where([['t_{wait}', N`time from the measurement until the burn`, 's'], ['\\phi_{now}', N`phase angle at the measurement`, 'rad'], ['T_{syn}', N`synodic period: time between two identical geometries`, 's']], N`Do the subtraction in angle, then add or subtract whole turns (360°) until the angle lies in [0°, 360°) before dividing. Chaser above the target: swap the roles, so the numerator is φ<sub>req</sub> − φ<sub>now</sub>, because φ then grows.`)}
             <p>${T`Example: φ<sub>now</sub> = 42°, φ<sub>req</sub> = 9.45°. The closing rate is 4.068 − 3.645 = 0.4233° per minute, so t<sub>wait</sub> = 32.55° / 0.4233 = 76.9 min. The synodic period of this pair is 14.2 h. Had φ<sub>now</sub> been 8°, the answer is almost a whole synodic period: 360° − 1.45° = 358.55° divided by the rate, 14.1 h. Close orbits give a small rate, so a long wait is normal.`}</p>
           </div>
         </section>
@@ -163,7 +203,7 @@
         <section class="section">
           <h2><span class="idx">0.4</span>${T`TIG on the mission clock`}</h2>
           <div class="prose">
-            <p>${T`The crew and Mission Control talk in <b>ground elapsed time</b>, GET: hours, minutes and seconds since liftoff, hours not wrapped into days. The calculation above gives a wait. Add it to the GET at which the phase angle was measured:`}</p>
+            <p>${T`The crew and Mission Control talk in <b>ground elapsed time</b>, GET: hours, minutes and seconds since liftoff, hours not wrapped into days. The calculation above gives a wait. Add it to the GET at which the phase angle was measured, the <b>fix</b> (the navigator’s word for a position measured at a known time):`}</p>
             <div class="eq">\\[ \\mathrm{TIG} = \\mathrm{GET}_{fix} + t_{wait} \\]</div>
             ${Sym.where([['\\mathrm{TIG}', N`time of ignition, as GET; for an impulsive burn it is also the burn point`, 's'], ['\\mathrm{GET}_{fix}', N`GET at which φ<sub>now</sub> was measured`, 's'], ['t_{wait}', N`wait from the previous section`, 's']])}
             <p>${T`Example: φ = 42° measured at GET 03:10:00 gives TIG = 03:10:00 + 1 h 16 min 53 s = <b>04:26:53</b>. The phase angle itself is measured from tracking or from the onboard navigation of module ${Progress.code('navigation')}. An error of 1° in φ moves the burn by 1°/(closing rate) = 2.4 minutes here. Small closing rates amplify angle errors into time errors.`}</p>
@@ -174,7 +214,7 @@
         <section class="section">
           <h2><span class="idx">0.5</span>${T`The Moon moves too`}</h2>
           <div class="prose">
-            <p>${T`The same idea sets the moment for the burn that leaves Earth for the Moon. The Moon travels about 13.2° per day around the Earth. The translunar trajectory takes days, so the burn must start when the Moon is the right angle ahead, and the departure point in the parking orbit must also match the plane. The transfer time here is not the half-period of a simple Hohmann ellipse, but the logic of “arrive where the target will be” is identical. On Apollo 11 the translunar injection burn (TLI) came during the second revolution of Earth parking orbit, at about GET 2:44.`}</p>
+            <p>${T`The same idea sets the moment for the burn that leaves Earth for the Moon. The Moon travels about 13.2° per day around the Earth. The translunar trajectory takes days, so the burn must start when the Moon is the right angle ahead, and the departure point in the parking orbit must also match the plane. The path is not a Hohmann half-ellipse, though. TLI gives a little more speed than the minimum: without the Moon the ellipse would climb well beyond the Moon’s orbit, so the spacecraft crosses the distance in about 3 days instead of the 5 of a Hohmann transfer, and near the Moon its gravity takes over and bends the path. The logic of “arrive where the target will be” is identical. On Apollo 11 the translunar injection burn (TLI) came during the second revolution of Earth parking orbit, at about GET 2:44.`}</p>
             <p>${T`In lunar orbit the rendezvous is the same problem on a smaller scale. The Lunar Module ascent stage lifts off from the surface, enters a lower orbit than the Command and Service Module, and must come up to it. Liftoff therefore has to be timed with the CSM’s position, and the ascent is possible only when the CSM’s orbit plane passes over the landing site. The lower LM is faster and gains on the CSM, as in section ${App.sec('timing', 1)}. This is a rendezvous <b>launch window</b>: it opens once per orbit, and it is the phase angle that decides it.`}</p>
           </div>
         </section>
@@ -187,18 +227,19 @@
             <p>${T`Section ${App.sec('timing', 5)} said that the LM must lift off at the right moment. Here is the calculation, in its simplest form. Everything is two-body and circular, and the landing site lies in the orbit plane of the mother ship, the CSM. The method: climb to a low circular orbit, then fly a Hohmann transfer up to the CSM’s orbit and arrive where the CSM is. Real Apollo flights used a longer coelliptic sequence after liftoff, which tolerates an imperfect insertion; module ${Progress.code('landing')} describes it. The direct method below is the exact version of the idea.`}</p>
             <p>${T`The ascent takes a time t<sub>asc</sub> and carries the LM over a downrange angle θ<sub>asc</sub> of the Moon, measured at its centre. For the Apollo LM, think of about 7 minutes to reach an orbit of about 15 km altitude, and a few hundred kilometres of ground track. These are inputs here, and we use 420 s and 300 km, which is 300 / 1 737.4 = 0.1727 rad = 9.89°. The Moon’s rotation is neglected: its surface turns only 0.55° per hour, so the site hardly moves during the flight (the end of the section shows its one small effect).`}</p>
             <p>${T`After the climb the LM is at angle θ<sub>asc</sub> from the site, in the low orbit. It flies the half ellipse of section ${App.sec('timing', 2)}: another t<sub>H</sub> and 180°. It therefore arrives at the angle θ<sub>asc</sub> + π from the site, after a total time t<sub>asc</sub> + t<sub>H</sub>. The CSM must be at that point then. It moves n<sub>C</sub>·(t<sub>asc</sub> + t<sub>H</sub>) meanwhile, so at liftoff it must be ahead of the site, in the direction of motion, by:`}</p>
-            <div class="eq">\\[ \\varphi_{lift} = \\theta_{asc} + \\pi - n_C\\,(t_{asc} + t_H) \\pmod{2\\pi} \\]</div>
-            ${Sym.where([['\\varphi_{lift}', N`angle by which the CSM must be ahead of the launch site at liftoff (negative: behind)`, 'rad'], ['\\theta_{asc}', N`downrange angle covered during the ascent`, 'rad'], ['n_C', N`mean motion of the CSM’s orbit, √(μ/r<sub>C</sub>³)`, 'rad/s'], ['t_{asc}', N`ascent time, from liftoff to the low orbit`, 's'], ['t_H', N`Hohmann transfer time from the low orbit to the CSM’s orbit: half the period of the transfer ellipse`, 's']], N`In words: the LM must arrive at θ<sub>asc</sub> + 180° and the CSM covers n<sub>C</sub>·(t<sub>asc</sub> + t<sub>H</sub>) to get there, so it must start that far short of the arrival point. This is the phase-angle formula for the Hohmann transfer with the ascent added to the flight time.`)}
+            <div class="eq">\\[ \\phi_{lift} = \\theta_{asc} + \\pi - n_C\\,(t_{asc} + t_H) \\pmod{2\\pi} \\]</div>
+            ${Sym.where([['\\phi_{lift}', N`angle by which the CSM must be ahead of the launch site at liftoff (negative: behind)`, 'rad'], ['\\theta_{asc}', N`downrange angle covered during the ascent`, 'rad'], ['n_C', N`mean motion of the CSM’s orbit, √(μ/r<sub>C</sub>³)`, 'rad/s'], ['t_{asc}', N`ascent time, from liftoff to the low orbit`, 's'], ['t_H', N`Hohmann transfer time from the low orbit to the CSM’s orbit: half the period of the transfer ellipse`, 's']], N`In words: the LM must arrive at θ<sub>asc</sub> + 180° and the CSM covers n<sub>C</sub>·(t<sub>asc</sub> + t<sub>H</sub>) to get there, so it must start that far short of the arrival point. This is the phase-angle formula for the Hohmann transfer with the ascent added to the flight time.`)}
+            ${figLiftoff()}
             <p>${T`Example, low orbit at 15 km and CSM at 110 km. The radii are 1 752.4 km and 1 847.4 km, so t<sub>H</sub> = 3 426 s = 57.10 min. The CSM’s rate is 3.031° per minute (period 118.75 min). Then n<sub>C</sub>·(t<sub>asc</sub> + t<sub>H</sub>) = 3.031° × 64.10 min = 194.32°, and φ<sub>lift</sub> = 9.89° + 180° − 194.32° = <b>−4.43°</b>. The CSM must be 4.43° <i>behind</i> the site, which is about 1.5 min of its orbit short of the overhead point.`}</p>
           </div>
           <div class="prose">
-            <p>${T`Now the clock. The site is fixed and the CSM goes round once per period, passing straight overhead once per revolution. Let the angle ψ from the site to the CSM be 0 at the pass. It grows at n<sub>C</sub>, so it equals φ<sub>lift</sub> a time after the pass:`}</p>
-            <div class="eq">\\[ t_{lift} = \\mathrm{GET}_{pass} + \\frac{\\varphi_{lift} \\bmod 2\\pi}{n_C} \\]</div>
-            ${Sym.where([['t_{lift}', N`liftoff time, as GET`, 's'], ['\\mathrm{GET}_{pass}', N`GET at which the CSM passes overhead the site`, 's'], ['\\varphi_{lift} \\bmod 2\\pi', N`φ<sub>lift</sub> brought into the range 0 to 360° (see Angles that wrap around)`, 'rad'], ['n_C', N`mean motion of the CSM’s orbit`, 'rad/s']], N`A negative φ<sub>lift</sub> means liftoff comes shortly before the next overhead pass, not just after the previous one.`)}
+            <p>${T`Now the clock. The site is fixed and the CSM goes round once per period, passing straight overhead once per revolution. The angle from the site to the CSM is 0 at that pass and grows at n<sub>C</sub>, so it reaches φ<sub>lift</sub> a time after the pass:`}</p>
+            <div class="eq">\\[ t_{lift} = \\mathrm{GET}_{pass} + \\frac{\\phi_{lift} \\bmod 2\\pi}{n_C} \\]</div>
+            ${Sym.where([['t_{lift}', N`liftoff time, as GET`, 's'], ['\\mathrm{GET}_{pass}', N`GET at which the CSM passes overhead the site`, 's'], ['\\phi_{lift} \\bmod 2\\pi', N`φ<sub>lift</sub> brought into the range 0 to 360° (see Angles that wrap around)`, 'rad'], ['n_C', N`mean motion of the CSM’s orbit`, 'rad/s']], N`A negative φ<sub>lift</sub> means liftoff comes shortly before the next overhead pass, not just after the previous one.`)}
             <p>${T`Example: the CSM passes overhead at GET 124:00:00. φ<sub>lift</sub> mod 360° = 355.57°, and 355.57° / 3.031° per minute = 117.29 min = 1 h 57 min 18 s. Liftoff is at GET <b>125:57:18</b>, 1 min 27 s before the next pass at 125:58:45. A check by numerical integration of both orbits gives an arrival miss below a metre. A liftoff 120 s late misses by about 195 km.`}</p>
             <p>${T`If the window is missed, the next one comes one CSM period later, here 118.75 min. The alternative is to coast in the low orbit, as in section ${App.sec('timing', 3)}: the LM is faster than the CSM, so it gains on it, and each minute of coast raises the angle the CSM may be ahead by (n<sub>L</sub> − n<sub>C</sub>), 0.25° here. If at the moment of insertion the CSM is φ<sub>now</sub> ahead of the site and the required angle is φ<sub>lift</sub>, the coast is`}</p>
-            <div class="eq">\\[ t_c = \\frac{\\varphi_{now} - \\varphi_{lift}}{n_L - n_C} \\]</div>
-            ${Sym.where([['t_c', N`coast time in the low orbit before the Hohmann burn`, 's'], ['\\varphi_{now}', N`angle by which the CSM is ahead of the site at liftoff`, 'rad'], ['\\varphi_{lift}', N`required angle without a coast (this section)`, 'rad'], ['n_L', N`mean motion of the low orbit`, 'rad/s'], ['n_C', N`mean motion of the CSM’s orbit`, 'rad/s']], N`Use it when φ<sub>now</sub> is a little larger than φ<sub>lift</sub>, so that the LM can catch up. A large difference means a long coast: 10° takes 40 min.`)}
+            <div class="eq">\\[ t_c = \\frac{\\phi_{now} - \\phi_{lift}}{n_L - n_C} \\]</div>
+            ${Sym.where([['t_c', N`coast time in the low orbit before the Hohmann burn`, 's'], ['\\phi_{now}', N`angle by which the CSM is ahead of the site at liftoff`, 'rad'], ['\\phi_{lift}', N`required angle without a coast (this section)`, 'rad'], ['n_L', N`mean motion of the low orbit`, 'rad/s'], ['n_C', N`mean motion of the CSM’s orbit`, 'rad/s']], N`Use it when φ<sub>now</sub> is a little larger than φ<sub>lift</sub>, so that the LM can catch up. A large difference means a long coast: 10° takes 40 min.`)}
             <p>${T`A hand-flown ascent is not exact. Liftoff is a few seconds off, the insertion angle is off by a few degrees, the orbit is a few kilometres too high or low, so the one-shot plan “lift off at t<sub>lift</sub> and arrive exactly” rarely closes by itself. The robust method has two steps. First lift off roughly at the computed time. Then, after insertion, measure the real orbit and the real phase angle (the methods of module ${Progress.code('navigation')}), coast in the low orbit until the phase is right, and fly the Hohmann burn at a TIG recomputed with the formulas of the earlier sections.`}</p>
             <p>${T`The two directions of error are not equal. A 20 km lunar orbit has a period of 110.2 min and a 110 km orbit 118.7 min, so the LM gains about 0.24° per minute on the CSM. If the phase is too large by 1°, the coast costs about 4 minutes, which is cheap. If it is too small, the lower LM pulls further ahead and the geometry returns only after a synodic period, about 25 h, or after a phasing maneuver, which is expensive. The rule: bias the plan. Lift off about one minute <b>later</b> than the exact solution. The CSM moves about 3° per minute, so that is about 3° of margin on the cheap side, at the price of a coast of about 12 minutes. The margin absorbs the pilot’s errors. This need for robustness is why Apollo flew the longer coelliptic sequence of module ${Progress.code('landing')}.`}</p>
             <p>${T`The Moon’s rotation matters in one place: the angle between the site and the CSM grows at n<sub>C</sub> − ω, with ω = 2.66 × 10⁻⁶ rad/s, not at n<sub>C</sub>. Replace n<sub>C</sub> by n<sub>C</sub> − ω in the denominator of t<sub>lift</sub> and the wait grows by 0.3%, 21 s in this example. The angle φ<sub>lift</sub> itself does not change, because the LM starts with the speed of the ground and the formula uses angles seen from the centre.`}</p>
@@ -207,7 +248,7 @@
 
         <section class="section">
           <h2><span class="idx">0.7</span>${T`Lab: the phasing clock`}</h2>
-          <div class="prose"><p>${T`A chaser and a target orbit counterclockwise, seen from above the pole. The scenario gives the angles at one GET. Compute the required phase angle and the TIG, type both, then press Execute. The lab flies an impulsive Hohmann transfer from your TIG and shows where the chaser arrives and where the target is: the miss. Use the warp controls to watch the geometry. “New fix” gives a new set of angles, so every attempt is your own calculation.`}</p></div>
+          <div class="prose"><p>${T`A chaser and a target orbit counterclockwise, seen from above the pole. The scenario gives the angles at one GET. Compute the required phase angle and the TIG, type both, then press Execute. The lab flies an impulsive Hohmann transfer from your TIG and shows where the chaser arrives and where the target is: the miss. Use the warp controls to watch the geometry. “New fix” measures the two positions again at a later GET, so every attempt is your own calculation.`}</p></div>
           <div class="lab tl-lab" id="pc">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Phasing clock`}</h3><span class="spacer"></span>
               <div class="seg" id="pc-rate" role="group" aria-label="${T`Time warp`}"><button data-v="60" aria-pressed="false">×60</button><button data-v="600" aria-pressed="true">×600</button><button data-v="3600" aria-pressed="false">×3600</button><button data-v="36000" aria-pressed="false">×36000</button></div>
@@ -348,7 +389,7 @@
       ctx.lineWidth = 1; ctx.strokeStyle = K.muted; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(...P(rMax * 1.04, p.th)); ctx.moveTo(cx, cy); ctx.lineTo(...P(rMax * 1.04, p.tgt)); ctx.stroke();
       ctx.strokeStyle = K.warn; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, rr, -p.th, -(p.th + phi), phi > 0); ctx.stroke();
       const mid = p.th + phi / 2, [lx, ly] = P(rr / s * 1.28, mid);
-      ctx.font = `11px ${K.mono}`; ctx.fillStyle = K.warn; ctx.textAlign = 'center'; ctx.fillText(`φ ${sgn(phi * D, 1)}°`, lx, ly + 4);
+      ctx.font = `11px ${K.mono}`; ctx.fillStyle = K.warn; ctx.textAlign = 'center'; ctx.fillText(`ϕ ${sgn(phi * D, 1)}°`, lx, ly + 4);
       // bodies
       ctx.fillStyle = K.ink; ctx.beginPath(); ctx.arc(c1x, c1y, 5, 0, 7); ctx.fill();
       ctx.fillStyle = K.good; ctx.beginPath(); ctx.arc(t1x, t1y, 5, 0, 7); ctx.fill();

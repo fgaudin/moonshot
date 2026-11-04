@@ -135,6 +135,8 @@ mjx-container[display="true"] { margin: .4em 0 !important; max-width: 100%; over
 .where .unit::before { content: "["; } .where .unit::after { content: "]"; }
 .where-note { grid-column: 1 / -1; margin: .2rem 0 0; color: var(--muted); font-style: italic; }
 abbr.gk { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; padding: .15em .2em; margin: -.15em -.2em; }
+/* φ in the body font everywhere: Literata draws it with a straight stroke, like \phi in the equations; mono fonts draw it loopy */
+abbr.gk[data-gk="phi"], abbr.gk[data-gk="varphi"] { font-family: var(--f-body); font-style: normal; }
 abbr.gl { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; }
 .gk-tip .gl-t { display: block; font-weight: 600; margin-bottom: .2rem; }
 mjx-container [class*="gk-"] { cursor: help; }

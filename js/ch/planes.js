@@ -60,13 +60,13 @@
       const lat = pick([28.5, 34.7, 45.9]), inc = lat + rnd(3, 25, 1), az = Math.asin(Math.cos(inc * D2R) / Math.cos(lat * D2R)) * deg;
       return { q: T`A rocket leaves a site at latitude <b>${f(lat, 1)}°</b> N towards the northeast for an orbit of inclination <b>${f(inc, 0)}°</b>. What is the launch azimuth (from north, clockwise), ignoring the Earth’s rotation?`, answer: az, unit: '°', tol: 0.01,
         hint: T`sin β = cos i / cos φ. Use the arcsine, which gives the northeast solution (below 90°).`,
-        sol: R`\[ \sin\beta = \frac{\cos i}{\cos\varphi} = \frac{\cos ${f(inc, 0)}^\circ}{\cos ${f(lat, 1)}^\circ} = ${f(Math.cos(inc * D2R) / Math.cos(lat * D2R), 4)} \Rightarrow \beta = ${f(az, 2)}^\circ \]` };
+        sol: R`\[ \sin\beta = \frac{\cos i}{\cos\phi} = \frac{\cos ${f(inc, 0)}^\circ}{\cos ${f(lat, 1)}^\circ} = ${f(Math.cos(inc * D2R) / Math.cos(lat * D2R), 4)} \Rightarrow \beta = ${f(az, 2)}^\circ \]` };
     } },
     { title: N`Lowest inclination from a site`, make() {
       const s = pick(SITES);
       return { q: T`What is the lowest orbital inclination, in degrees, that a rocket can reach from ${T(s.name)} (latitude ${f(s.lat, 1)}° N) without a plane change in orbit?`, answer: s.lat, unit: '°', tol: 0.01,
         hint: T`The orbit plane passes through the Earth’s centre and the launch site, so the site cannot be farther from the equator than the orbit plane allows.`,
-        sol: R`\[ i_{min} = \varphi = ${f(s.lat, 1)}^\circ \quad (\beta = 90^\circ,\ \text{due east}) \]` };
+        sol: R`\[ i_{min} = \phi = ${f(s.lat, 1)}^\circ \quad (\beta = 90^\circ,\ \text{due east}) \]` };
     } },
   ], [
     { q: N`A spacecraft must change its orbital plane. Where in a noncircular orbit is that cheapest?`, opts: [N`At a node, at apoapsis (lowest speed)`, N`At periapsis, where the speed is highest and the burn shortest`, N`Anywhere: the cost does not depend on the position`, N`Halfway between the nodes, where the planes are furthest apart`], a: 0, why: N`Δv = 2v sin(Δi/2) is proportional to the speed at the burn. The burn must also be at a node, where both planes contain the spacecraft. In a transfer orbit whose apoapsis is at a node, both conditions are met.` },
@@ -172,11 +172,11 @@
           <h2><span class="idx">11.5</span>${T`Launch azimuth and launch windows`}</h2>
           <div class="prose">
             <p>${T`The cheapest plane change is the one you never make: launch into the right plane. A rocket leaving a site at latitude φ along an azimuth β (measured from north, clockwise) ends up in an orbit of inclination i. Spherical trigonometry on the triangle formed by the site, the north pole and the point where the orbit crosses the equator gives:`}</p>
-            <div class="eq">\\[ \\cos i = \\cos\\varphi\\,\\sin\\beta, \\qquad \\sin\\beta = \\frac{\\cos i}{\\cos\\varphi} \\]</div>
-            ${Sym.where([['\\varphi', N`latitude of the launch site`, N`rad or °`], ['\\beta', N`launch azimuth: direction of flight, from north, clockwise (90° is due east)`, N`rad or °`], 'i'], N`The sine has two solutions, β and 180° − β: a northeast launch and a southeast launch give the same inclination. Because sin β ≤ 1, a site can only reach i ≥ φ.`)}
+            <div class="eq">\\[ \\cos i = \\cos\\phi\\,\\sin\\beta, \\qquad \\sin\\beta = \\frac{\\cos i}{\\cos\\phi} \\]</div>
+            ${Sym.where([['\\phi', N`latitude of the launch site`, N`rad or °`], ['\\beta', N`launch azimuth: direction of flight, from north, clockwise (90° is due east)`, N`rad or °`], 'i'], N`The sine has two solutions, β and 180° − β: a northeast launch and a southeast launch give the same inclination. Because sin β ≤ 1, a site can only reach i ≥ φ.`)}
             <p>${T`Two consequences. First, the <b>minimum inclination equals the site latitude</b>, reached by launching due east (β = 90°). From Cape Canaveral, 28.5°, no direct launch gives a lower inclination. Kourou, at 5.2° N, reaches nearly the equator. Second, a larger inclination needs a more northerly azimuth, and the rocket gives up some of the speed that the Earth’s rotation provides.`}</p>
             <p>${T`The formula holds for the velocity in an inertial frame, the one that does not turn with the Earth. The pilot flies relative to the ground, which moves east at v<sub>eq</sub> cos φ (408 m/s at 28.5°, from v<sub>eq</sub> = 465 m/s). Subtract it from the eastward part of the velocity:`}</p>
-            <div class="eq">\\[ \\tan\\beta_{rot} = \\frac{v_{orb}\\sin\\beta - v_{eq}\\cos\\varphi}{v_{orb}\\cos\\beta} \\]</div>
+            <div class="eq">\\[ \\tan\\beta_{rot} = \\frac{v_{orb}\\sin\\beta - v_{eq}\\cos\\phi}{v_{orb}\\cos\\beta} \\]</div>
             ${Sym.where([['\\beta_{rot}', N`the azimuth to fly relative to the rotating ground`, N`rad or °`], ['v_{orb}', N`inertial speed at insertion (7.79 km/s at 185 km)`, 'm/s'], ['v_{eq}', N`speed of the ground at the equator, 465 m/s`, 'm/s']], N`Numerator: the eastward speed the rocket must add to the ground’s motion. Denominator: the northward speed, which the Earth does not provide.`)}
             <p>${T`Example: from 28.5° N to a 32.5° orbit at 7 793 m/s. Inertial: sin β = cos 32.5° / cos 28.5° = 0.9594, so β = 73.7°. Flown relative to the ground, β<sub>rot</sub> = 72.8°. A pilot who steered 73.7° on the ground would end 0.4° low in inclination, which is about 50 m/s of plane change in low orbit. Apollo launches from Florida were limited to azimuths between 72° and 108°.`}</p>
             <p>${T`<b>Launch windows.</b> The orbit plane is fixed in space and the Earth turns once in 23 h 56 min. The launch site passes under the target plane twice a day: once going north, once going south. Those two moments are the launch windows. At other times, you need a plane change in orbit or a different azimuth with a different inclination. In the example, the two windows are about 4.2 hours apart, and the next pair follows 19.8 hours later (the lab shows the times). The northeast window corresponds to the northbound crossing.`}</p>
