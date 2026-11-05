@@ -97,6 +97,184 @@
     .pl-hint { font: .68rem/1.3 var(--f-mono); color: var(--muted); margin: 0; }
   `);
 
+  /* ---------------- Figure 11.5: launch azimuth on the globe, the spherical triangle pole–site–node ---------------- */
+  function figAzimuth() {
+    const W = 360, H = 300, cx = 180, cy = 158, Rg = 120, d = Math.PI / 180;
+    const phi = 28.5 * d, inc = 40 * d, lonN = -15 * d, lam0 = 0, el = 35 * d;
+    const beta = Math.asin(Math.cos(inc) / Math.cos(phi)), uS = Math.asin(Math.sin(phi) / Math.sin(inc));
+    const fx = (n) => n.toFixed(1), pct = (x, w) => (100 * x / w).toFixed(2) + '%';
+    const lbs = (list) => list.map(([[x, y], t, c]) => `<span class="lb ${c || ''}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`).join('');
+    const add = (a, b) => a.map((x, k) => x + b[k]), mul = (a, k) => a.map((x) => x * k), nrm = (a) => mul(a, 1 / Math.hypot(...a));
+    const vec = (la, lo) => [Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)];
+    // orthographic view from above the equator at longitude lam0, tilted down by el: [x, y, depth]
+    const pr = (q) => { const c = Math.cos(lam0), sn = Math.sin(lam0), xe = q[0] * c + q[1] * sn, ye = -q[0] * sn + q[1] * c;
+      return [ye, q[2] * Math.cos(el) - xe * Math.sin(el), q[2] * Math.sin(el) + xe * Math.cos(el)]; };
+    const S2 = (q) => { const p = pr(q); return [cx + Rg * p[0], cy - Rg * p[1]]; };
+    const path = (pts) => pts.map((q, k) => `${k ? 'L' : 'M'}${fx(S2(q)[0])},${fx(S2(q)[1])}`).join('');
+    // a curve on the sphere, split into its front (solid) and back (dashed) parts
+    const curve = (fn, t0, t1, cls, n = 120) => { let out = '', run = [], front = null;
+      const flush = () => { if (run.length > 1) out += `<path class="${cls}${front ? '' : ' f-back'}" d="${path(run)}"/>`; };
+      for (let k = 0; k <= n; k++) { const q = fn(t0 + (t1 - t0) * k / n), f = pr(q)[2] >= 0; if (front !== null && f !== front) { run.push(q); flush(); run = [q]; } else run.push(q); front = f; }
+      flush(); return out; };
+    const nN = vec(0, lonN), eN = vec(0, lonN + Math.PI / 2), mN = add(mul(eN, Math.cos(inc)), [0, 0, Math.sin(inc)]);
+    const track = (u) => add(mul(nN, Math.cos(u)), mul(mN, Math.sin(u)));
+    const S = track(uS), lonS = Math.atan2(S[1], S[0]), Pn = [0, 0, 1];
+    // local north and track direction at the site; the β arc between them, just above the surface
+    const tN = nrm(add(Pn, mul(S, -S[2]))), tT = add(mul(nN, -Math.sin(uS)), mul(mN, Math.cos(uS)));
+    const slerp = (a, b, t, th) => add(mul(a, Math.sin((1 - t) * th) / Math.sin(th)), mul(b, Math.sin(t * th) / Math.sin(th)));
+    const tangentArc = (c, a, b, r, k = 24) => { const th = Math.acos(a[0] * b[0] + a[1] * b[1] + a[2] * b[2]), o = []; for (let j = 0; j <= k; j++) o.push(nrm(add(c, mul(slerp(a, b, j / k, th), r)))); return o; };
+    const arcB = tangentArc(S, tN, tT, 0.22), arcI = tangentArc(nN, eN, mN, 0.2);
+    const tri = [...Array(31).keys()].map((k) => vec(phi + (Math.PI / 2 - phi) * k / 30, lonS))
+      .concat([...Array(31).keys()].map((k) => vec(Math.PI / 2 - (Math.PI / 2) * k / 30, lonN)))
+      .concat([...Array(31).keys()].map((k) => track(uS * k / 30)));
+    const head = (q, dir) => { const a = S2(q), b = S2(add(q, mul(dir, 0.02))), ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+      const h = (s) => `${fx(a[0] - 9 * Math.cos(ang + s))},${fx(a[1] - 9 * Math.sin(ang + s))}`; return `<path class="f-tr-fill" d="M${h(0.4)}L${fx(a[0])},${fx(a[1])}L${h(-0.4)}Z"/>`; };
+    const tip = track(uS + 0.55), tipDir = add(mul(nN, -Math.sin(uS + 0.55)), mul(mN, Math.cos(uS + 0.55)));
+    const at = (q, dx = 0, dy = 0) => { const p = S2(q); return [p[0] + dx, p[1] + dy]; };
+    return `<figure class="fig" role="img" aria-label="${T`A globe seen from above the equator. A launch site at latitude φ, the north pole and the ascending node of the orbit form a spherical triangle. At the site the ground track leaves at the azimuth β, measured clockwise from north; at the node it crosses the equator at the inclination i.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <circle class="f-eq" cx="${cx}" cy="${cy}" r="${Rg}"/>
+        <path class="f-pl" d="${path(tri)}Z"/>
+        ${curve((t) => vec(0, t), 0, 2 * Math.PI, 'f-mu')}
+        ${curve((t) => vec(t, lonS), 0, Math.PI / 2, 'f-mu thin')}${curve((t) => vec(t, lonN), 0, Math.PI / 2, 'f-mu thin')}
+        ${curve(track, -Math.PI, Math.PI, 'f-tr')}${head(tip, tipDir)}
+        <path class="f-ink-ln" d="${path(arcB)}"/><path class="f-ac-ln thin" d="${path(arcI)}"/>
+        <path class="f-wn-ln" d="${path([...Array(21).keys()].map((k) => vec(phi * k / 20, lonS - 0.0)))}"/>
+        <circle class="f-ink-fill" cx="${fx(S2(Pn)[0])}" cy="${fx(S2(Pn)[1])}" r="3"/>
+        <circle class="f-ink-fill" cx="${fx(S2(nN)[0])}" cy="${fx(S2(nN)[1])}" r="3.5"/>
+        <rect class="f-ac-fill" x="${fx(S2(S)[0] - 4)}" y="${fx(S2(S)[1] - 4)}" width="8" height="8"/>
+      </svg>${lbs([
+        [at(Pn, 0, -12), T`north pole`, 'm'], [at(S, 10, 4), T`site`, 'acc l'], [at(nN, 0, 14), T`ascending node`, 'ink'],
+        [at(arcB[12], 6, -6), 'β', 'ink l'], [at(arcI[12], 8, 0), 'i', 'acc l'], [at(vec(phi / 2, lonS), 9, 0), 'φ', 'wn l'],
+        [at(vec(0, lonN + 1.05), 0, 12), T`equator`, 'm'], [at(tip, 12, 10), T`ground track`, 'tr l'],
+      ])}</div>
+      <figcaption>${T`Not to scale (i = 40° for clarity). The shaded triangle has its corners at the north pole, the site and the ascending node. Its side from the pole to the site is 90° − φ, from the pole to the node 90°; the angle at the node is 90° − i and the angle at the site is 180° − β. The sine rule on this triangle gives cos i = cos φ sin β.`}</figcaption></figure>`;
+  }
+
+  /* ---------------- Figure 11.1: the orbit plane in 3D (drag to turn, sliders for i, Ω, u, optional second plane) ---------------- */
+  App.css('planes-fig', `
+    .fig.pe { max-width: 40rem; }
+    .pe-cv { display: block; width: 100%; aspect-ratio: 4 / 3; cursor: grab; touch-action: none; border-radius: 8px; background: var(--sunk); }
+    .pe-cv:active { cursor: grabbing; }
+    .pe-ctl { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .6rem .9rem; margin-top: .6rem; }
+    .pe-ctl .chk { display: flex; align-items: center; gap: .4rem; font: 500 .74rem/1.2 var(--f-mono); color: var(--muted); }
+    .pe-ctl .two[hidden] { display: none; }
+    .f-back { stroke-dasharray: 2 4; opacity: .45; } .f-mu.thin { stroke-width: .9; }
+    .f-wn-ln { fill: none; stroke: var(--warn); stroke-width: 2; } .f-tr-fill { fill: var(--trace); } .fig .lb.wn { color: var(--warn); }
+    .pe-ro { margin-top: .5rem; font: .78rem/1.5 var(--f-mono); color: var(--ink); }
+  `);
+  const figPlane3D = () => `<figure class="fig pe" id="pe" role="img" aria-label="${T`Three-dimensional view of an orbit around the Earth, which can be turned by dragging. The equatorial plane and the orbit plane cross along the line of nodes. The figure marks the ascending and descending nodes, the inclination i between the planes, the angle Ω from the reference direction to the ascending node, the argument of latitude u from the ascending node to the spacecraft, and the unit vector ĥ perpendicular to the orbit plane. A second orbit plane can be added to show the angle θ between the two planes.`}">
+      <canvas class="pe-cv"></canvas>
+      <div class="pe-ctl">
+        ${UI.slider({ id: 'pe-i', label: T`inclination i`, min: 0, max: 180, step: 1, value: 40, unit: '°' })}
+        ${UI.slider({ id: 'pe-O', label: T`node Ω`, min: 0, max: 360, step: 1, value: 60, unit: '°' })}
+        ${UI.slider({ id: 'pe-u', label: T`argument of latitude u`, min: 0, max: 360, step: 1, value: 70, unit: '°' })}
+        <label class="chk"><input type="checkbox" id="pe-two"> ${T`second plane`}</label>
+        <div class="two" hidden>${UI.slider({ id: 'pe-i2', label: T`inclination i₂`, min: 0, max: 180, step: 1, value: 20, unit: '°' })}</div>
+        <div class="two" hidden>${UI.slider({ id: 'pe-O2', label: T`node Ω₂`, min: 0, max: 360, step: 1, value: 200, unit: '°' })}</div>
+      </div>
+      <div class="pe-ro" id="pe-ro"></div>
+      <figcaption>${T`Drag to turn the view. Blue: the orbit, solid north of the equator and dashed south of it. The arrow ĥ stands perpendicular to the orbit plane. Tick “second plane” to add a green orbit: the angle θ between the two arrows ĥ is the angle between the two planes.`}</figcaption>
+    </figure>`;
+
+  function mountPlane3D(root) {
+    const cv = root.querySelector('.pe-cv'), view = UI.canvas(cv, null), cam = { yaw: -2.1, el: 0.38 }, Re = 0.2;
+    let v = { 'pe-i': 40, 'pe-O': 60, 'pe-u': 70, 'pe-two': false, 'pe-i2': 20, 'pe-O2': 200 };
+    const add = (a, b) => a.map((x, k) => x + b[k]), mul = (a, k) => a.map((x) => x * k), dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const proj = (q) => {
+      const c = Math.cos(cam.yaw), s = Math.sin(cam.yaw), x1 = q[0] * c - q[1] * s, y1 = q[0] * s + q[1] * c, ce = Math.cos(cam.el), se = Math.sin(cam.el);
+      return [x1, q[2] * ce + y1 * se, -y1 * ce + q[2] * se];
+    };
+    // the plane's frame: n to the ascending node, m 90° further along the orbit, h perpendicular
+    const frame = (i, O) => {
+      const n = [Math.cos(O), Math.sin(O), 0], e = [-Math.sin(O), Math.cos(O), 0];
+      return { n, m: add(mul(e, Math.cos(i)), [0, 0, Math.sin(i)]), e, h: [Math.sin(O) * Math.sin(i), -Math.cos(O) * Math.sin(i), Math.cos(i)] };
+    };
+    const ring = (F, r, u0 = 0, u1 = 2 * Math.PI, k = 120) => { const o = []; for (let j = 0; j <= k; j++) { const u = u0 + (u1 - u0) * j / k; o.push(add(mul(F.n, r * Math.cos(u)), mul(F.m, r * Math.sin(u)))); } return o; };
+    // arc of radius r around c, from unit direction a towards unit direction b
+    const arc = (c, a, b, r, k = 30) => { const th = Math.acos(Math.max(-1, Math.min(1, dot(a, b)))), o = []; if (th < 1e-3) return o;
+      for (let j = 0; j <= k; j++) { const t = th * j / k; o.push(add(c, mul(add(mul(a, Math.sin(th - t)), mul(b, Math.sin(t))), r / Math.sin(th)))); } return o; };
+
+    view.draw = (ctx, w, h) => {
+      const K = UI.tok(), sk = Math.min(w, h) / 2 / 1.45, cx = w / 2, cy = h / 2 + 0.04 * h;
+      const X = (q) => cx + sk * q[0], Y = (q) => cy - sk * q[1];
+      const hidden = (p) => { const q = proj(p); return q[2] < 0 && q[0] * q[0] + q[1] * q[1] < Re * Re; };
+      ctx.clearRect(0, 0, w, h);
+      const line = (pts, color, width, dash, pass) => {
+        ctx.strokeStyle = color; ctx.lineWidth = width;
+        for (let k = 0; k < pts.length - 1; k++) {
+          const mid = mul(add(pts[k], pts[k + 1]), 0.5), hid = hidden(mid);
+          if (hid !== pass) continue;
+          const d = typeof dash === 'function' ? dash(mid) : dash;
+          ctx.setLineDash(hid ? [2, 4] : d); ctx.globalAlpha = hid ? 0.3 : 1;
+          const a = proj(pts[k]), b = proj(pts[k + 1]); ctx.beginPath(); ctx.moveTo(X(a), Y(a)); ctx.lineTo(X(b), Y(b)); ctx.stroke();
+        }
+        ctx.setLineDash([]); ctx.globalAlpha = 1;
+      };
+      const fill = (pts, color, alpha) => { ctx.globalAlpha = alpha; ctx.fillStyle = color; ctx.beginPath(); pts.forEach((p, k) => { const q = proj(p); k ? ctx.lineTo(X(q), Y(q)) : ctx.moveTo(X(q), Y(q)); }); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; };
+      const label = (p, txt, color, dx = 6, dy = -6, align = 'left', bold = false) => { const q = proj(p); ctx.globalAlpha = hidden(p) ? 0.45 : 1; ctx.fillStyle = color; ctx.font = `${bold ? '600 ' : ''}12px ${K.mono}`; ctx.textAlign = align; ctx.fillText(txt, X(q) + dx, Y(q) + dy); ctx.globalAlpha = 1; };
+      const arrow = (p0, p1, color, width = 2) => { const a = proj(p0), b = proj(p1); ctx.globalAlpha = hidden(p1) ? 0.4 : 1; UI.arrow(ctx, X(a), Y(a), X(b), Y(b), color, width); ctx.globalAlpha = 1; };
+      const dotAt = (p, color, r = 4) => { const q = proj(p); ctx.globalAlpha = hidden(p) ? 0.4 : 1; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(X(q), Y(q), r, 0, 7); ctx.fill(); ctx.globalAlpha = 1; };
+
+      const i = v['pe-i'] * D2R, O = v['pe-O'] * D2R, u = v['pe-u'] * D2R, F = frame(i, O), E = frame(0, 0), two = v['pe-two'];
+      const F2 = two ? frame(v['pe-i2'] * D2R, v['pe-O2'] * D2R) : null;
+      const south = (p) => (p[2] < -1e-9 ? [5, 4] : []);
+      const lines = [];   // [pts, color, width, dash]
+      lines.push([ring(E, 1), K.muted, 1.2, []]);
+      lines.push([[[0, 0, 0], [1.3, 0, 0]], K.muted, 1, [3, 3]], [[[0, 0, 0], [0, 0, 1.25]], K.muted, 1, [3, 3]]);
+      lines.push([ring(F, 1), K.trace, 2.2, south]);
+      if (F2) lines.push([ring(F2, 1), K.good, 1.8, (p) => (p[2] < -1e-9 ? [2, 4] : [7, 4])]);
+      const inclined = Math.sin(i) > 1e-3;
+      if (inclined) {
+        lines.push([[mul(F.n, -1.12), mul(F.n, 1.12)], K.ink, 1, [6, 3]]);
+        lines.push([ring(E, 0.45, 0, O, 60), K.ink, 1.6, []]);
+        lines.push([arc(F.n, F.e, mul(add(mul(F.e, Math.cos(i)), [0, 0, Math.sin(i)]), 1), 0.24), K.accent, 2, []]);
+      }
+      lines.push([ring(F, 0.62, 0, u, 60), K.warn, 2, []]);
+      if (F2) lines.push([arc([0, 0, 0], F.h, F2.h, 0.42), K.ink, 1.6, []]);
+
+      // back pass, planes, Earth, front pass
+      lines.forEach((l) => line(l[0], l[1], l[2], l[3], true));
+      fill(ring(E, 1.0), K.earth, 0.07);
+      fill(ring(F, 1), K.trace, 0.12);
+      if (F2) fill(ring(F2, 1), K.good, 0.08);
+      UI.drawEarth(ctx, cx, cy, Re * sk, K);
+      lines.forEach((l) => line(l[0], l[1], l[2], l[3], false));
+
+      label([1.3, 0, 0], '♈', K.muted, 4, 4); label([0, 0, 1.25], 'N', K.muted, 0, -6, 'center');
+      label(E.m, T`equator`, K.muted, 4, 14);
+      arrow([0, 0, 0], mul(F.h, 0.95), K.trace, 2.2); label(mul(F.h, 0.95), 'ĥ', K.trace, 6, -2, 'left', true);
+      if (F2) { arrow([0, 0, 0], mul(F2.h, 0.95), K.good, 2); label(mul(F2.h, 0.95), 'ĥ₂', K.good, 6, -2, 'left', true);
+        const th = Math.acos(Math.max(-1, Math.min(1, dot(F.h, F2.h)))); const bis = add(F.h, F2.h), bl = Math.hypot(...bis); if (th > 0.05 && bl > 1e-3) label(mul(bis, 0.55 / bl), 'θ', K.ink, 0, 4, 'center', true); }
+      if (inclined) {
+        dotAt(F.n, K.ink, 3.5); dotAt(mul(F.n, -1), K.ink, 3.5);
+        label(F.n, 'AN', K.ink, 7, 14, 'left', true); label(mul(F.n, -1), 'DN', K.ink, 7, 14, 'left', true);
+        if (O > 0.12) label(ring(E, 0.52, O / 2, O / 2, 1)[0], 'Ω', K.ink, 0, 4, 'center', true);
+        label(add(F.n, mul(add(F.e, [0, 0, 1]), 0.2)), 'i', K.accent, 4, -2, 'left', true);
+      }
+      const uMid = ring(F, 0.72, u / 2, u / 2, 1)[0]; if (u > 0.15) label(uMid, 'u', K.warn, 0, 4, 'center', true);
+      const sc = ring(F, 1, u, u, 1)[0], tg = add(mul(F.n, -Math.sin(u)), mul(F.m, Math.cos(u)));
+      arrow(sc, add(sc, mul(tg, 0.2)), K.accent, 2); dotAt(sc, K.accent, 5);
+    };
+
+    const ro = root.querySelector('#pe-ro');
+    const readout = () => {
+      const i = v['pe-i'] * D2R, O = v['pe-O'] * D2R, h = frame(i, O).h, g = (x) => (x < 0 ? '−' : '') + f(Math.abs(x), 3);
+      let html = `ĥ = (${g(h[0])}, ${g(h[1])}, ${g(h[2])})`;
+      if (v['pe-two']) { const h2 = frame(v['pe-i2'] * D2R, v['pe-O2'] * D2R).h, th = Math.acos(Math.max(-1, Math.min(1, dot(h, h2)))) * deg;
+        html += ` · ĥ₂ = (${g(h2[0])}, ${g(h2[1])}, ${g(h2[2])}) · θ = ${f(th, 1)}°`; }
+      ro.textContent = html;
+    };
+    UI.bindControls(root, { 'pe-i': (x) => x, 'pe-O': (x) => x, 'pe-u': (x) => x, 'pe-i2': (x) => x, 'pe-O2': (x) => x }, (vals) => {
+      v = vals; root.querySelectorAll('.two').forEach((el) => { el.hidden = !v['pe-two']; }); readout(); view.redraw();
+    }).update();
+    let drag = null;
+    cv.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY }; try { cv.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ } });
+    cv.addEventListener('pointermove', (e) => { if (!drag) return; cam.yaw += (e.clientX - drag.x) * 0.008; cam.el = Math.max(-1.55, Math.min(1.55, cam.el + (e.clientY - drag.y) * 0.008)); drag = { x: e.clientX, y: e.clientY }; view.redraw(); });
+    const end = () => { drag = null; };
+    cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  }
+
   App.chapter({
     id: 'planes', phase: N`3D orbits`, title: N`Plane Changes`, lab: N`Plane change`,
     blurb: N`Inclination, nodes and the cost of tilting an orbit: Δv = 2v sin(Δi/2), combined burns and the launch azimuth.`,
@@ -123,6 +301,7 @@
             <p>${T`A plane is also a direction. The angular momentum vector is perpendicular to the plane, and its unit vector follows from the two angles:`}</p>
             <div class="eq">\\[ \\hat h = \\begin{pmatrix} \\sin\\Omega\\,\\sin i \\\\ -\\cos\\Omega\\,\\sin i \\\\ \\cos i \\end{pmatrix}, \\qquad \\cos\\theta = \\hat h_1\\cdot\\hat h_2 = \\cos i_1\\cos i_2 + \\sin i_1\\sin i_2\\cos(\\Omega_1-\\Omega_2) \\]</div>
             ${Sym.where([['\\hat h', N`unit vector perpendicular to the orbit plane (direction of the angular momentum)`, ''], ['i', N`inclination: angle between the orbit plane and the equatorial plane`, N`rad or °`], ['\\Omega', N`right ascension of the ascending node: where the orbit crosses the equator going north, measured from the vernal equinox`, N`rad or °`], ['\\theta', N`the angle between two orbit planes`, N`rad or °`]], N`The second formula is the dot product of the two h vectors. When only i changes (same Ω), it reduces to θ = |i₁ − i₂|. To change both i and Ω you need the full θ.`)}
+            ${figPlane3D()}
             ${Primer.box('vectors', false, 'refresher')}
             <p>${T`Inclination matters because the plane stays fixed in space while the Earth turns under it. A spacecraft that is 28.5° inclined passes over latitudes from 28.5° south to 28.5° north and nowhere else. An orbit with a different plane is a different orbit, and reaching it costs Δv.`}</p>
           </div>
@@ -165,6 +344,7 @@
               <li>${T`One combined burn at apoapsis: √(1 596² + 3 075² − 2 × 1 596 × 3 075 × cos 28.5°) = <b>1 837 m/s</b>.`}</li>
             </ul>
             <p>${T`The combined burn saves 1 156 m/s compared with the first plan. The reason is geometry: the two vectors v₁ and v₂ do not need to be turned and lengthened one after the other. The straight line between their tips is shorter than the two sides of any detour. The PAD of the combined burn is Δv<sub>P</sub> = 3 075 cos 28.5° − 1 596 = +1 106 m/s and Δv<sub>N</sub> = −3 075 sin 28.5° = −1 467 m/s. Apoapsis is the right place: the plane change part is paid at low speed, and the apoapsis is where the speed has to rise anyway.`}</p>
+            <p>${T`All three plans assume one thing: the apoapsis lies on the line of nodes. A burn can only turn the orbit into the target plane at a point that belongs to both planes, and for an equatorial target those points are the equator crossings. The transfer is therefore planned for it: the burn that leaves the parking orbit is made as the spacecraft crosses the equator, so the apoapsis, half an orbit later, is over the equator too. If the apoapsis were elsewhere, the burn there could not reach the equatorial plane, and the plane change would have to wait for a node, where the speed is higher and the cost larger.`}</p>
           </div>
         </section>
 
@@ -174,6 +354,7 @@
             <p>${T`The cheapest plane change is the one you never make: launch into the right plane. A rocket leaving a site at latitude φ along an azimuth β (measured from north, clockwise) ends up in an orbit of inclination i. Spherical trigonometry on the triangle formed by the site, the north pole and the point where the orbit crosses the equator gives:`}</p>
             <div class="eq">\\[ \\cos i = \\cos\\phi\\,\\sin\\beta, \\qquad \\sin\\beta = \\frac{\\cos i}{\\cos\\phi} \\]</div>
             ${Sym.where([['\\phi', N`latitude of the launch site`, N`rad or °`], ['\\beta', N`launch azimuth: direction of flight, from north, clockwise (90° is due east)`, N`rad or °`], 'i'], N`The sine has two solutions, β and 180° − β: a northeast launch and a southeast launch give the same inclination. Because sin β ≤ 1, a site can only reach i ≥ φ.`)}
+            ${figAzimuth()}
             <p>${T`Two consequences. First, the <b>minimum inclination equals the site latitude</b>, reached by launching due east (β = 90°). From Cape Canaveral, 28.5°, no direct launch gives a lower inclination. Kourou, at 5.2° N, reaches nearly the equator. Second, a larger inclination needs a more northerly azimuth, and the rocket gives up some of the speed that the Earth’s rotation provides.`}</p>
             <p>${T`The formula holds for the velocity in an inertial frame, the one that does not turn with the Earth. The pilot flies relative to the ground, which moves east at v<sub>eq</sub> cos φ (408 m/s at 28.5°, from v<sub>eq</sub> = 465 m/s). Subtract it from the eastward part of the velocity:`}</p>
             <div class="eq">\\[ \\tan\\beta_{rot} = \\frac{v_{orb}\\sin\\beta - v_{eq}\\cos\\phi}{v_{orb}\\cos\\beta} \\]</div>
@@ -236,6 +417,7 @@
         </section>
         ${Progress.debrief('planes', { math: 'trig', mathLabel: N`Sine, cosine and the law of cosines.` })}`;
 
+      mountPlane3D(page.querySelector('#pe'));
       mountLab(page.querySelector('#pl'));
       Practice.embed(page.querySelector('#practice-slot'), 'planes', 3);
     },
