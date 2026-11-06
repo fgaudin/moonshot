@@ -68,6 +68,144 @@
     ]);
   })();
 
+  /* ---------------- Figures: the three steps (animated) and what the COAS shows ---------------- */
+  App.css('docking-fig', `
+    .ds-steps { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0 0; padding: 0; align-items: center; }
+    .fig .ds-steps li + li { margin: 0; }
+    .ds-steps button { font: 500 .74rem/1.2 var(--f-mono); padding: .3rem .55rem; border-radius: 4px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); cursor: pointer; }
+    .ds-steps button[aria-current="step"] { border-color: var(--accent); color: var(--ink); }
+    .ds-steps button.done { color: var(--good); border-color: var(--good); }
+    .ds-steps .ds-play { margin-left: auto; color: var(--ink); }
+    .f-csm { fill: var(--panel); stroke: var(--ink); stroke-width: 1.4; } .f-lm { fill: var(--moon); fill-opacity: .55; stroke: var(--ink); stroke-width: 1; }
+    .f-plume { stroke: var(--warn); stroke-width: 2.4; stroke-linecap: round; } .f-plume.off { visibility: hidden; }
+    .f-good-dash { fill: none; stroke: var(--good); stroke-width: 1.2; stroke-dasharray: 3 5; }
+    .f-sight { fill: none; stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 2 3; }
+    .coas-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .8rem; }
+    .coas-row > div { display: flex; flex-direction: column; gap: .3rem; }
+    .coas-row svg { display: block; width: 100%; height: auto; }
+    .coas-row .cv { border-radius: 6px; }
+    .coas-row b { font: 600 .78rem/1.25 var(--f-mono); }
+    .coas-row span { font-size: .8rem; line-height: 1.35; color: var(--muted); }
+    .coas-row .ok { color: var(--good); }`);
+
+  // Figure 7.1: rotate, slide onto the axis, close in. Top-down, the chaser's pose is a pure function of time.
+  function figSteps() {
+    const steps = [T`1 · Rotate`, T`2 · Onto the axis`, T`3 · Close in`];
+    return `<figure class="fig" id="ds-fig" role="img" aria-label="${T`Animation, top-down view. A chaser below the target’s docking axis, turned 30° and drifting away from the axis, first rotates until it is parallel to the axis, then thrusts sideways to stop the drift and slide onto the axis, then closes in slowly along the axis, braking on the way, until its probe enters the target’s drogue.`}">
+      <div class="fig-box"><svg viewBox="0 0 400 190" aria-hidden="true">
+        <line class="f-good-dash" x1="0" y1="90" x2="328" y2="90"/>
+        <rect class="f-lm" x="330" y="52" width="58" height="76" rx="3"/>
+        <path class="f-ac-fill" d="M330,82 L336,86 L336,94 L330,98 Z"/>
+        <g id="ds-csm">
+          <path class="f-csm" d="M-33,-11.7 L9,-11.7 L27,-3.6 L27,3.6 L9,11.7 L-33,11.7 Z"/>
+          <line class="f-ink-ln" x1="27" y1="0" x2="33" y2="0" style="stroke-width:2.2"/>
+          <line class="f-plume off" data-p="fwd" x1="-18" y1="-13" x2="-27" y2="-13"/><line class="f-plume off" data-p="fwd" x1="-18" y1="13" x2="-27" y2="13"/>
+          <line class="f-plume off" data-p="back" x1="-6" y1="-13" x2="3" y2="-13"/><line class="f-plume off" data-p="back" x1="-6" y1="13" x2="3" y2="13"/>
+          <line class="f-plume off" data-p="up" x1="-12" y1="13" x2="-12" y2="22"/>
+          <line class="f-plume off" data-p="down" x1="-12" y1="-13" x2="-12" y2="-22"/>
+          <line class="f-plume off" data-p="rot" x1="20" y1="-7" x2="20" y2="-15"/><line class="f-plume off" data-p="rot" x1="-28" y1="13" x2="-28" y2="21"/>
+          <line class="f-plume off" data-p="rot2" x1="20" y1="7" x2="20" y2="15"/><line class="f-plume off" data-p="rot2" x1="-28" y1="-13" x2="-28" y2="-21"/>
+        </g>
+        <path id="ds-v" class="f-tr" d=""/><path id="ds-vh" class="f-tr-fill" d=""/>
+      </svg>${[[[359, 140], T`target`, 'm'], [[12, 82], T`docking axis`, 'gd l']].map(([[x, y], t, c]) => `<span class="lb ${c}" style="left:${(x / 4).toFixed(2)}%;top:${(100 * y / 190).toFixed(2)}%">${t}</span>`).join('')}</div>
+      <ol class="ds-steps">${steps.map((s, k) => `<li><button type="button" data-k="${k}">${s}</button></li>`).join('')}<li class="ds-play"><button type="button" class="ds-play" id="ds-play">${T`▸ Play`}</button></li></ol>
+      <figcaption>${T`Not to scale, time compressed. Orange: thruster firings. Blue arrow: the chaser’s velocity relative to the target. Click a step to replay it.`}</figcaption></figure>`;
+  }
+
+  function mountSteps(fig) {
+    if (!fig) return;
+    const csm = fig.querySelector('#ds-csm'), vLine = fig.querySelector('#ds-v'), vHead = fig.querySelector('#ds-vh');
+    const plumes = [...fig.querySelectorAll('.f-plume')], btns = [...fig.querySelectorAll('.ds-steps [data-k]')], play = fig.querySelector('#ds-play');
+    // phases (s): hold, rotate, onto the axis, close in, docked
+    const T0 = 1.2, T1 = T0 + 2.2, T2 = T1 + 3.2, T3 = T2 + 5.5, TE = T3 + 2.2, STEP = [T0, T1, T2];
+    const sm = (u) => (u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u));
+    const DRIFT = 5, Y0 = 140, X0 = 96, XD = 297;                     // px/s away from the axis; start and docked positions
+    function pose(t) {
+      const th = -30 * (1 - sm((t - T0) / (T1 - T0)));
+      let y;
+      if (t <= T1) y = Y0 + DRIFT * t;
+      else { const yc = Y0 + DRIFT * T1, D = T2 - T1, u = Math.min(1, (t - T1) / D);
+        // cubic Hermite from (yc, +DRIFT) to (90, 0): the drift is stopped, then the ship slides onto the axis and stops
+        const h10 = u * u * u - 2 * u * u + u, h01 = -2 * u * u * u + 3 * u * u; y = yc + (90 - yc) * h01 + DRIFT * D * h10; }
+      const u = Math.max(0, Math.min(1, (t - T2) / (T3 - T2)));
+      const x = X0 + (XD - X0) * (0.82 * (1 - (1 - u) * (1 - u)) + 0.18 * u);   // braking all the way, still moving at contact
+      return { x, y, th, u };
+    }
+    let t = 0, playing = false, stop = null;
+    function draw() {
+      const p = pose(t), q = pose(Math.min(TE, t + 0.05)), vx = (q.x - p.x) / 0.05, vy = (q.y - p.y) / 0.05;
+      csm.setAttribute('transform', `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) rotate(${p.th.toFixed(2)})`);
+      const on = { rot: t > T0 && t < T0 + 0.35, rot2: t > T1 - 0.35 && t < T1, up: t > T1 && t < T1 + 1.3, down: t > T2 - 1.2 && t < T2,
+        fwd: t > T2 && t < T2 + 0.6, back: t > T2 + 2.2 && t < T2 + 2.6 || t > T2 + 4.0 && t < T2 + 4.3 };
+      plumes.forEach((pl) => pl.classList.toggle('off', !on[pl.dataset.p] || !playing && t >= TE));
+      const sp = Math.hypot(vx, vy), k = 2.2;
+      if (sp > 0.8 && t < T3) {
+        const ex = p.x + vx * k, ey = p.y + vy * k, a = Math.atan2(vy, vx), h = (s) => `${(ex - 7 * Math.cos(a + s)).toFixed(1)},${(ey - 7 * Math.sin(a + s)).toFixed(1)}`;
+        vLine.setAttribute('d', `M${p.x.toFixed(1)},${p.y.toFixed(1)}L${ex.toFixed(1)},${ey.toFixed(1)}`); vHead.setAttribute('d', `M${h(0.45)}L${ex.toFixed(1)},${ey.toFixed(1)}L${h(-0.45)}Z`);
+      } else { vLine.setAttribute('d', ''); vHead.setAttribute('d', ''); }
+      const cur = t < T0 ? -1 : t < T1 ? 0 : t < T2 ? 1 : t < T3 ? 2 : 3;
+      btns.forEach((b, k2) => { b.classList.toggle('done', k2 < cur); if (k2 === cur) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+    }
+    const setPlaying = (v) => {
+      playing = v; play.textContent = v ? T`❚❚ Pause` : T`▸ Play`;
+      if (v && !stop) stop = UI.loop((dt) => { t += dt; if (t > TE) t = 0; draw(); });
+      if (!v && stop) { stop(); stop = null; }
+    };
+    play.addEventListener('click', () => { if (!playing && t >= TE - 0.01) t = 0; setPlaying(!playing); draw(); });
+    btns.forEach((b) => b.addEventListener('click', () => { t = STEP[+b.dataset.k] - 0.3; fig.dataset.paused = ''; setPlaying(true); draw(); }));
+    // play only while visible, and never on its own when the reader asked for reduced motion
+    if (!UI.reducedMotion() && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(([e]) => { if (e.isIntersecting && !fig.dataset.paused) setPlaying(true); else if (!e.isIntersecting) setPlaying(false); });
+      io.observe(fig); UI.onCleanup(() => io.disconnect());
+      play.addEventListener('click', () => { fig.dataset.paused = playing ? '' : '1'; });
+    }
+    if (UI.reducedMotion()) t = TE;
+    draw();
+  }
+
+  // Figure 7.5: the COAS view in three cases, with the lab's geometry (planar: everything on the sight's horizontal line).
+  function figCOAS() {
+    const W = 160, H = 120, cx = W / 2, cy = H / 2, FOV = 16 * Math.PI / 180, K = W / FOV, R = 6, d = Math.PI / 180;
+    const f1 = (v) => v.toFixed(1);
+    // target port at the origin, its axis along −x (towards the chaser); eye at (ex, ey), nose at heading psi (rad, CCW from +x)
+    function view(ex, ey, psi) {
+      const bear = (px, py) => Math.atan2(py - ey, px - ex) - psi, X = (px, py) => cx - K * bear(px, py);
+      const dist = (px, py) => Math.hypot(px - ex, py - ey);
+      const disc = X(0, 0), rD = K * Math.atan(TGT_R / dist(0, 0)), cr = X(-STANDOFF, 0), a = K * Math.atan(CROSS_ARM / dist(-STANDOFF, 0));
+      const fa = X(0.3, 2.1), fb = X(0.3, -2.1), half = K * Math.atan(2.1 / dist(0.3, 0));
+      let tick = '';
+      for (let k = -8; k <= 8; k++) { if (!k) continue; const px = cx + K * k * d, py = cy - K * k * d, L = k % 5 ? 2.5 : 5;
+        tick += `M${f1(px)},${cy - L}V${cy + L}M${cx - L},${f1(py)}H${cx + L}`; }
+      return `<svg class="cv" viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <rect width="${W}" height="${H}" fill="#05080d"/>
+        <rect x="${f1(Math.min(fa, fb))}" y="${f1(cy - half)}" width="${f1(Math.abs(fa - fb))}" height="${f1(2 * half)}" fill="#4a4f57" stroke="#8b9099"/>
+        <circle cx="${f1(disc)}" cy="${cy}" r="${f1(rD)}" fill="#2a2e35" stroke="#c9d2df" stroke-width="2"/>
+        <path d="M${f1(cr - a)},${cy}H${f1(cr + a)}M${f1(cr)},${f1(cy - a)}V${f1(cy + a)}" stroke="#5fd39a" stroke-width="2.4"/>
+        <path d="M0,${cy}H${W}M${cx},0V${H}${tick}" stroke="rgba(255,210,120,.6)" stroke-width=".8" fill="none"/>
+        <circle cx="${cx}" cy="${cy}" r="${f1(K * 2 * d)}" stroke="rgba(255,210,120,.6)" stroke-width=".8" fill="none"/>
+        <text x="${f1(cx - K * 5 * d)}" y="${cy + 14}" fill="rgba(255,210,120,.85)" font-size="8" font-family="monospace" text-anchor="middle">5°</text></svg>`;
+    }
+    // top-down sketch (the eye below the axis for off > 0), angles exaggerated so they can be seen
+    function sketch(off, psi) {
+      const px = 140, py = 22, L = 105, ex = px - L * Math.cos(off), ey = py + L * Math.sin(off), nx = Math.cos(psi), ny = -Math.sin(psi);
+      return `<svg viewBox="0 0 160 72" aria-hidden="true">
+        <line class="f-good-dash" x1="8" y1="${py}" x2="${px}" y2="${py}"/>
+        <rect class="f-lm" x="${px}" y="${py - 14}" width="14" height="28" rx="2"/><path class="f-ac-fill" d="M${px},${py - 4}L${px + 3},${py - 2}V${py + 2}L${px},${py + 4}Z"/>
+        <line class="f-sight" x1="${f1(ex)}" y1="${f1(ey)}" x2="${px}" y2="${py}"/>
+        <line class="f-ink-ln" x1="${f1(ex)}" y1="${f1(ey)}" x2="${f1(ex + 26 * nx)}" y2="${f1(ey + 26 * ny)}" style="stroke-width:2"/>
+        <circle class="f-ink-fill" cx="${f1(ex)}" cy="${f1(ey)}" r="3.5"/></svg>`;
+    }
+    const off = 15 * d, eC = [-R * Math.cos(off), R * Math.sin(off)];
+    const cases = [
+      [sketch(0, 0), view(-R, 0, 0), T`On the axis, aligned`, T`Target in the centre, cross in the middle of the disc. Keep closing.`, 'ok'],
+      [sketch(0, 12 * d), view(-R, 0, 4 * d), T`On the axis, nose turned 4°`, T`The whole target is off-centre, but the cross still sits in the middle of the disc: you are on the axis. Rotate.`],
+      [sketch(25 * d, 25 * d), view(eC[0], -eC[1], Math.atan2(eC[1], -eC[0])), T`15° off the axis, nose on the target`, T`The target is centred, but the cross has slid off the middle of the disc: parallax. You see the port from an angle. Translate onto the axis.`],
+    ];
+    return `<figure class="fig" style="max-width:44rem" role="img" aria-label="${T`Three COAS views with a top-down sketch above each. On the axis and aligned: the target is centred and the cross sits in the middle of the disc. On the axis with the nose turned 4°: the whole target is shifted off the reticle centre, the cross still in the middle of the disc. 15° off the axis with the nose on the target: the target is centred but the cross is offset from the middle of the disc.`}">
+      <div class="coas-row">${cases.map(([s, v, h, txt, c]) => `<div>${s}${v}<b class="${c || ''}">${h}</b><span>${txt}</span></div>`).join('')}</div>
+      <figcaption>${T`Computed with the lab’s geometry at 6 m from the port: target disc 0.25 m in radius, cross 0.45 m in front of it, reticle marks every degree. The sketches above exaggerate the angles. Where the target sits in the reticle tells you where your nose points; where the cross sits in the disc tells you where you are.`}</figcaption></figure>`;
+  }
+
   App.chapter({
     id: 'docking', phase: N`Docking`, title: N`Docking`, lab: N`Docking simulator`,
     blurb: N`Two ships, one line: match attitude, position and velocity to within centimetres per second.`,
@@ -94,6 +232,7 @@
             ${Sym.where([['\\hat a_c', N`unit vector along the chaser’s docking axis (a hat means length 1: a pure direction)`, '—'], ['\\hat a_t', N`unit vector along the target’s docking axis, pointing out of its port`, '—'], ['\\cdot', N`dot product: for unit vectors it equals the cosine of the angle between them. −1 means exactly opposite (180°)`, ''], ['d_\\perp', N`sideways distance between the chaser’s probe and the target’s axis`, 'm'], ['\\vec v_{rel}', N`velocity of the chaser relative to the target`, 'm/s'], ['v_{close}', N`closing speed along the axis: walking pace is 1.4 m/s; docking is 5 to 50 times slower`, 'm/s']], N`Apollo’s probe could capture within about 0.3 m and 10° of misalignment, at 3 to 30 cm/s.`)}
             ${Primer.box('vectors', false, 'refresher')}
             <p>${T`Crews tackle them in a fixed order. <b>Rotate first</b>: turning costs little propellant and changes nothing else. Then <b>null the sideways drift and slide onto the axis</b>. Only then <b>close in</b>, slowing down at each “braking gate” as the range shrinks: a common rule is a closing speed of about 1% of the range per second when far out, down to a few centimetres per second at contact.`}</p>
+            ${figSteps()}
           </div>
         </section>
 
@@ -152,7 +291,8 @@
 
         <section class="section">
           <h2><span class="idx">7.5</span>${T`Lab: dock`}</h2>
-          <div class="prose"><p>${T`Top-down view in the target’s frame, real RCS numbers. The dashed line predicts your path if you stop firing. The <b>COAS</b> inset is the view through the Crewman Optical Alignment Sight in the CSM window: when you are on the axis and aligned, the docking target’s stand-off cross sits in the middle of the target disc behind it. A cross offset from the ring means your angle is off (parallax); the whole target off-centre means you are off the axis.`}</p>
+          <div class="prose"><p>${T`Top-down view in the target’s frame, real RCS numbers. The dashed line predicts your path if you stop firing. The <b>COAS</b> inset is the view through the Crewman Optical Alignment Sight in the CSM window: when you are on the axis and aligned, the docking target sits in the middle of the reticle and its stand-off cross sits in the middle of the target disc behind it. The two read different things. The cross stays in the middle of the disc only while you are on the target’s axis: an offset means you see the port from an angle (parallax). Where the whole target sits in the reticle only tells you where your nose points.`}</p>
+          ${figCOAS()}
           <p class="mono note">${T`Keys: ↑/↓ or W/S thrust forward/back · ←/→ or A/D translate left/right · Q/E rotate · hold Shift for fine thrust · F cycles thruster mode · H cycles rotation mode · V toggles real mode · 1/2/3 time warp · R restart. Buttons work on touch screens (hold to fire).`}</p>
           <p>${T`The scenario <b>Terminal phase (from 2 km)</b> adds the part before all this. The map zooms out as the range grows, with rings at the braking gates and their speed limits. The readouts show the range, the closing speed, the gate limit and the line-of-sight rate against the stars (positive: the target drifts to the left of your nose; thrust left to stop it). Closing faster than the limit turns the readout red and warns “over the gate”.`}</p>
           <p>${T`<b>Real mode</b> hides the map: you fly from the COAS and the numbers alone, as the crews did. The target’s face grows as you approach and narrows when you come in at an angle. Watch the stand-off cross against the target disc behind it, and the degree marks on the reticle.`}</p></div>
@@ -190,6 +330,8 @@
 
         ${Archive.capsule('dockingSystem')}
 
+        ${Archive.capsule('rcsQuad')}
+
         <section class="section">
           <h2><span class="idx">7.7</span>${T`Apollo’s two dockings`}</h2>
           <div class="prose">
@@ -206,6 +348,7 @@
         </section>
         ${Progress.debrief('docking', { math: 'relative', mathLabel: N`Relative velocity and reference frames.` })}`;
 
+      mountSteps(page.querySelector('#ds-fig'));
       mountDocking(page.querySelector('#dk'));
       Practice.embed(page.querySelector('#practice-slot'), 'docking', 2);
     },

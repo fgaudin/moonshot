@@ -59,6 +59,12 @@
       alt: N`Engineering set-up of the Apollo docking system: a cone-shaped drogue above the probe mechanism`,
       story: N`An engineering set-up of the Apollo docking system: the command module’s probe entering the lunar module’s cone-shaped drogue. The capture latches at the probe tip snap into the socket at the bottom of the cone; then the probe retracts, and twelve latches around the tunnel ring lock the two spacecraft together.`,
     },
+    rcsQuad: {
+      img: 'as09-24-3641', date: '1969-03-07', mission: 'Apollo 9',
+      title: N`Sixteen small thrusters`,
+      alt: N`The Apollo 9 service module seen from the side: on its silver skin, a cross-shaped cluster of four small rocket nozzles pointing up, down, left and right`,
+      story: N`Apollo 9’s command and service modules, Gumdrop, photographed through a window of the lunar module Spider on the fifth day of the mission, the first flight test of the lunar module, in Earth orbit. The cross in the middle of the service module is one of its four RCS quads: four 445 N thrusters, pointing forward, aft and to both sides. Two more quads stand out edge-on at the left and right edges. The quads sit 90° apart around the module, sixteen thrusters in all. Fired in the right pairs, the same jets turn the spacecraft or push it along any axis. This crop is from the full frame, which shows the whole spacecraft through Spider’s window.`,
+    },
     eagleReturns: {
       img: 'as11-44-6642', date: '1969-07-21', mission: 'Apollo 11',
       title: N`Eagle comes home`,
