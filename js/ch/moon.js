@@ -270,7 +270,8 @@
 
   /* ---------------- The Earth–Moon lab (patched conics; optional MCC, three-body model and Earth zoom) ---------------- */
   App.css('moon-lab', `
-    .ml-verdict { border: 1px solid var(--line); border-left: 4px solid var(--muted); border-radius: 6px; padding: .55rem .7rem; background: var(--panel); }
+    .ml-ctl output { white-space: nowrap; min-width: 11ch; text-align: right; font-variant-numeric: tabular-nums; }
+    .ml-verdict { min-height: 5.2rem; border: 1px solid var(--line); border-left: 4px solid var(--muted); border-radius: 6px; padding: .55rem .7rem; background: var(--panel); }
     .ml-verdict b { display: block; font: 600 .84rem/1.3 var(--f-mono); }
     .ml-verdict span { display: block; font: .74rem/1.4 var(--f-mono); color: var(--muted); margin-top: .25rem; }
     .ml-verdict.good { border-left-color: var(--good); } .ml-verdict.good b { color: var(--good); }
@@ -280,19 +281,21 @@
     .tl-lab.ml-two .tl-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     @media (max-width: 860px) { .tl-lab.ml-two .tl-groups { grid-template-columns: minmax(0, 1fr); } }`);
 
+  const MCC_MAX = 1;   // m/s: the MCC slider spans ±MCC_MAX, fine enough to hit a 45 km corridor by hand
   const MoonLab = {
-    /* cfg: { id, title, presets, start: preset key, loi, mcc (also enables the model switch), earthZoom, detail: 'moon' | 'return' } */
+    /* cfg: { id, title, presets, start: preset key, loi, mcc (also enables the model switch), earthZoom, detail: 'moon' | 'return',
+             moonSpan: fixed width of the Moon zoom in m (else it follows the spacecraft), startPaused: open paused at launch } */
     markup(cfg) {
       const id = cfg.id, st = cfg.presets[cfg.start];
-      const flight = `<div class="tl-group"><h4>${T`Flight`}</h4>
+      const flight = `<div class="tl-group ml-ctl"><h4>${T`Flight`}</h4>
           <div class="ctl"><label for="${id}-preset"><span>${T`Scenario`}</span></label><select id="${id}-preset">${Object.entries(cfg.presets).map(([k, q]) => `<option value="${k}"${k === cfg.start ? ' selected' : ''}>${T(q.label)}</option>`).join('')}</select></div>
           ${UI.slider({ id: `${id}-dv`, label: T`TLI Δv`, min: cfg.dvRange ? cfg.dvRange[0] : 3000, max: cfg.dvRange ? cfg.dvRange[1] : 3250, step: 1, value: st.dv, unit: 'm/s' })}
           ${UI.slider({ id: `${id}-ang`, label: T`TLI burn position (from Earth–Moon line)`, min: cfg.angRange ? cfg.angRange[0] : -150, max: cfg.angRange ? cfg.angRange[1] : -110, step: 0.01, value: st.ang, unit: '°' })}
           ${cfg.loi ? `<label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="${id}-loi"${st.loi ? ' checked' : ''}> ${T`Fire LOI at periselene (retrograde)`}</label>
           ${UI.slider({ id: `${id}-loidv`, label: T`LOI Δv`, min: 800, max: 960, step: 1, value: st.loiDv || 900, unit: 'm/s' })}` : ''}
         </div>`;
-      const mc = cfg.mcc ? `<div class="tl-group"><h4>${T`Mission Control`}</h4>
-          ${UI.slider({ id: `${id}-mcc`, label: T`MCC at GET 26:42 (along-track)`, min: -15, max: 15, step: 0.01, value: st.mcc || 0, unit: 'm/s' })}
+      const mc = cfg.mcc ? `<div class="tl-group ml-ctl"><h4>${T`Mission Control`}</h4>
+          ${UI.slider({ id: `${id}-mcc`, label: T`MCC at GET 26:42 (along-track)`, min: -MCC_MAX, max: MCC_MAX, step: 0.005, value: st.mcc || 0, unit: 'm/s' })}
           <button class="btn" id="${id}-solve">${T`Mission Control: solve MCC for 40 km entry`}</button>
           <div class="ctl"><span class="mono note">${T`Physics model`}</span><div class="seg" id="${id}-model" role="group" aria-label="${T`Physics model`}"><button data-v="patched" aria-pressed="true">${T`Patched conics (plan)`}</button><button data-v="three" aria-pressed="false">${T`Three-body (reality)`}</button></div></div>
           <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="${id}-ghost"> ${T`Show the other model as a ghost`}</label>
@@ -304,7 +307,7 @@
           <div class="stage"><canvas id="${id}-cv" aria-label="${T`Spacecraft trajectory between Earth and Moon`}"></canvas><div class="overlay" id="${id}-ov"></div></div>
           <div class="tl-side">
             <div class="ml-verdict" id="${id}-verdict" aria-live="polite"></div>
-            <div class="mini ml-zoom"><h4 id="${id}-zt" data-at="soi">${T`Zoom: the Moon’s sphere of influence`}</h4><canvas id="${id}-zm" aria-label="${T`Close-up that follows the spacecraft: centred on the Earth near the Earth, on the Moon near the Moon`}"></canvas></div>
+            <div class="mini ml-zoom"><h4 id="${id}-zt" data-at="${cfg.moonSpan ? 'moon' : 'soi'}">${cfg.moonSpan ? T`Zoom: close to the Moon` : T`Zoom: the Moon’s sphere of influence`}</h4><canvas id="${id}-zm" aria-label="${cfg.moonSpan ? T`Fixed close-up of the Moon, showing how far above the surface the spacecraft passes, or where it hits` : T`Close-up that follows the spacecraft: centred on the Earth near the Earth, on the Moon near the Moon`}"></canvas></div>
             ${cfg.earthZoom ? `<div class="mini ml-zoom"><h4>${T`Zoom: the return to Earth`}</h4><canvas id="${id}-ze" aria-label="${T`Close-up of the return to Earth, with a gauge comparing the return perigee with the entry corridor`}"></canvas></div>` : ''}
           </div>
           <div class="tl-transport">
@@ -318,7 +321,8 @@
     mount(root, cfg) {
       const id = cfg.id, $ = (k) => root.querySelector(`#${id}-${k}`), val = (v, k) => v[`${id}-${k}`];
       const simFor = (m) => (m === 'three' ? Phys.simulateTLI : Phys.simulatePatched);
-      let model = 'patched', sim = null, other = null, frameName = 'rotating', idx = 0, tNow = 0, warp = 0, slowNote = '', playing = !UI.reducedMotion();
+      let model = 'patched', sim = null, other = null, frameName = 'rotating', idx = 0, tNow = 0, warp = 0, slowNote = '', playing = !UI.reducedMotion() && !cfg.startPaused;
+      let atStart = !!cfg.startPaused;   // first view: paused at launch, waiting for Play
       const tEnd = () => sim.pts[sim.pts.length - 1].t;
       // the lunar orbit after LOI: lowest and highest altitude (cached on the run)
       const lunarOrbit = (s) => { if (!s.loiT) return null; if (s.orbitAlt === undefined) { const r = s.pts.filter((q) => q.t > s.loiT).map((q) => q.rM - C.RM); s.orbitAlt = r.length ? [Math.min(...r), Math.max(...r)] : null; } return s.orbitAlt; };
@@ -327,7 +331,7 @@
         let lo = 0, hi = sim.pts.length - 1;
         while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (sim.pts[mid].t <= tNow) lo = mid; else hi = mid - 1; }
         idx = lo;
-        if (flown && cfg.onFlown && sim) cfg.onFlown(sim, tNow, { lunarOrbit });
+        if (flown && cfg.onFlown && sim) cfg.onFlown(sim, tNow, { lunarOrbit, inCorridor });
       }
       // objectives count only after the candidate has changed a control themselves (not a preset)
       let touched = false;
@@ -337,8 +341,9 @@
       const view = UI.canvas($('cv'), null), zm = UI.canvas($('zm'), null), ze = cfg.earthZoom ? UI.canvas($('ze'), null) : null;
       const zooms = [zm, ze].filter(Boolean);
       const MCC_T = 26.7 * 3600;
+      let vMinH = 0;   // tallest verdict so far
       const simOpts = (v) => ({ dv: val(v, 'dv'), burnAngle: val(v, 'ang'), mcc: cfg.mcc ? { t: MCC_T, dv: val(v, 'mcc') } : null, loi: cfg.loi && val(v, 'loi') ? { dv: val(v, 'loidv') } : null });
-      const fmts = { [`${id}-dv`]: (x) => UI.fmt(x, 0), [`${id}-ang`]: (x) => x.toFixed(2), [`${id}-loidv`]: (x) => UI.fmt(x, 0), [`${id}-mcc`]: (x) => (x > 0 ? '+' : '') + x.toFixed(2), [`${id}-t`]: () => (sim ? 'GET ' + UI.fmtTime(tNow) : '') };
+      const fmts = { [`${id}-dv`]: (x) => UI.fmt(x, 0), [`${id}-ang`]: (x) => x.toFixed(2), [`${id}-loidv`]: (x) => UI.fmt(x, 0), [`${id}-mcc`]: (x) => (x > 0 ? '+' : '') + x.toFixed(3), [`${id}-t`]: () => (sim ? 'GET ' + UI.fmtTime(tNow) : '') };
       const ctl = UI.bindControls(root, fmts, (v, src) => {
         if (src === `${id}-t`) { seek(val(v, 't') * tEnd()); playing = false; setPlayLabel(); draw(); zooms.forEach((z) => z.redraw()); return; }
         const wasBad = sim && !inCorridor(sim);
@@ -346,7 +351,7 @@
         const gh = $('ghost');
         other = gh && gh.checked ? simFor(model === 'patched' ? 'three' : 'patched')(simOpts(v)) : null;
         if (cfg.onResult) cfg.onResult(sim, { model, touched, src, wasBad, inCorridor });
-        seek(playing ? 0 : Infinity, false);
+        seek(playing || atStart ? 0 : Infinity, false); atStart = false;
         summarize(); draw(); zooms.forEach((z) => z.redraw());
       });
       ['loi', 'ghost'].forEach((k) => { const el = $(k); if (el) el.addEventListener('change', () => ctl.update()); });
@@ -363,10 +368,10 @@
         const btn = e.currentTarget, v = ctl.read();
         btn.textContent = T`Computing…`;
         setTimeout(() => {
-          const dv = Phys.solveMCC({ ...simOpts(v), mcc: { t: MCC_T, dv: 0 } }, 40000, 15, simFor(model));
-          if (dv == null) { btn.textContent = T`No fix within ±15 m/s: adjust TLI`; return; }
-          btn.textContent = T`RTCC solution: ${dv >= 0 ? '+' : ''}${UI.dec(dv.toFixed(2))} m/s. Solve again`;
-          ctl.set(`${id}-mcc`, dv.toFixed(2)); tNow = 0; playing = true; setPlayLabel(); touched = true; ctl.update(`${id}-mcc`);
+          const dv = Phys.solveMCC({ ...simOpts(v), mcc: { t: MCC_T, dv: 0 } }, 40000, MCC_MAX, simFor(model));
+          if (dv == null) { btn.textContent = T`No fix within ±1 m/s: adjust TLI`; return; }
+          btn.textContent = T`RTCC solution: ${dv >= 0 ? '+' : ''}${UI.dec(dv.toFixed(3))} m/s. Solve again`;
+          ctl.set(`${id}-mcc`, (Math.round(dv / 0.005) * 0.005).toFixed(3)); tNow = 0; playing = true; setPlayLabel(); touched = true; ctl.update(`${id}-mcc`);
         }, 30);
       });
       UI.seg(root, `#${id}-view`, (f) => { frameName = f; draw(); });
@@ -397,9 +402,11 @@
       function summarize() {
         const s = sim, [cls, title, detail] = verdict(s), vEl = $('verdict');
         vEl.className = 'ml-verdict ' + cls; vEl.innerHTML = `<b>${title}</b>${detail ? `<span>${detail}</span>` : ''}`;
+        // the box only grows, so a shorter verdict never shifts the controls under the pointer
+        vEl.style.minHeight = ''; vMinH = Math.max(vEl.offsetHeight, vMinH); vEl.style.minHeight = vMinH + 'px';
         const km = (m) => (isFinite(m) ? T`${km0(m)} km alt.` : '—'), v = ctl.read();
         const lines = [[T`Speed after TLI`, `${UI.fmt(s.v0 / 1000, 3)} km/s`]];
-        if (cfg.mcc && Math.abs(val(v, 'mcc')) > 0) lines.push([T`MCC burn`, `${UI.dec(val(v, 'mcc').toFixed(2))} m/s`]);
+        if (cfg.mcc && Math.abs(val(v, 'mcc')) > 0) lines.push([T`MCC burn`, `${UI.dec(val(v, 'mcc').toFixed(3))} m/s`]);
         lines.push([T`Closest lunar approach`, s.minM.alt < 0 ? T`impact` : km(s.minM.alt)], [T`Closest approach at GET`, UI.fmtTime(s.minM.t)]);
         const pc = s.model === 'patched' ? s : other && other.model === 'patched' ? other : null;
         if (pc && pc.conic.soiIn && (s.model === 'patched' || cfg.detail === 'moon')) {
@@ -490,6 +497,8 @@
       // closes in (the patch point, then the flyby or the lunar orbit). Not rotating, so the patched legs are true conics.
       const zEase = { at: null, span: 0, t: 0 };
       const zoomOf = (p) => {
+        // a fixed close-up (free return: the flyby altitude or the impact matters, not the approach)
+        if (cfg.moonSpan) return { at: 'moon', span: cfg.moonSpan };
         if (p.rE < 6e7 && p.rM > R_SOI) return { at: 'earth', span: Math.max(2.5e7, 2.6 * p.rE) };
         // in lunar orbit after LOI the distance stays small: frame the whole orbit, its high point at the edge
         const o = sim.loiT && p.t >= sim.loiT ? lunarOrbit(sim) : null;

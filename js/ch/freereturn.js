@@ -6,9 +6,9 @@
 
   Progress.register('freereturn', {
     name: N`Free Return`, topic: 'freereturn', glyph: 'figure8',
-    briefing: N`Three days of coasting towards a target moving at a kilometre per second. Get the trans-lunar burn right and the Moon itself will swing you home if anything breaks, as it did for Apollo 13. Get it wrong by a tenth of a metre per second and you will need Mission Control. You are in Mission Control today, {name}.`,
+    briefing: N`Three days of coasting towards a target moving at a kilometre per second. Get the trans-lunar burn right and the Moon itself will swing you home if anything breaks. Apollo 13 had already left that path when its oxygen tank exploded; a short burn put it back on, and the Moon brought the crew home. Get it wrong by a tenth of a metre per second and you will need Mission Control. You are in Mission Control today, {name}.`,
     objectives: [
-      { id: 'free', text: N`Fly a free return that comes home inside the entry corridor` },
+      { id: 'free', text: N`Fly a free return all the way home: play it to entry interface, inside the entry corridor` },
       { id: 'rescue', text: N`Rescue a bad trajectory with a midcourse correction` },
       { id: 'reality', text: N`Fly a free return inside the corridor in the three-body model` },
       { id: 'qual', text: N`Qualify: answer 2 free-return problems correctly` },
@@ -44,40 +44,73 @@
     .f-tr-ln-faint { fill: none; stroke: var(--trace); stroke-width: 1.6; opacity: .45; } .f-tr-fill-faint { fill: var(--trace); opacity: .45; }
     .f-gd-ln { fill: none; stroke: var(--good); stroke-width: 2; } .f-gd-fill { fill: var(--good); } .fig .lb.gd { color: var(--good); }
     .f-ac-faint { fill: none; stroke: var(--accent); stroke-width: 1.6; opacity: .4; } .f-ac-fill-faint { fill: var(--accent); opacity: .4; }
+    .f-dot { stroke-dasharray: 1.5 4; stroke-linecap: round; stroke-width: 2; }
+    .fr-pair { flex-direction: row; flex-wrap: wrap; align-items: flex-start; } .fr-pair .fig { flex: 1 1 30rem; max-width: 34rem; }   /* side by side only when both fit at a readable size */
     .fr-ctl { margin-top: .5rem; } .fr-ro { font: .78rem/1.5 var(--f-mono); color: var(--ink); margin-top: .3rem; } .fr-ro .bad { color: var(--bad); }`);
 
   // the lab's free return at the entry patch point (patched-conic model): v☾, v∞ and the turn δ, in km/s and degrees
   const VM = 1.0245, VINF = 1.038, VSC = 0.9246, TH = 69.1 * D2, DELTA = 86.0 * D2;
   const vRelDir = vunit(vsub([VSC * Math.sin(TH), VSC * Math.cos(TH)], [0, VM]));
 
-  /* ---------------- Figure 1: what the flyby does to the velocity relative to Earth ---------------- */
+  /* ---------------- Figure 1: what the flyby does to the velocity relative to Earth, two cases ---------------- */
+  // The Moon's sphere of influence with the flyby hyperbola, and at each patch point the triangle v_sc = v☾ + v_rel,
+  // to scale (k px per km/s). Same arrival, two sides of the Moon: turned clockwise (free return) or anticlockwise
+  // (slingshot) by δ. The hyperbola has the true eccentricity; its periselene is enlarged (true: 3 % of the sphere).
+  function figFlybyCase(sling, ext) {   // ext: shared extent [x0, x1] (and optionally y0, y1), so both panels have one scale
+    const R = 92, k = 50, e = 1 / Math.sin(DELTA / 2), rp = 0.07 * R, p = rp * (1 + e);
+    const nuR = Math.acos((p / R - 1) / e), nuI = Math.acos(-1 / e), sg = sling ? 1 : -1;
+    const vm = [0, VM], vin = vsub([VSC * Math.sin(TH), VSC * Math.cos(TH)], vm), vrIn = vin, vrOut = rot(vrIn, sg * DELTA);
+    const vsIn = vadd(vm, vrIn), vsOut = vadd(vm, vrOut);
+    // perifocal hyperbola (anticlockwise), mirrored for a clockwise turn, turned so its arrival matches v_rel in
+    const dIn = [-Math.cos(nuI), sg * Math.sin(nuI)], tw = Math.atan2(vrIn[1], vrIn[0]) - Math.atan2(dIn[1], dIn[0]);
+    const hyp = [...Array(61).keys()].map((j) => { const nu = -nuR + 2 * nuR * j / 60, r = p / (1 + e * Math.cos(nu)); return rot([r * Math.cos(nu), sg * r * Math.sin(nu)], tw); });
+    const P1 = hyp[0], P2 = hyp[60];
+    // the Earth-centred legs outside the sphere, dotted: tangent to v_in / v_out at the patch point, bent toward the
+    // Earth (left) as gravity would (dir −1: before patch 1, +1: after patch 2, ending just past the v_out tip). Schematic, like the enlarged periselene.
+    const leg = (P, v, dir) => { const u = vunit(v); return [...Array(13).keys()].map((j) => { const t = (dir > 0 ? Math.max(60, Math.hypot(...v) * k + 30) : 75) * j / 12; return vadd(P, [dir * u[0] * t - 0.0016 * t * t, dir * u[1] * t]); }); };
+    const tri = (P, vr, vs) => ({ m: vadd(P, vmul(vm, k)), s: vadd(P, vmul(vs, k)) });
+    const A = tri(P1, vrIn, vsIn), B = tri(P2, vrOut, vsOut);
+    const pts = [[-R, -R], [R, R], A.m, A.s, B.m, B.s, [-R - 60, 0], [-R - 14, -R - 30], ...leg(P1, vsIn, -1), ...leg(P2, vsOut, 1)];
+    const pad = 26, x0 = ext ? ext[0] : Math.min(...pts.map((q) => q[0])) - pad, x1 = ext ? ext[1] : Math.max(...pts.map((q) => q[0])) + pad;
+    const y0 = ext && ext[2] != null ? ext[2] : Math.min(...pts.map((q) => q[1])) - pad, y1 = ext && ext[3] != null ? ext[3] : Math.max(...pts.map((q) => q[1])) + pad;
+    const W = Math.round(x1 - x0), H = Math.round(y1 - y0), F = frame(W, H, -x0, y1);
+    const lbl = (q, d, t, c) => [vadd(q, d), t, c];
+    const side = (P, T2, t, c, off) => lbl(vmul(vadd(P, T2), 0.5), off, t, c);
+    const vsL = sling ? '<i>v</i><sub>out</sub>' : '<i>v</i><sub>out</sub>';
+    return { W, H, x0, x1, y0, y1, svg: `<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <circle class="f-mu-thin f-dash" cx="${fx(F.S([0, 0])[0])}" cy="${fx(F.S([0, 0])[1])}" r="${R}"/>
+        <circle class="f-moon" cx="${fx(F.S([0, 0])[0])}" cy="${fx(F.S([0, 0])[1])}" r="4"/>
+        <path class="f-ac-faint" d="${F.path(hyp)}"/>
+        <path class="f-tr-ln-faint f-dot" d="${F.path(leg(P1, vsIn, -1))}"/><path class="f-tr-ln-faint f-dot" d="${F.path(leg(P2, vsOut, 1))}"/>
+        ${F.arrow(P1, A.m, 'f-mu', 'f-mu-fill')}${F.arrow(A.m, A.s, 'f-ac-ln thin', 'f-ac-fill')}${F.arrow(P1, A.s, 'f-tr', 'f-tr-fill')}
+        ${F.arrow(P2, B.m, 'f-mu', 'f-mu-fill')}${F.arrow(B.m, B.s, 'f-ac-ln thin', 'f-ac-fill')}${F.arrow(P2, B.s, 'f-tr', 'f-tr-fill')}
+        ${F.dot(P1, 'f-ink-fill', 2.5)}${F.dot(P2, 'f-ink-fill', 2.5)}
+        ${F.arrow([-R + 26, -R - 22], [-R - 14, -R - 22], 'f-mu', 'f-mu-fill')}
+      </svg>`, labels: { P1, P2, A, B, R, F, side, lbl, vsL } };
+  }
   function figFlyby() {
-    const W = 380, H = 255, k = 95, F = frame(W, H, 185, 232);
-    const vm = [0, VM * k], vin = vmul(vRelDir, VINF * k), vout = rot(vin, -DELTA), vsl = rot(vin, DELTA);
-    const tin = vadd(vm, vin), tout = vadd(vm, vout), tsl = vadd(vm, vsl);
-    const a0 = Math.atan2(vin[1], vin[0]), a1 = a0 - DELTA;
-    return `<figure class="fig" style="max-width:30rem" role="img" aria-label="${T`Velocity vectors drawn to scale. The Moon’s velocity points up. From its tip, the arrival velocity relative to the Moon, v∞, points down and to the right; the Moon turns it by the angle δ, and it leaves pointing down and to the left, the same length. A dotted circle shows every direction the Moon could give it. Adding the Moon’s velocity back gives the departure velocity relative to Earth: short and pointing back toward the Earth. Turned the other way, the departure velocity would be long: a slingshot.`}">
-      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
-        <circle class="f-mu-thin f-dash" cx="${fx(F.S(vm)[0])}" cy="${fx(F.S(vm)[1])}" r="${fx(VINF * k)}"/>
-        ${F.arc(vm, 28, a0, a1, 'f-ink-ln')}
-        ${F.arrow(vm, tsl, 'f-ac-faint', 'f-ac-fill-faint')}${F.arrow([0, 0], tsl, 'f-tr-ln-faint', 'f-tr-fill-faint')}
-        ${F.arrow([0, 0], tin, 'f-tr-ln-faint', 'f-tr-fill-faint')}
-        ${F.arrow([0, 0], vm, 'f-mu', 'f-mu-fill')}
-        ${F.arrow(vm, tin, 'f-ac-ln thin', 'f-ac-fill')}${F.arrow(vm, tout, 'f-ac-ln thin', 'f-ac-fill')}
-        ${F.arrow([0, 0], tout, 'f-tr', 'f-tr-fill')}
-        ${F.arrow([-120, 6], [-170, 6], 'f-mu', 'f-mu-fill')}
-        ${F.dot([0, 0], 'f-ink-fill', 2.5)}
-      </svg>${F.lbs([
-        [[-8, vm[1] * 0.45], '<i>v</i><sub>☾</sub>', 'm r'],
-        [vadd(vm, vadd(vmul(vin, 0.6), [8, 8])), '<i>v</i><sub>∞</sub> ' + T`in`, 'acc l'],
-        [vadd(vm, vadd(vmul(vout, 0.62), [-8, 0])), '<i>v</i><sub>∞</sub> ' + T`out`, 'acc r'],
-        [vadd(vm, vmul(rot(vin, -DELTA / 2), 40)), 'δ', ''],
-        [vadd(tin, [8, -4]), '<i>v</i><sub>in</sub>', 'tr l'],
-        [vadd(tout, [-6, 10]), '<i>v</i><sub>out</sub>', 'tr r'],
-        [vadd(tsl, [-10, 4]), T`other side: slingshot`, 'm r'],
-        [[-145, 18], T`toward Earth`, 'm'],
-      ])}</div>
-      <figcaption>${T`To scale, for the lab’s free return. The Moon can turn v∞ but never stretch it, so the departure velocity relative to the Moon ends on the dotted circle. Turned one way, by δ = 86°, the departure velocity relative to Earth, v<sub>out</sub> = v∞ out + v☾, is short and points back toward the Earth: the spacecraft falls home. Turned the other way (faint), it is long: the Moon throws the spacecraft outward.`}</figcaption></figure>`;
+    // a label beside each side of a velocity triangle, pushed away from the triangle's centroid
+    const sideLb = (q0, q1, ctr, t, c, d = 10) => {
+      const m = vmul(vadd(q0, q1), 0.5), u = vunit(vsub(q1, q0)); let n = [-u[1], u[0]];
+      if ((m[0] - ctr[0]) * n[0] + (m[1] - ctr[1]) * n[1] < 0) n = vmul(n, -1);
+      return [vadd(m, vmul(n, d + 4 * Math.abs(n[1]))), t, c + (n[0] > 0.35 ? ' l' : n[0] < -0.35 ? ' r' : '')];
+    };
+    const triLb = (P, T) => { const ctr = vmul(vadd(vadd(P, T.m), T.s), 1 / 3), out = T === 'out';
+      return (io) => [sideLb(P, T.m, ctr, '<i>v</i><sub>☾</sub>', 'm'), sideLb(T.m, T.s, ctr, '<i>v</i><sub>rel</sub>', 'acc'), sideLb(P, T.s, ctr, `<i>v</i><sub>${io}</sub>`, 'tr')]; };
+    // the patch-point label goes just below the point, or to its right when the velocity label is below-left
+    const patchLb = (P, T, t) => (T.s[0] < P[0] ? [vadd(P, [10, -12]), t, 'm l'] : [vadd(P, [0, -18]), t, 'm']);   // right of the point when v_out points left
+    const ca = figFlybyCase(false), cb = figFlybyCase(true), ext = [Math.min(ca.x0, cb.x0), Math.max(ca.x1, cb.x1)];   // stacked: same width and scale, each its own height
+    const one = (sling) => {
+      const c = figFlybyCase(sling, ext), { P1, P2, A, B, R, F } = c.labels;
+      const L = [...triLb(P1, A)('in'), ...triLb(P2, B)('out'),
+        patchLb(P1, A, T`patch 1`), patchLb(P2, B, T`patch 2`),
+        [[-R + 32, -R - 22], T`toward Earth`, 'm l'], [[0, -13], T`Moon`, 'm']];
+      return `<figure class="fig sub" role="img" aria-label="${sling ? T`Slingshot: the same arrival, passing behind the Moon. At patch 2 the velocity relative to the Moon has turned forward, and the velocity relative to Earth is long and points outward.` : T`Free return: the spacecraft passes ahead of the Moon and around its far side. At patch 1 the velocity relative to Earth is the Moon’s velocity plus the velocity relative to the Moon. At patch 2 the velocity relative to the Moon has the same length but has turned backward, and the velocity relative to Earth is short and points back toward the Earth.`}">
+        <div class="fig-box">${c.svg}${F.lbs(L)}</div>
+        <figcaption>${sling ? T`<b>Slingshot.</b> Same arrival, passing behind the Moon: the turn is the other way, \\(v_{rel}\\) leaves pointing forward, and \\(v_{out}\\) is long. The spacecraft gains energy relative to the Earth and is thrown outward.` : T`<b>Free return.</b> Passing ahead of the Moon and around its far side, \\(v_{rel}\\) is turned backward by δ = 86°. Adding \\(v_☾\\) back gives a short \\(v_{out}\\) pointing toward the Earth: the spacecraft falls home.`}</figcaption></figure>`;
+    };
+    return `<div class="fig-pair fr-pair">${one(false)}${one(true)}</div>
+      <p class="note">${T`Both drawn in the Moon’s frame, to scale for the lab’s free return: the dashed circle is the sphere of influence and every arrow uses the same km/s scale. Only the periselene is enlarged, so the hyperbola’s turn is visible. Orange: the Moon-centred hyperbola inside the sphere; dotted blue: the Earth-centred legs before and after.`}</p>`;
   }
 
   /* ---------------- Figure 4: arriving late moves the aim line (interactive, seen from the Moon) ---------------- */
@@ -160,7 +193,7 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('freereturn')} · Translunar coast`,
           title: T`Free Return`,
-          lede: T`Pass the Moon on the right side and it throws you back to Earth without an engine burn. That path saved Apollo 13. It is also so sensitive that a fraction of a second of burn timing moves the return by a thousand kilometres, so it is corrected on the way. This module does both with the patched-conic tools of module ${mc}, then checks them against reality.`,
+          lede: T`Swing around the Moon on the correct side and it throws you back to Earth without an engine burn. That path brought Apollo 13 home. It is also so sensitive that a fraction of a second of burn timing moves the return by a thousand kilometres, so it is corrected on the way. This module does both with the patched-conic tools of module ${mc}, then checks them against reality.`,
           refs: [T`Sellers · Interplanetary Travel`, T`BMW ch. 7 Lunar Trajectories`],
         })}
         ${Progress.briefing('freereturn', { theory: 'theory', lab: 'fr', math: 'refresher', mathLabel: N`Adding and subtracting vectors.` })}
@@ -168,13 +201,13 @@
         <section class="section" id="theory">
           <h2><span class="idx">0.1</span>${T`What a flyby does`}</h2>
           <div class="prose">
-            <p>${T`Module ${mc} ended inside the sphere of influence: relative to the Moon, the spacecraft arrives at \\(v_\\infty\\) and leaves at \\(v_\\infty\\), its direction turned by δ. Now go back to the Earth’s point of view. On the way out of the sphere, change frames again, the other way: add the Moon’s velocity.`}</p>
-            <div class="eq">\\[ \\vec v_{out} = \\vec v_{\\infty,out} + \\vec v_☾ \\]</div>
-            ${Sym.where([['\\vec v_{out}', N`velocity relative to Earth after the flyby`, 'm/s'], ['\\vec v_{\\infty,out}', N`velocity relative to the Moon on departure: as long as on arrival, turned by δ`, 'm/s'], ['\\vec v_☾', N`the Moon’s orbital velocity, about 1.02 km/s`, 'm/s']])}
+            <p>${T`Module ${mc} ended inside the sphere of influence. At patch 1 the spacecraft enters it at \\(v_{rel}\\) relative to the Moon. The Moon’s hyperbola turns that velocity by δ, and at patch 2, at the same distance from the Moon, it leaves just as fast: same length, new direction. Now go back to the Earth’s point of view. At patch 2, change frames again, the other way: add the Moon’s velocity.`}</p>
+            <div class="eq">\\[ \\vec v_{out} = \\vec v_{rel,out} + \\vec v_☾ \\]</div>
+            ${Sym.where([['\\vec v_{out}', N`velocity relative to Earth after the flyby`, 'm/s'], ['\\vec v_{rel,out}', N`velocity relative to the Moon at patch 2: as long as at patch 1, turned by δ`, 'm/s'], ['\\vec v_☾', N`the Moon’s orbital velocity, about 1.02 km/s`, 'm/s']])}
             ${Primer.box('vectors', false, 'refresher')}
             ${figFlyby()}
-            <p>${T`The two \\(v_\\infty\\) have the same length but point differently, so adding the same \\(\\vec v_☾\\) gives a different velocity relative to Earth. That is the <b>gravity assist</b>: relative to the Moon nothing is gained or lost, relative to the Earth the speed and the direction of the orbit change.`}</p>
-            <p>${T`<b>Which side?</b> The Moon’s pull turns \\(v_\\infty\\) toward the Moon. The free return comes in ahead of the Moon, on the side the Moon is moving toward, swings around its far side and leaves behind it. The turn then points \\(v_\\infty\\) backward along the Moon’s path, \\(v_{out}\\) is short, the spacecraft loses energy relative to the Earth and falls back: the figure’s solid vectors. Come in behind the Moon and the turn is forward: the spacecraft gains energy and is thrown outward, the faint vectors. In the lab’s patched-conic model, starting from the scenario <i>Aim for a 110 km periselene</i>, a TLI point 1.18° earlier (17 seconds of burn timing) aims straight at the centre and hits the Moon. At 3° earlier the line is on the other side, at a 3 678 km periselene, and the spacecraft leaves on an escape path from Earth.`}</p>
+            <p>${T`The two \\(v_{rel}\\) have the same length but point differently, so adding the same \\(\\vec v_☾\\) gives a different velocity relative to Earth. That is the <b>gravity assist</b>: relative to the Moon nothing is gained or lost, relative to the Earth the speed and the direction of the orbit change.`}</p>
+            <p>${T`<b>Which side?</b> The Moon’s pull turns \\(v_{rel}\\) toward the Moon. The free return comes in ahead of the Moon, on the side the Moon is moving toward, swings around its far side and leaves behind it. The turn then points \\(v_{rel}\\) backward along the Moon’s path, \\(v_{out}\\) is short, the spacecraft loses energy relative to the Earth and falls back: the free-return figure. Come in behind the Moon and the turn is forward: the spacecraft gains energy and is thrown outward: the slingshot figure. In the lab’s patched-conic model, starting from the scenario <i>Aim for a 110 km periselene</i>, a TLI point 1.18° earlier (17 seconds of burn timing) aims straight at the centre and hits the Moon. At 3° earlier the line is on the other side, at a 3 678 km periselene, and the spacecraft leaves on an escape path from Earth.`}</p>
           </div>
         </section>
 
@@ -182,7 +215,7 @@
           <h2><span class="idx">0.2</span>${T`The free return`}</h2>
           <div class="prose">
             <p>${T`A <b>free return</b> is the flyby whose turn sends the spacecraft back to Earth with a perigee inside the <b>entry corridor</b>: the narrow band of perigee heights, about 20 to 65 km in the lab, where the capsule neither skips off the atmosphere nor dives into it too steeply (module ${Progress.code('entry')}). The perigee is measured as if the Earth had no air, the <b>vacuum perigee</b>. In the rotating frame, where the Earth–Moon line stands still, the path traces the famous <b>figure eight</b>. Patched conics can design one: in the lab, a TLI of 3 160 m/s at −132.33° passes 373 km from the Moon and comes back to a 29 km vacuum perigee.`}</p>
-            <p>${T`Apollo 8, 10 and 11 flew free-return trajectories, so that a dead main engine would still mean coming home. Apollo 12 onward used <b>hybrid</b> trajectories to reach landing sites the free return could not. They left the free return with a midcourse burn of the Service Propulsion System. On Apollo 13 an oxygen tank exploded 56 hours out, crippling the Service Module and making its engine too risky to use. The crew fired the Lunar Module’s descent engine for 35 seconds to get <i>back</i> on a free return, then burned again after passing the Moon (PC+2) to speed up the return. The Moon did the rest.`}</p>
+            <p>${T`Apollo 8, 10 and 11 flew free-return trajectories, so that a dead main engine would still mean coming home. Apollo 12 onward used <b>hybrid</b> trajectories to reach landing sites the free return could not. They left the free return with a midcourse burn of the Service Propulsion System. On Apollo 13 an oxygen tank exploded 56 hours out, crippling the Service Module and making its engine too risky to use. The crew fired the Lunar Module’s descent engine for 35 seconds to get <i>back</i> on a free return, then burned again two hours after closest approach (PC+2), back on the near side, to speed up the return. Neither burn was needed to turn the spacecraft around: the Moon did that.`}</p>
           </div>
         </section>
 
@@ -193,15 +226,15 @@
         <section class="section">
           <h2><span class="idx">0.3</span>${T`Lab: free return and corrections`}</h2>
           <div class="prose">
-            <p>${T`The lab starts in the patched-conic model. The verdict box says at once whether the spacecraft comes home. The two zooms show the turn at the Moon and the return to Earth: the dashed line continues the orbit to its vacuum perigee, and the gauge under it places that perigee against the corridor.`}</p>
+            <p>${T`The lab starts in the patched-conic model. The verdict box says at once whether the spacecraft comes home. The two zooms show the pass close to the Moon, where you can see the flyby altitude or the impact, and the return to Earth: the dashed line continues the orbit to its vacuum perigee, and the gauge under it places that perigee against the corridor.`}</p>
             <ol>
-              <li>${T`<i>Free return</i>: play it. Watch the hyperbola swing around the far side of the Moon, then the return graze the Earth inside the corridor.`}</li>
+              <li>${T`<i>Free return</i>: press <i>Play</i> and follow it home. Watch the hyperbola swing around the far side of the Moon, then the return graze the Earth inside the corridor.`}</li>
               <li>${T`<i>TLI half a second late</i>: the burn position is off by 0.03°. The return perigee drops to 1 300 km below the surface, far too steep for entry. That is how sensitive a free return is.`}</li>
               <li>${T`Press <i>Mission Control: solve MCC</i>. Half a metre per second, 26.7 hours after launch, brings the return back into the corridor. Sections ${App.sec('freereturn', 4)} to ${App.sec('freereturn', 6)} show how to compute such a burn by hand.`}</li>
               <li>${T`Switch the physics model to <i>Three-body (reality)</i> and tick the ghost: same burns, a different flight. Section ${App.sec('freereturn', 7)} explains.`}</li>
             </ol>
           </div>
-          ${MoonLab.markup({ id: 'fr', title: N`Free return and corrections`, presets: PRESETS, start: 'free', mcc: true, earthZoom: true, detail: 'return' })}
+          ${MoonLab.markup({ id: 'fr', title: N`Free return and corrections`, presets: PRESETS, start: 'free', mcc: true, earthZoom: true, moonSpan: 1.2e7, detail: 'return' })}
           <p class="note">${T`Planar model with the Moon on a circular orbit. Real Apollo trajectories were three-dimensional, with the Moon's 5° orbital inclination and its eccentric orbit, the Sun's pull and Earth's oblateness all included. The physics and the sensitivity are the same.`}</p>
         </section>
 
@@ -268,10 +301,11 @@
         ${Progress.debrief('freereturn', { math: 'trig', mathLabel: N`Sine, cosine and the law of cosines.` })}`;
 
       MoonLab.mount(page.querySelector('#fr'), {
-        id: 'fr', presets: PRESETS, mcc: true, earthZoom: true, detail: 'return',
+        id: 'fr', presets: PRESETS, mcc: true, earthZoom: true, moonSpan: 1.2e7, detail: 'return', startPaused: true,
+        // the first objective needs the flight played through to entry interface (a preset counts: it is the watching step)
+        onFlown(s, t, c) { if (c.inCorridor(s) && s.perigee && t >= s.perigee.t) Progress.done('freereturn', 'free'); },
         onResult(s, c) {
           const ok = c.inCorridor(s);
-          if (c.touched && ok) Progress.done('freereturn', 'free');
           if ((c.src === 'fr-mcc') && c.wasBad && ok) Progress.done('freereturn', 'rescue');
           if (c.touched && ok && c.model === 'three') Progress.done('freereturn', 'reality');
         },
