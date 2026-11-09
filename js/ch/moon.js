@@ -10,7 +10,7 @@
     flyby: { dv: 3160, ang: -132.18, loi: false, label: N`Fly past the Moon` },
     capture: { dv: 3160, ang: -132.41, loi: true, loiDv: 900, label: N`Capture into lunar orbit` },
     impact: { dv: 3160, ang: -132.5, loi: false, label: N`Lunar impact` },
-    miss: { dv: 3100, ang: -130, loi: false, label: N`Missed the Moon` },
+    miss: { dv: 3120, ang: -132, loi: false, label: N`Missed the Moon` },
   };
 
   /* ---------------- Figure 1: the sphere of influence and the two patched conics ---------------- */
@@ -21,66 +21,149 @@
     .f-ghost { fill: none; stroke: var(--trace); stroke-width: 1.4; stroke-dasharray: 3 4; opacity: .55; }
     .f-inset { fill: var(--panel); stroke: var(--line); stroke-width: 1; }`);
   function figSOI() {
-    const W = 460, H = 270, ex = 46, ey = 146, Dm = 300, rS = 62, rE = 13, rMn = 8, d = Math.PI / 180;
+    const Dm = 300, rS = 62, rE = 13, rMn = 8, d = Math.PI / 180;
     const fx = (n) => n.toFixed(1), pct = (x, w) => (100 * x / w).toFixed(2) + '%';
-    const S = (q) => [ex + q[0], ey - q[1]], pts = (list) => list.map((q, k) => `${k ? 'L' : 'M'}${fx(S(q)[0])},${fx(S(q)[1])}`).join('');
-    const lbs = (list) => list.map(([[x, y], t, c]) => `<span class="lb ${c || ''}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`).join('');
     const sub = (a, b) => [a[0] - b[0], a[1] - b[1]], add = (a, b) => [a[0] + b[0], a[1] + b[1]], mul = (a, k) => [a[0] * k, a[1] * k];
-    const unit = (a) => mul(a, 1 / Math.hypot(...a)), cross = (a, b) => a[0] * b[1] - a[1] * b[0];
-    // conic 1: Earth-centred ellipse, perigee radius rp1, reaching the sphere at P after a true anomaly nuP
-    const M = [Dm, 0], P = add(M, [rS * Math.cos(95 * d), rS * Math.sin(95 * d)]), rP = Math.hypot(...P), nuP = 160 * d, rp1 = 20;
-    const e1 = (rP - rp1) / (rp1 - rP * Math.cos(nuP)), p1 = rp1 * (1 + e1), w1 = Math.atan2(P[1], P[0]) - nuP;
-    const ell = (nu) => { const r = p1 / (1 + e1 * Math.cos(nu)); return [r * Math.cos(w1 + nu), r * Math.sin(w1 + nu)]; };
+    const unit = (a) => mul(a, 1 / Math.hypot(...a)), cross = (a, b) => a[0] * b[1] - a[1] * b[0], dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+    const rot = (q, a) => [q[0] * Math.cos(a) - q[1] * Math.sin(a), q[0] * Math.sin(a) + q[1] * Math.cos(a)];
     const span = (f, a, b, n = 90) => [...Array(n + 1).keys()].map((k) => f(a + (b - a) * k / n));
-    // velocities at P: v along the ellipse, the Moon's v☾ perpendicular to the Earth–Moon line, v∞ = v − v☾
-    const fpa = Math.atan2(e1 * Math.sin(nuP), 1 + e1 * Math.cos(nuP)), thP = w1 + nuP;
-    const v = mul([Math.cos(thP + Math.PI / 2 - fpa), Math.sin(thP + Math.PI / 2 - fpa)], 0.55), vM = [0, 1], vi = sub(v, vM);
-    // conic 2: Moon-centred hyperbola through P along v∞; the speed scale is picked to give a periselene rp2
-    const r2 = sub(P, M), u2 = unit(vi), rp2 = 17, h1 = cross(r2, u2);
-    const rpOf = (mu) => { const E = 0.5 - mu / rS, e = Math.sqrt(Math.max(0, 1 + 2 * E * h1 * h1 / (mu * mu))); return h1 * h1 / mu / (1 + e); };
-    let lo = 1e-3, hi = 1e3; for (let k = 0; k < 80; k++) { const m = Math.sqrt(lo * hi); if (rpOf(m) > rp2) lo = m; else hi = m; }
-    const mu = lo, sg = Math.sign(h1), ev = mul(sub(mul(r2, 1 - mu / rS), mul(u2, r2[0] * u2[0] + r2[1] * u2[1])), 1 / mu);
-    const e2 = Math.hypot(...ev), w2 = Math.atan2(ev[1], ev[0]), p2 = h1 * h1 / mu, nu2 = Math.acos((p2 / rS - 1) / e2);
-    const hyp = (nu) => { const r = p2 / (1 + e2 * Math.cos(nu)); return add(M, [r * Math.cos(w2 + sg * nu), r * Math.sin(w2 + sg * nu)]); };
-    const X = hyp(nu2), peri = hyp(0), mid = hyp(-nu2 * 0.55), head = (q, dir, cls) => {
-      const a = S(q), t = unit([dir[0], -dir[1]]), n = [-t[1], t[0]];
+    // units: Earth's μ = 1, distances in figure units. Conic 1: Earth-centred ellipse, perigee rp1, reaching the sphere at
+    // P (118° round the sphere) after a true anomaly nuP; picked so that the moving sphere first touches the path at P
+    const M = [Dm, 0], P = add(M, [rS * Math.cos(118 * d), rS * Math.sin(118 * d)]), rP = Math.hypot(...P), nuP = 163.5 * d, rp1 = 20;
+    const e1 = (rP - rp1) / (rp1 - rP * Math.cos(nuP)), p1 = rp1 * (1 + e1), w1 = Math.atan2(P[1], P[0]) - nuP, a1 = p1 / (1 - e1 * e1);
+    const ell = (nu) => { const r = p1 / (1 + e1 * Math.cos(nu)); return [r * Math.cos(w1 + nu), r * Math.sin(w1 + nu)]; };
+    // timing (Kepler): the Moon moves nM per unit time and sweeps nM·tP while the spacecraft climbs to P
+    const tOf = (nu) => { const E = 2 * Math.atan(Math.sqrt((1 - e1) / (1 + e1)) * Math.tan(nu / 2)); return Math.sqrt(a1 ** 3) * (E - e1 * Math.sin(E)); };
+    const nM = Math.sqrt(1 / Dm ** 3), tP = tOf(nuP), sweep = nM * tP, moonAt = (a) => [Dm * Math.cos(a), Dm * Math.sin(a)];
+    // true velocities at P: v along the ellipse, the Moon's v☾ perpendicular to the Earth–Moon line, v_rel = v − v☾
+    const vP = Math.sqrt(2 / rP - 1 / a1), fpa = Math.atan2(e1 * Math.sin(nuP), 1 + e1 * Math.cos(nuP)), thP = w1 + nuP;
+    const v = mul([Math.cos(thP + Math.PI / 2 - fpa), Math.sin(thP + Math.PI / 2 - fpa)], vP), vM = [0, Math.sqrt(1 / Dm)], vr = sub(v, vM), vrel = Math.hypot(...vr);
+    // conic 2: Moon-centred hyperbola from P with v_rel; the Moon's μ (exaggerated, about 3.6% of the Earth's) gives periselene rp2
+    const r2 = sub(P, M), h = cross(r2, vr), rp2 = 16;
+    const rpOf = (m) => { const E = vrel * vrel / 2 - m / rS, e = Math.sqrt(Math.max(0, 1 + 2 * E * h * h / (m * m))); return h * h / m / (1 + e); };
+    let lo = 1e-6, hi = 0.999 * vrel * vrel * rS / 2; for (let k = 0; k < 100; k++) { const m = Math.sqrt(lo * hi); if (rpOf(m) > rp2) lo = m; else hi = m; }
+    const mu = lo, sg = Math.sign(h), ev = mul(sub(mul(r2, vrel * vrel - mu / rS), mul(vr, dot(r2, vr))), 1 / mu);
+    const e2 = Math.hypot(...ev), w2 = Math.atan2(ev[1], ev[0]), p2 = h * h / mu, nu2 = Math.acos((p2 / rS - 1) / e2), aH = p2 / (e2 * e2 - 1);
+    const hypRel = (nu) => { const r = p2 / (1 + e2 * Math.cos(nu)); return [r * Math.cos(w2 + sg * nu), r * Math.sin(w2 + sg * nu)]; };
+    const hyp = (nu) => add(M, hypRel(nu)), tH = (nu) => { const F = 2 * Math.atanh(Math.sqrt((e2 - 1) / (e2 + 1)) * Math.tan(nu / 2)); return Math.sqrt(aH ** 3 / mu) * (e2 * Math.sinh(F) - F); };
+    const tB = tH(nu2) - tH(-nu2), sweepB = nM * tB;
+    // the same Moon leg seen from the Earth: the Moon keeps moving and carries the hyperbola with it
+    const posB = (nu) => add(moonAt(nM * (tH(nu) - tH(-nu2))), hypRel(nu));
+    const X = hyp(nu2), peri = hyp(0), mid = hyp(-nu2 * 0.55);
+    const moonArc = span(moonAt, -sweep - 5 * d, sweepB + 14 * d, 80), rDir = 25 * d;
+    // fit the frame: turn the scene by the angle rho that gives the smallest height
+    const keyPts = [...span(ell, 0, 175 * d), ...span(hyp, -nu2, nu2), ...span(posB, -nu2, nu2, 40), ...moonArc, [-rE - 30, -rE - 10], [-rE - 30, rE + 10],
+      ...[-sweep, 0, sweepB].flatMap((a) => span((t) => add(moonAt(a), [rS * Math.cos(t), rS * Math.sin(t)]), 0, 2 * Math.PI, 24))];
+    let rho = 0, best = Infinity;
+    for (let a = -20; a <= 30; a++) { const ys = keyPts.map((q) => rot(q, a * d)[1]), hgt = Math.max(...ys) - Math.min(...ys); if (hgt < best) { best = hgt; rho = a * d; } }
+    const box = keyPts.map((q) => rot(q, rho)), xs = box.map((q) => q[0]), ys = box.map((q) => q[1]), mg = 14;
+    const ex = mg - Math.min(...xs), ey = mg + 18 + Math.max(...ys), W = Math.ceil(Math.max(...xs) - Math.min(...xs) + 2 * mg + 40), H = Math.ceil(Math.max(...ys) - Math.min(...ys) + 2 * mg + 18);
+    const S = (q) => { const r = rot(q, rho); return [ex + r[0], ey - r[1]]; }, pts = (list, f = S) => list.map((q, k) => `${k ? 'L' : 'M'}${fx(f(q)[0])},${fx(f(q)[1])}`).join('');
+    const head = (q, dir, cls, f = S) => {
+      const a = f(q), b = f(add(q, mul(unit(dir), 1))), t = unit(sub(b, a)), n = [-t[1], t[0]];
       return `<path class="${cls}" d="M${fx(a[0] + 9 * t[0])},${fx(a[1] + 9 * t[1])}L${fx(a[0] + 4.5 * n[0])},${fx(a[1] + 4.5 * n[1])}L${fx(a[0] - 4.5 * n[0])},${fx(a[1] - 4.5 * n[1])}Z"/>`; };
     const dirAt = (f, nu, dn) => sub(f(nu + dn), f(nu));
-    // inset: the vector triangle at the patch point, v = v☾ + v∞
-    const k = 56, O = [62, 60], Om = add(O, mul(vM, k)), Ov = add(O, mul(v, k)), arrow = (a, b, cls, fill) => { const c = sub(b, mul(unit(sub(b, a)), 9)); return `<path class="${cls}" d="${pts([a, c])}"/>${head(c, sub(b, a), fill)}`; };   // tip exactly on b
-    const moonArc = span((a) => [Dm * Math.cos(a), Dm * Math.sin(a)], -21 * d, 21 * d, 40), rDir = 25 * d;
-    return `<figure class="fig" style="max-width:40rem" role="img" aria-label="${T`The Earth on the left, the Moon on the right inside a dashed circle, its sphere of influence. An Earth-centred ellipse leaves a low orbit and climbs to the edge of the sphere, where it ends at the entry patch point; its dashed continuation shows where the spacecraft would go if only Earth pulled. Inside the sphere a Moon-centred hyperbola takes over, swings behind the Moon at periselene and leaves the sphere on the Earth side at the exit patch point. An inset shows the velocities at the entry patch point: the spacecraft’s velocity relative to Earth is the Moon’s velocity plus the velocity relative to the Moon, v∞.`}">
+    // inset, top left under the Replay button: the vector triangle at patch 1, to scale, v_sc = v☾ + v_rel
+    const k = 56, O = [0, 0], Om = mul(unit(vM), k), Ov = mul(v, k / vM[1]), iTop = 52 + Math.max(...[O, Om, Ov].map((q) => rot(q, rho)[1]));
+    const I = (q) => { const r = rot(q, rho); return [74 + r[0], iTop - r[1]]; };
+    const arrow = (a, b, cls, fill) => { const c = sub(b, mul(unit(sub(b, a)), 9)); return `<path class="${cls}" d="${pts([a, c], I)}"/>${head(c, sub(b, a), fill, I)}`; };
+    const ib = [O, Om, Ov].map(I), ix = ib.map((q) => q[0]), iy = ib.map((q) => q[1]);
+    const lbs = (list) => list.map(([[x, y], t, c]) => `<span class="lb ${c || ''}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`).join('');
+    // animation data (SVG coordinates): time in units of tP, spacecraft position, Moon offset from its patch-1 position
+    const off = (a) => sub(S(moonAt(a)), S(M)).map((n) => +fx(n));
+    const anim = {
+      tB: +(tB / tP).toFixed(4),
+      A: span((nu) => nu, 0, nuP, 160).map((nu) => { const t = tOf(nu) / tP; return [+(t).toFixed(4), ...S(ell(nu)).map((n) => +fx(n)), ...off(-sweep * (1 - t))]; }),
+      B: span((nu) => nu, -nu2, nu2, 120).map((nu) => { const t = (tH(nu) - tH(-nu2)) / tP; return [+(1 + t).toFixed(4), ...S(posB(nu)).map((n) => +fx(n)), ...off(nM * tP * t)]; }),
+      P: S(P).map((n) => +fx(n)),
+    };
+    return `<figure class="fig soi-fig" style="max-width:40rem" data-anim='${JSON.stringify(anim)}' role="img" aria-label="${T`An animation in two views. Seen from the Earth: the Moon moves up along its orbit with its sphere of influence, a dashed circle. An Earth-centred ellipse leaves a low orbit and climbs slowly; the Moon catches up and the spacecraft enters the sphere at patch 1. Inside, the spacecraft follows a hyperbola around the Moon while the Moon carries it along, and its path relative to the Earth bends smoothly. Then the Moon is frozen at patch 1 and the hyperbola is drawn as seen from the Moon: it swings behind the Moon at periselene and leaves the sphere at patch 2, making a corner with the ellipse at patch 1. The dashed continuation of the ellipse shows where the spacecraft would go if only Earth pulled. An inset shows the velocities at patch 1: the spacecraft’s velocity relative to Earth is the Moon’s velocity plus the velocity relative to the Moon, v_rel.`}">
       <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
-        <path class="f-mu-thin f-dash" d="${pts(moonArc)}"/>${head(moonArc[36], dirAt((a) => [Dm * Math.cos(a), Dm * Math.sin(a)], 16.8 * d, 0.01), 'f-mu-fill')}
-        <circle class="f-soi" cx="${fx(S(M)[0])}" cy="${fx(S(M)[1])}" r="${rS}"/>
-        <path class="f-mu-thin" d="${pts([M, add(M, [rS * Math.cos(rDir), rS * Math.sin(rDir)])])}"/>
-        <circle class="f-mu-thin f-dash" cx="${ex}" cy="${ey}" r="${rp1}"/>
-        <path class="f-ghost" d="${pts(span(ell, nuP, 169 * d, 30))}"/>
-        <path class="f-tr" d="${pts(span(ell, 0, nuP))}"/>${head(ell(nuP * 0.6), dirAt(ell, nuP * 0.6, 0.01), 'f-tr-fill')}
-        <path class="f-ac-ln" d="${pts(span(hyp, -nu2, nu2, 120))}"/>${head(mid, dirAt(hyp, -nu2 * 0.55, 0.01), 'f-ac-fill')}${head(X, dirAt(hyp, nu2, 0.01), 'f-ac-fill')}
-        <circle class="f-earth" cx="${ex}" cy="${ey}" r="${rE}"/><circle class="f-moon" cx="${fx(S(M)[0])}" cy="${fx(S(M)[1])}" r="${rMn}"/>
-        <path class="f-mu-thin f-dash" d="${pts([M, peri])}"/>
-        <circle class="f-ink-fill" cx="${fx(S(P)[0])}" cy="${fx(S(P)[1])}" r="3.5"/><circle class="f-ink-fill" cx="${fx(S(X)[0])}" cy="${fx(S(X)[1])}" r="3"/>
+        <path class="f-mu-thin f-dash" d="${pts(moonArc)}"/>${head(moonAt(-19 * d), dirAt(moonAt, -19 * d, 0.01), 'f-mu-fill')}
+        <g class="soi-moon"><circle class="f-soi" cx="${fx(S(M)[0])}" cy="${fx(S(M)[1])}" r="${rS}"/>
+          <path class="f-ac-ln soi-ride" d="${pts(span(hyp, -nu2, nu2, 120))}"/>
+          <circle class="f-moon" cx="${fx(S(M)[0])}" cy="${fx(S(M)[1])}" r="${rMn}"/></g>
+        <circle class="f-mu-thin f-dash" cx="${fx(ex)}" cy="${fx(ey)}" r="${rp1}"/>
+        <path class="f-ac-ln soi-trail2" d="${pts(span(posB, -nu2, nu2, 120))}"/>
+        <g class="soi-end">
+          <path class="f-mu-thin" d="${pts([M, add(M, [rS * Math.cos(rDir), rS * Math.sin(rDir)])])}"/>
+          <path class="f-ghost" d="${pts(span(ell, nuP, 175 * d, 30))}"/>
+          ${head(ell(nuP * 0.6), dirAt(ell, nuP * 0.6, 0.01), 'f-tr-fill')}
+          <path class="f-ac-ln" d="${pts(span(hyp, -nu2, nu2, 120))}"/>${head(mid, dirAt(hyp, -nu2 * 0.55, 0.01), 'f-ac-fill')}${head(X, dirAt(hyp, nu2, 0.01), 'f-ac-fill')}
+          <path class="f-mu-thin f-dash" d="${pts([M, peri])}"/>
+          <circle class="f-ink-fill" cx="${fx(S(X)[0])}" cy="${fx(S(X)[1])}" r="3"/>
+          <circle class="f-ac-fill" cx="${fx(S(peri)[0])}" cy="${fx(S(peri)[1])}" r="2.5"/>
+          <rect class="f-inset" x="${fx(Math.min(...ix) - 46)}" y="${fx(Math.min(...iy) - 14)}" width="${fx(Math.max(...ix) - Math.min(...ix) + 96)}" height="${fx(Math.max(...iy) - Math.min(...iy) + 32)}" rx="6"/>
+          ${arrow(O, Om, 'f-mu', 'f-mu-fill')}${arrow(Om, Ov, 'f-ac-ln thin', 'f-ac-fill')}${arrow(O, Ov, 'f-tr', 'f-tr-fill')}
+        </g>
+        <path class="f-tr soi-trail" d="${pts(span(ell, 0, nuP))}"/>
+        <circle class="f-earth" cx="${fx(ex)}" cy="${fx(ey)}" r="${rE}"/>
         <circle class="f-tr-fill" cx="${fx(S(ell(0))[0])}" cy="${fx(S(ell(0))[1])}" r="3"/>
-        <circle class="f-ac-fill" cx="${fx(S(peri)[0])}" cy="${fx(S(peri)[1])}" r="2.5"/>
-        <rect class="f-inset" x="${fx(S(O)[0] - 52)}" y="${fx(S(Om)[1] - 12)}" width="150" height="${fx(k + 44)}" rx="6"/>
-        ${arrow(O, Om, 'f-mu', 'f-mu-fill')}${arrow(Om, Ov, 'f-ac-ln thin', 'f-ac-fill')}${arrow(O, Ov, 'f-tr', 'f-tr-fill')}
+        <circle class="f-ink-fill soi-sc" cx="${fx(S(P)[0])}" cy="${fx(S(P)[1])}" r="3.5"/>
       </svg>${lbs([
-        [S([rp1 + 5, 6]), T`Earth`, 'm l'], [S(add(M, [0, -rMn - 10])), T`Moon`, 'm'],
-        [S(add(M, [rS * Math.cos(rDir) * 0.6 + 2, rS * Math.sin(rDir) * 0.6 + 9])), '<i>r</i><sub>SOI</sub>', 'm'],
-        [S(add(moonArc[1], [7, 0])), T`Moon’s orbit`, 'm l'],
-        [S(add(ell(nuP * 0.72), [8, -10])), T`Earth-centred ellipse`, 'tr l'],
-        [S(add(ell(165 * d), [-8, 4])), T`Earth only`, 'tr r'],
+        [S([rp1 + 5, 6]), T`Earth`, 'm l'],
+        [S(add(moonAt(-40 * d), [-8, 0])), T`Moon’s orbit`, 'm r'],
         [S([-rp1 - 5, -rp1 + 2]), 'TLI', 'tr r'],
+        [S(add(ell(nuP * 0.72), [8, -10])), T`Earth-centred ellipse`, 'tr l'],
+      ])}<span class="lb m l soi-status" style="left:${pct(8, W)};top:${pct(H - 10, H)}">${T`Moon frozen at patch 1: seen from the Moon`}</span><div class="soi-end">${lbs([
+        [S(add(M, [0, -rMn - 10])), T`Moon`, 'm'],
+        [S(add(M, [rS * Math.cos(rDir) * 0.6 + 2, rS * Math.sin(rDir) * 0.6 + 9])), '<i>r</i><sub>SOI</sub>', 'm'],
+        [S(add(ell(173 * d), [-8, 4])), T`Earth only`, 'tr r'],
         [S(add(P, [-6, 10])), T`patch 1 (entry)`, 'r'],
         [S(add(peri, [6, 0])), T`periselene`, 'acc l'],
-        [S(add(M, [rS * 0.35, -rS - 12])), T`Moon-centred hyperbola`, 'acc'],
-        [S(add(X, [-6, -10])), T`patch 2 (exit)`, 'r'],
-        [S(add(O, [-6, k * 0.5])), '<i>v</i><sub>☾</sub>', 'm r'], [S(add(Ov, [6, 2])), '<i>v</i>', 'tr l'],
-        [S(add(mul(add(Om, Ov), 0.5), [8, 6])), '<i>v</i><sub>∞</sub>', 'acc l'],
-        [S(add(O, [k * v[0] * 0.5 + 2, -18])), T`at entry`, 'm'],
-      ])}</div>
-      <figcaption>${T`Not to scale: the Earth, the Moon and the parking orbit are drawn far too large. Conic 1 (blue) is a two-body orbit around the Earth alone, conic 2 (orange) a two-body orbit around the Moon alone. They are joined where the path enters the sphere, and the velocity changes frame there: v∞ = v − v☾. Where it leaves the sphere the opposite change, v = v∞ + v☾, starts a new Earth-centred conic, the return leg. Without the Moon the spacecraft would follow the dashed ellipse.`}</figcaption></figure>`;
+        [S(add(X, [32, -38])), T`Moon-centred hyperbola`, 'acc r'],
+        [S(add(X, [-9, 0])), T`patch 2 (exit)`, 'r'],
+        [I(add(mul(Om, 0.5), [-12, 0])), '<i>v</i><sub>☾</sub>', 'm r'], [I(add(Ov, [6, 2])), '<i>v</i><sub>sc</sub>', 'tr l'],
+        [I(add(mul(add(Om, Ov), 0.5), [8, 6])), '<i>v</i><sub>rel</sub>', 'acc l'],
+        [[Math.min(...ix) - 40, Math.max(...iy) + 10], T`at patch 1`, 'm l'],
+      ])}</div><button class="btn soi-replay" type="button" hidden>${T`▸ Replay`}</button></div>
+      <figcaption>${T`Not to scale: the Earth, the Moon and the parking orbit are drawn far too large, and the Moon’s pull is exaggerated so that the bend shows. The animation first shows the trip as seen from the Earth. The spacecraft climbs on conic 1 (blue), a two-body orbit around the Earth alone, and the Moon catches up: the path meets the sphere at patch 1 and not before. Inside, conic 2 (orange), a two-body orbit around the Moon alone, takes over while the Moon carries it along, so relative to the Earth the path bends smoothly, with no corner. The final picture freezes the Moon at patch 1 and draws the hyperbola as seen from the Moon. The corner at patch 1 is only that change of viewpoint, the velocity changing frame: v<sub>rel</sub> = v<sub>sc</sub> − v☾. At patch 2 the opposite change, v<sub>sc</sub> = v<sub>rel</sub> + v☾, starts a new Earth-centred conic, the return leg. Without the Moon the spacecraft would follow the dashed ellipse.`}</figcaption></figure>`;
+  }
+
+  // play figure 13.1 once when it scrolls into view: seen from the Earth (the Moon catches up, then carries the spacecraft
+  // round), then the frozen-Moon picture
+  App.css('moon-fig-anim', `
+    .soi-fig .soi-end, .soi-fig .soi-trail2, .soi-fig .soi-ride { transition: opacity .7s; }
+    .soi-fig .soi-trail2 { opacity: 0; } .soi-fig .soi-ride { opacity: 0; }
+    .soi-fig.playing .soi-end { opacity: 0; transition: none; }
+    .soi-fig.playing .soi-trail2 { opacity: 1; transition: none; }
+    .soi-fig.playing.in-b .soi-ride { opacity: .3; }
+    .soi-fig .soi-replay { position: absolute; left: .3rem; top: .3rem; font-size: .72rem; padding: .15rem .5rem; }`);
+  function mountSOI(root) {
+    const fig = root.querySelector('.soi-fig'); if (!fig) return;
+    const A = JSON.parse(fig.dataset.anim), $ = (s) => fig.querySelector(s);
+    const trail = $('.soi-trail'), trail2 = $('.soi-trail2'), sc = $('.soi-sc'), moon = $('.soi-moon'), btn = $('.soi-replay'), status = $('.soi-status');
+    const MS = 6000, SLOW = 1.8, tEnd = 1 + A.tB, HOLD = 1500;   // MS: playback time for the climb to patch 1; the leg inside the sphere plays SLOW times slower
+    const seenEarth = T`Seen from the Earth: the Moon moves`, seenMoon = T`Moon frozen at patch 1: seen from the Moon`;
+    let raf = 0, t0 = 0;
+    const path = (list) => list.map((q, k) => `${k ? 'L' : 'M'}${q[1]},${q[2]}`).join('');
+    const lerp = (list, t) => { let i = 1; while (i < list.length - 1 && list[i][0] < t) i++; const a = list[i - 1], b = list[i], u = b[0] > a[0] ? Math.min(1, Math.max(0, (t - a[0]) / (b[0] - a[0]))) : 1; return [i, a.map((x, j) => x + (b[j] - x) * u)]; };
+    function frame(t) {   // t: mission time in units of the climb to patch 1 (0 = TLI, 1 = patch 1, tEnd = patch 2)
+      const inB = t > 1, [i, q] = lerp(inB ? A.B : A.A, t);
+      if (!inB) { trail.setAttribute('d', path(A.A.slice(0, i)) + `L${q[1].toFixed(1)},${q[2].toFixed(1)}`); trail2.setAttribute('d', ''); }
+      else { trail.setAttribute('d', path(A.A)); trail2.setAttribute('d', path(A.B.slice(0, i)) + `L${q[1].toFixed(1)},${q[2].toFixed(1)}`); }
+      sc.setAttribute('cx', q[1].toFixed(1)); sc.setAttribute('cy', q[2].toFixed(1));
+      moon.setAttribute('transform', `translate(${q[3].toFixed(1)} ${q[4].toFixed(1)})`);
+      fig.classList.toggle('in-b', inB);
+    }
+    function finish() {   // the frozen-Moon picture
+      fig.classList.remove('playing', 'in-b'); moon.removeAttribute('transform');
+      trail.setAttribute('d', path(A.A)); trail2.setAttribute('d', path(A.B));
+      sc.setAttribute('cx', A.P[0]); sc.setAttribute('cy', A.P[1]); status.textContent = seenMoon; btn.hidden = false;
+    }
+    function play() {
+      cancelAnimationFrame(raf); fig.classList.add('playing'); btn.hidden = true; status.textContent = seenEarth; t0 = performance.now();
+      const step = (now) => {
+        const ms = now - t0, t = Math.min(tEnd, ms <= MS ? ms / MS : 1 + (ms - MS) / (MS * SLOW)); frame(t);
+        if (ms < MS + A.tB * MS * SLOW + HOLD) raf = requestAnimationFrame(step); else finish();
+      };
+      raf = requestAnimationFrame(step);
+    }
+    btn.addEventListener('click', play);
+    if (UI.reducedMotion() || !('IntersectionObserver' in window)) { btn.hidden = false; return; }
+    fig.classList.add('playing'); status.textContent = seenEarth; frame(0);
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); play(); } }, { threshold: 0.6 });
+    io.observe(fig);
   }
 
   /* shared helpers for the static figures below */
@@ -118,6 +201,40 @@
         [[Math.cos(Math.PI / 2 - th / 2) * 47, Math.sin(Math.PI / 2 - th / 2) * 47], 'θ', ''],
       ])}</div>
       <figcaption>${T`To scale, for the lab’s transfer at the entry patch point. The velocity relative to the Moon is the third side of the triangle: v<sub>sc</sub> = v☾ + v<sub>rel</sub>. The law of cosines gives its length from the two other sides and the angle θ between them.`}</figcaption></figure>`;
+  }
+
+  /* ---------------- Figure: the angles that give θ at the entry point (not to scale, sphere enlarged) ---------------- */
+  function figTheta() {
+    const W = 460, H = 340, F = frame(W, H, 34, 214), D = 300, rS = 110, lam = 43.4 * D2, phi = 76.8 * D2, L = 112;
+    const M = [D, 0], P = vadd(M, [-rS * Math.cos(lam), rS * Math.sin(lam)]), gam = Math.atan2(P[1], P[0]);
+    const dir = (a) => [Math.cos(a), Math.sin(a)], aH = gam + Math.PI / 2, aV = aH - phi, aM = Math.PI / 2, aPM = Math.atan2(P[1], P[0] - D);
+    const Vs = vadd(P, vmul(dir(aV), L)), Vm = vadd(P, vmul(dir(aM), L * 0.95));
+    const mid = (c, r, a0, a1) => vadd(c, vmul(dir((a0 + a1) / 2), r));
+    return `<figure class="fig" style="max-width:32rem" role="img" aria-label="${T`The Earth on the left, the Moon on the right inside its sphere of influence, drawn far too large. The entry point sits on the sphere, ahead of the Moon. At the Moon, the angle λ1 separates the line to the Earth from the line to the entry point. At the Earth, the angle γ1 separates the line to the Moon from the line to the entry point, of length r1. At the entry point the local horizontal is perpendicular to r1. The spacecraft’s velocity leans φ1 above it; the Moon’s velocity, perpendicular to the Earth–Moon line, is turned γ1 from the horizontal. The angle between the two velocities is θ = φ1 − γ1.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <circle class="f-soi" cx="${fx(F.S(M)[0])}" cy="${fx(F.S(M)[1])}" r="${rS}"/>
+        <path class="f-mu-thin" d="${F.path([[0, 0], M])}"/><path class="f-mu-thin" d="${F.path([M, P])}"/>
+        <path class="f-ink-ln" d="${F.path([[0, 0], P])}"/>
+        <path class="f-mu-thin f-dash" d="${F.path([P, vadd(P, vmul(dir(gam), 46))])}"/>
+        <path class="f-mu-thin f-dash" d="${F.path([vadd(P, vmul(dir(aH), -40)), vadd(P, vmul(dir(aH), 100))])}"/>
+        ${F.arc([0, 0], 70, 0, gam, 'f-ink-ln')}${F.arc(M, 26, aPM, Math.PI, 'f-ink-ln')}
+        ${F.arc(P, 84, aV, aH, 'f-tr', 40)}${F.arc(P, 50, aV, aM, 'f-ac-ln', 30)}${F.arc(P, 50, aM, aH, 'f-ink-ln', 12)}
+        ${F.arrow(M, vadd(M, [0, 46]), 'f-mu', 'f-mu-fill')}
+        ${F.arrow(P, Vm, 'f-mu', 'f-mu-fill')}${F.arrow(P, Vs, 'f-tr', 'f-tr-fill')}
+        <circle class="f-earth" cx="${fx(F.S([0, 0])[0])}" cy="${fx(F.S([0, 0])[1])}" r="13"/><circle class="f-moon" cx="${fx(F.S(M)[0])}" cy="${fx(F.S(M)[1])}" r="8"/>
+        ${F.dot(P, 'f-ink-fill', 3.5)}
+      </svg>${F.lbs([
+        [[0, -24], T`Earth`, 'm'], [vadd(M, [0, -20]), T`Moon`, 'm'], [vadd(M, [0, -rS - 12]), T`sphere of influence`, 'm'],
+        [[D * 0.5, -10], '<i>D</i>', 'm'], [vadd(vmul(vadd(M, P), 0.5), [8, -4]), '<i>r</i><sub>SOI</sub>', 'm l'],
+        [vadd(vmul(P, 0.5), [-4, 12]), '<i>r</i><sub>1</sub>', 'r'],
+        [vadd(dir(gam / 2), [84 * Math.cos(gam / 2) - 1, 84 * Math.sin(gam / 2) - 1]), 'γ<sub>1</sub>', ''],
+        [mid(M, 40, aPM, Math.PI), 'λ<sub>1</sub>', ''],
+        [vadd(P, [-12, 6]), T`entry point`, 'r'],
+        [vadd(M, [6, 40]), '<i>v</i><sub>☾</sub>', 'm l'], [vadd(Vm, [0, 10]), '<i>v</i><sub>☾</sub>', 'm'], [vadd(Vs, [8, 0]), '<i>v</i><sub>sc</sub>', 'tr l'],
+        [vadd(P, vmul(dir(aH), 104)), T`local horizontal`, 'm r'],
+        [mid(P, 97, aV, aH), 'φ<sub>1</sub>', 'tr'], [mid(P, 62, aV, aM), 'θ', 'acc'], [vadd(P, vmul(dir((aM + aH) / 2), 63)), 'γ<sub>1</sub>', ''],
+      ])}</div>
+      <figcaption>${T`Not to scale: the sphere is drawn far too large, which exaggerates γ<sub>1</sub> (7.7° in the lab). The Moon’s velocity is perpendicular to the Earth–Moon line, the local horizontal perpendicular to r<sub>1</sub>, so at the entry point the two are γ<sub>1</sub> apart. φ<sub>1</sub> is measured from the horizontal, θ from the Moon’s velocity: θ = φ<sub>1</sub> − γ<sub>1</sub>.`}</figcaption></figure>`;
   }
 
   /* ---------------- Figure 4: the hyperbola at the Moon, aim offset b, periselene, turn angle ---------------- */
@@ -169,10 +286,10 @@
       const id = cfg.id, st = cfg.presets[cfg.start];
       const flight = `<div class="tl-group"><h4>${T`Flight`}</h4>
           <div class="ctl"><label for="${id}-preset"><span>${T`Scenario`}</span></label><select id="${id}-preset">${Object.entries(cfg.presets).map(([k, q]) => `<option value="${k}"${k === cfg.start ? ' selected' : ''}>${T(q.label)}</option>`).join('')}</select></div>
-          ${UI.slider({ id: `${id}-dv`, label: T`TLI Δv`, min: 3000, max: 3250, step: 1, value: st.dv, unit: 'm/s' })}
-          ${UI.slider({ id: `${id}-ang`, label: T`TLI burn position (from Earth–Moon line)`, min: -150, max: -110, step: 0.01, value: st.ang, unit: '°' })}
+          ${UI.slider({ id: `${id}-dv`, label: T`TLI Δv`, min: cfg.dvRange ? cfg.dvRange[0] : 3000, max: cfg.dvRange ? cfg.dvRange[1] : 3250, step: 1, value: st.dv, unit: 'm/s' })}
+          ${UI.slider({ id: `${id}-ang`, label: T`TLI burn position (from Earth–Moon line)`, min: cfg.angRange ? cfg.angRange[0] : -150, max: cfg.angRange ? cfg.angRange[1] : -110, step: 0.01, value: st.ang, unit: '°' })}
           ${cfg.loi ? `<label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="${id}-loi"${st.loi ? ' checked' : ''}> ${T`Fire LOI at periselene (retrograde)`}</label>
-          ${UI.slider({ id: `${id}-loidv`, label: T`LOI Δv`, min: 300, max: 1400, step: 10, value: st.loiDv || 900, unit: 'm/s' })}` : ''}
+          ${UI.slider({ id: `${id}-loidv`, label: T`LOI Δv`, min: 800, max: 960, step: 1, value: st.loiDv || 900, unit: 'm/s' })}` : ''}
         </div>`;
       const mc = cfg.mcc ? `<div class="tl-group"><h4>${T`Mission Control`}</h4>
           ${UI.slider({ id: `${id}-mcc`, label: T`MCC at GET 26:42 (along-track)`, min: -15, max: 15, step: 0.01, value: st.mcc || 0, unit: 'm/s' })}
@@ -187,7 +304,7 @@
           <div class="stage"><canvas id="${id}-cv" aria-label="${T`Spacecraft trajectory between Earth and Moon`}"></canvas><div class="overlay" id="${id}-ov"></div></div>
           <div class="tl-side">
             <div class="ml-verdict" id="${id}-verdict" aria-live="polite"></div>
-            <div class="mini ml-zoom"><h4>${T`Zoom: the Moon’s sphere of influence`}</h4><canvas id="${id}-zm" aria-label="${T`Close-up of the trajectory inside the Moon’s sphere of influence, centred on the Moon`}"></canvas></div>
+            <div class="mini ml-zoom"><h4 id="${id}-zt" data-at="soi">${T`Zoom: the Moon’s sphere of influence`}</h4><canvas id="${id}-zm" aria-label="${T`Close-up that follows the spacecraft: centred on the Earth near the Earth, on the Moon near the Moon`}"></canvas></div>
             ${cfg.earthZoom ? `<div class="mini ml-zoom"><h4>${T`Zoom: the return to Earth`}</h4><canvas id="${id}-ze" aria-label="${T`Close-up of the return to Earth, with a gauge comparing the return perigee with the entry corridor`}"></canvas></div>` : ''}
           </div>
           <div class="tl-transport">
@@ -203,11 +320,14 @@
       const simFor = (m) => (m === 'three' ? Phys.simulateTLI : Phys.simulatePatched);
       let model = 'patched', sim = null, other = null, frameName = 'rotating', idx = 0, tNow = 0, warp = 0, slowNote = '', playing = !UI.reducedMotion();
       const tEnd = () => sim.pts[sim.pts.length - 1].t;
-      function seek(t) {
+      // the lunar orbit after LOI: lowest and highest altitude (cached on the run)
+      const lunarOrbit = (s) => { if (!s.loiT) return null; if (s.orbitAlt === undefined) { const r = s.pts.filter((q) => q.t > s.loiT).map((q) => q.rM - C.RM); s.orbitAlt = r.length ? [Math.min(...r), Math.max(...r)] : null; } return s.orbitAlt; };
+      function seek(t, flown = true) {   // flown: false when the view only jumps to the end after a recompute
         tNow = Math.max(0, Math.min(tEnd(), t));
         let lo = 0, hi = sim.pts.length - 1;
         while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (sim.pts[mid].t <= tNow) lo = mid; else hi = mid - 1; }
         idx = lo;
+        if (flown && cfg.onFlown && sim) cfg.onFlown(sim, tNow, { lunarOrbit });
       }
       // objectives count only after the candidate has changed a control themselves (not a preset)
       let touched = false;
@@ -222,11 +342,11 @@
       const ctl = UI.bindControls(root, fmts, (v, src) => {
         if (src === `${id}-t`) { seek(val(v, 't') * tEnd()); playing = false; setPlayLabel(); draw(); zooms.forEach((z) => z.redraw()); return; }
         const wasBad = sim && !inCorridor(sim);
-        sim = simFor(model)(simOpts(v));
+        sim = simFor(model)(simOpts(v)); sim.touched = touched;
         const gh = $('ghost');
         other = gh && gh.checked ? simFor(model === 'patched' ? 'three' : 'patched')(simOpts(v)) : null;
         if (cfg.onResult) cfg.onResult(sim, { model, touched, src, wasBad, inCorridor });
-        seek(playing ? 0 : Infinity);
+        seek(playing ? 0 : Infinity, false);
         summarize(); draw(); zooms.forEach((z) => z.redraw());
       });
       ['loi', 'ghost'].forEach((k) => { const el = $(k); if (el) el.addEventListener('change', () => ctl.update()); });
@@ -257,8 +377,6 @@
       setPlayLabel();
 
       const km0 = (m) => UI.fmt(m / 1000, 0);
-      // the lunar orbit after LOI: lowest and highest altitude
-      const lunarOrbit = (s) => { if (!s.loiT) return null; const r = s.pts.filter((q) => q.t > s.loiT).map((q) => q.rM - C.RM); return r.length ? [Math.min(...r), Math.max(...r)] : null; };
       function verdict(s) {
         const ret = s.retAlt, near = s.minM.alt < 20000e3;
         if (s.outcome === 'impact') return ['bad', T`Lunar impact`, T`The aim line passed too close to the Moon’s centre.`];
@@ -282,7 +400,7 @@
         const km = (m) => (isFinite(m) ? T`${km0(m)} km alt.` : '—'), v = ctl.read();
         const lines = [[T`Speed after TLI`, `${UI.fmt(s.v0 / 1000, 3)} km/s`]];
         if (cfg.mcc && Math.abs(val(v, 'mcc')) > 0) lines.push([T`MCC burn`, `${UI.dec(val(v, 'mcc').toFixed(2))} m/s`]);
-        lines.push([T`Closest lunar approach`, s.minM.alt < 0 ? T`impact` : km(s.minM.alt)], [T`… at GET`, UI.fmtTime(s.minM.t)]);
+        lines.push([T`Closest lunar approach`, s.minM.alt < 0 ? T`impact` : km(s.minM.alt)], [T`Closest approach at GET`, UI.fmtTime(s.minM.t)]);
         const pc = s.model === 'patched' ? s : other && other.model === 'patched' ? other : null;
         if (pc && pc.conic.soiIn && (s.model === 'patched' || cfg.detail === 'moon')) {
           const c = pc.conic.soiIn;
@@ -368,29 +486,49 @@
         $('ov').innerHTML = `${sim.model === 'patched' ? T`patched conics: Earth only (blue), then Moon only inside its SOI (orange)` : T`three-body: Earth and Moon pull at the same time`}<br>${frameName === 'rotating' ? T`rotating frame: Earth–Moon line fixed` : T`inertial frame, Earth-centred`}<br>${T`${km0(cur.rE)} km from Earth · ${km0(cur.rM)} km from the Moon · ${UI.fmt(speedAt(idx) / 1000, 2)} km/s`}${playing && warp ? `<br>${T`playback ×${UI.fmt(warp, 0)}`}${slowNote ? ' · ' + slowNote : ''}` : ''}`;
       };
 
-      // zoom on the Moon's sphere: Moon-centred, not rotating, so the patched hyperbola is a true conic here
+      // contextual zoom, following the spacecraft: Earth-centred near Earth, else Moon-centred and tightening as it
+      // closes in (the patch point, then the flyby or the lunar orbit). Not rotating, so the patched legs are true conics.
+      const zEase = { at: null, span: 0, t: 0 };
+      const zoomOf = (p) => {
+        if (p.rE < 6e7 && p.rM > R_SOI) return { at: 'earth', span: Math.max(2.5e7, 2.6 * p.rE) };
+        // in lunar orbit after LOI the distance stays small: frame the whole orbit, its high point at the edge
+        const o = sim.loiT && p.t >= sim.loiT ? lunarOrbit(sim) : null;
+        if (o) return { at: 'moon', span: 3 * (C.RM + o[1]) };
+        // the zoom stops tightening 10 000 km from the Moon's centre, so a fast flyby does not pump it in and out
+        return { at: p.rM < 0.5 * R_SOI ? 'moon' : 'soi', span: Math.min(2.5 * R_SOI, 2.6 * Math.max(p.rM, 1e7)) };
+      };
+      const zTitle = { earth: N`Zoom: near Earth`, soi: N`Zoom: the Moon’s sphere of influence`, moon: N`Zoom: close to the Moon` };
       zm.draw = (ctx, w, h) => {
         if (!sim) return;
-        const K = UI.tok(), span = 2.5 * R_SOI, s = Math.min(w, h) / span, cx = w / 2, cy = h / 2;
-        const rel = (p) => [p.x - p.mx, p.y - p.my], P = (p) => { const [x, y] = rel(p); return [cx + x * s, cy - y * s]; };
-        const inside = (p) => { const [x, y] = rel(p); return Math.hypot(x, y) < 1.6 * R_SOI; };
+        const cur = sim.pts[idx], z = zoomOf(cur), onMoon = z.at !== 'earth', now = performance.now();
+        // ease the scale toward its target while playing (time constant 0.3 s); snap on a change of centre or when paused
+        if (playing && zEase.span && (zEase.at === 'earth') === (z.at === 'earth')) z.span = zEase.span + (z.span - zEase.span) * (1 - Math.exp(-(now - zEase.t) / 300));
+        zEase.at = z.at; zEase.span = z.span; zEase.t = now;
+        const ht = $('zt'); if (ht && ht.dataset.at !== z.at) { ht.dataset.at = z.at; ht.textContent = T(zTitle[z.at]); }
+        const K = UI.tok(), s = Math.min(w, h) / z.span, cx = w / 2, cy = h / 2;
+        const rel = (p) => (onMoon ? [p.x - p.mx, p.y - p.my] : [p.x - p.ex, p.y - p.ey]), P = (p) => { const [x, y] = rel(p); return [cx + x * s, cy - y * s]; };
+        const inside = (p) => { const [x, y] = rel(p); return Math.abs(x) * s < w * 0.8 && Math.abs(y) * s < h * 0.8; };
         ctx.clearRect(0, 0, w, h);
-        ctx.strokeStyle = K.muted; ctx.setLineDash([4, 4]); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, R_SOI * s, 0, 7); ctx.stroke(); ctx.setLineDash([]);
         ctx.font = `10px ${K.mono}`; ctx.fillStyle = K.muted; ctx.textAlign = 'left';
-        ctx.fillText(T`Moon-centred, not rotating`, 6, 13); ctx.fillText(T`dashed: sphere of influence, ${UI.fmt(R_SOI / 1e6 * 1000, 0)} km`, 6, h - 6);
+        ctx.fillText(onMoon ? T`Moon-centred, not rotating` : T`Earth-centred, not rotating`, 6, 13);
+        const soiShown = onMoon && R_SOI * s < 0.6 * Math.max(w, h);
+        ctx.fillText(soiShown ? T`dashed: sphere of influence, ${UI.fmt(R_SOI / 1e6 * 1000, 0)} km` : T`${UI.fmt(z.span * w / Math.min(w, h) / 1e6 * 1000, 0)} km across`, 6, h - 6);
+        if (soiShown) { ctx.strokeStyle = K.muted; ctx.setLineDash([4, 4]); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, R_SOI * s, 0, 7); ctx.stroke(); ctx.setLineDash([]); }
         if (other) ghost(ctx, other, P, inside);
         ctx.globalAlpha = 0.3; trace(ctx, sim, P, sim.pts.length - 1, K, inside); ctx.globalAlpha = 1;
         trace(ctx, sim, P, idx, K, inside);
-        // the Moon's velocity and the direction of the Earth, at periselene
-        const pm = sim.pts.reduce((b, q) => (Math.abs(q.t - sim.minM.t) < Math.abs(b.t - sim.minM.t) ? q : b), sim.pts[0]);
-        const dE = vunit([pm.ex - pm.mx, pm.ey - pm.my]), dV = [-dE[1], dE[0]];
-        UI.drawMoon(ctx, cx, cy, Math.max(4, C.RM * s), K);
-        UI.arrow(ctx, cx + dV[0] * 12, cy - dV[1] * 12, cx + dV[0] * 34, cy - dV[1] * 34, K.muted, 1.4);
-        ctx.fillStyle = K.muted; ctx.textAlign = 'center'; ctx.fillText('v☾', cx + dV[0] * 44, cy - dV[1] * 44 + 3);
-        const ea = R_SOI * s * 1.12; UI.arrow(ctx, cx + dE[0] * (ea - 14), cy - dE[1] * (ea - 14), cx + dE[0] * ea, cy - dE[1] * ea, K.earth, 1.5);
-        ctx.fillStyle = K.earth; ctx.fillText(T`to Earth`, cx + dE[0] * (ea + 8), cy - dE[1] * (ea + 8) + 4);
-        if (sim.minM.alt > 0 && sim.minM.alt < R_SOI) { ctx.fillStyle = K.accent; ctx.textAlign = 'left'; ctx.fillText(T`periselene ${km0(sim.minM.alt)} km`, 6, 27); }
-        const cur = sim.pts[idx];
+        if (onMoon) {
+          // the Moon's velocity (the Earth→Moon direction turned +90°: the Moon orbits counter-clockwise) and the direction of the Earth
+          const dE = vunit([cur.ex - cur.mx, cur.ey - cur.my]), dV = [dE[1], -dE[0]], rm = Math.max(4, C.RM * s);
+          UI.drawMoon(ctx, cx, cy, rm, K);
+          UI.arrow(ctx, cx + dV[0] * (rm + 8), cy - dV[1] * (rm + 8), cx + dV[0] * (rm + 30), cy - dV[1] * (rm + 30), K.muted, 1.4);
+          ctx.fillStyle = K.muted; ctx.textAlign = 'center'; ctx.fillText('v☾', cx + dV[0] * (rm + 40), cy - dV[1] * (rm + 40) + 3);
+          const ea = Math.min(R_SOI * s * 1.12, 0.46 * Math.min(w, h)); UI.arrow(ctx, cx + dE[0] * (ea - 14), cy - dE[1] * (ea - 14), cx + dE[0] * ea, cy - dE[1] * ea, K.earth, 1.5);
+          ctx.fillStyle = K.earth; ctx.fillText(T`to Earth`, cx + dE[0] * (ea + 8), cy - dE[1] * (ea + 8) + 4);
+          if (sim.minM.alt > 0 && sim.minM.alt < R_SOI) { ctx.fillStyle = K.accent; ctx.textAlign = 'left'; ctx.fillText(T`periselene ${km0(sim.minM.alt)} km`, 6, 27); }
+        } else {
+          UI.drawEarth(ctx, cx, cy, Math.max(4, C.RE * s), K);
+        }
         if (inside(cur)) { const [sx, sy] = P(cur); ctx.fillStyle = K.ink; ctx.beginPath(); ctx.arc(sx, sy, 3.5, 0, 7); ctx.fill(); }
       };
 
@@ -453,7 +591,7 @@
         seek(tNow + dt * warp);
         if (tNow >= tEnd()) { playing = false; setPlayLabel(); }
         draw();
-        acc += dt; if (acc > 0.15) { zooms.forEach((z) => z.redraw()); acc = 0; }
+        acc += dt; if (acc > 0.05) { zooms.forEach((z) => z.redraw()); acc = 0; }
       });
       ctl.update();
     },
@@ -484,7 +622,6 @@
             ${Primer.box('powers', false, 'refresher')}
             <p>${T`The <b>patched-conic</b> method treats the flight as two two-body problems. Outbound it is an Earth-centred ellipse. At the sphere boundary, subtract the Moon’s velocity (≈ 1.02 km/s) to get the spacecraft’s velocity relative to the Moon. Inside the sphere the path is a Moon-centred hyperbola. Its periselene is set by where the outbound ellipse crosses the boundary, which makes the method very sensitive, but it gives Δv and flight times to within a few percent.`}</p>
             ${figSOI()}
-            <p>${T`One thing a drawing cannot show: the Moon moves, about a kilometre every second. The figure shows it where it is when the spacecraft reaches patch 1. Earlier in the trip the Moon and its sphere were farther back along the orbit, so the blue line only seems to cut into the sphere before patch 1: when the spacecraft was there, the sphere was not. Far from Earth the spacecraft moves mostly outward and slowly, and the Moon catches up with it. Whether the spacecraft is entering or leaving the sphere depends on its velocity relative to the Moon, the subject of section ${App.sec('moon', 3)}.`}</p>
           </div>
         </section>
 
@@ -507,11 +644,24 @@
             <div class="eq">\\[ \\vec v_{rel} = \\vec v_{sc} - \\vec v_☾, \\qquad v_{rel}^2 = v_{sc}^2 + v_☾^2 - 2\\,v_{sc}\\,v_☾\\cos\\theta \\]</div>
             ${Sym.where([['\\vec v_{rel}', N`velocity relative to the Moon at the edge of its sphere of influence`, 'm/s'], ['\\vec v_{sc}', N`spacecraft velocity relative to Earth at the sphere of influence`, 'm/s'], ['\\vec v_☾', N`the Moon’s orbital velocity, about 1.02 km/s`, 'm/s'], ['\\theta', N`angle between \\(\\vec v_{sc}\\) and \\(\\vec v_☾\\)`, N`rad or °`]], N`The second form is the law of cosines applied to the vector subtraction.`)}
             ${figVrel()}
-            <p>${T`In the lab’s transfer the spacecraft reaches the sphere at \\(v_{sc}\\) = 0.925 km/s, at θ = 69.1° from the Moon’s direction of motion: \\(v_{rel} = \\sqrt{0.925^2 + 1.0245^2 - 2\\times0.925\\times1.0245\\times\\cos 69.1^\\circ}\\) = 1.109 km/s. The spacecraft is slower than the Moon, but it moves in a different direction, so relative to the Moon it is fast.`}</p>
+            <p>${T`<b>Finding θ.</b> The Earth-centred conic gives the spacecraft’s speed and direction at the point where it crosses the sphere. That point is the planner’s choice, an input like the TLI speed: its angle \\(\\lambda_1\\) at the Moon, measured from the Moon–Earth line. Everything else follows from it. How to choose it is explained in section ${App.sec('moon', 4)}. Three steps give θ:`}</p>
+            <ol>
+              <li>${T`The triangle Earth–Moon–entry point gives the distance from Earth \\(r_1\\) and the angle \\(\\gamma_1\\) at the Earth between the spacecraft and the Moon (law of cosines, then law of sines).`}</li>
+              <li>${T`The conic gives the speed \\(v_{sc}\\) at \\(r_1\\) (energy) and the flight-path angle \\(\\phi_1\\), how far the velocity leans outward from the local horizontal (angular momentum; at TLI the velocity is horizontal, \\(h = r_0 v_0\\)).`}</li>
+              <li>${T`The Moon’s velocity is perpendicular to the Earth–Moon line, the local horizontal is perpendicular to the Earth–spacecraft line: the two directions differ by \\(\\gamma_1\\). The spacecraft enters the sphere ahead of the Moon, so \\(\\theta = \\phi_1 - \\gamma_1\\).`}</li>
+            </ol>
+            ${figTheta()}
+            <div class="eq">\\[ r_1^2 = D^2 + r_{SOI}^2 - 2\\,D\\,r_{SOI}\\cos\\lambda_1, \\qquad \\sin\\gamma_1 = \\frac{r_{SOI}}{r_1}\\sin\\lambda_1 \\]</div>
+            <div class="eq">\\[ v_{sc}^2 = v_0^2 - \\frac{2\\mu_\\oplus}{r_0} + \\frac{2\\mu_\\oplus}{r_1}, \\qquad \\cos\\phi_1 = \\frac{r_0\\,v_0}{r_1\\,v_{sc}}, \\qquad \\theta = \\phi_1 - \\gamma_1 \\]</div>
+            ${Sym.where([['\\lambda_1', N`angle at the Moon between the Moon–Earth line and the entry point on the sphere`, N`rad or °`], ['r_1', N`distance from the Earth’s centre to the entry point`, 'm'], ['\\gamma_1', N`angle at the Earth between the spacecraft and the Moon`, N`rad or °`], 'Dem', 'rsoi', ['r_0, v_0', N`radius and speed just after TLI, at perigee`, N`m, m/s`], 'muE', ['\\phi_1', N`flight-path angle at the entry point, measured from the local horizontal`, N`rad or °`]], N`\\(\\lambda_1\\) is chosen; \\(r_1\\), \\(\\gamma_1\\), \\(v_{sc}\\) and \\(\\phi_1\\) are derived from it.`)}
+            <p>${T`In the lab’s transfer: TLI leaves \\(r_0\\) = 6 563 km at \\(v_0\\) = 10.953 km/s and reaches the sphere at \\(\\lambda_1\\) = 43.4°, read from the simulated flight. Then \\(r_1\\) = 339 374 km, \\(\\gamma_1\\) = 7.7°, \\(v_{sc}\\) = 0.924 km/s and \\(\\phi_1\\) = 76.8°, so θ = 76.8° − 7.7° = 69.1° from the Moon’s direction of motion. Then \\(v_{rel} = \\sqrt{0.924^2 + 1.0245^2 - 2\\times0.924\\times1.0245\\times\\cos 69.1^\\circ}\\) = 1.108 km/s. The spacecraft is slower than the Moon, but it moves in a different direction, so relative to the Moon it is fast.`}</p>
             <p>${T`Inside the sphere the Moon’s gravity speeds the spacecraft up as it falls in and slows it down as it climbs out. Energy conservation relative to the Moon gives its speed at any distance \\(r\\) from the Moon’s centre:`}</p>
-            <div class="eq">\\[ v^2 = v_\\infty^2 + \\frac{2\\mu_☾}{r} \\qquad\\Longrightarrow\\qquad v_\\infty = \\sqrt{v_{rel}^2 - \\frac{2\\mu_☾}{r_{SOI}}} \\]</div>
-            ${Sym.where(['vinf', 'muM', ['r', N`distance from the Moon’s centre`, 'm']], N`The left relation holds along the whole hyperbola. The right one applies it at the edge of the sphere.`)}
-            <p>${T`As \\(r\\) grows, the term \\(2\\mu_☾/r\\) shrinks toward zero and \\(v\\) tends to \\(v_\\infty\\): the speed the spacecraft would have infinitely far from the Moon, what is left once the Moon’s gravity has taken its share. It is called the <b>hyperbolic excess speed</b>. In the lab: \\(v_\\infty = \\sqrt{1.109^2 - 2\\times4\\,902.8/66\\,183}\\) = 1.04 km/s, the 1 038 m/s the lab prints. Many textbooks skip this step and call \\(v_{rel}\\) the excess speed directly; at the Moon that is 7% too high.`}</p>
+            <div class="eq">\\[ v^2 = v_\\infty^2 + \\frac{2\\mu_☾}{r} \\]</div>
+            ${Sym.where([['v', N`speed relative to the Moon at distance \\(r\\)`, 'm/s'], 'vinf', 'muM', ['r', N`distance from the Moon’s centre`, 'm']], N`It holds at every point of the hyperbola.`)}
+            <p>${T`At the edge of the sphere, \\(r = r_{SOI}\\) and the speed relative to the Moon is the \\(v_{rel}\\) just computed. Put them in and solve for \\(v_\\infty\\):`}</p>
+            <div class="eq">\\[ v_{rel}^2 = v_\\infty^2 + \\frac{2\\mu_☾}{r_{SOI}} \\qquad\\Longrightarrow\\qquad v_\\infty = \\sqrt{v_{rel}^2 - \\frac{2\\mu_☾}{r_{SOI}}} \\]</div>
+            ${Sym.where([['v_{rel}', N`speed relative to the Moon at the edge of its sphere of influence`, 'm/s'], 'vinf', 'muM', 'rsoi'])}
+            <p>${T`As \\(r\\) grows, the term \\(2\\mu_☾/r\\) shrinks toward zero and \\(v\\) tends to \\(v_\\infty\\): the speed the spacecraft would have infinitely far from the Moon, what is left once the Moon’s gravity has taken its share. It is called the <b>hyperbolic excess speed</b>. In the lab: \\(v_\\infty = \\sqrt{1.108^2 - 2\\times4\\,902.8/66\\,183}\\) = 1.04 km/s, the 1 038 m/s the lab prints. Many textbooks skip this step and call \\(v_{rel}\\) the excess speed directly; at the Moon that is 7% too high.`}</p>
             <p>${T`Gravity never stops pulling, so why does the speed not keep falling to zero? It does keep falling, forever, but toward \\(v_\\infty\\), not toward zero. The pull weakens as \\(1/r^2\\), so carrying a kilogram from distance \\(r\\) out to infinity takes a finite energy, \\(\\mu/r\\): the escape energy of module ${Progress.code('newton')}. A spacecraft with more kinetic energy than that never runs out. It keeps the surplus, \\(\\tfrac12 v_\\infty^2\\) per kilogram, and its path is a hyperbola. With less, it falls back on an ellipse. Arriving from the Earth, a spacecraft always has a surplus relative to the Moon, so without a braking burn it leaves the sphere again.`}</p>
           </div>
         </section>
@@ -530,6 +680,13 @@
             ${Sym.where([['b', N`impact parameter: distance from the Moon’s centre to the arrival line, before the Moon’s gravity bends it`, 'm'], 'rpM', 'vinf', 'vp', 'muM'], N`The square root is larger than 1. Gravity pulls the path inward, so you must aim wider than the periselene you want.`)}
             <p>${T`Example. Apollo aimed for a periselene about 110 km above the surface, the height of the lunar parking orbit (Apollo 11 entered a 111 × 313 km orbit). With the lab’s \\(v_\\infty = 1\\,038\\) m/s: \\(r_p = 1\\,737.4 + 110 = 1\\,847.4\\) km, \\(2\\mu_☾/(r_p v_\\infty^2) = 4.92\\) and \\(b = 1\\,847.4\\times\\sqrt{5.92} = 4\\,496\\) km. To pass 1 847 km from the centre, aim 4 496 km from it.`}</p>
             <p>${T`Put \\(r_p = R_☾\\) and the same formula gives the narrowest aim that still misses: below \\(b\\) = 4 339 km the spacecraft hits the Moon. That is 2.5 lunar radii. The ratio is not a rule: it is \\(\\sqrt{1 + 2\\mu_☾/(R_☾ v_\\infty^2)}\\), which depends on \\(v_\\infty\\). It does say something useful. Gravity bends into the surface paths that would have missed it, so the Moon catches everything aimed within 2.5 of its radii. A slower arrival makes it an even bigger target; a very fast one shrinks it toward its real size. The lab prints both numbers as <i>Aim offset b</i> and <i>Impact if b below</i>.`}</p>
+            <p>${T`<b>Closing the loop.</b> You cannot pick \\(b\\) and work backward: \\(b\\) depends on how the outbound ellipse crosses the sphere, so it comes out of the whole Earth-side calculation. It is the target. The knob is the arrival point \\(\\lambda_1\\) of section ${App.sec('moon', 3)}, or the TLI that produces it:`}</p>
+            <ol>
+              <li>${T`From the periselene you want, the formula above gives the \\(b\\) you need (4 496 km for 110 km).`}</li>
+              <li>${T`Choose \\(\\lambda_1\\) and compute forward: \\(r_1\\), \\(\\gamma_1\\), \\(\\phi_1\\), θ, \\(v_{rel}\\), \\(v_\\infty\\), and the \\(b\\) this trajectory gives. The time from TLI to the sphere also tells you where the Moon must be at TLI, so where to burn.`}</li>
+              <li>${T`Compare with the target, adjust \\(\\lambda_1\\) and repeat until they match. Even \\(v_\\infty\\) changes a little with \\(\\lambda_1\\), which is why this is a loop and not a single formula.`}</li>
+            </ol>
+            <p>${T`Planners solve this loop numerically, nudging the departure until the arrival converges on the target. The lab lets you run it by hand the other way round: the TLI burn position is the knob, and <i>Aim offset b</i> under <i>Outcome</i> shows where it lands.`}</p>
           </div>
         </section>
 
@@ -546,14 +703,14 @@
         <section class="section">
           <h2><span class="idx">0.6</span>${T`Lab: fly to the Moon`}</h2>
           <div class="prose">
-            <p>${T`The lab flies the plan: patched conics, one body at a time. The large view shows the whole trip. The zoom beside it stays centred on the Moon without turning, so you see the switch from the Earth conic (blue) to the Moon conic (orange) at the edge of the sphere, and the hyperbola swinging around the Moon.`}</p>
+            <p>${T`The lab flies the plan: patched conics, one body at a time. The large view shows the whole trip. The zoom beside it follows the spacecraft without turning: centred on the Earth just after TLI, then on the Moon, closer and closer as the spacecraft falls in. There you see the switch from the Earth conic (blue) to the Moon conic (orange) at the edge of the sphere, and the hyperbola swinging around the Moon.`}</p>
             <ol>
               <li>${T`Scenario <i>Fly past the Moon</i>. Play it and watch the zoom: the blue line ends at the sphere and the orange hyperbola takes over. Read v∞, the periselene and the aim offset b under <i>Outcome</i>, and compare them with sections ${App.sec('moon', 3)} and ${App.sec('moon', 4)}.`}</li>
-              <li>${T`Move the TLI burn position by a few hundredths of a degree. The periselene moves by hundreds of kilometres: the timing of one burn aims the whole transfer. Module ${Progress.code('freereturn')} explains why.`}</li>
-              <li>${T`Scenario <i>Capture into lunar orbit</i>: the LOI burn at periselene brakes the spacecraft into orbit. Lower the LOI Δv until it is no longer captured.`}</li>
+              <li>${T`Move the TLI burn position by a few hundredths of a degree. The periselene moves by hundreds of kilometres: the timing of one burn aims the whole transfer. Module ${Progress.code('freereturn')} explains why. Aim for Apollo’s band, a periselene between 100 and 300 km, and play the flight to periselene.`}</li>
+              <li>${T`Scenario <i>Capture into lunar orbit</i>: the LOI burn at periselene brakes the spacecraft into orbit, but its low point is only about 80 km up. Lower the LOI Δv until it is no longer captured. Then match Apollo 11’s first lunar orbit, 111 × 313 km: adjust the aim and the LOI Δv for a low point between 100 and 130 km and a high point between 280 and 340 km, and play it through the burn. The high point moves about 5 km for every m/s of LOI.`}</li>
             </ol>
           </div>
-          ${MoonLab.markup({ id: 'tl', title: N`Earth–Moon trajectory`, presets: PRESETS, start: 'flyby', loi: true, detail: 'moon' })}
+          ${MoonLab.markup({ id: 'tl', title: N`Earth–Moon trajectory`, presets: PRESETS, start: 'flyby', loi: true, detail: 'moon', dvRange: [3120, 3200], angRange: [-132.8, -131.8] })}
           <p class="note">${T`Planar model with the Moon on a circular orbit. Real Apollo trajectories were three-dimensional, with the Moon's 5° orbital inclination and its eccentric orbit, the Sun's pull and Earth's oblateness all included. The method is the same.`}</p>
         </section>
 
@@ -565,12 +722,15 @@
 
       MoonLab.mount(page.querySelector('#tl'), {
         id: 'tl', presets: PRESETS, loi: true, detail: 'moon',
-        onResult(s, c) {
-          if (!c.touched) return;
-          if (s.outcome !== 'impact' && s.minM.alt >= 50e3 && s.minM.alt <= 2000e3) Progress.done('moon', 'reach');
-          if (s.outcome === 'lunarOrbit') Progress.done('moon', 'loi');
+        // objectives: the candidate's own aim, and the flight played (or scrubbed) past the event
+        onFlown(s, t, c) {
+          if (!s.touched || s.model !== 'patched') return;
+          if (s.outcome !== 'impact' && s.minM.alt >= 100e3 && s.minM.alt <= 300e3 && t >= s.minM.t) Progress.done('moon', 'reach');
+          const o = s.outcome === 'lunarOrbit' && c.lunarOrbit(s);
+          if (o && o[0] >= 100e3 && o[0] <= 130e3 && o[1] >= 280e3 && o[1] <= 340e3 && t >= s.loiT) Progress.done('moon', 'loi');   // Apollo 11's LOI-1: 111 × 313 km
         },
       });
+      mountSOI(page);
       Practice.embed(page.querySelector('#practice-slot'), 'moon', 3);
     },
   });
@@ -595,5 +755,8 @@
         hint: T`Energy relative to the Moon: v² = v∞² + 2μ☾/r, with μ☾ = 4902.8 km³/s².`,
         sol: R`\[ v_\infty = \sqrt{v_{rel}^2 - \frac{2\mu_☾}{r_{SOI}}} = \sqrt{${fm(vrel, 2)}^2 - \frac{2\times4902.8}{66183}} = ${fm(vinf, 3)}\ \mathrm{km/s} \]` };
     } },
-  ], []);
+  ], [
+    { q: N`A spacecraft coasts into the Moon’s sphere of influence and nobody fires the engine. What happens?`, opts: [N`It is captured into an orbit around the Moon`, N`It swings around the Moon on a hyperbola and leaves the sphere as fast as it arrived`, N`It falls straight onto the Moon`, N`It stops at the edge of the sphere, where the two pulls balance`], a: 1, why: N`Arriving from the Earth it always has a surplus of energy relative to the Moon, v∞ > 0. The hyperbola only turns its direction. Capture needs a braking burn at periselene, the LOI.` },
+    { q: N`To pass 110 km above the Moon, where do you aim the arrival line?`, opts: [N`At the Moon’s centre: gravity does the rest`, N`Exactly 110 km above the surface`, N`Well outside the periselene you want, about 4 500 km from the centre`, N`Inside the Moon, because gravity pushes the path outward`], a: 2, why: N`Gravity bends the path inward, so the aim offset b is larger than the periselene radius: b = r_p √(1 + 2μ☾/(r_p v∞²)), about 2.4 times r_p here.` },
+  ]);
 })();

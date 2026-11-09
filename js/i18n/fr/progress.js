@@ -63,7 +63,6 @@ I18N.add('fr', {
     'Trois jours de croisière vers une cible qui file à un kilomètre par seconde. Réussissez la poussée translunaire et, en cas de panne, la Lune elle-même vous renverra vers la Terre, comme pour Apollo 13. Ratez-la d’un dixième de mètre par seconde et vous aurez besoin du contrôle de mission. Aujourd’hui, le contrôle de mission, c’est vous, {name}.',
   'Fly a free return that comes home inside the entry corridor': 'Réussir un retour libre qui revient dans le couloir de rentrée',
   'Rescue a bad trajectory with a midcourse correction': 'Sauver une mauvaise trajectoire par une correction à mi-parcours',
-  'Brake into lunar orbit with an LOI burn': 'Freiner pour se placer en orbite lunaire par une poussée LOI',
   'Qualify: answer 2 lunar trajectory problems correctly': 'Qualification : résoudre correctement 2 problèmes de trajectoire lunaire',
   'You navigated to the Moon and back, {name}. Now the hardest five hundred metres of the whole mission.':
     'Vous avez navigué jusqu’à la Lune et retour, {name}. Place maintenant aux cinq cents mètres les plus difficiles de toute la mission.',
@@ -132,6 +131,7 @@ I18N.add('fr', {
   "Reset the objectives of this module": "Réinitialiser les objectifs de ce module",
   "Click again to clear these objectives and the practice score of this module": "Cliquez à nouveau pour effacer ces objectifs et le score d’entraînement de ce module",
   "A target three days away that moves at a kilometre per second, and two bodies pulling on you at once. Before anyone flies it, someone plans it with pencil and paper: an orbit around the Earth, a switch at the edge of the Moon’s sphere of influence, an orbit around the Moon. Plan the trip, aim it and brake into lunar orbit, {name}.": "Une cible à trois jours de route qui file à un kilomètre par seconde, et deux astres qui vous attirent en même temps. Avant que quiconque ne vole, quelqu’un planifie le trajet au crayon : une orbite autour de la Terre, un changement à la limite de la sphère d’influence de la Lune, une orbite autour de la Lune. Planifiez le voyage, visez juste et freinez en orbite lunaire, {name}.",
-  "Fly past the Moon with a periselene between 50 and 2 000 km": "Survoler la Lune avec un périsélène entre 50 et 2 000 km",
   "You can plan a trip to the Moon, aim it and brake into orbit, {name}. Next: the trajectory that brings you home on its own if the engine dies.": "Vous savez planifier un voyage vers la Lune, le viser et freiner en orbite, {name}. Prochaine étape : la trajectoire qui vous ramène seule si le moteur vous lâche.",
+  "Aim the TLI yourself to pass the Moon at an Apollo-like periselene, 100 to 300 km, and fly it to periselene": "Visez vous-même la TLI pour passer près de la Lune à un périsélène de type Apollo, entre 100 et 300 km, et volez jusqu’au périsélène",
+  "Match Apollo 11’s first lunar orbit: brake into an orbit with its low point at 100–130 km and its high point at 280–340 km, and fly it through the LOI burn": "Reproduisez la première orbite lunaire d’Apollo 11 : freinez pour une orbite dont le point bas est à 100–130 km et le point haut à 280–340 km, et volez jusqu’après la poussée LOI",
 });

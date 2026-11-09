@@ -87,8 +87,8 @@
       name: N`Translunar Navigation`, topic: 'moon', glyph: 'soi',
       briefing: N`A target three days away that moves at a kilometre per second, and two bodies pulling on you at once. Before anyone flies it, someone plans it with pencil and paper: an orbit around the Earth, a switch at the edge of the Moon’s sphere of influence, an orbit around the Moon. Plan the trip, aim it and brake into lunar orbit, {name}.`,
       objectives: [
-        { id: 'reach', text: N`Fly past the Moon with a periselene between 50 and 2 000 km` },
-        { id: 'loi', text: N`Brake into lunar orbit with an LOI burn` },
+        { id: 'reach', text: N`Aim the TLI yourself to pass the Moon at an Apollo-like periselene, 100 to 300 km, and fly it to periselene` },
+        { id: 'loi', text: N`Match Apollo 11’s first lunar orbit: brake into an orbit with its low point at 100–130 km and its high point at 280–340 km, and fly it through the LOI burn` },
         { id: 'qual', text: N`Qualify: answer 2 lunar trajectory problems correctly` },
       ],
       debrief: N`You can plan a trip to the Moon, aim it and brake into orbit, {name}. Next: the trajectory that brings you home on its own if the engine dies.`,

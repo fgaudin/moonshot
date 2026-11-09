@@ -63,7 +63,6 @@ I18N.add('de', {
     'Drei Tage Freiflug auf ein Ziel zu, das sich mit einem Kilometer pro Sekunde bewegt. Sitzt die translunare Zündung, schleudert dich der Mond selbst nach Hause, falls etwas ausfällt, wie bei Apollo 13. Liegst du um ein Zehntel Meter pro Sekunde daneben, brauchst du die Missionskontrolle. Heute bist du die Missionskontrolle, {name}.',
   'Fly a free return that comes home inside the entry corridor': 'Fliege eine freie Rückkehr, die innerhalb des Wiedereintrittskorridors heimkommt',
   'Rescue a bad trajectory with a midcourse correction': 'Rette eine schlechte Flugbahn mit einer Kurskorrektur',
-  'Brake into lunar orbit with an LOI burn': 'Bremse mit einer LOI-Zündung in die Mondumlaufbahn ein',
   'Qualify: answer 2 lunar trajectory problems correctly': 'Qualifikation: Löse 2 Aufgaben zu Mondflugbahnen richtig',
   'You navigated to the Moon and back, {name}. Now the hardest five hundred metres of the whole mission.':
     'Du bist zum Mond und zurück navigiert, {name}. Jetzt kommen die schwierigsten fünfhundert Meter der ganzen Mission.',
@@ -132,6 +131,7 @@ I18N.add('de', {
   "Reset the objectives of this module": "Die Ziele dieses Moduls zurücksetzen",
   "Click again to clear these objectives and the practice score of this module": "Klick noch einmal, um diese Ziele und den Übungspunktestand dieses Moduls zu löschen",
   "A target three days away that moves at a kilometre per second, and two bodies pulling on you at once. Before anyone flies it, someone plans it with pencil and paper: an orbit around the Earth, a switch at the edge of the Moon’s sphere of influence, an orbit around the Moon. Plan the trip, aim it and brake into lunar orbit, {name}.": "Ein Ziel drei Tage entfernt, das mit einem Kilometer pro Sekunde fliegt, und zwei Himmelskörper, die gleichzeitig an dir ziehen. Bevor jemand fliegt, plant jemand die Reise mit Bleistift und Papier: eine Bahn um die Erde, ein Wechsel am Rand der Einflusssphäre des Mondes, eine Bahn um den Mond. Plane die Reise, ziele genau und bremse in die Mondumlaufbahn, {name}.",
-  "Fly past the Moon with a periselene between 50 and 2 000 km": "Fliege mit einem Periselenum zwischen 50 und 2 000 km am Mond vorbei",
   "You can plan a trip to the Moon, aim it and brake into orbit, {name}. Next: the trajectory that brings you home on its own if the engine dies.": "Du kannst eine Reise zum Mond planen, sie zielen und in die Umlaufbahn bremsen, {name}. Als Nächstes: die Bahn, die dich von selbst nach Hause bringt, wenn das Triebwerk ausfällt.",
+  "Aim the TLI yourself to pass the Moon at an Apollo-like periselene, 100 to 300 km, and fly it to periselene": "Ziele die TLI selbst, um den Mond mit einem Periselenum wie bei Apollo, 100 bis 300 km, zu passieren, und fliege bis zum Periselenum",
+  "Match Apollo 11’s first lunar orbit: brake into an orbit with its low point at 100–130 km and its high point at 280–340 km, and fly it through the LOI burn": "Bilde die erste Mondumlaufbahn von Apollo 11 nach: Bremse in eine Bahn mit dem tiefsten Punkt bei 100–130 km und dem höchsten bei 280–340 km ein, und fliege über die LOI-Zündung hinaus",
 });
