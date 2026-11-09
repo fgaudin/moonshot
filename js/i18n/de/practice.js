@@ -391,4 +391,7 @@ I18N.add('de', {
   "Yes: free drift would make the same turn for nothing": "Ja: Freies Driften ergäbe dieselbe Drehung kostenlos",
   "A path to lunar orbit that needs no braking burn": "Eine Bahn in die Mondumlaufbahn ohne Bremszündung",
   "The astronauts preferred keeping one pilot in orbit": "Die Astronauten wollten lieber einen Piloten im Orbit lassen",
+  "Free return": "Freie Rückkehr",
+  "At the edge of the Moon’s sphere of influence the spacecraft moves at <b>{$0} km/s</b> relative to Earth. The Moon moves at 1.02 km/s, and the angle between the two velocities is <b>{$1}°</b>. What is the speed relative to the Moon, v_rel?": "Am Rand der Einflusssphäre des Mondes bewegt sich das Raumschiff mit <b>{$0} km/s</b> relativ zur Erde. Der Mond bewegt sich mit 1,02 km/s, und der Winkel zwischen beiden Geschwindigkeiten beträgt <b>{$1}°</b>. Wie groß ist die Geschwindigkeit relativ zum Mond, v_rel?",
+  "v_rel is the vector difference of the two velocities: use the law of cosines.": "v_rel ist die Vektordifferenz der beiden Geschwindigkeiten: Verwende den Kosinussatz.",
 });

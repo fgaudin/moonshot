@@ -155,7 +155,7 @@
         <section class="section">
           <h2><span class="idx">0.6</span>${T`Free return and Apollo 13`}</h2>
           <div class="prose">
-            <p>${T`Module ${Progress.code('moon')} (section ${App.sec('moon', 4)}) told how Apollo 13’s crew got back onto a free return after the oxygen tank failure. For return planning the second burn is the one to study: about two hours after passing the Moon, the lunar module’s descent engine sped the return up, a trans-Earth burn made with the wrong engine. The spacecraft splashed down on 17 April 1970, in the corridor, after a few small midcourse corrections.`}</p>
+            <p>${T`Module ${Progress.code('freereturn')} (section ${App.sec('freereturn', 2)}) told how Apollo 13’s crew got back onto a free return after the oxygen tank failure. For return planning the second burn is the one to study: about two hours after passing the Moon, the lunar module’s descent engine sped the return up, a trans-Earth burn made with the wrong engine. The spacecraft splashed down on 17 April 1970, in the corridor, after a few small midcourse corrections.`}</p>
           </div>
         </section>
 

@@ -84,15 +84,14 @@
       debrief: N`Hard dock, {name}. You can now join two spacecraft into one. Next: the long coast to the Moon.`,
     },
     moon: {
-      name: N`Translunar Navigation`, topic: 'moon', glyph: 'figure8',
-      briefing: N`Three days of coasting towards a target moving at a kilometre per second. Get the trans-lunar burn right and the Moon itself will swing you home if anything breaks, as it did for Apollo 13. Get it wrong by a tenth of a metre per second and you will need Mission Control. You are in Mission Control today, {name}.`,
+      name: N`Translunar Navigation`, topic: 'moon', glyph: 'soi',
+      briefing: N`A target three days away that moves at a kilometre per second, and two bodies pulling on you at once. Before anyone flies it, someone plans it with pencil and paper: an orbit around the Earth, a switch at the edge of the Moon’s sphere of influence, an orbit around the Moon. Plan the trip, aim it and brake into lunar orbit, {name}.`,
       objectives: [
-        { id: 'free', text: N`Fly a free return that comes home inside the entry corridor` },
-        { id: 'rescue', text: N`Rescue a bad trajectory with a midcourse correction` },
+        { id: 'reach', text: N`Fly past the Moon with a periselene between 50 and 2 000 km` },
         { id: 'loi', text: N`Brake into lunar orbit with an LOI burn` },
         { id: 'qual', text: N`Qualify: answer 2 lunar trajectory problems correctly` },
       ],
-      debrief: N`You navigated to the Moon and back, {name}. Now the hardest five hundred metres of the whole mission.`,
+      debrief: N`You can plan a trip to the Moon, aim it and brake into orbit, {name}. Next: the trajectory that brings you home on its own if the engine dies.`,
     },
     landing: {
       name: N`The Last 500 Metres`, topic: 'landing', glyph: 'lander',
@@ -191,6 +190,8 @@
     rocket: '<path d="M0 -20 C 6 -12 6 4 5 14 L -5 14 C -6 4 -6 -12 0 -20 Z" class="pg-fill"/><path d="M-5 6 L-10 16 L-5 14 M5 6 L10 16 L5 14" class="pg-line"/><path d="M-3 16 L0 25 L3 16" class="pg-dot"/>',
     ascent: '<path d="M-24 22 A 60 60 0 0 1 24 22" class="pg-line" opacity=".4"/><path d="M-14 18 C -12 0 0 -12 22 -14" class="pg-line"/><circle cx="22" cy="-14" r="2.6" class="pg-dot"/>',
     transfer: '<circle cx="0" cy="4" r="9" class="pg-line"/><circle cx="0" cy="4" r="20" class="pg-line" opacity=".5"/><path d="M9 4 A 14.5 12 0 0 1 -20 4" class="pg-line pg-acc"/><circle cx="0" cy="4" r="3" class="pg-fill"/>',
+    // a Moon inside its dashed sphere of influence, an arc arriving from the Earth
+    soi: '<circle cx="-19" cy="10" r="6" class="pg-fill"/><circle cx="12" cy="-4" r="13" class="pg-line" stroke-dasharray="3 3" opacity=".7"/><path d="M-13 7 C -6 -6 2 -12 8 -15" class="pg-line"/><path d="M8 -15 C 18 -10 20 2 10 6" class="pg-line pg-acc"/><circle cx="12" cy="-4" r="3.5" class="pg-dot"/>',
     figure8: '<path d="M-18 4 C -8 -12 8 -12 14 0 C 20 12 24 12 24 4 C 24 -4 20 -4 14 8 C 8 20 -8 20 -18 4" class="pg-line"/><circle cx="-18" cy="4" r="5" class="pg-fill"/><circle cx="22" cy="4" r="3" class="pg-dot"/>',
     lander: '<rect x="-7" y="-10" width="14" height="9" class="pg-fill"/><rect x="-9" y="-1" width="18" height="7" class="pg-dot"/><path d="M-9 6 L-15 16 M9 6 L15 16 M-18 16 L-12 16 M12 16 L18 16" class="pg-line"/><path d="M-24 18 L24 18" class="pg-line" opacity=".5"/>',
     node: '<circle cx="0" cy="4" r="17" class="pg-line"/><circle cx="0" cy="4" r="5" class="pg-fill"/><path d="M17 4 L17 -14" class="pg-line pg-acc"/><path d="M13 -10 L17 -16 L21 -10" class="pg-line pg-acc"/><circle cx="17" cy="4" r="3" class="pg-dot"/>',

@@ -136,7 +136,7 @@
     rpT: ['r_p', N('perigee radius = parking orbit radius (6 378 + 185 = 6 563 km)'), 'm'],
     raT: ['r_a', N('apogee radius, out at the Moon’s distance (≈ 384 400 km)'), 'm'],
     dvtli: ['\\Delta v_{TLI}', N('trans-lunar injection burn'), 'm/s'],
-    vinf: ['v_\\infty', N('hyperbolic excess speed: speed relative to the Moon on arrival, before its gravity speeds you up'), 'm/s'],
+    vinf: ['v_\\infty', N('hyperbolic excess speed: the speed relative to the Moon far from it, the value the speed tends to as the distance grows'), 'm/s'],
     rpM: ['r_p', N('periselene radius: closest distance to the Moon’s centre'), 'm'],
     dvloi: ['\\Delta v_{LOI}', N('lunar orbit insertion burn (braking)'), 'm/s'],
     // landing

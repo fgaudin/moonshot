@@ -15,7 +15,10 @@
           <dd>${e.d}${ch ? ` <a class="gl-mod" href="#${e.module}">→ ${code}${T(ch.title)}</a>` : ''}</dd></div>`;
       }).join('');
   }
+  // links from a film to the modules it illustrates
+  const mv = (...ids) => ids.filter((id) => App.chapters[id]).map((id) => `<a class="gl-mod" href="#${id}">→ ${Progress.code(id)} ${T(App.chapters[id].title)}</a>`).join(' ');
   App.css('glossary', `
+    .movies li { margin-bottom: .7rem; } .movies .chips { display: inline-flex; flex-wrap: wrap; gap: .2rem .7rem; }
     .gl-search { max-width: 24rem; margin: .5rem 0 1rem; }
     .glossary { margin: 0; display: grid; gap: .1rem; }
     .gl-entry { padding: .55rem 0; border-top: 1px solid var(--line); }
@@ -151,7 +154,7 @@
               <li>${T`<b>Integrator</b>: classical fourth-order Runge–Kutta, a standard method that advances the motion in small time steps. Step sizes scale with the local orbital time scale \\(\\sqrt{r^3/\\mu}\\), so steps are short near Earth and Moon and long in cislunar space, between the Earth and the Moon.`}</li>
               <li>${T`<b>Orbit designer, Hohmann planner</b>: exact two-body solutions with Kepler’s equation solved by Newton iteration.`}</li>
               <li>${T`<b>Ascent</b>: planar, point mass, rotating Earth, exponential atmosphere, pressure-dependent F-1 thrust, centre-engine cutoff, gravity turn for stage 1 and a linear-tangent-like terminal guidance law for the upper stages.`}</li>
-              <li>${T`<b>Earth–Moon</b>: planar circular restricted three-body problem in an inertial barycentric frame. Patched conics are used only in the text.`}</li>
+              <li>${T`<b>Earth–Moon</b>: two models. Patched conics: an Earth-centred two-body orbit, switched to a Moon-centred one inside the Moon’s sphere of influence and back again on leaving it. Three-body: the planar circular restricted three-body problem in an inertial barycentric frame.`}</li>
               <li>${T`<b>Entry</b>: planar point mass with lift, constant bank angle, exponential atmosphere and Sutton–Graves heating.`}</li>
             </ul>
             <p>${T`All of these are models. They are close to Apollo’s numbers, typically within 5–15%, but not mission-grade.`}</p>
@@ -177,6 +180,20 @@
           <h2><span class="idx">H</span>${T`Photographs`}</h2>
           <div class="prose"><p>${T`The archive photographs in this manual are NASA images from the NASA Image and Video Library (images.nasa.gov). Works created by NASA are generally not subject to copyright in the United States; NASA asks to be credited as the source. NASA’s use does not imply its endorsement of this manual. Each photograph links to its original record.`}</p></div>
           ${Archive.credits()}
+        </section>
+
+        <section class="section">
+          <h2><span class="idx">I</span>${T`At the movies`}</h2>
+          <div class="prose">
+            <p>${T`Five films to watch once you know what is on the screen. Each one shows something this manual teaches.`}</p>
+            <ul class="movies">
+              <li>${T`<b>Hidden Figures</b> (2016, Theodore Melfi). Katherine Johnson, Dorothy Vaughan and Mary Jackson at NASA Langley. Johnson computed trajectories by hand: where a capsule comes down, and when to fire to get there. John Glenn asked for her to check the IBM computer’s numbers before his 1962 orbital flight. She later worked on trajectories for Apollo 11, and her backup procedures and charts helped bring Apollo 13 home.`} <span class="chips">${mv('orbits', 'entry', 'freereturn')}</span></li>
+              <li>${T`<b>Apollo 13</b> (1995, Ron Howard). The free return, the burn of the lunar module’s descent engine to get back onto it, the manual burn steered by keeping the Earth in the window, and an entry corridor that must not be missed.`} <span class="chips">${mv('freereturn', 'burns', 'entry')}</span></li>
+              <li>${T`<b>Apollo 11</b> (2019, Todd Douglas Miller). A documentary made only from the 1969 footage and recordings, much of it 70 mm film never shown before. Launch, trans-lunar injection, the landing with its program alarms, and the return.`} <span class="chips">${mv('ascent', 'moon', 'landing')}</span></li>
+              <li>${T`<b>First Man</b> (2018, Damien Chazelle). Neil Armstrong from the X-15 to the Moon: the Gemini 8 docking and the spin that followed, the training vehicle crash, and the final minutes of the landing.`} <span class="chips">${mv('docking', 'landing')}</span></li>
+              <li>${T`<b>The Martian</b> (2015, Ridley Scott). Fiction, but careful with orbits. The rescue uses a flyby of the Earth to turn the ship back toward Mars, a gravity assist, and ends with a rendezvous where the relative velocity is what matters.`} <span class="chips">${mv('freereturn', 'docking')}</span></li>
+            </ul>
+          </div>
         </section>`;
       const q = page.querySelector('#gl-q'), items = [...page.querySelectorAll('.gl-entry')], none = page.querySelector('#gl-none');
       q.addEventListener('input', () => {

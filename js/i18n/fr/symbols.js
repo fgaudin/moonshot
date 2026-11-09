@@ -185,4 +185,5 @@ I18N.add('fr', {
   'latitude, phase angle or burn position, as φ': 'latitude, angle de phase ou position de la poussée, notée φ',
   'two uses: angular velocity, in rad/s (ω⊕ = Earth’s rotation); argument of periapsis, the angle from the node to periapsis': 'deux usages : vitesse angulaire, en rad/s (ω⊕ = rotation de la Terre) ; argument de la périapside, angle du nœud à la périapside',
   'flight-path angle: angle of the velocity above the local horizontal; 0 flying horizontally and at periapsis and apoapsis, 90° straight up': 'angle de trajectoire : angle de la vitesse au-dessus de l’horizontale locale ; 0 en vol horizontal, à la périapside et à l’apoapside, 90° à la verticale',
+  "hyperbolic excess speed: the speed relative to the Moon far from it, the value the speed tends to as the distance grows": "vitesse hyperbolique d’excès : la vitesse par rapport à la Lune loin d’elle, la valeur vers laquelle tend la vitesse quand la distance augmente",
 });

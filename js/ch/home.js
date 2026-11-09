@@ -7,7 +7,7 @@
     { t: 0, end: 0.195, name: N`Launch to Earth parking orbit`, short: N`Launch`, dv: 9300, who: N`Saturn V`, ch: 'ascent', note: N`7.8 km/s orbital speed + ~1.5 km/s gravity & drag losses` },
     { t: 2.73, end: 2.83, name: N`Trans-lunar injection (TLI)`, short: N`TLI`, dv: 3182, who: N`S-IVB`, ch: 'moon' },
     { t: 3.3, end: 3.4, name: N`Transposition, docking and LM extraction`, dv: 0, who: N`CSM RCS`, ch: 'docking' },
-    { t: 26.7, end: 26.7, name: N`Midcourse correction 2`, dv: 6.4, who: N`CSM SPS`, ch: 'moon' },
+    { t: 26.7, end: 26.7, name: N`Midcourse correction 2`, dv: 6.4, who: N`CSM SPS`, ch: 'freereturn' },
     { t: 75.8, end: 75.9, name: N`Lunar orbit insertion 1`, short: N`LOI`, dv: 889, who: N`CSM SPS`, ch: 'moon' },
     { t: 80.2, end: 80.2, name: N`Lunar orbit insertion 2`, dv: 48, who: N`CSM SPS`, ch: 'maneuvers' },
     { t: 101.6, end: 101.6, name: N`Descent orbit insertion`, dv: 23, who: N`LM DPS`, ch: 'maneuvers' },

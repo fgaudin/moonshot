@@ -185,4 +185,5 @@ I18N.add('de', {
   'latitude, phase angle or burn position, as φ': 'geografische Breite, Phasenwinkel oder Position der Zündung, als φ',
   'two uses: angular velocity, in rad/s (ω⊕ = Earth’s rotation); argument of periapsis, the angle from the node to periapsis': 'zwei Verwendungen: Winkelgeschwindigkeit in rad/s (ω⊕ = Erdrotation); Argument der Periapsis, der Winkel vom Knoten zur Periapsis',
   'flight-path angle: angle of the velocity above the local horizontal; 0 flying horizontally and at periapsis and apoapsis, 90° straight up': 'Bahnneigungswinkel: Winkel der Geschwindigkeit über der lokalen Horizontalen; 0 im Horizontalflug sowie in Periapsis und Apoapsis, 90° senkrecht nach oben',
+  "hyperbolic excess speed: the speed relative to the Moon far from it, the value the speed tends to as the distance grows": "hyperbolische Überschussgeschwindigkeit: die Geschwindigkeit relativ zum Mond weit weg von ihm, der Wert, dem sich die Geschwindigkeit mit wachsendem Abstand nähert",
 });
