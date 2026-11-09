@@ -144,23 +144,23 @@
     // one module only: its objectives and the practice score of its topic, which would re-earn the qualification
     resetModule(mod) {
       for (const k of Object.keys(state.done)) if (k.startsWith(mod + '.')) delete state.done[k];
+      pending.forEach((t, k) => { if (k.startsWith(mod + '.')) { clearTimeout(t); pending.delete(k); } });
       save();
       const s = UI.store.get('stats', {}); delete s[MODULES[mod].topic]; UI.store.set('stats', s);
       refreshChecklists();
     },
 
-    // Mark an objective done. Safe to call repeatedly.
+    // Mark an objective done. Safe to call repeatedly. Lab objectives are confirmed only after HOLD ms with no
+    // lab control touched (see the listener below), so sweeping a slider through a solution does not earn it:
+    // the candidate has to stop on it. Repeated calls keep the running timer; 'qual' (practice) is immediate.
     done(mod, id) {
       const key = `${mod}.${id}`;
       if (state.done[key] || !MODULES[mod]) return;
-      state.done[key] = Date.now(); save();
-      const o = MODULES[mod].objectives.find((x) => x.id === id);
-      toast(`<span><b>${T`Objective complete`}</b>${o ? T(o.text) : id}</span>`, 'obj');
-      refreshChecklists();
-      if (Progress.complete(mod)) {
-        setTimeout(() => toast(`${patchSVG(mod, true, 54)}<span><b>${T`Patch earned: ${MODULES[mod].code}`}</b>${T(MODULES[mod].name)}</span>`, 'patch'), 700);
-        if (Progress.totals().patches === ORDER.length) setTimeout(() => toast(`<span><b>${T`Training complete`}</b>${T`You are GO for launch. See your certificate on the home page.`}</span>`, 'patch'), 1600);
+      if (id !== 'qual') {
+        if (!pending.has(key)) pending.set(key, setTimeout(() => { pending.delete(key); award(mod, id); }, HOLD));
+        return;
       }
+      award(mod, id);
     },
     // qualification objectives come from practice scores
     checkQual() {
@@ -168,6 +168,33 @@
       for (const k of ORDER) if ((s[MODULES[k].topic]?.right || 0) >= 2) Progress.done(k, 'qual');
     },
   };
+
+  const HOLD = 3000, pending = new Map();
+  // touching a lab control cancels every pending objective; the lab's handler, which runs after this capture
+  // listener, re-reports those that still hold and they start a fresh HOLD. Playback controls (.tl-transport)
+  // only move through time, so they cancel nothing.
+  const cancelPending = (e) => {
+    const el = e.target;
+    if (!pending.size || !el.closest || !el.closest('.lab') || el.closest('.tl-transport')) return;
+    // a slider's 'change' (on release) repeats the value of its last 'input', which the lab already handled
+    if (e.type === 'input' ? !el.matches('input[type=range]') : !el.matches('select, input[type=checkbox], input[type=radio]')) return;
+    pending.forEach((t) => clearTimeout(t)); pending.clear();
+  };
+  document.addEventListener('input', cancelPending, true);
+  document.addEventListener('change', cancelPending, true);
+
+  function award(mod, id) {
+    const key = `${mod}.${id}`;
+    if (state.done[key]) return;
+    state.done[key] = Date.now(); save();
+    const o = MODULES[mod].objectives.find((x) => x.id === id);
+    toast(`<span><b>${T`Objective complete`}</b>${o ? T(o.text) : id}</span>`, 'obj');
+    refreshChecklists();
+    if (Progress.complete(mod)) {
+      setTimeout(() => toast(`${patchSVG(mod, true, 54)}<span><b>${T`Patch earned: ${MODULES[mod].code}`}</b>${T(MODULES[mod].name)}</span>`, 'patch'), 700);
+      if (Progress.totals().patches === ORDER.length) setTimeout(() => toast(`<span><b>${T`Training complete`}</b>${T`You are GO for launch. See your certificate on the home page.`}</span>`, 'patch'), 1600);
+    }
+  }
 
   /* ---------- toasts ---------- */
   let tray = null;

@@ -205,7 +205,7 @@
 
   /* ---------------- Figure: the angles that give θ at the entry point (not to scale, sphere enlarged) ---------------- */
   function figTheta() {
-    const W = 460, H = 340, F = frame(W, H, 34, 214), D = 300, rS = 110, lam = 43.4 * D2, phi = 76.8 * D2, L = 112;
+    const W = 460, H = 340, F = frame(W, H, 34, 214), D = 300, rS = 110, lam = 43.3 * D2, phi = 76.8 * D2, L = 112;
     const M = [D, 0], P = vadd(M, [-rS * Math.cos(lam), rS * Math.sin(lam)]), gam = Math.atan2(P[1], P[0]);
     const dir = (a) => [Math.cos(a), Math.sin(a)], aH = gam + Math.PI / 2, aV = aH - phi, aM = Math.PI / 2, aPM = Math.atan2(P[1], P[0] - D);
     const Vs = vadd(P, vmul(dir(aV), L)), Vm = vadd(P, vmul(dir(aM), L * 0.95));
@@ -284,13 +284,13 @@
   const MCC_MAX = 1;   // m/s: the MCC slider spans ±MCC_MAX, fine enough to hit a 45 km corridor by hand
   const MoonLab = {
     /* cfg: { id, title, presets, start: preset key, loi, mcc (also enables the model switch), earthZoom, detail: 'moon' | 'return',
-             moonSpan: fixed width of the Moon zoom in m (else it follows the spacecraft), startPaused: open paused at launch } */
+             moonSpan: fixed width of the Moon zoom in m (else it follows the spacecraft), startPaused: open paused at launch, angRange / dvRange: slider limits, angStep: burn-position step in degrees } */
     markup(cfg) {
       const id = cfg.id, st = cfg.presets[cfg.start];
       const flight = `<div class="tl-group ml-ctl"><h4>${T`Flight`}</h4>
           <div class="ctl"><label for="${id}-preset"><span>${T`Scenario`}</span></label><select id="${id}-preset">${Object.entries(cfg.presets).map(([k, q]) => `<option value="${k}"${k === cfg.start ? ' selected' : ''}>${T(q.label)}</option>`).join('')}</select></div>
           ${UI.slider({ id: `${id}-dv`, label: T`TLI Δv`, min: cfg.dvRange ? cfg.dvRange[0] : 3000, max: cfg.dvRange ? cfg.dvRange[1] : 3250, step: 1, value: st.dv, unit: 'm/s' })}
-          ${UI.slider({ id: `${id}-ang`, label: T`TLI burn position (from Earth–Moon line)`, min: cfg.angRange ? cfg.angRange[0] : -150, max: cfg.angRange ? cfg.angRange[1] : -110, step: 0.01, value: st.ang, unit: '°' })}
+          ${UI.slider({ id: `${id}-ang`, label: T`TLI burn position (from Earth–Moon line)`, min: cfg.angRange ? cfg.angRange[0] : -150, max: cfg.angRange ? cfg.angRange[1] : -110, step: cfg.angStep || 0.01, value: st.ang, unit: '°' })}
           ${cfg.loi ? `<label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="${id}-loi"${st.loi ? ' checked' : ''}> ${T`Fire LOI at periselene (retrograde)`}</label>
           ${UI.slider({ id: `${id}-loidv`, label: T`LOI Δv`, min: 800, max: 960, step: 1, value: st.loiDv || 900, unit: 'm/s' })}` : ''}
         </div>`;
@@ -331,7 +331,7 @@
         let lo = 0, hi = sim.pts.length - 1;
         while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (sim.pts[mid].t <= tNow) lo = mid; else hi = mid - 1; }
         idx = lo;
-        if (flown && cfg.onFlown && sim) cfg.onFlown(sim, tNow, { lunarOrbit, inCorridor });
+        if (flown && cfg.onFlown && sim) cfg.onFlown(sim, tNow, { lunarOrbit, inCorridor, model });
       }
       // objectives count only after the candidate has changed a control themselves (not a preset)
       let touched = false;
@@ -343,14 +343,13 @@
       const MCC_T = 26.7 * 3600;
       let vMinH = 0;   // tallest verdict so far
       const simOpts = (v) => ({ dv: val(v, 'dv'), burnAngle: val(v, 'ang'), mcc: cfg.mcc ? { t: MCC_T, dv: val(v, 'mcc') } : null, loi: cfg.loi && val(v, 'loi') ? { dv: val(v, 'loidv') } : null });
-      const fmts = { [`${id}-dv`]: (x) => UI.fmt(x, 0), [`${id}-ang`]: (x) => x.toFixed(2), [`${id}-loidv`]: (x) => UI.fmt(x, 0), [`${id}-mcc`]: (x) => (x > 0 ? '+' : '') + x.toFixed(3), [`${id}-t`]: () => (sim ? 'GET ' + UI.fmtTime(tNow) : '') };
+      const fmts = { [`${id}-dv`]: (x) => UI.fmt(x, 0), [`${id}-ang`]: (x) => x.toFixed(cfg.angStep ? Math.round(-Math.log10(cfg.angStep)) : 2), [`${id}-loidv`]: (x) => UI.fmt(x, 0), [`${id}-mcc`]: (x) => (x > 0 ? '+' : '') + x.toFixed(3), [`${id}-t`]: () => (sim ? 'GET ' + UI.fmtTime(tNow) : '') };
       const ctl = UI.bindControls(root, fmts, (v, src) => {
         if (src === `${id}-t`) { seek(val(v, 't') * tEnd()); playing = false; setPlayLabel(); draw(); zooms.forEach((z) => z.redraw()); return; }
-        const wasBad = sim && !inCorridor(sim);
         sim = simFor(model)(simOpts(v)); sim.touched = touched;
         const gh = $('ghost');
         other = gh && gh.checked ? simFor(model === 'patched' ? 'three' : 'patched')(simOpts(v)) : null;
-        if (cfg.onResult) cfg.onResult(sim, { model, touched, src, wasBad, inCorridor });
+        if (cfg.onResult) cfg.onResult(sim, { model, touched, src, inCorridor });
         seek(playing || atStart ? 0 : Infinity, false); atStart = false;
         summarize(); draw(); zooms.forEach((z) => z.redraw());
       });
@@ -663,14 +662,14 @@
             <div class="eq">\\[ r_1^2 = D^2 + r_{SOI}^2 - 2\\,D\\,r_{SOI}\\cos\\lambda_1, \\qquad \\sin\\gamma_1 = \\frac{r_{SOI}}{r_1}\\sin\\lambda_1 \\]</div>
             <div class="eq">\\[ v_{sc}^2 = v_0^2 - \\frac{2\\mu_\\oplus}{r_0} + \\frac{2\\mu_\\oplus}{r_1}, \\qquad \\cos\\phi_1 = \\frac{r_0\\,v_0}{r_1\\,v_{sc}}, \\qquad \\theta = \\phi_1 - \\gamma_1 \\]</div>
             ${Sym.where([['\\lambda_1', N`angle at the Moon between the Moon–Earth line and the entry point on the sphere`, N`rad or °`], ['r_1', N`distance from the Earth’s centre to the entry point`, 'm'], ['\\gamma_1', N`angle at the Earth between the spacecraft and the Moon`, N`rad or °`], 'Dem', 'rsoi', ['r_0, v_0', N`radius and speed just after TLI, at perigee`, N`m, m/s`], 'muE', ['\\phi_1', N`flight-path angle at the entry point, measured from the local horizontal`, N`rad or °`]], N`\\(\\lambda_1\\) is chosen; \\(r_1\\), \\(\\gamma_1\\), \\(v_{sc}\\) and \\(\\phi_1\\) are derived from it.`)}
-            <p>${T`In the lab’s transfer: TLI leaves \\(r_0\\) = 6 563 km at \\(v_0\\) = 10.953 km/s and reaches the sphere at \\(\\lambda_1\\) = 43.4°, read from the simulated flight. Then \\(r_1\\) = 339 374 km, \\(\\gamma_1\\) = 7.7°, \\(v_{sc}\\) = 0.924 km/s and \\(\\phi_1\\) = 76.8°, so θ = 76.8° − 7.7° = 69.1° from the Moon’s direction of motion. Then \\(v_{rel} = \\sqrt{0.924^2 + 1.0245^2 - 2\\times0.924\\times1.0245\\times\\cos 69.1^\\circ}\\) = 1.108 km/s. The spacecraft is slower than the Moon, but it moves in a different direction, so relative to the Moon it is fast.`}</p>
+            <p>${T`In the lab’s transfer: TLI leaves \\(r_0\\) = 6 563 km at \\(v_0\\) = 10.953 km/s and reaches the sphere at \\(\\lambda_1\\) = 43.3°, read from the simulated flight. Then \\(r_1\\) = 339 298 km, \\(\\gamma_1\\) = 7.7°, \\(v_{sc}\\) = 0.924 km/s and \\(\\phi_1\\) = 76.8°, so θ = 76.8° − 7.7° = 69.1° from the Moon’s direction of motion. Then \\(v_{rel} = \\sqrt{0.924^2 + 1.0245^2 - 2\\times0.924\\times1.0245\\times\\cos 69.1^\\circ}\\) = 1.108 km/s. The spacecraft is slower than the Moon, but it moves in a different direction, so relative to the Moon it is fast.`}</p>
             <p>${T`Inside the sphere the Moon’s gravity speeds the spacecraft up as it falls in and slows it down as it climbs out. Energy conservation relative to the Moon gives its speed at any distance \\(r\\) from the Moon’s centre:`}</p>
             <div class="eq">\\[ v^2 = v_\\infty^2 + \\frac{2\\mu_☾}{r} \\]</div>
             ${Sym.where([['v', N`speed relative to the Moon at distance \\(r\\)`, 'm/s'], 'vinf', 'muM', ['r', N`distance from the Moon’s centre`, 'm']], N`It holds at every point of the hyperbola.`)}
             <p>${T`At the edge of the sphere, \\(r = r_{SOI}\\) and the speed relative to the Moon is the \\(v_{rel}\\) just computed. Put them in and solve for \\(v_\\infty\\):`}</p>
             <div class="eq">\\[ v_{rel}^2 = v_\\infty^2 + \\frac{2\\mu_☾}{r_{SOI}} \\qquad\\Longrightarrow\\qquad v_\\infty = \\sqrt{v_{rel}^2 - \\frac{2\\mu_☾}{r_{SOI}}} \\]</div>
             ${Sym.where([['v_{rel}', N`speed relative to the Moon at the edge of its sphere of influence`, 'm/s'], 'vinf', 'muM', 'rsoi'])}
-            <p>${T`As \\(r\\) grows, the term \\(2\\mu_☾/r\\) shrinks toward zero and \\(v\\) tends to \\(v_\\infty\\): the speed the spacecraft would have infinitely far from the Moon, what is left once the Moon’s gravity has taken its share. It is called the <b>hyperbolic excess speed</b>. In the lab: \\(v_\\infty = \\sqrt{1.108^2 - 2\\times4\\,902.8/66\\,183}\\) = 1.04 km/s, the 1 038 m/s the lab prints. Many textbooks skip this step and call \\(v_{rel}\\) the excess speed directly; at the Moon that is 7% too high.`}</p>
+            <p>${T`As \\(r\\) grows, the term \\(2\\mu_☾/r\\) shrinks toward zero and \\(v\\) tends to \\(v_\\infty\\): the speed the spacecraft would have infinitely far from the Moon, what is left once the Moon’s gravity has taken its share. It is called the <b>hyperbolic excess speed</b>. In the lab: \\(v_\\infty = \\sqrt{1.108^2 - 2\\times4\\,902.8/66\\,183}\\) = 1.039 km/s, the 1 039 m/s the lab prints. Many textbooks skip this step and call \\(v_{rel}\\) the excess speed directly; at the Moon that is 7% too high.`}</p>
             <p>${T`Gravity never stops pulling, so why does the speed not keep falling to zero? It does keep falling, forever, but toward \\(v_\\infty\\), not toward zero. The pull weakens as \\(1/r^2\\), so carrying a kilogram from distance \\(r\\) out to infinity takes a finite energy, \\(\\mu/r\\): the escape energy of module ${Progress.code('newton')}. A spacecraft with more kinetic energy than that never runs out. It keeps the surplus, \\(\\tfrac12 v_\\infty^2\\) per kilogram, and its path is a hyperbola. With less, it falls back on an ellipse. Arriving from the Earth, a spacecraft always has a surplus relative to the Moon, so without a braking burn it leaves the sphere again.`}</p>
           </div>
         </section>
@@ -687,11 +686,11 @@
             <p>${T`Two conservation laws give \\(b\\). Far from the Moon the spacecraft moves at \\(v_\\infty\\) along a line that misses the centre by \\(b\\), so its angular momentum about the Moon is \\(b\\,v_\\infty\\) per kilogram. At periselene the velocity is perpendicular to the radius, so it is \\(r_p\\,v_p\\). Angular momentum is conserved, so the two are equal. Energy is conserved as well and gives \\(v_p\\), from the relation of section ${App.sec('moon', 3)}. Put them together:`}</p>
             <div class="eq">\\[ b\\,v_\\infty = r_p\\,v_p, \\qquad v_p^2 = v_\\infty^2 + \\frac{2\\mu_☾}{r_p} \\qquad\\Longrightarrow\\qquad b = r_p\\sqrt{1 + \\frac{2\\mu_☾}{r_p\\,v_\\infty^2}} \\]</div>
             ${Sym.where([['b', N`impact parameter: distance from the Moon’s centre to the arrival line, before the Moon’s gravity bends it`, 'm'], 'rpM', 'vinf', 'vp', 'muM'], N`The square root is larger than 1. Gravity pulls the path inward, so you must aim wider than the periselene you want.`)}
-            <p>${T`Example. Apollo aimed for a periselene about 110 km above the surface, the height of the lunar parking orbit (Apollo 11 entered a 111 × 313 km orbit). With the lab’s \\(v_\\infty = 1\\,038\\) m/s: \\(r_p = 1\\,737.4 + 110 = 1\\,847.4\\) km, \\(2\\mu_☾/(r_p v_\\infty^2) = 4.92\\) and \\(b = 1\\,847.4\\times\\sqrt{5.92} = 4\\,496\\) km. To pass 1 847 km from the centre, aim 4 496 km from it.`}</p>
-            <p>${T`Put \\(r_p = R_☾\\) and the same formula gives the narrowest aim that still misses: below \\(b\\) = 4 339 km the spacecraft hits the Moon. That is 2.5 lunar radii. The ratio is not a rule: it is \\(\\sqrt{1 + 2\\mu_☾/(R_☾ v_\\infty^2)}\\), which depends on \\(v_\\infty\\). It does say something useful. Gravity bends into the surface paths that would have missed it, so the Moon catches everything aimed within 2.5 of its radii. A slower arrival makes it an even bigger target; a very fast one shrinks it toward its real size. The lab prints both numbers as <i>Aim offset b</i> and <i>Impact if b below</i>.`}</p>
+            <p>${T`Example. Apollo aimed for a periselene about 110 km above the surface, the height of the lunar parking orbit (Apollo 11 entered a 111 × 313 km orbit). With the lab’s \\(v_\\infty = 1\\,039\\) m/s: \\(r_p = 1\\,737.4 + 110 = 1\\,847.4\\) km, \\(2\\mu_☾/(r_p v_\\infty^2) = 4.92\\) and \\(b = 1\\,847.4\\times\\sqrt{5.92} = 4\\,494\\) km. To pass 1 847 km from the centre, aim 4 494 km from it.`}</p>
+            <p>${T`Put \\(r_p = R_☾\\) and the same formula gives the narrowest aim that still misses: below \\(b\\) = 4 336 km the spacecraft hits the Moon. That is 2.5 lunar radii. The ratio is not a rule: it is \\(\\sqrt{1 + 2\\mu_☾/(R_☾ v_\\infty^2)}\\), which depends on \\(v_\\infty\\). It does say something useful. Gravity bends into the surface paths that would have missed it, so the Moon catches everything aimed within 2.5 of its radii. A slower arrival makes it an even bigger target; a very fast one shrinks it toward its real size. The lab prints both numbers as <i>Aim offset b</i> and <i>Impact if b below</i>.`}</p>
             <p>${T`<b>Closing the loop.</b> You cannot pick \\(b\\) and work backward: \\(b\\) depends on how the outbound ellipse crosses the sphere, so it comes out of the whole Earth-side calculation. It is the target. The knob is the arrival point \\(\\lambda_1\\) of section ${App.sec('moon', 3)}, or the TLI that produces it:`}</p>
             <ol>
-              <li>${T`From the periselene you want, the formula above gives the \\(b\\) you need (4 496 km for 110 km).`}</li>
+              <li>${T`From the periselene you want, the formula above gives the \\(b\\) you need (4 494 km for 110 km).`}</li>
               <li>${T`Choose \\(\\lambda_1\\) and compute forward: \\(r_1\\), \\(\\gamma_1\\), \\(\\phi_1\\), θ, \\(v_{rel}\\), \\(v_\\infty\\), and the \\(b\\) this trajectory gives. The time from TLI to the sphere also tells you where the Moon must be at TLI, so where to burn.`}</li>
               <li>${T`Compare with the target, adjust \\(\\lambda_1\\) and repeat until they match. Even \\(v_\\infty\\) changes a little with \\(\\lambda_1\\), which is why this is a loop and not a single formula.`}</li>
             </ol>
@@ -716,7 +715,7 @@
             <ol>
               <li>${T`Scenario <i>Fly past the Moon</i>. Play it and watch the zoom: the blue line ends at the sphere and the orange hyperbola takes over. Read v∞, the periselene and the aim offset b under <i>Outcome</i>, and compare them with sections ${App.sec('moon', 3)} and ${App.sec('moon', 4)}.`}</li>
               <li>${T`Move the TLI burn position by a few hundredths of a degree. The periselene moves by hundreds of kilometres: the timing of one burn aims the whole transfer. Module ${Progress.code('freereturn')} explains why. Aim for Apollo’s band, a periselene between 100 and 300 km, and play the flight to periselene.`}</li>
-              <li>${T`Scenario <i>Capture into lunar orbit</i>: the LOI burn at periselene brakes the spacecraft into orbit, but its low point is only about 80 km up. Lower the LOI Δv until it is no longer captured. Then match Apollo 11’s first lunar orbit, 111 × 313 km: adjust the aim and the LOI Δv for a low point between 100 and 130 km and a high point between 280 and 340 km, and play it through the burn. The high point moves about 5 km for every m/s of LOI.`}</li>
+              <li>${T`Scenario <i>Capture into lunar orbit</i>: the LOI burn at periselene brakes the spacecraft into orbit, but its low point is only about 90 km up. Lower the LOI Δv until it is no longer captured. Then match Apollo 11’s first lunar orbit, 111 × 313 km: adjust the aim and the LOI Δv for a low point between 100 and 130 km and a high point between 280 and 340 km, and play it through the burn. The high point moves about 5 km for every m/s of LOI.`}</li>
             </ol>
           </div>
           ${MoonLab.markup({ id: 'tl', title: N`Earth–Moon trajectory`, presets: PRESETS, start: 'flyby', loi: true, detail: 'moon', dvRange: [3120, 3200], angRange: [-132.8, -131.8] })}

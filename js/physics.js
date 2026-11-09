@@ -467,8 +467,22 @@
       }
       if (phase !== 'M' && rE < C.RE) { outcome = 'impactE'; break; }
       const rc = phase === 'M' ? rM : rE, mu = phase === 'M' ? C.muM : C.muE;
-      const dt = Math.max(2, Math.min(900, 0.012 * Math.pow(rc, 1.5) / Math.sqrt(mu)));
-      y = rk4(phase === 'M' ? fM : fE, t, y, dt);
+      let dt = Math.max(2, Math.min(900, 0.012 * Math.pow(rc, 1.5) / Math.sqrt(mu)));
+      const f = phase === 'M' ? fM : fE;
+      // land the patch on the sphere's edge: a step that crosses it is shortened (bisection) to end just past it.
+      // Otherwise the patch radius depends on where the step grid falls, and the return perigee jumps by tens of km
+      // when a tiny change (a few mm/s of MCC) moves the crossing into the next step.
+      const crossed = (s, h) => {
+        if (phase === 'E1') { const mm = moon(t + h); return Math.hypot(s[0] - mm[0], s[1] - mm[1]) < R_SOI; }
+        return phase === 'M' && rM <= R_SOI && Math.hypot(s[0], s[1]) > R_SOI;
+      };
+      let yn = rk4(f, t, y, dt);
+      if (crossed(yn, dt)) {
+        let lo = 0, hi = dt;
+        for (let k = 0; k < 30; k++) { const mid = (lo + hi) / 2; if (crossed(rk4(f, t, y, mid), mid)) hi = mid; else lo = mid; }
+        dt = hi; yn = rk4(f, t, y, dt);
+      }
+      y = yn;
       t += dt; sinceRecord += dt;
     }
     if (!pts.length || pts[pts.length - 1].t !== t) record();

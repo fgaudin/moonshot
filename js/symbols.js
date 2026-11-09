@@ -7,15 +7,15 @@
   const GREEK = {
     alpha: { ch: 'α', name: N('alpha'), say: N('AL-fa'), use: N('an angle; three uses: steering angle between thrust and velocity (ascent), lead angle (rendezvous), burn attitude in the orbit plane (PAD)') },
     beta: { ch: 'β', name: N('beta'), say: N('BAY-ta'), use: N('two uses: ballistic coefficient m/(C_D·A), in kg/m² (sounding, entry); launch azimuth, the compass heading of the launch (plane changes)') },
-    gamma: { ch: 'γ', name: N('gamma'), say: N('GAM-a'), use: N('flight-path angle: angle of the velocity above the local horizontal (0 at periapsis and apoapsis, 90° straight up, negative when descending)') },
+    gamma: { ch: 'γ', name: N('gamma'), say: N('GAM-a'), use: N('two uses: flight-path angle, the angle of the velocity above the local horizontal (0 at periapsis and apoapsis, 90° straight up, negative when descending); γ₁ (going to the Moon), the angle at the Earth between the spacecraft and the Moon') },
     Gamma: { ch: 'Γ', name: N('capital gamma'), say: N('GAM-a'), use: N('not used in this course') },
-    delta: { ch: 'δ', name: N('delta'), say: N('DEL-ta'), use: N('a small change') },
+    delta: { ch: 'δ', name: N('delta'), say: N('DEL-ta'), use: N('two uses: a small change; the turn angle of a flyby, how far the Moon rotates the velocity relative to it (going to the Moon, free return)') },
     Delta: { ch: 'Δ', name: N('capital delta'), say: N('DEL-ta'), use: N('“change in”: Δv is a change of velocity in m/s, Δi a change of inclination') },
     varepsilon: { ch: 'ε', name: N('epsilon'), say: N('EP-si-lon'), use: N('specific mechanical energy: orbital energy per kilogram, in J/kg (= m²/s²)') },
     epsilon: { ch: 'ϵ', name: N('epsilon'), say: N('EP-si-lon'), use: N('specific mechanical energy, in J/kg') },
     eta: { ch: 'η', name: N('eta'), say: N('AY-ta'), use: N('efficiency (not used here)') },
     theta: { ch: 'θ', name: N('theta'), say: N('THAY-ta'), use: N('a generic angle, defined where it is used (between two vectors, between two planes, θ∞ of a hyperbola)') },
-    lambda: { ch: 'λ', name: N('lambda'), say: N('LAM-da'), use: N('longitude or wavelength (not used here)') },
+    lambda: { ch: 'λ', name: N('lambda'), say: N('LAM-da'), use: N('λ₁ (going to the Moon): the angle at the Moon between the Moon–Earth line and the point where the transfer enters the sphere of influence') },
     mu: { ch: 'μ', name: N('mu'), say: N('“mew”'), use: N('gravitational parameter μ = G·M of the central body, in m³/s² (Earth: 3.986 × 10¹⁴)') },
     nu: { ch: 'ν', name: N('nu'), say: N('“new”'), use: N('true anomaly: the angle from periapsis to the spacecraft, seen from the planet’s centre') },
     pi: { ch: 'π', name: N('pi'), say: N('“pie”'), use: N('3.14159…; π radians = 180°, half a turn') },
@@ -23,8 +23,9 @@
     sigma: { ch: 'σ', name: N('sigma'), say: N('SIG-ma'), use: N('two uses: standard deviation of an error (1σ, 3σ); bank angle of the capsule during entry (0° = lift up, 180° = lift down)') },
     Sigma: { ch: 'Σ', name: N('capital sigma'), say: N('SIG-ma'), use: N('“sum of”: add the terms together, one per value of the index below it') },
     sum: { ch: 'Σ', name: N('capital sigma (sum)'), say: N('SIG-ma'), use: N('“sum of”: add up the expression for every value of the index written below it (e.g. each stage k)') },
+    psi: { ch: 'ψ', name: N('psi'), say: N('“sigh” or “psee”'), use: N('angle between the Moon’s velocity v☾ and the arrival velocity v∞ (free return: aiming by timing and by a midcourse burn)') },
     tau: { ch: 'τ', name: N('tau'), say: N('“taw”'), use: N('a time constant (not used here)') },
-    phi: { ch: 'φ', name: N('phi'), say: N('“fye” or “fee”'), use: N('an angle, defined where it is used: latitude (launch site), phase angle between two spacecraft (timing), burn position in lunar orbit (return)') },
+    phi: { ch: 'φ', name: N('phi'), say: N('“fye” or “fee”'), use: N('an angle, defined where it is used: latitude (launch site), phase angle between two spacecraft (timing), flight-path angle φ₁ at the sphere of influence (going to the Moon), burn position in lunar orbit (return)') },
     varphi: { ch: 'ϕ', name: N('phi'), say: N('“fye” or “fee”'), use: N('latitude, phase angle or burn position, as φ') },
     omega: { ch: 'ω', name: N('omega'), say: N('oh-MAY-ga'), use: N('two uses: angular velocity, in rad/s (ω⊕ = Earth’s rotation); argument of periapsis, the angle from the node to periapsis') },
     Omega: { ch: 'Ω', name: N('capital omega'), say: N('oh-MAY-ga'), use: N('right ascension of the ascending node: where the orbit plane crosses the equator') },
@@ -175,7 +176,7 @@
   };
 
   /* ---------- TeX pre-filter: wrap Greek letters so MathJax tags them with a class ---------- */
-  const TEX_RE = /\\(alpha|beta|gamma|Gamma|delta|Delta|varepsilon|epsilon|eta|theta|lambda|mu|nu|pi|rho|sigma|Sigma|sum|tau|phi|varphi|omega|Omega|infty|oplus|partial|int)(?![a-zA-Z])/g;
+  const TEX_RE = /\\(alpha|beta|gamma|Gamma|delta|Delta|varepsilon|epsilon|eta|theta|lambda|mu|nu|pi|rho|sigma|Sigma|sum|tau|psi|phi|varphi|omega|Omega|infty|oplus|partial|int)(?![a-zA-Z])/g;
   Sym.texFilter = (tex) => (window.I18N && I18N.decimalComma() ? tex.replace(/(\d),(\d)/g, '$1{,}$2') : tex).replace(TEX_RE, (m0, name) => `{\\class{gk-${name}}{\\${name}}}`).replace(/☾/g, '{\\class{gk-moon}{☾}}');
 
   /* ---------- HTML text: wrap Greek characters in <abbr data-gk> ---------- */
