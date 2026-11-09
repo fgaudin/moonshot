@@ -184,7 +184,7 @@
   const BOLD = new Set(['B', 'STRONG']);
   const used = new WeakMap();                 // section element → entries already linked in it
   function wrap(root) {
-    if (!window.I18N || !root || (root.closest && root.closest('#page') && location.hash === '#reference')) return;
+    if (!window.I18N || !root || (root.closest && root.closest('#page') && location.hash === '#glossary')) return;   // the glossary page is the definitions themselves
     const m = matcher();
     const prose = root.matches && root.matches('.prose') ? [root] : [...(root.querySelectorAll ? root.querySelectorAll('.prose') : [])];
     if (!prose.length && root.closest) { const p = root.closest('.prose'); if (p) prose.push(root); }

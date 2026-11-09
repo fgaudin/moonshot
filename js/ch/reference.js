@@ -1,4 +1,4 @@
-/* Reference: constants, formula sheet, sources. */
+/* Reference: notation, Greek letters, constants, formula sheet, sources. Glossary: its own page, after Reference. */
 (function () {
   'use strict';
   const { C } = Phys;
@@ -34,6 +34,7 @@
     render(page) {
       page.innerHTML = `
         ${App.header({ eyebrow: T`Flight data file`, title: T`Reference`, lede: T`Every constant used by the simulators and exercises, and the equations you will reach for most often.` })}
+        <p class="note">${T`Looking for a term or an acronym? See the <a href="#glossary">Glossary</a>.`}</p>
 
         <section class="section">
           <h2><span class="idx">A</span>${T`Reading the notation`}</h2>
@@ -69,16 +70,8 @@
             </tbody></table></div>
         </section>
 
-        <section class="section" id="glossary">
-          <h2><span class="idx">B</span>${T`Glossary`}</h2>
-          <div class="prose"><p>${T`Every technical term and acronym of the course, in plain words. Each entry links to the module that explains it.`}</p></div>
-          <div class="ctl gl-search"><label for="gl-q"><span>${T`Search the glossary`}</span></label><input type="search" id="gl-q" autocomplete="off" placeholder="${T`apoapsis, TLI, Isp…`}"></div>
-          <dl class="glossary" id="gl-list">${glossary()}</dl>
-          <p class="note" id="gl-none" hidden>${T`No term matches.`}</p>
-        </section>
-
         <section class="section">
-          <h2><span class="idx">C</span>${T`The Greek alphabet in this manual`}</h2>
+          <h2><span class="idx">B</span>${T`The Greek alphabet in this manual`}</h2>
           <div class="prose"><p>${T`Hover over (or tap) any Greek letter on any page to see this information in place.`}</p></div>
           <div class="scroll-x" style="max-width:56rem"><table class="data notation">
             <thead><tr><th>${T`Letter`}</th><th>${T`Name`}</th><th>${T`Say`}</th><th>${T`Meaning here`}</th></tr></thead>
@@ -87,7 +80,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">D</span>${T`Constants`}</h2>
+          <h2><span class="idx">C</span>${T`Constants`}</h2>
           <div class="scroll-x"><table class="data">
             <thead><tr><th>${T`Quantity`}</th><th>${T`Symbol`}</th><th>${T`Value`}</th><th>${T`Note`}</th></tr></thead>
             <tbody>
@@ -114,7 +107,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">E</span>${T`Formula sheet`}</h2>
+          <h2><span class="idx">D</span>${T`Formula sheet`}</h2>
           <div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(20rem,1fr))">
             <div class="card"><span class="phase">${T`Gravity`}</span>
               <div class="eq">\\[ F = \\frac{GMm}{r^2},\\quad g = \\frac{\\mu}{r^2} \\]</div>
@@ -148,7 +141,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">F</span>${T`How the simulators work`}</h2>
+          <h2><span class="idx">E</span>${T`How the simulators work`}</h2>
           <div class="prose">
             <ul>
               <li>${T`<b>Integrator</b>: classical fourth-order Runge–Kutta, a standard method that advances the motion in small time steps. Step sizes scale with the local orbital time scale \\(\\sqrt{r^3/\\mu}\\), so steps are short near Earth and Moon and long in cislunar space, between the Earth and the Moon.`}</li>
@@ -162,7 +155,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">G</span>${T`Sources and further reading`}</h2>
+          <h2><span class="idx">F</span>${T`Sources and further reading`}</h2>
           <div class="prose">
             <ul>
               <li>J. J. Sellers, <i>Understanding Space: An Introduction to Astronautics</i>, McGraw-Hill.</li>
@@ -177,13 +170,13 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">H</span>${T`Photographs`}</h2>
+          <h2><span class="idx">G</span>${T`Photographs`}</h2>
           <div class="prose"><p>${T`The archive photographs in this manual are NASA images from the NASA Image and Video Library (images.nasa.gov). Works created by NASA are generally not subject to copyright in the United States; NASA asks to be credited as the source. NASA’s use does not imply its endorsement of this manual. Each photograph links to its original record.`}</p></div>
           ${Archive.credits()}
         </section>
 
         <section class="section">
-          <h2><span class="idx">I</span>${T`At the movies`}</h2>
+          <h2><span class="idx">H</span>${T`At the movies`}</h2>
           <div class="prose">
             <p>${T`Five films to watch once you know what is on the screen. Each one shows something this manual teaches.`}</p>
             <ul class="movies">
@@ -194,6 +187,20 @@
               <li>${T`<b>The Martian</b> (2015, Ridley Scott). Fiction, but careful with orbits. The rescue uses a flyby of the Earth to turn the ship back toward Mars, a gravity assist, and ends with a rendezvous where the relative velocity is what matters.`} <span class="chips">${mv('freereturn', 'docking')}</span></li>
             </ul>
           </div>
+        </section>`;
+    },
+  });
+
+  App.chapter({
+    id: 'glossary', phase: N`Flight data file`, title: N`Glossary`,
+    blurb: N`Every technical term and acronym of the course, in plain words.`,
+    render(page) {
+      page.innerHTML = `
+        ${App.header({ eyebrow: T`Flight data file`, title: T`Glossary`, lede: T`Every technical term and acronym of the course, in plain words. Each entry links to the module that explains it.` })}
+        <section class="section">
+          <div class="ctl gl-search"><label for="gl-q"><span>${T`Search the glossary`}</span></label><input type="search" id="gl-q" autocomplete="off" placeholder="${T`apoapsis, TLI, Isp…`}"></div>
+          <dl class="glossary" id="gl-list">${glossary()}</dl>
+          <p class="note" id="gl-none" hidden>${T`No term matches.`}</p>
         </section>`;
       const q = page.querySelector('#gl-q'), items = [...page.querySelectorAll('.gl-entry')], none = page.querySelector('#gl-none');
       q.addEventListener('input', () => {

@@ -1,7 +1,7 @@
 /* Router and chapter registry. Each chapter file calls App.chapter({...}). */
 (function () {
   'use strict';
-  const ORDER = ['home', 'newton', 'orbits', 'navigation', 'rockets', 'sounding', 'ascent', 'launcher', 'maneuvers', 'burns', 'timing', 'planes', 'docking', 'moon', 'freereturn', 'descent', 'landing', 'homeward', 'entry', 'mcc', 'toolkit', 'practice', 'reference'];
+  const ORDER = ['home', 'newton', 'orbits', 'navigation', 'rockets', 'sounding', 'ascent', 'launcher', 'maneuvers', 'burns', 'timing', 'planes', 'docking', 'moon', 'freereturn', 'descent', 'landing', 'homeward', 'entry', 'mcc', 'toolkit', 'practice', 'reference', 'glossary'];
   const chapters = {};
 
   const App = {
