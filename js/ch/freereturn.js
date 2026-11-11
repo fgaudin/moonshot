@@ -45,7 +45,8 @@
     .f-ac-faint { fill: none; stroke: var(--accent); stroke-width: 1.6; opacity: .4; } .f-ac-fill-faint { fill: var(--accent); opacity: .4; }
     .f-dot { stroke-dasharray: 1.5 4; stroke-linecap: round; stroke-width: 2; }
     .fr-pair { flex-direction: row; flex-wrap: wrap; align-items: flex-start; } .fr-pair .fig { flex: 1 1 30rem; max-width: 34rem; }   /* side by side only when both fit at a readable size */
-    .fr-ctl { margin-top: .5rem; } .fr-ro { font: .78rem/1.5 var(--f-mono); color: var(--ink); margin-top: .3rem; } .fr-ro .bad { color: var(--bad); }`);
+    .fr-ctl { margin-top: .5rem; display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; } .fr-ctl > :first-child { flex: 1 1 16rem; }
+    .fr-twin { display: flex; gap: .6rem; flex-wrap: wrap; } .fr-twin .fig-box { flex: 1 1 15rem; } .f-tr-thin { fill: none; stroke: var(--trace); stroke-width: 1; } .f-mu-wide { fill: none; stroke: var(--muted); stroke-width: 3; opacity: .7; } .fr-play { font-size: .72rem; padding: .15rem .5rem; min-width: 5.5rem; } .fr-ro { font: .78rem/1.5 var(--f-mono); color: var(--ink); margin-top: .3rem; } .fr-ro .bad { color: var(--bad); }`);
 
   // the lab's free return at the entry patch point (patched-conic model): v☾, v∞ and the turn δ, in km/s and degrees
   const VM = 1.0245, VSC = 0.9245, TH = 69.1 * D2, DELTA = 86.0 * D2;
@@ -112,53 +113,118 @@
       <p class="note">${T`Both drawn in the Moon’s frame, to scale for the lab’s free return: the dashed circle is the sphere of influence and every arrow uses the same km/s scale. Only the periselene is enlarged, so the hyperbola’s turn is visible. Orange: the Moon-centred hyperbola inside the sphere; dotted blue: the Earth-centred legs before and after.`}</p>`;
   }
 
-  /* ---------------- Figure 4: arriving late moves the aim line (interactive, seen from the Moon) ---------------- */
-  // ψ ≈ 129°, with sin ψ = 0.78 exactly as in the text, so the slider at 1 334 s shows the text's Δb = −1 066 km
+  /* ---------------- Figure 4: arriving late, seen from the Earth and from the Moon (animated, interactive) ---------------- */
+  // Straight lines, the Moon's pull left out. Two spacecraft fly the same straight path in space, the second Δt later.
+  // ψ ≈ 129°, with sin ψ = 0.78 exactly as in the text, so the slider at 1 334 s shows the text's Δb = −1 066 km.
   const PSI = Math.PI - Math.asin(0.78), B0 = 5560, BMIN = 4336, RMN = 1737.4;
-  function svgTiming(dtS) {   // arrival delay in seconds
-    const W = 380, H = 300, sc = 0.024, F = frame(W, H, 130, 190);
-    const u = [Math.cos(Math.PI / 2 - PSI), Math.sin(Math.PI / 2 - PSI)], n = [-u[1], u[0]];
+  const TW = (() => {
+    const u = [Math.sin(PSI), Math.cos(PSI)], n = [-u[1], u[0]];   // v∞ direction, and the side the on-time line passes
+    const vr = Math.hypot(VSC * Math.sin(TH), VSC * Math.cos(TH) - VM);   // |v∞| of the triangle of figure 5, km/s
+    const vm = [0, VM], vsc = vadd(vm, vmul(u, vr));   // Earth-frame velocities, km/s
+    return { u, n, vr, vm, vsc, t0: -6000, t1: 6000, sc: 0.02 };   // times in s: on-time closest approach at t = 0
+  })();
+  function svgTwin(dtS, t) {   // dtS: delay of the second spacecraft, s; t: time shown, s, or null for the final picture
+    const { u, n, vr, vm, vsc, t0, t1, sc } = TW, end = t === null, tn = end ? t1 : t;
+    const W = 250, H = 352, k = (q) => vmul(q, sc);
+    const FE = frame(W, H, 2400 * sc + 6, 8000 * sc + 24), FM = frame(W, H, 2400 * sc + 6, 9000 * sc + 24);
     const d = VM * dtS, db = d * Math.sin(PSI), b = B0 - db;
-    const A = vmul(n, B0 * sc), A2 = vsub(A, [0, d * sc]), Af = vmul(n, b * sc);
-    const Q = [172, -50];   // the angle ψ, drawn with copies of v☾ and v∞ in a free corner
-    const line = (c, cls) => `<path class="${cls}" d="${F.path([vadd(c, vmul(u, -260)), vadd(c, vmul(u, 260))])}"/>`;
-    return { b, d, db, svg: `<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
-        <circle class="f-mu-thin f-dash" cx="${fx(F.S([0, 0])[0])}" cy="${fx(F.S([0, 0])[1])}" r="${fx(BMIN * sc)}"/>
-        <circle class="f-moon" cx="${fx(F.S([0, 0])[0])}" cy="${fx(F.S([0, 0])[1])}" r="${fx(RMN * sc)}"/>
-        ${line(A, 'f-mu-thin f-dash')}${dtS > 0 ? line(Af, 'f-tr') : ''}${F.head(vadd(Af, vmul(u, 120)), u, 'f-tr-fill')}
-        ${F.arrow([0, 0], [0, 58], 'f-mu', 'f-mu-fill')}
-        ${d * sc > 10 ? F.arrow(A, A2, 'f-ink-ln', 'f-ink-fill') : ''}
-        ${db * sc > 2 ? `<path class="f-ac-ln" d="${F.path([A, Af])}"/>` : ''}
-        <path class="f-mu-thin" d="${F.path([[0, 0], Af])}"/>
-        ${F.arrow(Q, vadd(Q, [0, 34]), 'f-mu', 'f-mu-fill')}${F.arrow(Q, vadd(Q, vmul(u, 46)), 'f-tr', 'f-tr-fill')}
-        ${F.arc(Q, 15, Math.PI / 2, Math.PI / 2 - PSI, 'f-ink-ln')}
-      </svg>`, labels: F.lbs([
-        [vadd(Q, [-6, 20]), '<i>v</i><sub>☾</sub>', 'm r'], [vadd(Q, vadd(vmul(u, 40), [6, -8])), '<i>v</i><sub>∞</sub>', 'tr l'],
-        [vadd(Q, vmul([Math.cos(Math.PI / 2 - PSI / 2), Math.sin(Math.PI / 2 - PSI / 2)], 25)), 'ψ', ''],
-        [[-6, 46], '<i>v</i><sub>☾</sub>', 'm r'], [[0, -RMN * sc - 10], T`Moon`, 'm'],
-        [[0, -BMIN * sc + 14], T`impact inside`, 'm'],
-        [vadd(A, vadd(vmul(u, 60), vmul(n, 14))), T`on time`, 'm l'],
-        [vadd(Af, vmul(u, -110)), dtS > 0 ? T`${UI.fmt(dtS / 60, 1)} min late` : '', 'tr r'],
-        [vadd(vmul(A2, 1), [8, 0]), d * sc > 10 ? '<i>v</i><sub>☾</sub>Δ<i>t</i>' : '', 'l'],
-        [vadd(vmul(vadd(A, Af), 0.5), [8, 10]), db * sc > 6 ? 'Δ<i>b</i>' : '', 'acc l'],
-        [vadd(vmul(Af, 0.5), [-8, 4]), '<i>b</i>', 'r'],
-      ]) };
+    const pA = (s) => vadd(vmul(n, B0), vmul(vsc, s)), pB = (s) => pA(s - dtS);   // Earth frame, Moon at the origin at t = 0
+    const mo = (s) => vmul(vm, s);   // the Moon, Earth frame
+    const tcA = 0, tcB = (vsc[0] * u[0] + vsc[1] * u[1]) * dtS / vr;   // closest approaches (same moment in both frames)
+    const span = (f, a, c, m = 40) => [...Array(m + 1).keys()].map((i) => f(a + (c - a) * i / m));
+    const startB = t0 + dtS, showB = tn >= startB;
+    const circ = (F, c, r, cls) => `<circle class="${cls}" cx="${fx(F.S(k(c))[0])}" cy="${fx(F.S(k(c))[1])}" r="${fx(r * sc)}"/>`;
+    const seg = (F, list, cls) => `<path class="${cls}" d="${F.path(list.map(k))}"/>`;
+    const dotK = (F, q, cls, r) => F.dot(k(q), cls, r);
+    // seen from the Earth
+    const moonNow = mo(tn);
+    let e = seg(FE, [[0, -7800], [0, 7600]], 'f-mu-thin f-dash') + FE.head(k([0, 7600]), [0, 1], 'f-mu-fill');
+    // where the Moon was at each closest approach, and that distance
+    if (tn >= tcA) e += seg(FE, [mo(tcA), pA(tcA)], 'f-mu-thin') + dotK(FE, mo(tcA), 'f-mu-fill', 2.5);
+    if (showB && tn >= tcB) e += seg(FE, [mo(tcB), pB(tcB)], 'f-tr-ln-faint') + dotK(FE, mo(tcB), 'f-tr-fill-faint', 2.5);
+    e += circ(FE, moonNow, RMN, 'f-moon');
+    e += seg(FE, span(pA, t0, tn), 'f-mu-wide');
+    if (showB) e += seg(FE, span(pB, startB, tn), 'f-tr');
+    e += dotK(FE, pA(tn), 'f-ink-fill', 3.5) + (showB ? dotK(FE, pB(tn), 'f-tr-fill', 3.5) : '');
+    const eL = [[[-2400 * sc, 8000 * sc + 12], T`Seen from the Earth`, 'l'], [k([300, -7300]), T`Moon’s path`, 'm l'],
+      [vadd(k(pA(t0)), [-2, 12]), T`from Earth`, 'm l'], [vadd(k(moonNow), [0, 0]), T`Moon`, 'm']];
+    if (!end) eL.push([vadd(k(pA(tn)), [0, 11]), T`on time`, 'm'], showB ? [vadd(k(pB(tn)), [0, -11]), T`late`, 'tr'] : null);
+    else eL.push([vadd(k(pA(800)), [6, -12]), T`one path`, 'tr'], [vadd(k(pA(t1)), [0, 12]), T`on time`, 'm'], [vadd(k(pB(t1)), [4, -12]), T`late`, 'tr']);
+    // seen from the Moon
+    const rA = (s) => vsub(pA(s), mo(s)), rB = (s) => vsub(pB(s), mo(s));
+    let m = circ(FM, [0, 0], BMIN, 'f-mu-thin f-dash') + circ(FM, [0, 0], RMN, 'f-moon') + FM.arrow([0, 0], [0, 50], 'f-mu', 'f-mu-fill');
+    if (end) {
+      const ext = (c, cls) => seg(FM, [vadd(c, vmul(u, -6500)), vadd(c, vmul(u, 6500))], cls);
+      m += ext(vmul(n, B0), 'f-mu-wide f-dash') + ext(vmul(n, b), 'f-tr') + FM.head(k(vadd(vmul(n, b), vmul(u, 5600))), u, 'f-tr-fill');
+    } else {
+      m += seg(FM, span(rA, t0, tn), 'f-mu-wide');
+      if (showB) m += seg(FM, span(rB, startB, tn), 'f-tr');
+    }
+    if (tn >= tcA && !end) m += seg(FM, [[0, 0], vmul(n, B0)], 'f-mu-thin');
+    if (showB && tn >= tcB) m += seg(FM, [[0, 0], vmul(n, b)], end ? 'f-tr-thin' : 'f-tr-ln-faint');
+    const A = vmul(n, B0), A2 = vsub(A, [0, d]), Af = vmul(n, b), Q = [-1700, -5500];
+    if (end) {
+      if (d * sc > 10) m += FM.arrow(k(A), k(A2), 'f-ink-ln', 'f-ink-fill');
+      if (db * sc > 2) m += seg(FM, [A, Af], 'f-ac-ln');
+      m += FM.arrow(k(Q), vadd(k(Q), [0, 30]), 'f-mu', 'f-mu-fill') + FM.arrow(k(Q), vadd(k(Q), vmul(u, 42)), 'f-tr', 'f-tr-fill')
+        + FM.arc(k(Q), 15, Math.PI / 2, Math.PI / 2 - PSI, 'f-ink-ln');
+    } else {
+      m += dotK(FM, rA(tn), 'f-ink-fill', 3.5) + (showB ? dotK(FM, rB(tn), 'f-tr-fill', 3.5) : '');
+    }
+    const mL = [[[-2400 * sc, 9000 * sc + 12], T`Seen from the Moon`, 'l'], [k([0, -RMN - 520]), T`Moon`, 'm'], [vadd(k([0, 0]), [-6, 44]), '<i>v</i><sub>☾</sub>', 'm r']];
+    if (end) mL.push(
+      [vadd(k(A), vadd(vmul(u, 70), vmul(n, 12))), T`on time`, 'm l'],
+      [vadd(k(Af), vadd(vmul(u, 30), vmul(n, -16))), dtS > 0 ? T`${UI.fmt(dtS / 60, 1)} min late` : '', 'tr l'],
+      [vadd(k(vmul(vadd(A, A2), 0.5)), [7, 0]), d * sc > 10 ? '<i>v</i><sub>☾</sub>Δ<i>t</i>' : '', 'l'],
+      [vadd(k(vmul(vadd(A, Af), 0.5)), [-8, 2]), db * sc > 6 ? 'Δ<i>b</i>' : '', 'acc r'],
+      [vadd(k(vmul(Af, 0.5)), [-8, 2]), '<i>b</i>', 'tr r'],
+      [vadd(k(Q), [-6, 18]), '<i>v</i><sub>☾</sub>', 'm r'], [vadd(k(Q), vadd(vmul(u, 36), [6, -8])), '<i>v</i><sub>∞</sub>', 'tr l'],
+      [vadd(k(Q), vmul([Math.cos(Math.PI / 2 - PSI / 2), Math.sin(Math.PI / 2 - PSI / 2)], 25)), 'ψ', '']);
+    else mL.push([vadd(k(rA(tn)), [0, 11]), T`on time`, 'm'], showB ? [vadd(k(rB(tn)), [0, -11]), T`late`, 'tr'] : null);
+    const box = (F, svg, L) => `<div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${svg}</svg>${F.lbs(L.filter(Boolean))}</div>`;
+    return { b, d, db, earth: box(FE, e, eL), moon: box(FM, m, mL) };
   }
   function figTiming() {
-    const t = svgTiming(1334);
-    return `<figure class="fig" style="max-width:30rem" id="fr-timing" role="img" aria-label="${T`Seen from the Moon, which stands still. The transfer arrives along a straight line that misses the Moon by the aim offset b. A slider delays the arrival. In the delay the Moon moves forward by v☾Δt, so seen from the Moon the line moves back by that distance; only the part of the shift across the line changes b. A dashed circle marks the aim offsets that hit the Moon.`}">
-      <div class="fig-box">${t.svg}${t.labels}</div>
+    const t = svgTwin(1334, null);
+    return `<figure class="fig fr-twin-fig" style="max-width:40rem" id="fr-timing" role="img" aria-label="${T`An animation in two views side by side, at the same scale, with straight paths and the Moon’s pull left out. Two spacecraft fly the same straight path in space, the second one leaving later. Seen from the Earth, the Moon moves up its path and both spacecraft follow one line; the late one passes closer to the Moon. Seen from the Moon, the Moon stands still and each spacecraft comes in along its own straight line in the direction of v∞. The two lines are parallel: the late one is the on-time line moved back by v☾Δt, the distance the Moon travelled in the delay. The gap between them, v☾Δt sin ψ, is the change of aim offset Δb. A time slider moves back and forth through the approach, and a second slider sets the delay.`}">
+      <div class="fr-twin">${t.earth}${t.moon}</div>
+      <div class="fr-ctl">${UI.slider({ id: 'fr-tt', label: T`time from the on-time closest approach`, min: TW.t0 / 60, max: TW.t1 / 60, step: 1, value: TW.t1 / 60, unit: 'min' })}
+        <button class="btn fr-play" type="button">${T`▸ Play`}</button></div>
       <div class="fr-ctl">${UI.slider({ id: 'fr-dt', label: T`arrival delay Δt`, min: 0, max: 2400, step: 1, value: 1334, unit: 's' })}</div>
       <div class="fr-ro" id="fr-dt-ro"></div>
-      <figcaption>${T`Seen from the Moon, to scale. The dashed line is the arrival on time, aimed 5 560 km from the centre. Arrive Δt later and the Moon has moved v☾Δt forward, so the line has moved back by that distance relative to the Moon. A shift along the line changes nothing; the part across it, v☾Δt sin ψ, is the change of aim offset Δb. ψ is the angle between the Moon’s velocity v☾ and the arrival velocity v∞, drawn bottom right. Inside the dashed circle the spacecraft hits the Moon.`}</figcaption></figure>`;
+      <figcaption>${T`To scale, straight paths, the Moon’s pull left out. Grey: on time; blue: the same path, Δt later. Thin lines from the Moon’s centre: each closest approach, the same length in both views. At the end, the black arrow is the Moon’s move v☾Δt and the orange gap between the two lines is Δb. Inside the dashed circle the spacecraft would hit the Moon.`}</figcaption></figure>`;
   }
   function mountTiming(root) {
-    const box = root.querySelector('.fig-box'), ro = root.querySelector('#fr-dt-ro');
-    UI.bindControls(root, { 'fr-dt': (x) => UI.fmt(x, 0) }, (v) => {
-      const t = svgTiming(v['fr-dt']);
-      box.innerHTML = t.svg + t.labels;
-      ro.innerHTML = T`The Moon moves ${UI.fmt(t.d, 0)} km · Δb = −${UI.fmt(t.db, 0)} km · b = ${UI.fmt(t.b, 0)} km` + (t.b < BMIN ? ` · <span class="bad">${T`below 4 336 km: impact`}</span>` : '');
-    }).update();
+    const twin = root.querySelector('.fr-twin'), ro = root.querySelector('#fr-dt-ro'), btn = root.querySelector('.fr-play');
+    const RATE = (TW.t1 - TW.t0) / 8000;   // simulated seconds per millisecond: the whole approach plays in 8 s
+    let raf = 0, dt = 1334, tm = TW.t1;
+    const draw = () => {
+      const r = svgTwin(dt, tm >= TW.t1 ? null : tm); twin.innerHTML = r.earth + r.moon;
+      ro.innerHTML = T`The Moon moves ${UI.fmt(r.d, 0)} km · Δb = −${UI.fmt(r.db, 0)} km · b = ${UI.fmt(r.b, 0)} km` + (r.b < BMIN ? ` · <span class="bad">${T`below 4 336 km: impact`}</span>` : '');
+    };
+    const setBtn = () => { btn.textContent = raf ? T`❚❚ Pause` : T`▸ Play`; };
+    const stop = () => { cancelAnimationFrame(raf); raf = 0; setBtn(); };
+    const ctl = UI.bindControls(root, { 'fr-dt': (x) => UI.fmt(x, 0), 'fr-tt': (x) => (x > 0 ? '+' : '') + UI.fmt(x, 0) }, (v, src) => {
+      if (src === 'fr-tt') stop();   // the reader takes over the timeline
+      dt = v['fr-dt']; if (src !== 'anim') tm = v['fr-tt'] * 60;
+      draw();
+    });
+    const play = () => {
+      if (tm >= TW.t1) tm = TW.t0;
+      let last = performance.now();
+      const step = (now) => {
+        tm = Math.min(TW.t1, tm + (now - last) * RATE); last = now;
+        ctl.set('fr-tt', Math.round(tm / 60)); ctl.update('anim');
+        if (tm < TW.t1) raf = requestAnimationFrame(step); else stop();
+      };
+      raf = requestAnimationFrame(step); setBtn();
+    };
+    btn.addEventListener('click', () => (raf ? stop() : play()));
+    ctl.update();
+    if (UI.reducedMotion() || !('IntersectionObserver' in window)) return;
+    tm = TW.t0; ctl.set('fr-tt', TW.t0 / 60); ctl.update('anim');
+    const io = new IntersectionObserver((es) => { if (es.some((x) => x.isIntersecting)) { io.disconnect(); if (!raf && tm <= TW.t0) play(); } }, { threshold: 0.6 });
+    io.observe(root);
   }
 
   /* ---------------- Figure 5: a midcourse burn along the flight direction, and the angles α and ψ ---------------- */
@@ -247,7 +313,7 @@
           <h2><span class="idx">0.4</span>${T`Aiming by timing`}</h2>
           <div class="prose">
             <p>${T`Section ${App.sec('moon', 4)} gave the aim offset for a chosen periselene. Take the lab’s scenario <i>Aim for a 110 km periselene</i>, in the patched-conic model. Its TLI sends the spacecraft past the Moon at 899 km, aimed \\(b\\) = 5 560 km from the centre. Lunar orbit insertion wants 110 km, which needs \\(b\\) = 4 494 km (the example of section ${App.sec('moon', 4)}). The aim line must move by \\(\\Delta b\\) = 4 494 − 5 560 = −1 066 km. Two tools can move it: the timing of the TLI burn, and a midcourse correction.`}</p>
-            <p>${T`Timing first. Look at the arrival from the Moon, which then stands still: the transfer comes in along a straight line, at \\(v_\\infty\\). Now let the whole transfer arrive later by \\(\\Delta t\\): the same path in space, just later. In that time the Moon has moved \\(v_☾\\,\\Delta t\\) further along its orbit, so seen from the Moon the line has moved back by the same distance. A shift along the line changes nothing. Only the part across the line changes the aim offset:`}</p>
+            <p>${T`Timing first. Fly the same path in space, but \\(\\Delta t\\) later. The spacecraft then meets the Moon at a different moment, so it passes at a different distance. The figure below shows it from both sides. Seen from the Earth, the on-time and the late spacecraft follow one line. Seen from the Moon, which then stands still, each comes in along its own straight line, in the direction of its velocity relative to the Moon, \\(v_\\infty\\). Because both bodies move, that line is slanted at an angle \\(\\psi\\) to the Moon’s motion, not at the angle the path makes with the Moon’s orbit seen from the Earth. The on-time line passes \\(b\\) from the Moon’s centre. By the time the late spacecraft arrives, the Moon has moved \\(v_☾\\,\\Delta t\\) further, so seen from the Moon the late line is the on-time line moved back by \\(v_☾\\,\\Delta t\\): the same direction, a parallel line. A shift of \\(v_☾\\,\\Delta t\\) at the angle \\(\\psi\\) to the lines opens a gap of \\(v_☾\\,\\Delta t\\,\\sin\\psi\\) between them, and that gap is the change of aim offset:`}</p>
             <div class="eq">\\[ \\Delta b \\approx v_☾\\,\\Delta t\\,\\sin\\psi \\qquad\\Longleftrightarrow\\qquad \\Delta t \\approx \\frac{\\Delta b}{v_☾\\,\\sin\\psi} \\]</div>
             ${Sym.where([['\\Delta b', N`change of the aim offset you want`, 'm'], ['\\Delta t', N`how much later the transfer reaches the Moon’s orbit, relative to the Moon’s schedule`, 's'], ['v_☾', N`the Moon’s orbital speed, 1.02 km/s`, 'm/s'], ['\\psi', N`angle between the Moon’s velocity and \\(v_\\infty\\) (not the angle θ at the sphere boundary, which is measured from \\(v_{sc}\\))`, N`rad or °`]], N`Timing does nothing when \\(v_\\infty\\) lies along the Moon’s path (sin ψ = 0) and works best when it lies across it. For this transfer, arriving later makes b smaller.`)}
             ${figTiming()}
