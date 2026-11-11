@@ -2,7 +2,7 @@
 const test = require('node:test'), assert = require('node:assert/strict');
 const { loadChapter } = require('./helpers/chapter.js');
 const { fly, inCorridor, km } = require('./helpers/lab.js');
-const { PRESETS, svgTwin, B0, BMIN } = loadChapter('freereturn', ['PRESETS', 'svgTwin', 'B0', 'BMIN']);
+const { PRESETS, svgTwin, figTLIShift, B0, BMIN } = loadChapter('freereturn', ['PRESETS', 'svgTwin', 'figTLIShift', 'B0', 'BMIN']);
 const near = (x, want, tol, what) => assert.ok(Math.abs(x - want) <= tol, `${what}: ${x.toFixed(2)}, text says ${want}`);
 
 test('scenarios do what the lab steps say (patched conics)', () => {
@@ -41,4 +41,8 @@ test('timing figure renders at every time without NaN', () => {
     const r = svgTwin(dt, t);
     assert.ok(!/NaN|undefined/.test(r.earth + r.moon), `t=${t} dt=${dt}`);
   }
+});
+
+test('TLI-shift figure renders without NaN', () => {
+  assert.ok(!/NaN|undefined/.test(figTLIShift()));
 });

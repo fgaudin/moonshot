@@ -227,6 +227,45 @@
     io.observe(root);
   }
 
+  /* ---------------- Figure 4b: moving the TLI point turns the whole transfer (seen from the Earth) ---------------- */
+  // Schematic, Earth-centred: the transfer is a conic from perigee (the TLI point) to the Moon's orbit. Starting TLI
+  // earlier moves perigee back along the parking orbit by Δφ and turns the whole conic by Δφ, so it reaches the Moon's
+  // orbit Δφ further back. Δφ is drawn 12° (really 0.2°).
+  function figTLIShift() {
+    const W = 470, H = 436, F = frame(W, H, 128, 346);
+    const D = 290, rp = 42, ra = 330, e = (ra - rp) / (ra + rp), p = rp * (1 + e), dphi = 12 * D2;
+    const nuA = Math.acos((p / D - 1) / e), aA = 64 * D2, w0 = aA - nuA, aM = 33 * D2;   // arrival direction, perigee direction, Moon
+    const pol = (a, r) => [r * Math.cos(a), r * Math.sin(a)];
+    const conic = (w, n1 = nuA) => [...Array(81).keys()].map((k) => { const nu = n1 * k / 80; return pol(w + nu, p / (1 + e * Math.cos(nu))); });
+    const P0 = pol(w0, rp), P1 = pol(w0 - dphi, rp), A0 = pol(aA, D), A1 = pol(aA - dphi, D), M = pol(aM, D);
+    const ray = (a, r0, r1) => F.path([pol(a, r0), pol(a, r1)]);
+    const orbit = (a0, a1, r) => [...Array(61).keys()].map((k) => pol(a0 + (a1 - a0) * k / 60, r));
+    const tang = (a) => [-Math.sin(a), Math.cos(a)];
+    return `<figure class="fig" style="max-width:30rem" role="img" aria-label="${T`Seen from the Earth, not to scale. A small parking orbit around the Earth and an arc of the Moon’s orbit. The transfer leaves the parking orbit at the TLI point and climbs to the Moon’s orbit. A second transfer starts a little earlier, at a TLI point moved back by the angle Δφ: it is the same curve turned by Δφ about the Earth, and it reaches the Moon’s orbit Δφ further back, closer to the Moon. Along the Moon’s orbit the two arrival points are D Δφ apart, the same distance the Moon covers in Δt.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <path class="f-mu-thin f-dash" d="${F.path(orbit(14 * D2, 100 * D2, D))}"/>${F.head(pol(100 * D2, D), tang(100 * D2), 'f-mu-fill')}
+        <circle class="f-mu-thin" cx="${fx(F.S([0, 0])[0])}" cy="${fx(F.S([0, 0])[1])}" r="${rp}"/>
+        <path class="f-mu-thin f-dash" d="${ray(aA, 0, D + 18)}"/><path class="f-mu-thin f-dash" d="${ray(aA - dphi, 0, D + 18)}"/>
+        <path class="f-mu-thin f-dash" d="${ray(w0, 0, rp + 26)}"/><path class="f-mu-thin f-dash" d="${ray(w0 - dphi, 0, rp + 26)}"/>
+        ${F.arc([0, 0], 150, aA - dphi, aA, 'f-ink-ln')}${F.arc([0, 0], rp + 18, w0 - dphi, w0, 'f-ink-ln')}
+        <path class="f-mu-wide f-dash" d="${F.path(conic(w0))}"/>
+        <path class="f-tr" d="${F.path(conic(w0 - dphi))}"/>${F.head(conic(w0 - dphi)[44], vsub(conic(w0 - dphi)[45], conic(w0 - dphi)[44]), 'f-tr-fill')}
+        <path class="f-ac-ln" d="${F.path(orbit(aA - dphi, aA, D))}"/>
+        <circle class="f-earth" cx="${fx(F.S([0, 0])[0])}" cy="${fx(F.S([0, 0])[1])}" r="24"/>
+        <circle class="f-moon" cx="${fx(F.S(M)[0])}" cy="${fx(F.S(M)[1])}" r="13"/>${F.arrow(vadd(M, vmul(tang(aM), 16)), vadd(M, vmul(tang(aM), 40)), 'f-mu', 'f-mu-fill')}
+        ${F.dot(P0, 'f-ink-fill')}${F.dot(P1, 'f-tr-fill')}${F.dot(A0, 'f-ink-fill')}${F.dot(A1, 'f-tr-fill')}
+      </svg>${F.lbs([
+        [[0, 0], T`Earth`, 'm'], [pol(28 * D2, rp + 6), T`parking orbit`, 'm l'],
+        [vadd(P0, [8, -12]), T`TLI on schedule`, 'l'], [vadd(P1, [-2, -20]), T`TLI 3 s earlier`, 'tr r'],
+        [vadd(pol(w0 - dphi / 2, rp + 30), [8, -2]), 'Δφ', 'l'], [pol(aA - dphi / 2, 162), 'Δφ', ''],
+        [vadd(pol(aA, D), [-2, 14]), T`arrival on schedule`, 'r'], [vadd(A1, [10, 2]), T`arrival, TLI earlier`, 'tr l'],
+        [vadd(pol(aA - dphi / 2, D + 16), [10, -4]), '<i>D</i>Δφ = <i>v</i><sub>☾</sub>Δ<i>t</i>', 'acc l'],
+        [vadd(M, [16, -14]), T`Moon`, 'm l'], [vadd(M, vadd(vmul(tang(aM), 40), [-8, 2])), '<i>v</i><sub>☾</sub>', 'm r'],
+        [pol(96 * D2, D + 16), T`Moon’s orbit`, 'm'],
+      ])}</div>
+      <figcaption>${T`Seen from the Earth, not to scale: Δφ is drawn 12° instead of 0.2°, and the parking orbit far too big. Starting TLI earlier moves the burn back along the parking orbit by Δφ and turns the whole transfer by Δφ about the Earth (blue). It reaches the Moon’s orbit D Δφ further back, at the same moment, so relative to the Moon it arrives as if it were Δt late at the old point.`}</figcaption></figure>`;
+  }
+
   /* ---------------- Figure 5: a midcourse burn along the flight direction, and the angles α and ψ ---------------- */
   function figMCC() {
     const W = 360, H = 240, k = 140, F = frame(W, H, 70, 214);
@@ -319,6 +358,7 @@
             ${figTiming()}
             <p>${T`For this transfer \\(\\psi = 129^\\circ\\), so \\(\\sin\\psi = 0.78\\), and \\(v_☾ = 1.0245\\) km/s. For \\(\\Delta b = -1\\,066\\) km: \\(\\Delta t = 1\\,066/(1.0245\\times0.78) = 1\\,334\\) s. Arrive 22 minutes late, while the Moon covers 1 367 km. The figure above opens on this delay; set its slider back to 1 334 s to check.`}</p>
             <p>${T`Nobody delays the Moon. You move the TLI point instead. Moving the burn by \\(\\Delta\\phi\\) along the parking orbit turns the whole transfer by \\(\\Delta\\phi\\) about Earth. At the Moon’s distance \\(D\\) that is a sideways shift \\(D\\,\\Delta\\phi\\), the same as the Moon being \\(v_☾\\Delta t\\) away, so \\(\\Delta\\phi = \\omega_☾\\,\\Delta t\\), with \\(\\omega_☾ = v_☾/D = 2.66\\times10^{-6}\\) rad/s. Here \\(\\Delta\\phi = 0.20^\\circ\\). In a 185 km parking orbit the spacecraft covers 0.068° per second, so the burn must start <b>3.0 seconds earlier</b>. Three seconds of burn timing move the periselene by almost 800 km. That is why TLI windows are counted in seconds.`}</p>
+            ${figTLIShift()}
             <p>${T`Check it in the lab. Moving the TLI point by −0.204° gives a periselene of 199 km, not 110 km. The straight-line picture is a first estimate: Earth’s pull curves the path, and the geometry changes a little as you shift it. The simulator moves \\(b\\) by 4 663 km per degree of TLI point where the formula gives 5 229 km, about 11% less. Section ${App.sec('freereturn', 6)} removes that error.`}</p>
           </div>
         </section>
