@@ -35,6 +35,49 @@
     ],
   });
 
+  /* ---------------- Figure 1: DOI, coast to periapsis, PDI (seen from above the orbit plane) ---------------- */
+  // Schematic: the altitudes are exaggerated about 20 times; angles along the orbit are true (DOI opposite PDI,
+  // the landing site about 16° beyond PDI, as Apollo's powered descent covered some 480 km).
+  function figDOI() {
+    const W = 580, H = 350, ox = 280, oy = 170, Rm = 100, k = 0.4;   // k: px per km of altitude (exaggerated)
+    const ra = Rm + 110 * k, rp = Rm + 15 * k, a = (ra + rp) / 2, e = (ra - rp) / (ra + rp), p = a * (1 - e * e);
+    const vadd = (u, w) => [u[0] + w[0], u[1] + w[1]];
+    const fx = (n) => n.toFixed(1), pct = (x, w) => (100 * x / w).toFixed(2) + '%', D = Math.PI / 180;
+    const S = (q) => [ox + q[0], oy - q[1]], pol = (ang, r) => [r * Math.cos(ang), r * Math.sin(ang)];
+    const path = (list) => list.map((q, i) => `${i ? 'L' : 'M'}${fx(S(q)[0])},${fx(S(q)[1])}`).join('');
+    const span = (fn, a0, a1, n = 90) => [...Array(n + 1).keys()].map((i) => fn(a0 + (a1 - a0) * i / n));
+    const ell = (th) => pol(th, p / (1 + e * Math.cos(th)));   // periapsis at angle 0 (right), apoapsis at 180° (left)
+    const head = (q, dir, cls) => { const s = S(q), t = [dir[0], -dir[1]], l = Math.hypot(...t), u = [t[0] / l, t[1] / l], n = [-u[1], u[0]];
+      return `<path class="${cls}" d="M${fx(s[0] + 9 * u[0])},${fx(s[1] + 9 * u[1])}L${fx(s[0] + 4.5 * n[0])},${fx(s[1] + 4.5 * n[1])}L${fx(s[0] - 4.5 * n[0])},${fx(s[1] - 4.5 * n[1])}Z"/>`; };
+    const lbs = (list) => list.map(([q, t, c]) => { const [x, y] = S(q); return `<span class="lb ${c || ''}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`; }).join('');
+    const dot = (q, cls, r = 3.5) => `<circle class="${cls}" cx="${fx(S(q)[0])}" cy="${fx(S(q)[1])}" r="${r}"/>`;
+    // the descent: from PDI (periapsis) down to the site, 16° further on (shape only)
+    const site = 16 * D, desc = span((th) => pol(th, rp - (rp - Rm) * Math.pow(th / site, 1.6)), 0, site, 30);
+    const DOI = ell(Math.PI), PDI = ell(0), SITE = pol(site, Rm);
+    return `<figure class="fig" style="max-width:38rem" role="img" aria-label="${T`The Moon seen from above the orbit plane, altitudes exaggerated. The lander circles at 110 km. On the side opposite the landing site it fires a short retrograde burn, DOI, which turns the circle into an ellipse. It coasts half an orbit down to the low point of the ellipse, 15 km above the surface, just before the site. There the powered descent starts, PDI, and the lander brakes down to the site.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <circle class="f-moon" cx="${ox}" cy="${oy}" r="${Rm}"/>
+        <circle class="f-mu-thin f-dash" cx="${ox}" cy="${oy}" r="${fx(ra)}"/>
+        ${head(pol(62 * D, ra), [-Math.sin(62 * D), Math.cos(62 * D)], 'f-mu-fill')}
+        <path class="f-mu-thin f-dash" d="${path(span(ell, 0, Math.PI))}"/>
+        <path class="f-tr" d="${path(span(ell, Math.PI, 2 * Math.PI))}"/>
+        ${head(ell(1.5 * Math.PI), [1, 0], 'f-tr-fill')}
+        <path class="f-ac-ln" d="${path(desc)}"/>
+        <path class="f-ink-ln" d="${path([vadd(DOI, [0, 6]), vadd(DOI, [0, 34])])}"/>${head(vadd(DOI, [0, 34]), [0, 1], 'f-ink-fill')}
+        ${dot(DOI, 'f-ink-fill')}${dot(PDI, 'f-tr-fill')}${dot(SITE, 'f-ac-fill', 3)}
+      </svg>${lbs([
+        [[0, -30], T`Moon`, 'm'],
+        [pol(105 * D, ra + 12), T`circular orbit, 110 km`, 'm'],
+        [vadd(DOI, [0, 56]), T`DOI: −21.6 m/s,<br>retrograde`, ''],
+        [vadd(DOI, [-10, -6]), T`apoapsis`, 'm r'],
+        [pol(-90 * D, ra + 14), T`coast half an orbit, 57 min`, 'tr'],
+        [vadd(PDI, [10, -12]), T`PDI: periapsis,<br>15 km, 1 695 m/s`, 'tr l'],
+        [vadd(SITE, [10, 10]), T`landing site`, 'acc l'],
+        [pol(9 * D, Rm - 12), T`powered descent`, 'acc r'],
+      ])}</div>
+      <figcaption>${T`Not to scale: the altitudes are drawn about 20 times too large; the angles are true. The DOI burn is made half an orbit before the site, opposite it, and lowers only the other side of the orbit. The lander then falls, unpowered, to the periapsis, where it is fastest and lowest, and starts the powered descent there.`}</figcaption></figure>`;
+  }
+
   /* ---------------- Practice ---------------- */
   const registerPractice = () => Practice.register('descent', N`Descent planning`, [
     { title: N`Descent orbit insertion Δv`, make() {
@@ -125,6 +168,7 @@
             ${Sym.where(['mu', ['r_a', N`radius of the circular orbit (R☾ + 110 km) = apoapsis of the new ellipse`, 'm'], ['r_p', N`radius of the new periapsis (R☾ + 15 km)`, 'm'], 'a', ['v_c,\\ v_a', N`circular speed, and speed at the apoapsis of the ellipse`, 'm/s']], N`The lunar values are μ = 4.9028 × 10¹² m³/s² and R☾ = 1 737.4 km.`)}
             <p>${T`For 110 km and 15 km: r<sub>a</sub> = 1 847.4 km, r<sub>p</sub> = 1 752.4 km, v<sub>c</sub> = 1 629.1 m/s, v<sub>a</sub> = 1 607.4 m/s. So Δv = <b>21.6 m/s</b>. It is a small difference of two large speeds, so carry six digits. A mistake of 1 m/s moves the periapsis by about 4 km.`}</p>
             <p>${T`The lander coasts half an orbit, about 57 minutes, to periapsis. There its speed is 1 695 m/s (the vis-viva speed at r<sub>p</sub>), nearly horizontal, at 15 km altitude. That is the place and time of <b>powered descent initiation</b> (PDI).`}</p>
+            ${figDOI()}
           </div>
         </section>
 
@@ -193,7 +237,7 @@
             <div class="stage"><canvas id="ds-cv" aria-label="${T`Side view of the descent: altitude against ground distance, with the landing site and the flown path`}"></canvas><div class="overlay" id="ds-ov"><span style="color:var(--muted)">${T`coast`}</span> · <span style="color:var(--accent)">${T`braking`}</span> · <span style="color:var(--good, green)">${T`approach`}</span></div><div class="badge" id="ds-badge"></div></div>
             <div class="tl-side">
               <dl class="readout" id="ds-res"></dl>
-              <p class="note" id="ds-live" style="margin:.5rem 0 0"></p>
+              <dl class="readout" id="ds-live" style="margin-top:.6rem" aria-live="off"></dl>
               <p class="note" id="ds-obj" style="margin:.5rem 0 0"></p>
             </div>
             <div class="tl-transport">
@@ -232,6 +276,7 @@
     const $ = (s) => root.querySelector(s);
     const view = UI.canvas($('#ds-cv'), null);
     let scenKey = 'nominal', touched = false, res = null, o = null, tNow = 1, playing = false;
+    let liveAt = 0;   // last refresh of the live values (ms)
     const km = (x, d = 1) => f(x / 1e3, d);
     const sgn = (x, d = 1) => (x >= 0 ? '+' : '−') + f(Math.abs(x), d);
     const tEnd = () => (res && res.trace.length ? res.trace[res.trace.length - 1].t : 1);
@@ -356,7 +401,17 @@
       if (res.hg) { ctx.beginPath(); ctx.arc(X(res.hg.x / 1e3), Y(res.hg.h / 1e3), 3, 0, 7); ctx.fill(); ctx.textAlign = 'right'; ctx.fillText(T`high gate`, X(res.hg.x / 1e3) + 4, Y(res.hg.h / 1e3) - 8); ctx.textAlign = 'left'; }
       const s = stateAt(tNow * tEnd());
       if (s) { ctx.fillStyle = K.warn; ctx.beginPath(); ctx.arc(X(s.x / 1e3), Y(s.h / 1e3), 5, 0, 7); ctx.fill(); }
-      $('#ds-live').textContent = s ? T`t = ${f(s.t, 0)} s · h = ${f(Math.max(0, s.h), 0)} m · v = ${f(s.vx, 0)} m/s · ${f(s.vh, 1)} m/s vertical · propellant ${f(s.prop, 0)} kg` : '';
+      // live values, one per line; while playing they refresh every 100 ms so they can be read
+      const now = performance.now();
+      if (!playing || tNow >= 1 || now - liveAt >= 100) {
+        liveAt = now;
+        $('#ds-live').innerHTML = s ? `<div class="sub">${T`Now`}</div>
+          <dt>${T`Time t`}</dt><dd>${f(s.t, 0)} s</dd>
+          <dt>${T`Altitude h`}</dt><dd>${f(Math.max(0, s.h), 0)} m</dd>
+          <dt>${T`Horizontal speed v`}</dt><dd>${f(s.vx, 0)} m/s</dd>
+          <dt>${T`Vertical speed`}</dt><dd>${f(s.vh, 1)} m/s</dd>
+          <dt>${T`Propellant`}</dt><dd>${f(s.prop, 0)} kg</dd>` : '';
+      }
     };
     function redrawAll() { view.redraw(); }
 
