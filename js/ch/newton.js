@@ -21,15 +21,19 @@
           <h2><span class="idx">1.1</span>${T`The three laws of motion`}</h2>
           <div class="prose">
             <p>${T`<b>First law, inertia.</b> A body keeps its velocity, constant speed in a straight line, unless an external force acts on it. A spacecraft coasting between Earth and Moon needs no engine to keep moving. It needs an engine only to <i>change</i> its motion.`}</p>
+            ${figInertia()}
             <p>${T`<b>Momentum.</b> Before the second law, one new quantity. The momentum of a body is its mass times its velocity. It measures how hard the body is to stop: a heavy body, or a fast one, has a lot of it.`}</p>
             <div class="eq">\\[ \\vec p = m\\,\\vec v \\]</div>
             ${Sym.where([['\\vec p', N`momentum: mass times velocity. A vector, so it points the way the body moves`, 'kg·m/s'], 'm', 'vecv'], N`The unit kg·m/s is the same as N·s. A 1 kg ball at 1 m/s has a momentum of 1 kg·m/s; a 45 t spacecraft at 7.8 km/s has about 3.5 × 10⁸ kg·m/s.`)}
+            ${figMomentum()}
             <p>${T`<b>Second law.</b> The rate of change of momentum equals the applied force:`}</p>
             <div class="eq">\\[ \\vec F = \\frac{d}{dt}\\left(m\\vec v\\right) \\quad\\Longrightarrow\\quad \\vec F = m\\,\\vec a \\;\\; ${T`\\text{(constant mass)}`} \\]</div>
             ${Sym.where(['vecF', 'ddt', 'm', 'vecv', 'veca'], N`Read it as: force = mass × acceleration. Push twice as hard and a body speeds up twice as fast.`)}
+            ${figSecondLaw()}
             ${Primer.box('vectors', false, 'refresher') + Primer.box('derivative')}
             <p>${T`A rocket's mass is <i>not</i> constant; it throws away about 13 tonnes of propellant every second at liftoff. Working this law with changing mass gives the rocket equation (module ${Progress.code('rockets')}, section ${App.sec('rockets', 3)}).`}</p>
             <p>${T`<b>Third law, action and reaction.</b> When the engine pushes exhaust backward, the exhaust pushes the engine forward with an equal and opposite force. A rocket needs no air to push against, which is why it works in a vacuum.`}</p>
+            ${figThirdLaw()}
           </div>
         </section>
 
@@ -90,9 +94,156 @@
         ${Progress.debrief('newton', { math: 'vectors', mathLabel: N`Vectors, derivatives, powers of ten.` })}`;
 
       mountCannon(page.querySelector('#cannon'));
+      mountAnims(page);
       Practice.embed(page.querySelector('#practice-slot'), 'newton', 3);
     },
   });
+
+  /* ---------------- Figures for 1.1: the three laws and momentum, animated ---------------- */
+  // Each figure is a function scene(t) → { svg, labels } drawn from the equations, so any moment can be shown.
+  // animFig() wraps it with a time slider and a play button per row; mountAnims() wires them.
+  function kit(W, H) {
+    const fx = (n) => n.toFixed(1), pct = (x, w) => (100 * x / w).toFixed(2) + '%';
+    const arrow = (x0, y0, x1, y1, cls, fill) => {
+      const l = Math.hypot(x1 - x0, y1 - y0); if (l < 10) return '';
+      const u = [(x1 - x0) / l, (y1 - y0) / l], n = [-u[1], u[0]], b = [x1 - 10 * u[0], y1 - 10 * u[1]];
+      return `<path class="${cls}" d="M${fx(x0)},${fx(y0)}L${fx(x1 - 9 * u[0])},${fx(y1 - 9 * u[1])}"/><path class="${fill}" d="M${fx(x1)},${fx(y1)}L${fx(b[0] + 5 * n[0])},${fx(b[1] + 5 * n[1])}L${fx(b[0] - 5 * n[0])},${fx(b[1] - 5 * n[1])}Z"/>`; };
+    const lb = (x, y, t, c = '') => `<span class="lb ${c}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`;
+    return { W, H, fx, arrow, lb };
+  }
+  const SCENES = {};
+  // An animated figure is a list of panels, each a drawing with its own play button in its bottom-right corner.
+  // panel: { H, scene(t) → { svg, labels } }; t1: end time (s); rate: animation seconds per real second.
+  // Every panel opens stopped at its start, so its labels can be read first; the reader presses Play.
+  function animFig({ id, W, panels, t1, rate = 1, aria, caption, maxW = 32 }) {
+    SCENES[id] = { t1, rate, W, panels };
+    const body = panels.map((P, i) => { const s = P.scene(0);
+      return `<div class="fig-box nw-panel"><svg viewBox="0 0 ${W} ${P.H}" aria-hidden="true">${s.svg}</svg>${s.labels}
+        <button class="btn nw-play" type="button" data-i="${i}">${T`▸ Play`}</button></div>`; }).join('');
+    return `<figure class="fig nw-anim" data-anim="${id}" style="max-width:${maxW}rem" role="img" aria-label="${aria}">${body}<figcaption>${caption}</figcaption></figure>`;
+  }
+  App.css('newton-anim', `
+    .nw-panel + .nw-panel { margin-top: .6rem; }
+    .nw-play { position: absolute; right: .2rem; bottom: .2rem; font-size: .7rem; padding: .1rem .45rem; min-width: 5rem; }`);
+  function mountAnims(root) {
+    root.querySelectorAll('.nw-anim').forEach((fig) => {
+      const S = SCENES[fig.dataset.anim], n = S.panels.length;
+      const boxes = [...fig.querySelectorAll('.nw-panel')], btns = [...fig.querySelectorAll('.nw-play')];
+      const tm = Array(n).fill(0), raf = Array(n).fill(0);
+      const draw = (i) => { const s = S.panels[i].scene(tm[i]), box = boxes[i], svg = box.querySelector('svg');
+        svg.innerHTML = s.svg; box.querySelectorAll('.lb').forEach((e) => e.remove()); svg.insertAdjacentHTML('afterend', s.labels); };
+      const setBtn = (i) => { btns[i].textContent = raf[i] ? T`❚❚ Pause` : tm[i] >= S.t1 ? T`↻ Replay` : T`▸ Play`; };
+      const stop = (i) => { cancelAnimationFrame(raf[i]); raf[i] = 0; setBtn(i); };
+      const play = (i) => {
+        if (tm[i] >= S.t1) tm[i] = 0;
+        let last = performance.now();
+        const step = (now) => {
+          tm[i] = Math.min(S.t1, tm[i] + (now - last) / 1000 * S.rate); last = now; draw(i);
+          if (tm[i] < S.t1) raf[i] = requestAnimationFrame(step); else stop(i);
+        };
+        raf[i] = requestAnimationFrame(step); setBtn(i);
+      };
+      btns.forEach((b, i) => b.addEventListener('click', () => (raf[i] ? stop(i) : play(i))));
+    });
+  }
+
+  // First law: 60 m/s with the engine off; from 4 s the engine pushes at 30 m/s². A mark is left every second.
+  function figInertia() {
+    const K = kit(500, 166), y = 78, x0 = 40, k = 0.75, TON = 4, V = 60, A = 30;   // k: px per m
+    const pos = (t) => (t <= TON ? V * t : V * TON + V * (t - TON) + A / 2 * (t - TON) ** 2);
+    const craft = (x, cls, flame) => `<rect class="${cls}" x="${K.fx(x - 9)}" y="${y - 6}" width="18" height="12" rx="3"/>`
+      + (flame ? `<path class="f-ac-fill" d="M${K.fx(x - 9)},${y - 4}L${K.fx(x - 21)},${y}L${K.fx(x - 9)},${y + 4}Z"/>` : '');
+    const scene = (t) => {
+      let svg = `<path class="f-mu-thin f-dash" d="M20,${y}L${K.W - 14},${y}"/><path class="f-mu-thin" d="M${x0 + k * pos(TON) + 14},44L${x0 + k * pos(TON) + 14},136"/>`;
+      let L = K.lb(20, 30, T`engine off: equal steps`, 'm l wrap') + K.lb(K.W - 10, 30, T`engine on: the steps grow`, 'tr r wrap');
+      for (let n = 0; n <= Math.floor(t + 1e-9); n++) {   // the marks left at each whole second
+        const x = x0 + k * pos(n);
+        svg += `<rect class="${n <= TON ? 'f-mu-fill' : 'f-tr-fill'}" x="${K.fx(x - 9)}" y="${y - 6}" width="18" height="12" rx="3" opacity=".35"/>`;
+        L += K.lb(x, y + 20, `${n} s`, 'm');
+        if (n > 0) L += K.lb((x + x0 + k * pos(n - 1)) / 2, y - 18, `${UI.fmt(pos(n) - pos(n - 1), 0)} m`, n > TON ? 'tr' : 'm');
+      }
+      svg += craft(x0 + k * pos(t), t > TON ? 'f-tr-fill' : 'f-mu-fill', t > TON);
+      return { svg, labels: L };
+    };
+    return animFig({ id: 'inertia', W: K.W, panels: [{ H: K.H, scene }], t1: 7, rate: 1,
+      aria: T`An animation of a spacecraft moving along a straight line, with a mark left every second. While the engine is off it covers 60 m every second. From 4 s the engine fires and each step is longer than the last: 75 m, then 105 m, then 135 m.`,
+      caption: T`Not to scale. With no force the spacecraft keeps the same velocity: equal steps in equal times, in a straight line. Only when the engine pushes does the velocity change: with a steady push, each step is longer than the last by the same amount.` });
+  }
+
+  // Momentum: two carts meet head-on and stick together. Top: equal and opposite momenta, they stop dead.
+  // Bottom: the light cart is slower, the heavy one wins and both move on its way. After contact V = Σ m v / Σ m.
+  function figMomentum() {
+    const K = kit(500, 170), xm = 250, k = 32, KV = 18, TC = 1.5, y = 86;   // contact point (px), px per m, px per m/s, contact time
+    const pairs = [{ a: { m: 1, v: 4 }, b: { m: 2, v: -2 } }, { a: { m: 1, v: 2 }, b: { m: 2, v: -2 } }];
+    const cart = (xc, m, cls) => { const w = 26 * Math.sqrt(m), h = 22 * Math.sqrt(m);
+      return `<rect class="${cls}" x="${K.fx(xc - w / 2)}" y="${K.fx(y - h)}" width="${K.fx(w)}" height="${K.fx(h)}" rx="4"/>`
+        + `<circle class="f-ink-fill" cx="${K.fx(xc - w / 4)}" cy="${y + 3}" r="3"/><circle class="f-ink-fill" cx="${K.fx(xc + w / 4)}" cy="${y + 3}" r="3"/>`; };
+    const sgn = (x) => (x > 0 ? '+' : x < 0 ? '−' : '') + UI.fmt(Math.abs(x), 0);
+    const sceneOf = ({ a, b }) => (t) => {
+      const wa = 26 * Math.sqrt(a.m), wb = 26 * Math.sqrt(b.m), V = (a.m * a.v + b.m * b.v) / (a.m + b.m);
+      const after = t >= TC, xc = after ? xm + V * (t - TC) * k : 0;   // contact point once stuck
+      const xa = after ? xc - wa / 2 : xm - wa / 2 + a.v * (t - TC) * k, xb = after ? xc + wb / 2 : xm + wb / 2 + b.v * (t - TC) * k;
+      let svg = `<path class="f-mu-thin" d="M14,${y + 7}L${K.W - 14},${y + 7}"/>` + cart(xa, a.m, 'f-mu-fill') + cart(xb, b.m, 'f-mu-fill');
+      let L = after ? K.lb(xc, y + 20, `${a.m} kg + ${b.m} kg`, 'm') : K.lb(xa, y + 20, `${a.m} kg`, 'm') + K.lb(xb, y + 20, `${b.m} kg`, 'm');
+      const top = y - 22 * Math.sqrt(b.m) - 12;
+      if (!after) {
+        svg += K.arrow(xa, top, xa + a.v * KV, top, 'f-tr', 'f-tr-fill') + K.arrow(xb, top, xb + b.v * KV, top, 'f-tr', 'f-tr-fill');
+        L += K.lb(xa, top - 14, `${a.v} m/s`, 'tr') + K.lb(xb, top - 14, `${-b.v} m/s`, 'tr');
+        L += K.lb(xa, y + 37, T`p = ${sgn(a.m * a.v)}`, 'acc') + K.lb(xb, y + 37, T`p = ${sgn(b.m * b.v)}`, 'acc');
+      } else {
+        if (Math.abs(V) > 1e-9) svg += K.arrow(xc, top, xc + V * KV * 2, top, 'f-tr', 'f-tr-fill');
+        L += K.lb(xc, top - 14, Math.abs(V) > 1e-9 ? T`${UI.fmt(Math.abs(V), 1)} m/s` : T`stopped`, 'tr');
+        L += K.lb(xc, y + 37, T`together: p = ${sgn(a.m * a.v + b.m * b.v)} kg·m/s`, 'acc');
+      }
+      return { svg, labels: L };
+    };
+    const panels = pairs.map((pr) => ({ H: K.H, scene: sceneOf(pr) }));
+    return animFig({ id: 'momentum', W: K.W, panels, t1: 4, rate: 0.8,
+      aria: T`An animation of two pairs of carts meeting head-on and sticking together. Top: a 1 kg cart at 4 m/s meets a 2 kg cart at 2 m/s. Their momenta are 4 kg·m/s each, in opposite directions, and both stop dead. Bottom: the 1 kg cart comes at only 2 m/s, with half the momentum; the 2 kg cart wins and both roll on in its direction.`,
+      caption: T`Two carts meet head-on and stick together: momentum decides who stops whom. Top: the light, fast cart and the heavy, slow one carry the same momentum, 4 kg·m/s, in opposite directions; they stop each other dead. Bottom: the light cart has only 2 kg·m/s, and the heavy cart pushes both backward. Momentum is a vector: + to the right, − to the left. Blue: velocity; orange: momentum, in kg·m/s.` });
+  }
+
+  // Second law: three boxes start at rest; 2 N on 1 kg, 4 N on 1 kg, 2 N on 2 kg. The velocity arrow grows as a·t.
+  function figSecondLaw() {
+    const K = kit(500, 112), x0 = 112, k = 22, KV = 8, KF = 20, y = 60;   // px per m, px per m/s, px per N
+    const sceneOf = (r) => (t) => {
+      const a = r.F / r.m, x = x0 + k * a / 2 * t * t, v = a * t, sz = 22 * Math.sqrt(r.m);
+      let svg = `<path class="f-mu-thin f-dash" d="M14,${y + sz / 2}L${K.W - 14},${y + sz / 2}"/>`;
+      svg += K.arrow(x - sz / 2 - 3 - r.F * KF, y, x - sz / 2 - 3, y, 'f-ac-ln', 'f-ac-fill');
+      svg += `<rect class="f-mu-fill" x="${K.fx(x - sz / 2)}" y="${K.fx(y - sz / 2)}" width="${K.fx(sz)}" height="${K.fx(sz)}" rx="3"/>`;
+      svg += K.arrow(x + sz / 2 + 3, y, x + sz / 2 + 3 + v * KV, y, 'f-tr', 'f-tr-fill');
+      const L = K.lb(x - sz / 2 - 3 - r.F * KF / 2, y - 13, `${r.F} N`, 'acc') + K.lb(x, y + sz / 2 + 11, `${r.m} kg`, 'm')
+        + K.lb(14, 16, T`a = ${a} m/s² · v = ${UI.fmt(v, 1)} m/s`, 'tr l');
+      return { svg, labels: L };
+    };
+    const panels = [{ F: 2, m: 1 }, { F: 4, m: 1 }, { F: 2, m: 2 }].map((r) => ({ H: r.m > 1 ? K.H + 6 : K.H, scene: sceneOf(r) }));
+    return animFig({ id: 'second', W: K.W, panels, t1: 2.5, rate: 0.5,
+      aria: T`An animation of three boxes pushed from rest. A force of 2 N on 1 kg gives 2 m/s²; 4 N on the same 1 kg gives 4 m/s², twice as much; 2 N on 2 kg gives 1 m/s², half as much. The velocity arrows grow steadily, each at its own rate.`,
+      caption: T`Each box starts at rest. Twice the force gives twice the acceleration (second box); the same force on twice the mass gives half of it (third box). The velocity, in blue, grows by a every second. Orange: the force.` });
+  }
+
+  // Third law: puffs of exhaust leave backward while the rocket, starting at rest, speeds up forward.
+  function figThirdLaw() {
+    const K = kit(500, 196), y = 96, X0 = 150, AR = 9, VE = 150, DT = 0.12, len = 100;   // rocket accel px/s², exhaust px/s
+    const xr = (t) => X0 + AR / 2 * t * t;   // the nozzle
+    const scene = (t) => {
+      const xn = xr(t);
+      let svg = '';
+      for (let te = 0; te <= t; te += DT) {   // puffs emitted at te, moving back from where the nozzle was
+        const age = t - te, x = xr(te) - 14 - VE * age, dy = 9 * Math.sin(te * 37);
+        if (x > -10) svg += `<circle class="f-ac-fill-faint" cx="${K.fx(x)}" cy="${K.fx(y + dy * Math.min(1, age * 2))}" r="${K.fx(3 + 2 * Math.min(1, age))}" opacity="${K.fx(Math.max(0.15, 1 - age / 2.2))}"/>`;
+      }
+      svg += `<path class="f-mu-fill" d="M${K.fx(xn)},${y - 14}L${K.fx(xn + 120)},${y - 14}L${K.fx(xn + 150)},${y}L${K.fx(xn + 120)},${y + 14}L${K.fx(xn)},${y + 14}Z"/>`
+        + `<path class="f-mu-fill" d="M${K.fx(xn)},${y - 9}L${K.fx(xn - 12)},${y - 13}L${K.fx(xn - 12)},${y + 13}L${K.fx(xn)},${y + 9}Z"/>`;
+      svg += K.arrow(xn + 30, y - 32, xn + 30 + len, y - 32, 'f-ac-ln', 'f-ac-fill') + K.arrow(xn - 26, y + 36, xn - 26 - len, y + 36, 'f-ac-ln', 'f-ac-fill');
+      const L = K.lb(xn + 30 + len / 2, y - 48, T`force on the rocket`, 'acc') + K.lb(xn - 26 - len / 2, y + 52, T`force on the exhaust`, 'acc')
+        + K.lb(xn + 75, y + 28, T`rocket`, 'm') + K.lb(14, 22, T`speed ${UI.fmt(AR * t / 40, 1)} m/s`, 'm l');
+      return { svg, labels: L };
+    };
+    return animFig({ id: 'third', W: K.W, panels: [{ H: K.H, scene }], t1: 5, rate: 1,
+      aria: T`An animation of a rocket firing its engine in empty space. Puffs of exhaust stream backward while the rocket, starting at rest, speeds up forward. Two arrows of the same length stay attached: the force on the exhaust points backward, the force on the rocket points forward.`,
+      caption: T`Action and reaction: the engine pushes the exhaust backward, and the exhaust pushes the rocket forward just as hard. Both forces act between the rocket and its own exhaust, so no air is needed. Not to scale.` });
+  }
 
   function mountCannon(root) {
     const traces = [];

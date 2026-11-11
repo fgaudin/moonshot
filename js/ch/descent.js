@@ -73,7 +73,7 @@
         [pol(-90 * D, ra + 14), T`coast half an orbit, 57 min`, 'tr'],
         [vadd(PDI, [10, -12]), T`PDI: periapsis,<br>15 km, 1 695 m/s`, 'tr l'],
         [vadd(SITE, [10, 10]), T`landing site`, 'acc l'],
-        [pol(9 * D, Rm - 12), T`powered descent`, 'acc r'],
+        [pol(9 * D, Rm - 12), T`powered descent`, 'acc r wrap narrow'],
       ])}</div>
       <figcaption>${T`Not to scale: the altitudes are drawn about 20 times too large; the angles are true. The DOI burn is made half an orbit before the site, opposite it, and lowers only the other side of the orbit. The lander then falls, unpowered, to the periapsis, where it is fastest and lowest, and starts the powered descent there.`}</figcaption></figure>`;
   }

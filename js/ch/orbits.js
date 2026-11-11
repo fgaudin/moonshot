@@ -146,6 +146,7 @@
     .fig .lb { position: absolute; transform: translate(-50%, -50%); font: 500 clamp(.58rem, 3.1cqw, .78rem)/1.1 var(--f-mono); color: var(--ink); white-space: nowrap; pointer-events: none; text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg), 0 0 5px var(--bg); }
     .fig .lb.r { transform: translate(-100%, -50%); }
     .fig .lb.l { transform: translate(0, -50%); }
+    .fig .lb.wrap { white-space: normal; width: max-content; max-width: 42%; } .fig .lb.wrap.r { text-align: right; } .fig .lb.wrap.narrow { max-width: 26%; }   /* may break onto two lines (long fr/de labels) */
     .fig .lb.m { color: var(--muted); } .fig .lb.acc { color: var(--accent); } .fig .lb.tr { color: var(--trace); } .fig .lb.inv { color: #fff; text-shadow: none; }
     .fig .lb abbr { pointer-events: auto; }
     .f-cone { fill: var(--sunk); stroke: var(--muted); stroke-width: 1; }

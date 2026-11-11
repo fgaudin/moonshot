@@ -6,7 +6,9 @@
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const Phys = require('../../js/physics.js');
 
-const tag = (s, ...v) => s.reduce((a, x, i) => a + x + (i < v.length ? v[i] : ''), '');
+// T`…` as a tag, or T('… {$0} …', x) / T(str) as a function, as in js/i18n.js
+const tag = (s, ...v) => (typeof s === 'string' ? s.replace(/\{\$(\d+)\}/g, (m, i) => v[+i])
+  : s.reduce((a, x, i) => a + x + (i < v.length ? v[i] : ''), ''));
 // a stub that accepts any property access and any call, and turns into '' in a string
 const any = new Proxy(function () {}, {
   get: (t, k) => (k === Symbol.toPrimitive ? () => '' : k === 'then' ? undefined : any),
@@ -20,7 +22,7 @@ function loadChapter(id, names, extra = {}) {
   const hook = `\n;globalThis.__exports = { ${names.join(', ')} };\n`;
   const ctx = {
     T: tag, N: tag, Phys, Math, JSON, console,
-    App: any, UI: { ...stubUI() }, Progress: any, Sym: any,
+    App: any, UI: stubUI(), Progress: any, Sym: any,
     Practice: { register: (topic, label, gens = [], quiz = []) => { ctx.__practice = { topic, gens, quiz }; }, embed: () => {} }, MoonLab: any, Glossary: any, I18N: any,
     document: any, performance: { now: () => 0 }, requestAnimationFrame: () => 0, cancelAnimationFrame: () => {},
   };

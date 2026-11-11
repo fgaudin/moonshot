@@ -39,6 +39,8 @@ function figX() {
   width (container query). Label classes: `l` (anchored on its left), `r` (anchored on its right), default centred;
   colours `m` (muted), `acc`, `tr`, `inv`, plus `wn`, `gd` where a chapter defines them. Math in labels uses
   `<i>v</i><sub>∞</sub>`, not TeX.
+  A label that may be too long in French or German can take the class `wrap`: it stays on one line when it fits and
+  breaks onto two lines (at most 42% of the figure width) when it doesn't; add `narrow` for at most 26%.
 - **Shared SVG classes** are defined once in js/ch/orbits.js (`App.css('orbits', …)`, global): `.fig`, `.fig-box`, `.lb*`,
   `f-tr` (blue trajectory), `f-ac-ln` / `f-ac-fill` (orange), `f-ink-ln` / `f-ink-fill`, `f-mu` / `f-mu-fill` (grey),
   `f-dash`, `f-earth`, `f-eq`, `f-pl`, `f-cone`, `f-cut`. Add chapter-specific classes with `App.css('<chapter>-fig', …)`.
