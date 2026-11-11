@@ -46,3 +46,9 @@ test('timing figure renders at every time without NaN', () => {
 test('TLI-shift figure renders without NaN', () => {
   assert.ok(!/NaN|undefined/.test(figTLIShift()));
 });
+
+test('practice generators and concept questions are well formed', () => {
+  const { practice } = loadChapter('freereturn', []);
+  require('./helpers/practice.js').checkGenerators(practice);
+  require('./helpers/practice.js').checkQuiz(practice);
+});

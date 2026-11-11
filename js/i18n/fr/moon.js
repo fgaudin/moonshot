@@ -39,7 +39,6 @@ I18N.add('fr', {
   "Check yourself": "Vérifiez vos acquis",
   "Powers, roots and scientific notation.": "Puissances, racines et notation scientifique.",
   "Computing…": "Calcul en cours…",
-  "No fix within ±15 m/s: adjust TLI": "Aucune correction possible dans ±15 m/s : ajustez la TLI",
   "RTCC solution: {$0}{$1} m/s. Solve again": "Solution RTCC : {$0}{$1} m/s. Recalculer",
   "❚❚ Pause": "❚❚ Pause",
   "Captured in lunar orbit": "Capturé en orbite lunaire",
@@ -211,4 +210,6 @@ I18N.add('fr', {
   "Planners solve this loop numerically, nudging the departure until the arrival converges on the target. The lab lets you run it by hand the other way round: the TLI burn position is the knob, and <i>Aim offset b</i> under <i>Outcome</i> shows where it lands.": "Les planificateurs résolvent cette boucle numériquement, en retouchant le départ jusqu’à ce que l’arrivée converge vers la cible. Le labo vous la fait parcourir à la main, dans l’autre sens : la position de la poussée TLI est le bouton de réglage, et <i>Décalage de visée b</i> sous <i>Résultat</i> montre où elle mène.",
   "Scenario <i>Capture into lunar orbit</i>: the LOI burn at periselene brakes the spacecraft into orbit, but its low point is only about 90 km up. Lower the LOI Δv until it is no longer captured. Then match Apollo 11’s first lunar orbit, 111 × 313 km: adjust the aim and the LOI Δv for a low point between 100 and 130 km and a high point between 280 and 340 km, and play it through the burn. The high point moves about 5 km for every m/s of LOI.": "Scénario <i>Capture en orbite lunaire</i> : la poussée LOI au périsélène freine le vaisseau et le place en orbite, mais son point bas n’est qu’à 90 km environ. Diminuez le Δv de la LOI jusqu’à ce qu’il ne soit plus capturé. Puis reproduisez la première orbite lunaire d’Apollo 11, 111 × 313 km : réglez la visée et le Δv de la LOI pour un point bas entre 100 et 130 km et un point haut entre 280 et 340 km, et jouez le vol jusqu’après la poussée. Le point haut se déplace d’environ 5 km par m/s de LOI.",
   "yes": "oui",
+  "Fixed close-up of the Moon, showing how far above the surface the spacecraft passes, or where it hits": "Gros plan fixe sur la Lune, montrant à quelle hauteur au-dessus de la surface le vaisseau passe, ou où il percute",
+  "No fix within ±1 m/s: adjust TLI": "Aucune solution à ±1 m/s : ajustez la TLI",
 });

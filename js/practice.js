@@ -335,7 +335,7 @@
         hint: T`v_rel is the vector difference of the two velocities: use the law of cosines.`,
         sol: R`\[ v_{rel} = \sqrt{v_{sc}^2 + v_☾^2 - 2\,v_{sc}\,v_☾\cos\theta} = \sqrt{${f(vsc, 2)}^2 + 1.02^2 - 2\times${f(vsc, 2)}\times1.02\cos ${th}^\circ} = ${f(vinf, 3)}\ \mathrm{km/s} \]` };
     } },
-    { topic: 'freereturn', title: N`Flyby turn angle`, make() {
+    { topic: 'moon', title: N`Flyby turn angle`, make() {
       const vinf = rnd(0.8, 1.2, 0.05), h = pick([100, 300, 1000, 3000]);
       const rp = RM + h, e = 1 + rp * vinf * vinf / MUM, d = 2 * Math.asin(1 / e) / deg;
       return { q: T`A spacecraft arrives at the Moon with v∞ = <b>${f(vinf, 2)} km/s</b> on a hyperbola with periselene altitude <b>${f(h, 0)} km</b>. By what angle does the Moon turn its velocity?`, answer: d, unit: '°',

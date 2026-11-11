@@ -9,3 +9,9 @@ test('tests/helpers/lab.js still mirrors MoonLab (MCC time and corridor)', () =>
   assert.equal(MCC_T, 26.7 * 3600);
   assert.match(src, /const inCorridor = \(s\) => s\.outcome === 'entry' && s\.retAlt >= 20e3 && s\.retAlt <= 65e3 && s\.minM\.alt < 20000e3;/);
 });
+
+test('practice generators and concept questions are well formed', () => {
+  const { practice } = require('./helpers/chapter.js').loadChapter('moon', []);
+  require('./helpers/practice.js').checkGenerators(practice);
+  require('./helpers/practice.js').checkQuiz(practice);
+});
