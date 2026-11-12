@@ -109,6 +109,7 @@
       objectives: [
         { id: 'skip', text: N`Find the overshoot boundary: make a capsule skip out` },
         { id: 'safe', text: N`Fly a lunar-return entry captured with a peak below 8 g` },
+        { id: 'site', text: N`Deorbit from Earth orbit and splash down within 50 km of the recovery ship, with your own burn and lead angle` },
         { id: 'qual', text: N`Qualify: answer 2 re-entry problems correctly` },
       ],
       debrief: N`Splashdown, {name}. Welcome home.`,

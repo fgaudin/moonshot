@@ -320,4 +320,7 @@ I18N.add('de', {
   "Bingo": "Bingo",
   "bingo call · bingo fuel": "Bingo-Ruf · Bingo-Treibstoff",
   "Mission Control's call during a lunar landing when the descent stage reached its reserve of about 20 s of propellant, the minimum still needed for a safe abort. After bingo the crew had to land at once or abort. Mission Control counted down to it: “60 seconds”, “30 seconds”, then bingo.": "Ruf der Missionskontrolle bei einer Mondlandung, sobald die Abstiegsstufe ihre Reserve von etwa 20 s Treibstoff erreichte, das Minimum für einen sicheren Abbruch. Nach Bingo musste die Besatzung sofort landen oder abbrechen. Die Missionskontrolle zählte darauf herunter: „60 Sekunden“, „30 Sekunden“, dann Bingo.",
+  "Ballistic entry": "Ballistischer Eintritt",
+  "ballistic reentry": "ballistischer Wiedereintritt",
+  "An entry without lift: only drag and gravity act on the vehicle, as on a cannonball, so nothing holds it up or steers it. It brakes harder than a lifting entry at the same speed and angle. Mercury capsules and warheads enter this way; Apollo did not. Not to be confused with the ballistic coefficient, which every vehicle has.": "Ein Eintritt ohne Auftrieb: Auf das Fahrzeug wirken nur Luftwiderstand und Schwerkraft, wie auf eine Kanonenkugel, sodass nichts es trägt oder steuert. Er bremst stärker als ein Eintritt mit Auftrieb bei gleicher Geschwindigkeit und gleichem Winkel. Mercury-Kapseln und Sprengköpfe treten so ein; Apollo nicht. Nicht zu verwechseln mit dem ballistischen Koeffizienten, den jedes Fahrzeug hat.",
 });
