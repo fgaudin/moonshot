@@ -11,6 +11,7 @@
   --accent-ink: #ffffff;
   --trace: #1c64a8;       /* trajectories */
   --trace2: #7a4fb5;
+  --appx: #1d4775;        /* rail circles of the appendices: filled, dark blue */
   --moon: #7d8592;
   --earth: #2d6fa3;
   --good: #23784a;
@@ -30,7 +31,7 @@
   :root:not([data-theme="light"]) {
     --bg: #0c1420; --panel: #121c2b; --sunk: #0a111b; --ink: #e2e8f0; --muted: #8d9bb0; --line: #24334a;
     --accent: #f08a3c; --accent-ink: #1a0e04; --trace: #5cb0f0; --trace2: #b993f0; --moon: #a8afba; --earth: #4f9ad4;
-    --good: #4cc387; --warn: #e3b047; --bad: #f0675c; --grid: rgba(226, 232, 240, .07);
+    --good: #4cc387; --warn: #e3b047; --bad: #f0675c; --grid: rgba(226, 232, 240, .07); --appx: #2a5a8c;
     --shadow: 0 1px 0 rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.7);
     color-scheme: dark;
   }
@@ -38,7 +39,7 @@
 :root[data-theme="dark"] {
   --bg: #0c1420; --panel: #121c2b; --sunk: #0a111b; --ink: #e2e8f0; --muted: #8d9bb0; --line: #24334a;
   --accent: #f08a3c; --accent-ink: #1a0e04; --trace: #5cb0f0; --trace2: #b993f0; --moon: #a8afba; --earth: #4f9ad4;
-  --good: #4cc387; --warn: #e3b047; --bad: #f0675c; --grid: rgba(226, 232, 240, .07);
+  --good: #4cc387; --warn: #e3b047; --bad: #f0675c; --grid: rgba(226, 232, 240, .07); --appx: #2a5a8c;
   --shadow: 0 1px 0 rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.7);
   color-scheme: dark;
 }
@@ -68,7 +69,9 @@ a { color: var(--trace); }
 .brand small { font: 500 .7rem/1.3 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
 .timeline { list-style: none; margin: 0; padding: 0; position: relative; }
-.timeline::before { content: ""; position: absolute; left: .42rem; top: .6rem; bottom: .6rem; width: 2px; background: var(--line); }
+/* the rail line is drawn per item, so it breaks between the modules and the appendices; it runs from the first circle to the last of each group */
+.timeline li:not(.sep)::after { content: ""; position: absolute; left: .42rem; top: 0; bottom: 0; width: 2px; background: var(--line); }
+.timeline li.g-first::after { top: 1.15rem; } .timeline li.g-last::after { bottom: auto; height: 1.15rem; } .timeline li.g-first.g-last::after { display: none; }
 .timeline li { position: relative; }
 .timeline a {
   display: grid; grid-template-columns: 1rem 1fr; gap: .1rem .75rem; align-items: baseline;
@@ -84,6 +87,9 @@ a { color: var(--trace); }
 .timeline a[aria-current="page"]::before { border-color: var(--accent); background: var(--accent); }
 .timeline a[aria-current="page"] .ttl { color: var(--accent); }
 .timeline a.done::before { border-color: var(--good); }
+/* appendices: reference pages, not objectives to complete, so their circles are filled dark blue, never green */
+.timeline li.appx a::before { border-color: var(--appx); background: var(--appx); }   /* filled like a completed module, in dark blue instead of green */
+.timeline li.appx a[aria-current="page"]::before { border-color: var(--accent); background: var(--accent); }
 .timeline .sep { margin: .6rem 0 .3rem 1.75rem; font: 500 .66rem/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 
 .rail-foot { font: .72rem/1.5 var(--f-mono); color: var(--muted); }

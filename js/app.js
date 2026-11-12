@@ -17,18 +17,20 @@
     // rail: module code and state (patch earned = filled, started = ring)
     refreshRail() {
       const tl = document.getElementById('timeline');
-      let html = '';
-      for (const id of ORDER) {
+      let html = '', appx = false;
+      // two groups, each with its own rail line: the modules (home to the last TM), then the appendices from 'toolkit' on
+      const ids = ORDER.filter((id) => chapters[id]), start = ids.indexOf('toolkit');
+      ids.forEach((id, i) => {
         const c = chapters[id];
-        if (!c) continue;
-        if (id === 'toolkit') html += `<li class="sep">${T`Training`}</li>`;
+        if (id === 'toolkit') { html += `<li class="sep">${T`Training`}</li>`; appx = true; }
+        const edge = (i === 0 || i === start ? ' g-first' : '') + (i === ids.length - 1 || i === start - 1 ? ' g-last' : '');
         const m = Progress.MODULES[id];
         // pre-launch counts as done once the candidate has entered a callsign
         const state = m ? (Progress.complete(id) ? 'done' : Progress.count(id) ? 'started' : '') : id === 'home' && Progress.hasCallsign() ? 'done' : '';
         const label = m ? `${m.code} · ${T(c.phase)}` : T(c.phase);
         const cur = (location.hash || '#home').slice(1) === id ? ' aria-current="page"' : '';
-        html += `<li><a href="#${id}" data-id="${id}" class="${state}"${cur}><span class="phase">${label}</span><span class="ttl">${T(c.title)}</span></a></li>`;
-      }
+        html += `<li class="${(appx ? 'appx' : 'tm') + edge}"><a href="#${id}" data-id="${id}" class="${state}"${cur}><span class="phase">${label}</span><span class="ttl">${T(c.title)}</span></a></li>`;
+      });
       tl.innerHTML = html;
     },
     // switch language: load its dictionaries, then redraw everything that shows text
