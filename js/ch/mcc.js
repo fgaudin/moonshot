@@ -27,7 +27,7 @@
 
   Practice.register('mcc', N`Mission Control`, [
     { title: N`Margin as a percentage`, make() {
-      const plan = rnd(800, 2200, 10), rem = plan * rnd(110, 135, 1) / 100 | 0, s3 = rnd(30, 90, 5);
+      const plan = rnd(800, 2200, 10), rem = plan * rnd(8, 15, 1) / 100 | 0, s3 = rnd(10, Math.min(60, rem * 0.6), 5);
       const m = 100 * (rem - s3) / plan;
       return { q: T`A stage must deliver a planned <b>${plan} m/s</b>. After its last burn the propellant left would give <b>${rem} m/s</b>, and the 3σ dispersion of its burns is <b>${s3} m/s</b>. What is the margin, as a percentage of the planned Δv?`,
         answer: m, unit: '%', tol: 0.02,
@@ -65,6 +65,14 @@
         answer: km, unit: 'km', tol: 0.015,
         hint: T`A small velocity error grows linearly with time: distance = speed error × time. Convert the hours to seconds.`,
         sol: R`\[ \delta r = \delta v\,t = ${f(dv, 1)}\times ${f(h * 3600, 0)}\ \mathrm{s} = ${f(km, 0)}\ \mathrm{km} \]` + `<p>${T`Gravity bends this estimate, but it gives the right size. It is why midcourse corrections exist: a 0.3 m/s error is cheap to fix early and costly late.`}</p>` };
+    } },
+    { title: N`Time out of contact behind the Moon`, make() {
+      const h = rnd(60, 300, 10), L = Phys.lunarLOS(h * 1e3), r = Phys.C.RM / 1e3 + h;
+      return { q: T`A spacecraft circles the Moon at <b>${h} km</b> altitude (R☾ = 1 737 km, μ☾ = 4 903 km³/s²). How many minutes of each orbit is it behind the Moon, out of radio contact with the Earth?`,
+        answer: L.t / 60, unit: 'min', tol: 0.02,
+        hint: T`The Moon hides the spacecraft while it is within θ of the far-side midpoint, on either side, with sin θ = R☾/r. Take the fraction 2θ/360° of the period.`,
+        sol: R`\[ r = ${f(r, 0)}\ \mathrm{km},\quad \theta = \arcsin\frac{1737}{${f(r, 0)}} = ${f(L.arcDeg / 2, 2)}^\circ \]
+          \[ T = 2\pi\sqrt{\frac{r^3}{\mu_☾}} = ${f(L.P / 60, 1)}\ \mathrm{min},\qquad t_{LOS} = \frac{2\times${f(L.arcDeg / 2, 2)}^\circ}{360^\circ}\,T = ${f(L.t / 60, 1)}\ \mathrm{min} \]` };
     } },
     { title: N`PAD total Δv and attitude`, make() {
       const p = rnd(-400, 400, 5), n = rnd(-40, 40, 5), r = rnd(5, 60, 5);
@@ -250,7 +258,11 @@
           <h2><span class="idx">0.2</span>${T`The flight plan and the clock`}</h2>
           <div class="prose">
             <p>${T`Everything on the timeline is a <b>GET</b>, ground elapsed time: hours, minutes and seconds since liftoff. A PAD says “TIG 075:49:50”, not a calendar time, so everybody, on the ground and in the spacecraft, counts the same clock. The flight plan lists the events in order, each with its GET: engine burns, midcourse windows, sleep periods, go/no-go points. The Flight Activities Officer keeps it.`}</p>
-            <p>${T`The plan also follows <b>coverage</b>. Antennas on Earth see the spacecraft only part of the time. Near the Moon the limit is simple geometry: when the spacecraft goes behind the Moon, the signal stops (<b>loss of signal</b>, LOS) and returns when it comes out (<b>acquisition</b>, AOS). In lunar orbit that is a large fraction of every two-hour orbit. The Apollo crews flew LOI and TEI on the far side, out of contact. The ground could not help, so the PAD had to be complete and read back before the loss of signal, and the result was known only at acquisition.`}</p>
+            <p>${T`The plan also follows <b>coverage</b>. Antennas on Earth see the spacecraft only part of the time. Near the Moon the limit is simple geometry: when the spacecraft goes behind the Moon, the signal stops (<b>loss of signal</b>, LOS) and returns when it comes out (<b>acquisition</b>, AOS). In lunar orbit that is a large part of every orbit (below). The Apollo crews flew LOI and TEI on the far side, out of contact. The ground could not help, so the PAD had to be complete and read back before the loss of signal, and the result was known only at acquisition.`}</p>
+            <p>${T`How long is the silence? The Earth is so far away that its direction is the same seen from anywhere near the Moon, so the Moon casts a straight “radio shadow” behind it, as wide as the Moon. The spacecraft is in the shadow while it is less than \\(R_☾\\) from the Earth–Moon line, on the far side. Seen from the Moon’s centre, that happens within an angle \\(\\theta\\) on either side of the far-side midpoint, with \\(\\sin\\theta = R_☾/r\\). The hidden arc is \\(2\\theta\\) out of 360°, and a circular orbit covers equal angles in equal times:`}</p>
+            <div class="eq">\\[ \\sin\\theta = \\frac{R_☾}{r}, \\qquad T = 2\\pi\\sqrt{\\frac{r^3}{\\mu_☾}}, \\qquad t_{LOS} = \\frac{2\\theta}{360^\\circ}\\,T \\]</div>
+            ${Sym.where([['R_☾', N`radius of the Moon: 1 737 km`, 'm'], 'r', ['\\theta', N`half the hidden arc, seen from the Moon’s centre`, N`°`], 'muM', 'T', ['t_{LOS}', N`time out of contact on each orbit`, 's']], N`The orbit is assumed circular and in the plane that contains the Earth. The Moon’s own motion around the Earth, about 1° during one orbit, is left out.`)}
+            <p>${T`Example: a 110 km orbit has \\(r = ${f(Phys.C.RM / 1e3 + 110, 0)}\\) km, so \\(\\sin\\theta = ${f(Phys.C.RM / (Phys.C.RM + 110e3), 3)}\\) and \\(\\theta = ${f(Phys.lunarLOS(110e3).arcDeg / 2, 1)}^\\circ\\). The hidden arc is ${f(Phys.lunarLOS(110e3).arcDeg, 0)}°, ${f(100 * Phys.lunarLOS(110e3).frac, 0)}% of the orbit. The period is ${f(Phys.lunarLOS(110e3).P / 60, 1)} minutes, so the spacecraft is out of contact for about <b>${f(Phys.lunarLOS(110e3).t / 60, 0)} minutes</b> on every orbit, then in view for about ${f((Phys.lunarLOS(110e3).P - Phys.lunarLOS(110e3).t) / 60, 0)} minutes. A lower orbit is hidden for a larger share of the time: at 15 km, the low point of the descent orbit, θ is already ${f(Phys.lunarLOS(15e3).arcDeg / 2, 0)}°.`}</p>
             <p>${T`Planners use this: they place a burn where it can be monitored, or, when it cannot be, they prepare a backup that works without the ground.`}</p>
           </div>
         </section>
@@ -262,7 +274,7 @@
             <ul>
               <li>${T`<b>Call signs.</b> The ground is “Houston”. Each spacecraft has its own name (Apollo 11 flew <i>Columbia</i> and <i>Eagle</i>), so a call is never ambiguous when two spacecraft share a loop.`}</li>
               <li>${T`<b>Readback.</b> Every set of numbers is read back by the receiver, digit by digit. The sender confirms or corrects. Nothing goes into the computer before this.`}</li>
-              <li>${T`<b>Go/no-go polls.</b> Before a critical event such as powered descent, the Flight Director calls each position in turn. Each answers “go” or “no-go” and gives a reason for a no-go. The decision belongs to the Flight Director, and a mission rule that forbids an action cannot be argued away in the heat of the moment.`}</li>
+              <li>${T`<b>Go/no-go polls.</b> Before a critical event such as powered descent, the Flight Director calls each position in turn. Each answers “go” or “no-go” and gives a reason for a no-go. The decision belongs to the Flight Director, and a mission rule that forbids an action cannot be argued away in the heat of the moment (examples in section ${App.sec('mcc', 7)}).`}</li>
               <li>${T`<b>Short and standard.</b> Numbers in a fixed order, a fixed vocabulary, no guesses. A mission rule is useful because it is stated in the same words every time.`}</li>
             </ul>
           </div>
@@ -287,16 +299,16 @@
         <section class="section">
           <h2><span class="idx">0.5</span>${T`Δv budget and margins`}</h2>
           <div class="prose">
-            <p>${T`A mission plan starts as a list of burns with a Δv each, and each burn is assigned to a stage. The rocket equation of module ${Progress.code('rockets')} tells how much Δv each stage can give for the mass it pushes:`}</p>
+            <p>${T`A mission plan starts as a list of burns with a Δv each, and each burn is assigned to a stage. Once the plan is flown on paper, some propellant is left in each stage after its last planned burn. The rocket equation of module ${Progress.code('rockets')} turns it into the <b>remaining Δv</b>, Δv<sub>rem</sub>: what the stage could still give if it had to. It is the stage’s reserve:`}</p>
             <div class="eq">\\[ \\Delta v_{rem} = I_{sp}\\,g_0\\,\\ln\\frac{m_0}{m_0 - m_{prop}} \\]</div>
-            ${Sym.where(['dv', 'isp', 'g0', 'm0', ['m_{prop}', N`propellant still in the tanks after the stage’s last planned burn`, 'kg']], N`Here m₀ is everything the stage still pushes: its own dry mass, the propellant and whatever else is attached.`)}
+            ${Sym.where([['\\Delta v_{rem}', N`remaining Δv (“rem” for remaining): the Δv the propellant left after the stage’s last planned burn could still give`, 'm/s'], 'isp', 'g0', ['m_0', N`mass the stage still pushes after its last planned burn: its own dry mass, the leftover propellant and whatever else is attached`, 'kg'], ['m_{prop}', N`propellant still in the tanks after the stage’s last planned burn`, 'kg']], N`Both masses are taken after the planned burns, not at launch: the reserve is what is left over.`)}
             ${Primer.box('log', false, 'refresher')}
             <p>${T`Not all of that reserve is spare. The burns will not be flown exactly, so part of the reserve is already spoken for. The <b>margin</b> is what is left after you pay for the dispersions, compared with what the stage must deliver:`}</p>
             <div class="eq">\\[ \\text{margin} = 100\\,\\frac{\\Delta v_{rem} - 3\\sigma}{\\Delta v_{plan}}\\ \\% \\]</div>
             ${Sym.where([['\\Delta v_{plan}', N`Δv the stage must deliver in the plan`, 'm/s'], ['3\\sigma', N`combined dispersion of the stage’s burns: the value that actual burns stay within 99.7 % of the time`, 'm/s']], N`Mission rules fix the least margin allowed. The lab asks for 5 %, a training figure.`)}
             <p>${T`<b>Margin as time.</b> A Δv margin means little to a pilot, so Mission Control also states it as time. A lander hovering over the Moon spends about g☾ of Δv every second:`}</p>
             <div class="eq">\\[ t_{hover} \\approx \\frac{\\Delta v_{margin}}{g_☾} \\]</div>
-            ${Sym.where(['gM', ['t_{hover}', N`how long the margin lets the lander hover or search for a site`, 's']], N`Apollo 11 touched down after Mission Control’s “30 seconds” call, which counted down to the land-or-abort limit, not to empty tanks. The budget decided how long a pilot could look for a landing site.`)}
+            ${Sym.where([['\\Delta v_{margin}', N`the margin as a Δv: Δv<sub>rem</sub> − 3σ`, 'm/s'], 'gM', ['t_{hover}', N`how long the margin lets the lander hover or search for a site`, 's']], N`Apollo 11 touched down after Mission Control’s “30 seconds” call, which counted down to the land-or-abort limit, not to empty tanks. The budget decided how long a pilot could look for a landing site.`)}
             <p>${T`On a coasting leg the margin is a burn time at the engine’s thrust, or hours of oxygen and power.`}</p>
           </div>
         </section>
@@ -324,32 +336,28 @@
           <h2><span class="idx">0.7</span>${T`Mission rules and aborts`}</h2>
           <div class="prose">
             <p>${T`The worst moment to decide what is acceptable is when something has just broken. <b>Mission rules</b> are written before flight, by the people who will fly and run it: which failure is a no-go for which event, which failure forces an abort, how much margin must remain. In real time, the Flight Director applies the rule and spends the time thinking about what the rule did not foresee.`}</p>
+            <p>${T`Four real rules, and what they did:`}</p>
+            <ul>
+              <li>${T`<b>Program alarms, Apollo 11.</b> During the powered descent the guidance computer raised alarms 1202 and 1201: it was overloaded. Before the flight, the guidance controllers had listed which alarms were safe as long as they did not come continuously. The answer “go” came within seconds, and the landing went on (module ${Progress.code('landing')}).`}</li>
+              <li>${T`<b>Landing propellant: the bingo call.</b> When the descent stage reaches its last reserve, about 20 s of propellant, the crew must be on the ground or abort. Mission Control counts down to it: “60 seconds”, “30 seconds”. Apollo 11 landed less than 20 s before it.`}</li>
+              <li>${T`<b>Landing radar, Apollo 14.</b> The rules called for an abort if the landing radar gave no valid data by 10 000 ft (3 km). It stayed silent through the first part of the descent. On the ground’s advice the crew cycled its circuit breaker, and the radar locked on at about 22 000 ft (6.7 km), well before the limit.`}</li>
+              <li>${T`<b>Engine steering, Apollo 16.</b> The rules required both the main and the backup steering of the service module’s engine to work before the lunar module could commit to the landing: the engine was the crew’s way home. Just before descent, the backup steering oscillated. The landing was held while engineers tested it on the ground, and it went ahead about six hours late, once they had shown the backup was safe to use.`}</li>
+            </ul>
+            <p>${T`Each one states the condition in numbers or in plain yes/no terms, and each was decided long before the moment it was used.`}</p>
             <p>${T`An abort is a plan prepared in advance for every phase:`}</p>
             <ul>
               <li>${T`<b>On the pad and in ascent.</b> The Apollo launch escape tower pulled the command module away from the rocket in the first minutes. Later in ascent, the abort modes used the service module’s engine, in the end to reach an orbit rather than to return at once.`}</li>
-              <li>${T`<b>Free return.</b> After TLI the early Apollo flights flew a trajectory that swings around the Moon and returns to Earth with no engine burn at all. Later flights chose a trajectory with access to more landing sites and gave up part of that guarantee; module ${Progress.code('homeward')} covers the free return.`}</li>
+              <li>${T`<b>Free return.</b> After TLI the early Apollo flights flew a trajectory that swings around the Moon and returns to Earth with no engine burn at all. Later flights chose a trajectory with access to more landing sites and gave up part of that guarantee; module ${Progress.code('freereturn')} covers the free return.`}</li>
               <li>${T`<b>Direct abort.</b> A burn right away that turns the spacecraft around. It is quick, but it needs a large Δv from a healthy main engine.`}</li>
               <li>${T`<b>Lifeboat.</b> On Apollo 13 an oxygen tank failed after TLI, and the service module could no longer be used. The crew moved into the lunar module, and its descent engine did the burns that brought them home. The plan survived because a consumables margin existed for the lunar module.`}</li>
             </ul>
+            ${Archive.capsule('escapeTower')}
             <p>${T`The choice among abort options is arithmetic with three checks: is the engine you need healthy, is the Δv available larger than the Δv required plus its dispersion, and do the consumables outlast the trip with a reserve? The fastest option that passes all three wins. You practise it in the lab.`}</p>
           </div>
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.8</span>${T`Three ways to run the mission`}</h2>
-          <div class="prose">
-            <p>${T`In the course exercises you operate the same mission in three modes. They differ in who computes and who carries the workload.`}</p>
-          </div>
-          <div class="mcc-scroll"><table class="data notation"><thead><tr><th>${T`Mode`}</th><th>${T`Who computes`}</th><th>${T`PAD flow`}</th><th>${T`Crew workload`}</th></tr></thead><tbody>
-            <tr><td><b>${T`Solo`}</b></td><td>${T`The crew, alone.`}</td><td>${T`None: you compute, enter and fly your own burns.`}</td><td>${T`Highest: navigation, computation and flying together.`}</td></tr>
-            <tr><td><b>${T`Apollo`}</b></td><td>${T`Mission Control computes; the crew checks.`}</td><td>${T`MC computes, CAPCOM voices, the crew copies, reads back, checks for sense, then enters.`}</td><td>${T`Moderate: the crew calculates a quick check and flies.`}</td></tr>
-            <tr><td><b>${T`MC-only`}</b></td><td>${T`Mission Control, entirely.`}</td><td>${T`MC computes and voices; the crew copies, reads back and executes.`}</td><td>${T`Lowest on computation. The crew still reads back, and a wrong PAD is flown as written.`}</td></tr>
-          </tbody></table></div>
-          <div class="prose"><p>${T`In every mode the flow ends in the same place: numbers in the computer, attitude held, engine on at TIG. What changes is whether anyone else has seen the numbers before you do.`}</p></div>
-        </section>
-
-        <section class="section">
-          <h2><span class="idx">0.9</span>${T`Lab: the mission planning desk`}</h2>
+          <h2><span class="idx">0.8</span>${T`Lab: the mission planning desk`}</h2>
           <div class="prose"><p>${T`Three tabs. The <b>Δv budget</b> holds an Apollo-like lunar mission with its stages, masses and three-sigma dispersions. Change anything and the margins follow. The <b>PAD worksheet</b> is a form for maneuver, TEI and entry PADs, which you can fill in, check and print, with a readback drill. The <b>Abort decision</b> asks you to choose among options with the clock running. The figures are rounded training values, close to Apollo but not exact.`}</p></div>
           <div class="lab tl-lab" id="mcc-lab">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Mission planning desk`}</h3><span class="spacer"></span>
@@ -400,7 +408,7 @@
       </div>
       <p class="note" id="mcc-task" style="margin:0"></p>
       <div style="display:flex;flex-direction:column;gap:.5rem;min-width:0"><h4>${T`Stages and margins`}</h4>
-          <div class="mcc-scroll"><table class="data"><thead><tr><th>${T`Stage`}</th><th>${T`dry (kg)`}</th><th>${T`propellant (kg)`}</th><th>Isp (s)</th><th>${T`tank (kg)`}</th><th>${T`plan Δv`}</th><th>${T`remaining Δv`}</th><th>3σ</th><th>${T`margin (m/s)`}</th><th>${T`margin (%)`}</th><th></th></tr></thead><tbody id="mcc-stages">${rows}</tbody></table></div>
+          <div class="mcc-scroll"><table class="data"><thead><tr><th>${T`Stage`}</th><th>${T`dry (kg)`}</th><th>${T`propellant (kg)`}</th><th>Isp (s)</th><th>${T`tank (kg)`}</th><th>${T`plan Δv`}</th><th>${T`remaining Δv`}</th><th>3<span class="lc">σ</span></th><th>${T`margin (m/s)`}</th><th>${T`margin (%)`}</th><th></th></tr></thead><tbody id="mcc-stages">${rows}</tbody></table></div>
         </div>
       <div class="mcc-cols">
         <div style="display:flex;flex-direction:column;gap:.8rem;min-width:0">
@@ -417,7 +425,7 @@
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:.5rem"><h4>${T`Maneuvers`}</h4>
-        <div class="mcc-scroll"><table class="data"><thead><tr><th>${T`Maneuver`}</th><th>${T`Phase`}</th><th>${T`Stage`}</th><th>Δv (m/s)</th><th>${T`propellant (kg)`}</th><th>3σ (m/s)</th></tr></thead><tbody id="mcc-mv">${mv}</tbody></table></div>
+        <div class="mcc-scroll"><table class="data"><thead><tr><th>${T`Maneuver`}</th><th>${T`Phase`}</th><th>${T`Stage`}</th><th>Δv (m/s)</th><th>${T`propellant (kg)`}</th><th>3<span class="lc">σ</span> (m/s)</th></tr></thead><tbody id="mcc-mv">${mv}</tbody></table></div>
       </div>`;
   }
 

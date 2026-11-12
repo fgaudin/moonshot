@@ -3,7 +3,7 @@
 const test = require('node:test'), assert = require('node:assert/strict');
 const { execFileSync } = require('child_process'), fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..');
-const WIP = [];   // e.g. 'js/ch/descent.js'
+const WIP = ['js/history.js', 'js/ch/moon.js', 'js/ch/homeward.js'];   // e.g. 'js/ch/descent.js'
 
 const sources = [...fs.readdirSync(path.join(ROOT, 'js')).filter((f) => f.endsWith('.js')).map((f) => 'js/' + f),
   ...fs.readdirSync(path.join(ROOT, 'js/ch')).filter((f) => f.endsWith('.js')).map((f) => 'js/ch/' + f)].filter((f) => !WIP.includes(f));

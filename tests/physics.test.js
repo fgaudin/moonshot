@@ -38,3 +38,20 @@ test('solveMCC returns a burn within its range, rounded result lands near the ta
   const s = Phys.simulatePatched({ ...opts, mcc: { t: opts.mcc.t, dv } });
   assert.ok(Math.abs(km(s.retAlt) - 40) < 5, `perigee ${km(s.retAlt).toFixed(1)} km`);
 });
+
+test('lunarLOS: loss of signal behind the Moon in a 110 km orbit', () => {
+  const Phys = require('../js/physics.js');
+  const l = Phys.lunarLOS(110e3);
+  assert.equal(Math.round(l.P / 60), 119);        // orbital period, minutes
+  assert.equal(Math.round(l.arcDeg), 140);        // arc hidden behind the Moon
+  assert.equal(Math.round(l.t / 60), 46);         // minutes out of contact per orbit
+  assert.ok(Phys.lunarLOS(15e3).frac > l.frac);   // lower orbit: hidden a larger share of the time
+});
+
+test('lunarLOS: the hand formula of TM-19 (sin θ = R/r, t = 2θ/360° × T)', () => {
+  const Phys = require('../js/physics.js');
+  for (const alt of [15e3, 110e3, 300e3]) {
+    const r = Phys.C.RM + alt, th = Math.asin(Phys.C.RM / r), T = 2 * Math.PI * Math.sqrt(r ** 3 / Phys.C.muM);
+    assert.ok(Math.abs(Phys.lunarLOS(alt).t - 2 * th / (2 * Math.PI) * T) < 1e-6);
+  }
+});

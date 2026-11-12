@@ -224,6 +224,7 @@ table.data { border-collapse: collapse; width: 100%; font: .82rem/1.4 var(--f-mo
 table.data th, table.data td { padding: .45rem .6rem; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
 table.data th:first-child, table.data td:first-child { text-align: left; }
 table.data th { font-weight: 600; color: var(--muted); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; }
+.lc { text-transform: none; }
 table.data.notation td { white-space: normal; text-align: left; vertical-align: top; font: .92rem/1.45 var(--f-body); }
 table.data.notation td:first-child { white-space: nowrap; }
 table.data input { width: 6.5rem; text-align: right; padding: .35rem .4rem; }

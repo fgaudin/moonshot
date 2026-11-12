@@ -633,7 +633,14 @@
     return { trace, maxG, maxQdot, heatLoad, outcome, t, range: y[3], minH, vEnd: y[1] };
   }
 
-  const Phys = { C, elementsFromRV, solveKepler, trueFromEcc, eccFromTrue, timeSincePeriapsis, rocket, rk4, SATURN_V, simulateAscent, EM, Orbit2D, burnTime, executeBurns, simulateTLI, simulatePatched, R_SOI, solveMCC, simulateEntry, density, pressure };
+  // loss of signal behind the Moon, for a circular lunar orbit at altitude alt (m), seen from a distant Earth:
+  // the spacecraft is hidden while it is within asin(R☾/r) of the far-side midpoint, on both sides
+  function lunarLOS(alt = 110e3) {
+    const r = C.RM + alt, P = 2 * Math.PI * Math.sqrt(r * r * r / C.muM), arc = 2 * Math.asin(C.RM / r);
+    return { P, arcDeg: arc * 180 / Math.PI, frac: arc / (2 * Math.PI), t: arc / (2 * Math.PI) * P };
+  }
+
+  const Phys = { C, lunarLOS, elementsFromRV, solveKepler, trueFromEcc, eccFromTrue, timeSincePeriapsis, rocket, rk4, SATURN_V, simulateAscent, EM, Orbit2D, burnTime, executeBurns, simulateTLI, simulatePatched, R_SOI, solveMCC, simulateEntry, density, pressure };
   root.Phys = Phys;
   if (typeof module !== 'undefined' && module.exports) module.exports = Phys;
 })(typeof window !== 'undefined' ? window : globalThis);

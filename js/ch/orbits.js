@@ -262,7 +262,7 @@
             <p>${T`\\(\\nu\\) is the <b>true anomaly</b>, the angle from periapsis to the spacecraft. The eccentricity \\(e\\) selects the conic, and the energy sign tells you which kind you are on:`}</p>
           </div>
           <div class="scroll-x" style="max-width:52rem"><table class="data elements" style="min-width:40rem">
-            <thead><tr><th>${T`Conic`}</th><th>${T`Eccentricity`}</th><th>${T`Energy ε`}</th><th>${T`Semi-major axis`}</th><th>${T`Example`}</th></tr></thead>
+            <thead><tr><th>${T`Conic`}</th><th>${T`Eccentricity`}</th><th>${T`Energy ε`.replace('ε', '<span class="lc">ε</span>')}</th><th>${T`Semi-major axis`}</th><th>${T`Example`}</th></tr></thead>
             <tbody>
               <tr><td>${T`Circle`}</td><td>e = 0</td><td>< 0</td><td>a = r</td><td>${T`Apollo parking orbit, 185 km: a temporary orbit where the spacecraft waits before its next burn`}</td></tr>
               <tr><td>${T`Ellipse`}</td><td>0 < e < 1</td><td>< 0</td><td>a > 0</td><td>${T`Trans-lunar coast (two-body view)`}</td></tr>

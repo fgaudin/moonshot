@@ -143,6 +143,12 @@
       alt: N`The Moon, almost full, against black space`,
       story: N`The Moon photographed by the Apollo 17 crew during the coast home in December 1972. The trans-Earth injection burn had been made behind the Moon, out of contact with Earth; from then on the trajectory, refined by small midcourse corrections, decided where and when the capsule would meet the atmosphere.`,
     },
+    escapeTower: {
+      img: '6900547', focus: '50% 22%', date: '1969-07', mission: 'Apollo 11',
+      title: N`The tower on top`,
+      alt: N`The top of the Saturn V on the launch pad: a slim rocket on an open lattice tower sits on the cone-shaped cover of the command module, among the service arms of the launch tower`,
+      story: N`Apollo 11 on the pad, days before launch. The slim rocket on the lattice tower is the launch escape system: if the Saturn V failed in the first minutes, it would pull the command module clear. It was dropped soon after the second stage lit, and never had to fire with a crew aboard.`,
+    },
     flightDirectors: {
       img: 's72-54881', id: 'S72-54881', date: '1972-12-06', mission: 'Apollo 17',
       title: N`The flight directors`,
