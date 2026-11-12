@@ -30,6 +30,14 @@
     .f-shadow { fill: var(--muted); opacity: .12; }
     .hw-exec:empty { display: none; } .hw-exec { margin: .6rem 0; padding: .5rem .7rem; border: 1px solid var(--line); border-radius: 6px; font-size: .85rem; }
     .hw-exec.flash { animation: hw-flash .8s ease-out; } @keyframes hw-flash { from { background: color-mix(in srgb, var(--accent) 22%, transparent); } }
+    .hw-lab { grid-template-columns: minmax(0, 1fr); } .hw-lab .lab-head .badge { font: 600 .74rem/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; padding: .45rem .6rem; border-radius: 4px; background: var(--panel); border: 1px solid var(--line); }
+    .hw-panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); } .hw-panel { display: flex; flex-direction: column; min-width: 0; border-right: 1px solid var(--line); } .hw-panel:last-child { border-right: 0; }
+    .hw-panel h4 { margin: 0; padding: .55rem .8rem; font: 600 .7rem/1.2 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
+    .hw-panel h4 b { display: inline-block; min-width: 1.3em; margin-right: .5em; padding: .1em 0; text-align: center; border-radius: 3px; background: var(--accent); color: var(--accent-ink); }
+    .hw-cv { position: relative; height: 340px; background: var(--sunk); } .hw-cv canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; } #hw-c1 { touch-action: none; cursor: grab; } #hw-c1.drag { cursor: grabbing; }
+    .hw-panel .readout { padding: .6rem .8rem; grid-template-columns: minmax(0, 1fr) 9.5em; }   /* fixed value column: a label wraps the same way whatever the value, so nothing below moves */ .hw-note { margin: 0; padding: .7rem 1rem; border-top: 1px solid var(--line); min-height: calc(1.6em + 1.4rem); box-sizing: border-box; }   /* room for one line, so the controls below do not jump when a message appears */
+    .hw-nudge { display: flex; gap: .2rem; margin-top: .25rem; } .hw-nudge .btn { flex: 1; min-width: 0; padding: .2rem 0; font: .68rem/1 var(--f-mono); }
+    @media (max-width: 860px) { .hw-panels { grid-template-columns: minmax(0, 1fr); } .hw-panel { border-right: 0; border-bottom: 1px solid var(--line); } }
     .hw-exec ul { margin: .3rem 0 0; padding: 0; list-style: none; } .hw-exec li { margin: .15rem 0; }`);
   // Earth to the left, the Moon moving up the page; the orbit is clockwise, so at the far-side midpoint (right) the
   // spacecraft moves down, against v☾. Burn φ before that point; the hyperbola's asymptote is θ∞ further on.
@@ -229,16 +237,27 @@
 
         <section class="section">
           <h2><span class="idx">0.7</span>${T`Lab: the trans-Earth planner`}</h2>
-          <div class="prose"><p>${T`Pick a scenario. Choose the Δv of the burn, its position φ in lunar orbit, and the revolution. The plan runs through the patched-conic simulation as you type: the Earth–Moon view shows the whole trajectory, the lunar view shows the burn, and the entry view zooms on the arrival at the Earth, against the corridor. The results show the vacuum perigee, the entry angle, the flight time and the verdict. Where a scenario allows a midcourse correction, enter its time and Δv. Objectives are checked when you press <b>Execute</b>. “Solve φ” hands the burn position to Mission Control, and the corridor objective is then not credited.`}</p></div>
-          <div class="lab tl-lab" id="hw">
-            <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Trans-Earth planner`}</h3><span class="spacer"></span>
-              <div class="seg" id="hw-view" role="group" aria-label="${T`View`}"><button data-v="em" aria-pressed="true">${T`Earth–Moon`}</button><button data-v="moon" aria-pressed="false">${T`Lunar orbit`}</button><button data-v="entry" aria-pressed="false">${T`Entry`}</button></div>
+          <div class="prose"><p>${T`Pick a scenario, then set the Δv of the burn, its position φ in lunar orbit, and the revolution. The plan runs through the patched-conic simulation as you change it, and three panels follow the burn to its consequence:`}</p>
+            <ol>
+              <li>${T`<b>Burn at the Moon.</b> Drag the burn point around the orbit, or type φ. The hyperbola and its departure direction turn with it. The small buttons under the fields change a value by a fine step, which you need: the target is narrow.`}</li>
+              <li>${T`<b>Leaving the Moon.</b> The departure velocity v<sub>∞</sub>, which is relative to the Moon, plus the Moon’s own velocity gives the velocity seen from the Earth. That velocity sets the path to the Earth, drawn underneath.`}</li>
+              <li>${T`<b>Arrival at the Earth.</b> A zoom on the entry, with the corridor as a green fan. The path must cross 122 km inside it.`}</li>
+            </ol>
+            <p>${T`Where a scenario allows a midcourse correction, enter its time and Δv. Objectives are checked when you press <b>Execute</b>. “Solve φ” hands the burn position to Mission Control, and the corridor objective is then not credited.`}</p></div>
+          <div class="lab tl-lab hw-lab" id="hw">
+            <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Trans-Earth planner`}</h3><span class="spacer"></span><div class="badge" id="hw-badge"></div></div>
+            <div class="hw-panels">
+              <div class="hw-panel"><h4><b>1</b>${T`Burn at the Moon`}</h4>
+                <div class="hw-cv"><canvas id="hw-c1" aria-label="${T`The lunar orbit seen from above, with the burn point, which can be dragged, and the departure hyperbola`}"></canvas></div>
+                <dl class="readout" id="hw-r1"></dl></div>
+              <div class="hw-panel"><h4><b>2</b>${T`Leaving the Moon`}</h4>
+                <div class="hw-cv"><canvas id="hw-c2" aria-label="${T`Top: the departure velocity relative to the Moon, the Moon’s velocity and their sum, the velocity seen from the Earth. Bottom: the path from the Moon to the Earth`}"></canvas></div>
+                <dl class="readout" id="hw-r2"></dl></div>
+              <div class="hw-panel"><h4><b>3</b>${T`Arrival at the Earth`}</h4>
+                <div class="hw-cv"><canvas id="hw-c3" aria-label="${T`Zoom on the arrival at the Earth: the path against the entry corridor, altitude against distance along the ground`}"></canvas></div>
+                <dl class="readout" id="hw-r3"></dl></div>
             </div>
-            <div class="stage"><canvas id="hw-cv" aria-label="${T`Trans-Earth trajectory: the lunar orbit with the burn point, and the path from the Moon to the Earth`}"></canvas><div class="overlay" id="hw-ov"></div><div class="badge" id="hw-badge"></div></div>
-            <div class="tl-side">
-              <dl class="readout" id="hw-res"></dl>
-              <p class="note" id="hw-note" style="margin:0"></p>
-            </div>
+            <p class="note hw-note" id="hw-note"></p>
             <div class="tl-groups">
               <div class="tl-group">
                 <h4>${T`Scenario`}</h4>
@@ -248,8 +267,10 @@
               <div class="tl-group">
                 <h4>${T`Trans-Earth injection`}</h4>
                 <div class="mc-fields">
-                  <label><span>${T`burn Δv (m/s)`}</span><input type="text" inputmode="decimal" id="hw-dv" autocomplete="off"></label>
-                  <label><span>${T`burn position φ (°)`}</span><input type="text" inputmode="decimal" id="hw-phi" autocomplete="off"></label>
+                  <div><label><span>${T`burn Δv (m/s)`}</span><input type="text" inputmode="decimal" id="hw-dv" autocomplete="off"></label>
+                    <div class="hw-nudge" data-for="hw-dv" role="group" aria-label="${T`Change the burn Δv by a small step`}">${[-1, -0.1, 0.1, 1].map((d) => `<button class="btn" data-d="${d}">${d > 0 ? '+' : '−'}${UI.dec(String(Math.abs(d)))}</button>`).join('')}</div></div>
+                  <div><label><span>${T`burn position φ (°)`}</span><input type="text" inputmode="decimal" id="hw-phi" autocomplete="off"></label>
+                    <div class="hw-nudge" data-for="hw-phi" role="group" aria-label="${T`Change the burn position by a small step`}">${[-0.1, -0.01, 0.01, 0.1].map((d) => `<button class="btn" data-d="${d}">${d > 0 ? '+' : '−'}${UI.dec(String(Math.abs(d)))}</button>`).join('')}</div></div>
                   <label><span>${T`revolution k`}</span><input type="text" inputmode="numeric" id="hw-rev" autocomplete="off"></label>
                 </div>
                 <div class="btn-row"><button class="btn primary" id="hw-go">${T`Execute`}</button><button class="btn" id="hw-solve">${T`Solve φ`}</button><button class="btn" id="hw-work">${T`Show the working`}</button></div>
@@ -283,8 +304,8 @@
     const $ = (sel) => root.querySelector(sel);
     const num = (id) => { const s = String($(id).value).replace(/\s|\u202f/g, '').replace('−', '-').replace(',', '.'); if (s === '') return NaN; const v = Number(s); return isFinite(v) ? v : NaN; };
     const set = (id, v) => { $(id).value = UI.dec(String(v)); };
-    const view = UI.canvas($('#hw-cv'), null);
-    let scenKey = 'nominal', sc = SCEN.nominal, res = null, mode = 'em', peeked = false, assisted = false, bad = false;
+    const views = ['#hw-c1', '#hw-c2', '#hw-c3'].map((id) => UI.canvas($(id), null)), view = { redraw: () => views.forEach((v) => v.redraw()) };
+    let scenKey = 'nominal', sc = SCEN.nominal, res = null, peeked = false, assisted = false, bad = false, geo1 = null, dragging = false;
 
     function load() {
       sc = SCEN[scenKey];
@@ -345,19 +366,15 @@
     };
 
     function render(q) {
-      const dl = $('#hw-res'), b = $('#hw-badge');
-      if (!res) { dl.innerHTML = ''; b.textContent = T`Enter numbers`; b.className = 'badge'; $('#hw-note').textContent = T`Enter the Δv, the burn position and the revolution as numbers (revolution 1 to 20).`; $('#hw-ov').textContent = ''; return; }
+      const b = $('#hw-badge'), dls = ['#hw-r1', '#hw-r2', '#hw-r3'].map($);
+      if (!res) { dls.forEach((d) => { d.innerHTML = ''; }); b.textContent = T`Enter numbers`; b.className = 'badge'; $('#hw-note').textContent = T`Enter the Δv, the burn position and the revolution as numbers (revolution 1 to 20).`; return; }
       const r = res, v = VERDICT[r.outcome], sensDv = Ph.sensitivity({ ...r.opts, dvErr: 0, mcc: undefined }, 'dv', 0.1), sensPhi = Ph.sensitivity({ ...r.opts, dvErr: 0, mcc: undefined }, 'phi', 0.005);
       const far = Math.abs(((q.phi + 180 + 360 * 100) % 360) - 180) < r.lo.losPhi * deg;
-      const rows = [
-        [T`Burn at`, UI.fmtTime(r.t0)], [T`Earth contact at the burn`, far ? T`lost (far side)` : T`in contact`],
-        [T`Moon departure speed v∞`, r.hyp ? `${f(r.vinf, 0)} m/s` : '—'],
-        [T`Vacuum perigee altitude`, r.periAlt != null ? `${f(r.periAlt / 1e3, 0)} km` : '—'],
-        [T`Entry angle`, r.gamma != null ? `${f(r.gamma, 2)}°` : '—'], [T`Entry speed`, r.vEI ? `${f(r.vEI / 1e3, 2)} km/s` : '—'],
-        [T`Flight time`, r.tof != null ? `${hrs(r.tof)} h` : '—'], [T`Splashdown after marker`, r.tEI != null ? `${hrs(r.tEI)} h` : '—'],
-      ];
-      dl.innerHTML = rows.map(([k, x], i) => `<dt>${k}</dt><dd${i === 3 || i === 4 ? ' class="hl"' : ''}>${x}</dd>`).join('') +
-        `<dt class="sub" style="grid-column:1/-1">${T`Sensitivity of the perigee`}</dt><dt>${T`per m/s of burn Δv`}</dt><dd>${f(sensDv, 0)} km</dd><dt>${T`per 0.01° of position`}</dt><dd>${f(sensPhi * 0.01, 1)} km</dd>`;
+      const fill = (dl, rows) => { dl.innerHTML = rows.map(([k, x, hl]) => `<dt>${k}</dt><dd${hl ? ' class="hl"' : ''}>${x}</dd>`).join(''); };
+      fill(dls[0], [[T`Burn at`, UI.fmtTime(r.t0)], [T`Earth contact at the burn`, far ? T`lost (far side)` : T`in contact`], [T`Moon departure speed v∞`, r.hyp ? `${f(r.vinf, 0)} m/s` : '—']]);
+      fill(dls[1], [[T`Speed relative to the Moon`, r.exit ? `${f(r.exit.vRel, 0)} m/s` : '—'], [T`Speed seen from the Earth`, r.exit ? `${f(r.exit.v, 0)} m/s` : '—'], [T`Flight time`, r.tof != null ? `${hrs(r.tof)} h` : '—'], [T`Splashdown after marker`, r.tEI != null ? `${hrs(r.tEI)} h` : '—']]);
+      fill(dls[2], [[T`Vacuum perigee altitude`, r.periAlt != null ? `${f(r.periAlt / 1e3, 0)} km` : '—', 1], [T`Entry angle`, r.gamma != null ? `${f(r.gamma, 2)}°` : '—', 1], [T`Entry speed`, r.vEI ? `${f(r.vEI / 1e3, 2)} km/s` : '—'],
+        [T`Perigee per m/s of burn Δv`, `${f(sensDv, 0)} km`], [T`Perigee per 0.01° of position`, `${f(sensPhi * 0.01, 1)} km`]]);
       b.textContent = T(v[0]); b.className = 'badge ' + v[1];
       const notes = [];
       if (sc.target != null && r.tEI != null) { const d = (r.tEI - sc.target) / 3600; notes.push(T`Requested splashdown: ${hrs(sc.target)} h ± ${hrs(sc.window)} h. Yours is ${f(Math.abs(d), 1)} h ${d >= 0 ? T`late` : T`early`}.`); }
@@ -370,8 +387,7 @@
         const s = Ph.sensitivity({ ...r.opts, mcc: { dt: Math.max(q.mt, 0) * 3600 || 86400, dv: 0 } }, 'mcc', 0.1);
         notes.push(T`Tracking: perigee ${f(r.periAlt / 1e3, 0)} km against 40 km wanted. A correction at ${f(q.mt, 0)} h moves the perigee by about ${f(s, 0)} km per m/s.`);
       }
-      $('#hw-note').textContent = notes.join(' ');
-      $('#hw-ov').textContent = `${T`Moon’s speed`} ${f(Ph.VM, 0)} m/s`;
+      $('#hw-note').textContent = notes.join(' ') || '\u00a0';   // never empty: the line keeps its height
     }
 
     function showWorking() {
@@ -393,16 +409,36 @@
       set('#hw-phi', roots[0].toFixed(3)); assisted = true; run(false);
     }
 
-    // ---- drawing ----
-    view.draw = (ctx, w, h) => {
-      const K = UI.tok();
-      ctx.clearRect(0, 0, w, h);
-      UI.stars(ctx, w, h, K, 80);
-      if (!res) return;
-      if (mode === 'em') drawEM(ctx, w, h, K); else if (mode === 'moon') drawMoon(ctx, w, h, K); else drawEntry(ctx, w, h, K);
-    };
+    // ---- drawing: three linked panels ----
+    const panel = (i, n, draw) => { views[i].draw = (ctx, w, h) => { const K = UI.tok(); ctx.clearRect(0, 0, w, h); UI.stars(ctx, w, h, K, n); ctx.font = `10px ${K.mono}`; if (res) draw(ctx, w, h, K); }; };
+    panel(0, 40, (ctx, w, h, K) => drawMoon(ctx, w, h, K));
+    panel(1, 40, (ctx, w, h, K) => drawLeave(ctx, w, h, K));
+    panel(2, 0, (ctx, w, h, K) => drawEntry(ctx, w, h, K));
+    // text that shrinks to fit the panel width
+    const fit = (ctx, K, text, x, y, wMax) => { let px = 10; ctx.font = `${px}px ${K.mono}`; while (px > 7 && ctx.measureText(text).width > wMax) { px -= 0.5; ctx.font = `${px}px ${K.mono}`; } ctx.fillText(text, x, y); ctx.font = `10px ${K.mono}`; };
+    // velocities on leaving the Moon's sphere (Earth to the left, the Moon moving up), then the path to the Earth
+    function drawLeave(ctx, w, h, K) {
+      const r = res, hT = Math.round(h * 0.5);
+      if (r.exit) {
+        const a = -Ph.W * r.tSOI, cs = Math.cos(a), sn = Math.sin(a), mv = Ph.moonVel(r.tSOI), rot = (x, y) => [x * cs - y * sn, x * sn + y * cs];
+        const vE = rot(r.exit.s[2], r.exit.s[3]), vI = rot(r.exit.s[2] - mv[0], r.exit.s[3] - mv[1]), vM = rot(mv[0], mv[1]);
+        const k = Math.min(w * 0.4, hT * 0.4) / Math.max(1100, Math.hypot(...vI)), ox = w * 0.5, oy = hT * 0.5;
+        const tip = (v) => [ox + v[0] * k, oy - v[1] * k], tM = tip(vM), tI = tip(vI), tE = tip(vE);
+        ctx.strokeStyle = K.line; ctx.lineWidth = 1; ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(...tM); ctx.lineTo(...tE); ctx.lineTo(...tI); ctx.stroke(); ctx.setLineDash([]);
+        UI.arrow(ctx, ox, oy, tM[0], tM[1], K.muted, 1.6); UI.arrow(ctx, ox, oy, tI[0], tI[1], K.accent, 2); UI.arrow(ctx, ox, oy, tE[0], tE[1], K.trace, 2.6);
+        const lab = (t, q, col, dx, dy, al) => { ctx.fillStyle = col; ctx.textAlign = al; ctx.fillText(t, Math.max(4, Math.min(w - 4, q[0] + dx)), q[1] + dy); };
+        const sideI = tI[0] < ox ? -1 : 1;
+        lab(`v☾ ${f(Ph.VM, 0)}`, tM, K.muted, 6, 4, 'left');
+        lab(`${T`rel. Moon`} ${f(Math.hypot(...vI), 0)}`, tI, K.accent, 0, 14, 'center');
+        lab(`v ${f(Math.hypot(...vE), 0)} m/s`, tE, K.trace, sideI * 6, -6, sideI < 0 ? 'right' : 'left');
+        ctx.fillStyle = K.muted; ctx.textAlign = 'left'; fit(ctx, K, T`v = v rel. Moon + v☾`, 8, 16, w - 16);
+        UI.arrow(ctx, 44, hT - 12, 10, hT - 12, K.muted, 1.2); ctx.fillStyle = K.muted; ctx.fillText(T`towards Earth`, 50, hT - 8);
+      } else { ctx.fillStyle = K.muted; ctx.textAlign = 'center'; fit(ctx, K, T(VERDICT[r.outcome][0]), w / 2, hT / 2, w - 16); }
+      ctx.strokeStyle = K.line; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, hT + 0.5); ctx.lineTo(w, hT + 0.5); ctx.stroke();
+      ctx.save(); ctx.beginPath(); ctx.rect(0, hT + 1, w, h - hT - 1); ctx.clip(); ctx.translate(0, hT); drawEM(ctx, w, h - hT, K); ctx.restore();
+    }
     function drawEM(ctx, w, h, K) {
-      const r = res, cx = w * 0.42, cy = h / 2, s = Math.min(w * 0.58, h / 2 - 14) / (Ph.D * 1.02);
+      const r = res, cx = w * 0.4, cy = h / 2, s = Math.min(w * 0.56, h / 2 - 12) / (Ph.D * 1.02);
       const P = (x, y) => [cx + x * s, cy - y * s];
       ctx.strokeStyle = K.line; ctx.lineWidth = 1; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.arc(cx, cy, Ph.D * s, 0, 7); ctx.stroke(); ctx.setLineDash([]);
       UI.drawEarth(ctx, cx, cy, Math.max(4, Ph.RE * s * 4), K);
@@ -411,8 +447,9 @@
       const m0 = Ph.moonPos(r.t0), m1 = r.tEI != null ? Ph.moonPos(r.tEI) : null;
       const mp = P(...m0);
       UI.drawMoon(ctx, mp[0], mp[1], Math.max(3.5, Ph.RM * s * 4), K);
-      ctx.fillStyle = K.muted; ctx.fillText(T`Moon at burn`, mp[0] + 8, mp[1] - 8);
-      if (m1) { const q = P(...m1); ctx.strokeStyle = K.muted; ctx.beginPath(); ctx.arc(q[0], q[1], 4, 0, 7); ctx.stroke(); ctx.fillStyle = K.muted; ctx.fillText(T`Moon at entry`, q[0] + 8, q[1] + 12); }
+      const inW = (t, x) => Math.min(x, w - ctx.measureText(t).width - 4);
+      ctx.fillStyle = K.muted; ctx.fillText(T`Moon at burn`, inW(T`Moon at burn`, mp[0] + 8), mp[1] - 8);
+      if (m1) { const q = P(...m1); ctx.strokeStyle = K.muted; ctx.beginPath(); ctx.arc(q[0], q[1], 4, 0, 7); ctx.stroke(); ctx.fillStyle = K.muted; ctx.fillText(T`Moon at entry`, inW(T`Moon at entry`, q[0] + 8), q[1] + 12); }
       const pts = Ph.samples(r, 400);
       if (pts.length) {
         ctx.lineWidth = 2;
@@ -424,46 +461,52 @@
         }
       }
       if (r.mccState) { const c = P(r.mccState[0], r.mccState[1]); ctx.fillStyle = K.warn; ctx.beginPath(); ctx.arc(c[0], c[1], 4, 0, 7); ctx.fill(); ctx.fillText('MCC', c[0] + 6, c[1] - 6); }
-      ctx.fillStyle = K.muted; ctx.textAlign = 'center';
-      ctx.fillText(T`Earth and Moon not to scale; the path is drawn to scale`, w / 2, h - 10);
     }
     function drawMoon(ctx, w, h, K) {
-      const r = res, lo = r.lo, cx = w / 2, cy = h / 2, s = Math.min(w, h) / 2 / (5 * RM) * 1.0;
+      const r = res, lo = r.lo, cx = w * 0.46, cy = h * 0.4, s = Math.min(w, h) * 0.5 / (3.3 * RM);
+      geo1 = { cx, cy };
       const rot = -Ph.W * r.t0, cs = Math.cos(rot), sn = Math.sin(rot);
       const P = (x, y) => [cx + (x * cs - y * sn) * s, cy - (x * sn + y * cs) * s];
       UI.drawMoon(ctx, cx, cy, RM * s, K);
       // Earth direction and far-side midpoint
-      ctx.strokeStyle = K.line; ctx.setLineDash([3, 5]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(cx - RM * s * 4.8, cy); ctx.lineTo(cx + RM * s * 4.8, cy); ctx.stroke(); ctx.setLineDash([]);
-      ctx.font = `10px ${K.mono}`; ctx.fillStyle = K.muted; ctx.textAlign = 'left'; ctx.fillText(T`far side`, cx + RM * s * 3.4, cy - 6); ctx.textAlign = 'right'; ctx.fillText(T`towards Earth`, cx - RM * s * 3.4 + 40, cy - 6);
+      ctx.strokeStyle = K.line; ctx.setLineDash([3, 5]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = K.muted; ctx.textAlign = 'right'; ctx.fillText(T`far side`, w - 6, cy - 6); ctx.textAlign = 'left'; ctx.fillText(T`towards Earth`, 6, cy - 6);
+      UI.arrow(ctx, 14, h - 34, 14, h - 74, K.muted, 1.4); ctx.fillText(T`Moon’s motion`, 22, h - 50);
       // orbit; the part out of contact with the Earth is drawn thicker
       ctx.lineWidth = 1.4; ctx.strokeStyle = K.trace;
       ctx.beginPath(); ctx.arc(cx, cy, lo.r * s, 0, 7); ctx.stroke();
-      ctx.lineWidth = 4; ctx.strokeStyle = K.muted; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(cx, cy, lo.r * s, -lo.losPhi, lo.losPhi); ctx.stroke(); ctx.globalAlpha = 1;
-      // burn point: angle φ before far-side midpoint (orbit runs clockwise on this plane, so before = counter-clockwise from +x)
-      const ph = (res.opts.phi) / deg, bx = cx + lo.r * s * Math.cos(ph), by = cy - lo.r * s * Math.sin(ph);
-      ctx.fillStyle = K.warn; ctx.beginPath(); ctx.arc(bx, by, 5, 0, 7); ctx.fill();
-      ctx.textAlign = 'left'; ctx.fillText(`TEI ϕ = ${f(res.opts.phi, 2)}°`, bx + 8, by - 8);
-      // hyperbola
+      ctx.lineWidth = 5; ctx.strokeStyle = K.muted; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(cx, cy, lo.r * s, -lo.losPhi, lo.losPhi); ctx.stroke(); ctx.globalAlpha = 1;
+      // hyperbola, with the direction it leaves in
       if (r.legM) {
-        const L = r.legM; ctx.strokeStyle = K.accent; ctx.lineWidth = 2; ctx.beginPath();
-        let first = true;
-        for (let i = 0; i <= 160; i++) {
-          const nu = L.nu0 + (L.nu1 - L.nu0) * i / 160, st = Ph.stateAt(L.c, nu), c = P(st[0], st[1]);
-          if (Math.hypot(c[0] - cx, c[1] - cy) > Math.hypot(w, h)) break;
-          if (first) { ctx.moveTo(...c); first = false; } else ctx.lineTo(...c);
+        const L = r.legM, pts = [];
+        for (let i = 0; i <= 200; i++) {
+          const nu = L.nu0 + (L.nu1 - L.nu0) * i / 200, st = Ph.stateAt(L.c, nu), c = P(st[0], st[1]);
+          if (c[0] < 12 || c[0] > w - 12 || c[1] < 12 || c[1] > h - 44) break;
+          pts.push(c);
         }
-        ctx.stroke();
-        // Moon’s velocity direction (screen up on the far side) and the asymptote hint
-        UI.arrow(ctx, cx + RM * s * 3, cy + 6, cx + RM * s * 3, cy + 6 + 46, K.muted, 1.4);
-        ctx.fillStyle = K.muted; ctx.textAlign = 'left'; const lt = T`against the Moon’s motion`; ctx.fillText(lt, Math.min(cx + RM * s * 3 + 8, w - ctx.measureText(lt).width - 6), cy + 46);
+        if (pts.length > 3) {
+          ctx.strokeStyle = K.accent; ctx.lineWidth = 2; ctx.beginPath(); pts.forEach((c, i) => (i ? ctx.lineTo(...c) : ctx.moveTo(...c))); ctx.stroke();
+          const e = pts[pts.length - 1], d = pts[pts.length - 3], n = Math.hypot(e[0] - d[0], e[1] - d[1]) || 1;
+          UI.arrow(ctx, e[0], e[1], e[0] + (e[0] - d[0]) / n * 12, e[1] + (e[1] - d[1]) / n * 12, K.accent, 2);
+          ctx.fillStyle = K.accent; ctx.textAlign = e[0] > w / 2 ? 'right' : 'left'; ctx.fillText('v∞', e[0] + (e[0] > w / 2 ? -10 : 10), e[1] - 2);
+        }
       }
-      ctx.fillStyle = K.muted; ctx.textAlign = 'center'; ctx.fillText(T`Thick arc: out of contact with the Earth`, w / 2, h - 10);
+      // burn point: angle φ before the far-side midpoint (the orbit runs clockwise here, so before = counter-clockwise from +x). Draggable.
+      const ph = res.opts.phi / deg, bx = cx + lo.r * s * Math.cos(ph), by = cy - lo.r * s * Math.sin(ph);
+      ctx.strokeStyle = K.warn; ctx.lineWidth = 1; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = K.warn; ctx.beginPath(); ctx.arc(bx, by, 7, 0, 7); ctx.fill(); ctx.strokeStyle = K.panel; ctx.lineWidth = 2; ctx.stroke();
+      { const co = Math.cos(ph), si = Math.sin(ph), t = `TEI  φ = ${f(res.opts.phi, 2)}°`, tw = ctx.measureText(t).width; ctx.fillStyle = K.warn; ctx.textAlign = 'left';
+        ctx.fillText(t, Math.max(4, Math.min(w - tw - 4, bx + 14 * co - (co < -0.3 ? tw : co < 0.3 ? tw / 2 : 0))), Math.max(12, by - 16 * si + 4)); }
+      ctx.fillStyle = K.muted; ctx.textAlign = 'center';
+      fit(ctx, K, T`Drag the burn point around the orbit`, w / 2, h - 18, w - 12);
+      fit(ctx, K, T`Thick arc: out of contact with the Earth`, w / 2, h - 6, w - 12);
     }
 
     // zoom on the arrival: altitude against distance along the ground, every path lined up where it crosses 122 km.
     // The corridor is the fan between the steepest and the shallowest allowed path.
     function drawEntry(ctx, w, h, K) {
       const r = res, X0 = -2200e3, X1 = 2300e3, A0 = -25e3, A1 = 330e3, pad = 22;
+      if (!r.cE) { ctx.fillStyle = K.muted; ctx.textAlign = 'center'; fit(ctx, K, T(VERDICT[r.outcome][0]), w / 2, h / 2, w - 16); return; }
       const P = (x, a) => [w * (x - X0) / (X1 - X0), h - pad - (h - pad - 26) * (a - A0) / (A1 - A0)];
       const line = (pts, to) => { ctx.beginPath(); let on = false; for (const [x, a] of pts) { if (a < 0 || a > A1 * 1.05) { on = false; continue; } const q = P(x, a); if (on) ctx.lineTo(...q); else { ctx.moveTo(...q); on = true; } } ctx.stroke(); };
       const cut = (pts, before) => pts.filter(([x]) => (before ? x <= 0 : x >= 0));
@@ -492,19 +535,19 @@
           ctx.textAlign = 'left'; ctx.fillText(`γ = ${f(r.gamma, 2)}°`, ei[0] + 8, ei[1] - 8);
         } else line(pts);
         const low = pts.reduce((b, q) => (q[1] < b[1] ? q : b));
-        if (low[1] > 0 && low[1] < A1 && low[0] > X0 && low[0] < X1) { const q = P(...low); ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.fillText(T`vacuum perigee ${f(low[1] / 1e3, 0)} km`, q[0], q[1] - 8); }
+        if (r.gamma == null && low[1] > 0 && low[1] < A1 && low[0] > X0 && low[0] < X1) { const q = P(...low), t = T`vacuum perigee ${f(low[1] / 1e3, 0)} km`, tw = ctx.measureText(t).width / 2; ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.fillText(t, Math.max(tw + 4, Math.min(w - tw - 4, q[0])), q[1] - 8); }
+        if (r.periAlt > A1) { ctx.fillStyle = col; ctx.textAlign = 'center'; UI.arrow(ctx, w * 0.7, 46, w * 0.7, 22, col, 2); fit(ctx, K, T`Passes ${f(r.periAlt / 1e3, 0)} km above the Earth`, w * 0.6, 62, w * 0.75); }
       }
       ctx.fillStyle = K.muted; ctx.textAlign = 'left';
-      ctx.fillText(T`entry interface, 122 km`, 8, ei[1] - 6);
+      fit(ctx, K, T`entry interface, 122 km`, 8, ei[1] - 6, ei[0] - 16);
       ctx.fillText(T`atmosphere`, 8, (ei[1] + g0[1]) / 2 + 4);
-      ctx.textAlign = 'right';
-      ctx.fillText(T`too shallow: skips out`, w - 8, P(X1, shallow[shallow.length - 1][1])[1] - 8 < 14 ? 14 : ei[1] - 6);
-      ctx.fillText(T`too steep`, w - 8, g0[1] - 8);
-      ctx.fillStyle = K.good; ctx.textAlign = 'left';
-      const cl = P(...shallow.reduce((b, q) => (Math.abs(q[1] - 215e3) < Math.abs(b[1] - 215e3) && q[0] < 0 ? q : b), [X0, 1e9]));
-      ctx.fillText(T`corridor: ${f(Ph.CORRIDOR.shallow, 1)}° to ${f(Ph.CORRIDOR.steep, 1)}°`, cl[0] + 12, cl[1]);
+      const at = (pts, alt) => pts.reduce((b, q) => (q[0] < 0 && Math.abs(q[1] - alt) < Math.abs(b[1] - alt) ? q : b), [X0, 1e9]);
+      const qs = P(...at(shallow, 190e3)), qt = P(...at(steep, 190e3));
+      ctx.textAlign = 'right'; ctx.fillText(T`too shallow`, qs[0] - 8, qs[1] + 3); ctx.textAlign = 'left'; ctx.fillText(T`too steep`, qt[0] + 8, qt[1] + 3);
+      ctx.fillStyle = K.good; ctx.textAlign = 'right';
+      ctx.fillText(T`corridor: ${f(Ph.CORRIDOR.shallow, 1)}° to ${f(Ph.CORRIDOR.steep, 1)}°`, w - 8, 16);
       ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
-      ctx.fillText(T`Altitude stretched; dashed: the path without air`, w / 2, h - 7);
+      fit(ctx, K, T`Altitude stretched; dashed: the path without air`, w / 2, h - 7, w - 10);
     }
 
     // ---- wiring ----
@@ -516,7 +559,22 @@
       el.addEventListener('input', () => { if (el.id === 'hw-phi') assisted = false; run(false); });
       el.addEventListener('keydown', (e) => { if (e.key === 'Enter') run(true); });
     });
-    UI.seg(root, '#hw-view', (v) => { mode = v; $('#hw-ov').hidden = v === 'entry'; view.redraw(); });
+    root.querySelectorAll('.hw-nudge button').forEach((bt) => bt.addEventListener('click', () => {
+      const id = '#' + bt.parentNode.dataset.for, d = +bt.dataset.d, v = num(id);
+      if (!isFinite(v)) return;
+      set(id, +(v + d).toFixed(3)); if (id === '#hw-phi') assisted = false; run(false);
+    }));
+    // drag the burn point: the angle of the pointer seen from the Moon's centre (further out = finer)
+    const c1 = $('#hw-c1');
+    const dragTo = (e) => {
+      if (!geo1) return;
+      const b = c1.getBoundingClientRect(), a = Math.atan2(geo1.cy - (e.clientY - b.top), e.clientX - b.left - geo1.cx) * deg;
+      set('#hw-phi', +a.toFixed(2)); assisted = false; run(false);
+    };
+    c1.addEventListener('pointerdown', (e) => { dragging = true; c1.classList.add('drag'); try { c1.setPointerCapture(e.pointerId); } catch (err) { /* synthetic event */ } dragTo(e); e.preventDefault(); });
+    c1.addEventListener('pointermove', (e) => { if (dragging) dragTo(e); });
+    const endDrag = () => { dragging = false; c1.classList.remove('drag'); };
+    c1.addEventListener('pointerup', endDrag); c1.addEventListener('pointercancel', endDrag);
     $('#hw-scen').value = scenKey;
     load();
   }
