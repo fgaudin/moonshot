@@ -10,11 +10,78 @@
   const rnd = (a, b, step = 1) => a + Math.round(Math.random() * ((b - a) / step)) * step;
   const deg = 180 / Math.PI;
 
+  /* ---------- figure 17.3: where the trans-Earth burn goes (Moon-centred, computed from the hand values) ---------- */
+  const fx = (n) => n.toFixed(1), pct = (x, w) => (100 * x / w).toFixed(2) + '%';
+  const vsub = (a, b) => [a[0] - b[0], a[1] - b[1]], vadd = (a, b) => [a[0] + b[0], a[1] + b[1]], vmul = (a, k) => [a[0] * k, a[1] * k];
+  const vunit = (a) => vmul(a, 1 / Math.hypot(...a)), pol = (r, a) => [r * Math.cos(a), r * Math.sin(a)];
+  function frame(W, H, ox, oy) {
+    const S = (q) => [ox + q[0], oy - q[1]];
+    const path = (list) => list.map((q, k) => `${k ? 'L' : 'M'}${fx(S(q)[0])},${fx(S(q)[1])}`).join('');
+    const head = (q, dir, cls) => { const a = S(q), t = vunit([dir[0], -dir[1]]), n = [-t[1], t[0]];
+      return `<path class="${cls}" d="M${fx(a[0] + 9 * t[0])},${fx(a[1] + 9 * t[1])}L${fx(a[0] + 4.5 * n[0])},${fx(a[1] + 4.5 * n[1])}L${fx(a[0] - 4.5 * n[0])},${fx(a[1] - 4.5 * n[1])}Z"/>`; };
+    const arrow = (a, b, cls, fill) => { const c = vsub(b, vmul(vunit(vsub(b, a)), 9)); return `<path class="${cls}" d="${path([a, c])}"/>${head(c, vsub(b, a), fill)}`; };
+    const arc = (c, r, a0, a1, cls, n = 40) => `<path class="${cls}" d="${path([...Array(n + 1).keys()].map((k) => vadd(c, pol(r, a0 + (a1 - a0) * k / n))))}"/>`;
+    const lbs = (list) => list.map(([q, t, c]) => { const [x, y] = S(q); return `<span class="lb ${c || ''}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`; }).join('');
+    const dot = (q, cls, r = 3) => `<circle class="${cls}" cx="${fx(S(q)[0])}" cy="${fx(S(q)[1])}" r="${r}"/>`;
+    return { S, path, head, arrow, arc, lbs, dot };
+  }
+  App.css('homeward-fig', `
+    .f-moon { fill: var(--moon); fill-opacity: .35; stroke: var(--muted); stroke-width: 1; }
+    .f-shadow { fill: var(--muted); opacity: .12; }
+    .hw-exec:empty { display: none; } .hw-exec { margin: .6rem 0; padding: .5rem .7rem; border: 1px solid var(--line); border-radius: 6px; font-size: .85rem; }
+    .hw-exec.flash { animation: hw-flash .8s ease-out; } @keyframes hw-flash { from { background: color-mix(in srgb, var(--accent) 22%, transparent); } }
+    .hw-exec ul { margin: .3rem 0 0; padding: 0; list-style: none; } .hw-exec li { margin: .15rem 0; }`);
+  // Earth to the left, the Moon moving up the page; the orbit is clockwise, so at the far-side midpoint (right) the
+  // spacecraft moves down, against v☾. Burn φ before that point; the hyperbola's asymptote is θ∞ further on.
+  function figBurn(h) {
+    const W = 540, H = 400, ox = 250, oy = 130, RMN = 44, RO = 60;
+    const F = frame(W, H, ox, oy), e = h.e, thI = h.thInf, phi = h.phi / deg;
+    const p = RO * (1 + e), rMax = 262;
+    const nuMax = Math.acos((p / rMax - 1) / e);
+    const hyp = [...Array(81).keys()].map((k) => { const nu = nuMax * k / 80; return pol(p / (1 + e * Math.cos(nu)), phi - nu); });
+    const end = hyp[hyp.length - 1], burn = pol(RO, phi), far = [RO, 0];
+    const tang = (a) => [Math.sin(a), -Math.cos(a)];                     // clockwise direction of motion at angle a
+    const dirInf = phi - thI;                                            // asymptote direction (≈ −90°: down the page)
+    const circ = (r, cls) => `<circle class="${cls}" cx="${ox}" cy="${oy}" r="${r}"/>`;
+    return `<figure class="fig" role="img" aria-label="${T`The Moon seen from above, with the Earth off to the left and the Moon moving up the page. The spacecraft circles the Moon clockwise. The trans-Earth burn is made on the far side, about 52° before the point opposite the Earth. From there the departure hyperbola swings around the far side and leaves downwards, against the Moon’s motion. The angle from the burn point to the asymptote direction is θ∞, about 142°.`}">
+      <div class="fig-box"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true">
+        <rect class="f-shadow" x="${ox}" y="${oy - RMN}" width="${W - ox}" height="${2 * RMN}"/>
+        <path class="f-mu-thin f-dash" d="${F.path([[-190, 0], [W - ox, 0]])}"/>
+        ${F.arrow([-150, 0], [-225, 0], 'f-mu', 'f-mu-fill')}
+        ${F.arrow([-150, -120], [-150, -50], 'f-mu', 'f-mu-fill')}
+        ${circ(RO, 'f-mu-thin')}${circ(RMN, 'f-moon')}
+        ${F.head(pol(RO, 155 * Math.PI / 180), tang(155 * Math.PI / 180), 'f-mu-fill')}
+        <path class="f-mu-thin f-dash" d="${F.path([[0, 0], pol(250, dirInf)])}"/>
+        ${F.arc([0, 0], 24, phi, dirInf, 'f-mu-thin')}
+        ${F.arc([0, 0], 104, 0, phi, 'f-ac-ln')}
+        <path class="f-tr" d="${F.path(hyp)}"/>
+        ${F.arrow(end, vadd(end, vmul(vunit(vsub(end, hyp[hyp.length - 4])), 40)), 'f-tr', 'f-tr-fill')}
+        ${F.arrow(burn, vadd(burn, vmul(tang(phi), 36)), 'f-ac-ln', 'f-ac-fill')}
+        ${F.arrow(far, [RO, -34], 'f-mu', 'f-mu-fill')}<path class="f-mu-thin" d="${F.path([[RO - 9, 0], [RO - 9, -9], [RO, -9]])}"/>${F.dot(far, 'f-mu-fill')}${F.dot(burn, 'f-ac-fill', 4)}
+      </svg>${F.lbs([
+        [[-226, -14], T`to the Earth`, 'm l wrap narrow'],
+        [[-142, -62], '<i>v</i><sub>☾</sub>', 'm l'],
+        [[-142, -84], T`Moon’s motion`, 'm l wrap narrow'],
+        [[0, 0], T`Moon`, 'm'],
+        [[-66, 36], T`lunar orbit (clockwise)`, 'm r wrap narrow'],
+        [vadd(burn, [-14, 26]), T`TEI burn`, 'acc r'],
+        [vadd(burn, [34, -14]), 'Δ<i>v</i>', 'acc l'],
+        [pol(114, phi / 2), '<i>φ</i>', 'acc l'],
+        [[66, -12], T`far-side midpoint`, 'm l wrap narrow'],
+        [[W - ox - 8, 28], T`behind the Moon: no radio contact`, 'm r wrap narrow'],
+        [pol(34, (phi + dirInf) / 2 - 0.35), '<i>θ</i><sub>∞</sub>', 'm'],
+        [[-8, -150], T`asymptote direction`, 'm r'],
+        [vadd(end, [-12, -34]), T`<i>v</i><sub>∞</sub>, against the Moon’s motion`, 'tr r wrap'],
+        [pol(150, -0.55), T`departure hyperbola`, 'tr l wrap narrow'],
+      ])}</div>
+      <figcaption>${T`Where the burn goes, for the minimum-energy return (e = ${f(e, 3)}). Not to scale: the orbit and the hyperbola are drawn larger than the Moon. The burn comes φ ≈ ${f(h.phi, 0)}° before the far-side midpoint, so the asymptote, θ∞ ≈ ${f(thI * deg, 0)}° further on, points against the Moon’s motion.`}</figcaption></figure>`;
+  }
+
   Progress.register('homeward', {
     name: N`Planning the Return`, topic: 'homeward', glyph: 'homeward',
     briefing: N`The landing is done, {name}, and the hardest burn of the flight is still ahead. There is no second chance at trans-Earth injection: the engine fires once, behind the Moon, out of radio contact. In this module you work the patched conics backwards, from the Earth entry corridor to the burn in lunar orbit. You choose the speed, the place and the revolution, and you learn how little room for error the corridor leaves.`,
     objectives: [
-      { id: 'dv', text: N`Nominal return: execute a trans-Earth injection with the Δv from your own hand calculation (within 10 m/s)` },
+      { id: 'dv', text: N`Nominal return: execute a trans-Earth injection with the Δv from your own hand calculation (within 3 m/s)` },
       { id: 'corr', text: N`Aim a return burn yourself, without Mission Control’s solver, so the entry angle falls inside the corridor` },
       { id: 'rev', text: N`Pick the lunar revolution that puts splashdown inside the requested window, in the corridor` },
       { id: 'mcc', text: N`Fix a dispersed burn with a midcourse correction of 4 m/s or less so the entry angle is back in the corridor` },
@@ -68,8 +135,8 @@
   /* ---------------- Lab scenarios ---------------- */
   const PHI_NOM = Ph.solvePhi({ alt: 110e3, dv: 1000 })[0];
   const SCEN = {
-    nominal: { label: N`Nominal return, 110 km orbit`, alt: 110e3, dv: 1000, phi: 0, rev: 1, err: 0, mcc: false,
-      task: N`Minimum-energy return: the apogee of the return ellipse is at the Moon’s distance and the vacuum perigee is 40 km. Work out the Δv by hand (the working panel shows the method, but then the Δv objective is not credited), type it in, then find the burn position that brings the entry angle into the corridor.` },
+    nominal: { label: N`Nominal return, 60 km orbit`, alt: 60e3, dv: 1000, phi: 0, rev: 1, err: 0, mcc: false,
+      task: N`Minimum-energy return from a 60 km orbit, lower than the example in the text: the apogee of the return ellipse is at the Moon’s distance and the vacuum perigee is 40 km. Work out the Δv by hand (the working panel shows the method, but then the Δv objective is not credited), type it in, then find the burn position that brings the entry angle into the corridor.` },
     fast: { label: N`Faster return (costlier)`, alt: 110e3, dv: 1000, phi: 0, rev: 1, err: 0, mcc: false,
       task: N`Mission rules: splashdown within 52 hours of the burn. A faster return costs more Δv. Find a Δv that meets the rule, then the burn position that keeps the entry in the corridor.` },
     landing: { label: N`Choose the revolution`, alt: 110e3, dv: 1000, phi: 0, rev: 1, err: 0, mcc: false, target: 69.5 * 3600, window: 3600,
@@ -121,12 +188,13 @@
           <div class="prose">
             <p>${T`The spacecraft sits in a circular lunar orbit of radius r (110 km altitude: r = ${f((RM + 110e3) / 1e3, 0)} km). It must leave the Moon’s gravity with a speed v<sub>∞</sub> to spare. Energy conservation on the departure hyperbola gives the speed needed at the burn, and the burn is the difference with the circular speed:`}</p>
             <div class="eq">\\[ v_{hyp} = \\sqrt{v_\\infty^2 + \\frac{2\\mu_☾}{r}}, \\qquad \\Delta v = v_{hyp} - v_c, \\qquad v_c = \\sqrt{\\frac{\\mu_☾}{r}} \\]</div>
-            ${Sym.where(['vinf', 'muM', ['r', N`radius of the lunar orbit: Moon’s radius plus altitude`, 'm'], ['v_{hyp}', N`speed on the departure hyperbola at the burn point`, 'm/s'], 'vcirc', 'dv'], N`The same energy argument as for the escape speed: 2μ/r is the square of the escape speed. A hyperbolic excess speed adds to it.`)}
+            ${Sym.where(['vinf', 'muM', ['r', N`radius of the lunar orbit: Moon’s radius plus altitude`, 'm'], ['v_{hyp}', N`speed on the departure hyperbola at the burn point`, 'm/s'], ['v_c', N`circular speed of the lunar orbit at radius r`, 'm/s'], 'dv'], N`The same energy argument as for the escape speed: 2μ/r is the square of the escape speed. A hyperbolic excess speed adds to it.`)}
             <p>${T`The numbers: v<sub>c</sub> = ${f(h.vc, 1)} m/s, v<sub>hyp</sub> = ${f(h.vhyp, 1)} m/s, and <b>Δv = ${f(h.dv, 0)} m/s</b>. The real flights used about 1 km/s because they came home in about 2.5 days instead of five: a faster return needs more speed at the Moon and so a bigger burn. The lab lets you trade the two.`}</p>
             <p>${T`The burn is a prograde push at one point of the orbit, and the hyperbola then bends away. Where must the burn be? The departure hyperbola leaves along an asymptote. Its angle from the burn point (periselene) is the true anomaly at infinity, where r → ∞ in the orbit equation:`}</p>
             <div class="eq">\\[ e = 1 + \\frac{r\\,v_\\infty^2}{\\mu_☾}, \\qquad \\cos\\theta_\\infty = -\\frac{1}{e}, \\qquad \\phi \\approx \\theta_\\infty - 90^\\circ \\]</div>
-            ${Sym.where(['e', ['\\theta_\\infty', N`angle between the burn point and the asymptote direction, seen from the Moon’s centre`, N`rad or °`], ['\\phi', N`burn position: how far before the far-side midpoint (the point opposite the Earth) the burn takes place, along the orbit`, N`°`]], N`At the burn the spacecraft moves 90° ahead of its position vector. The asymptote is θ∞ ahead of the position, so it is θ∞ − 90° ahead of the velocity. We want the asymptote to point against the Moon’s motion, which is the direction of the spacecraft’s motion at the far-side midpoint. So the burn comes θ∞ − 90° before that point.`)}
+            ${Sym.where(['e', ['\\theta_\\infty', N`angle between the burn point and the asymptote direction, seen from the Moon’s centre`, N`rad or °`], ['\\phi', N`burn position: how far before the far-side midpoint (the point opposite the Earth) the burn takes place, along the orbit`, N`°`]], N`In a circular orbit the velocity is always at right angles to the radius. At the far-side midpoint the spacecraft therefore moves against the Moon’s motion, a quarter turn further round the orbit than the point itself (the small arrow in the figure). That is the direction the asymptote must point. The asymptote lies θ∞ further round than the burn point, so the burn comes θ∞ − 90° before the far-side midpoint.`)}
             <p>${T`For the example e = ${f(h.e, 3)}, θ∞ = ${f(h.thInf * deg, 1)}° and φ ≈ ${f(h.phi, 1)}°. The burn takes place on the <b>far side</b> of the Moon. This was true on every Apollo flight: the spacecraft was behind the Moon, out of radio contact, when the engine fired, and the first sign that it had worked was the signal returning on the other side. The first crew to live it was Apollo 8, on Christmas Day 1968.`}</p>
+            ${figBurn(h)}
             <p>${T`The hand calculation has limits. It assumes the spacecraft leaves from the Moon’s centre and ignores that it needs about 13 to 18 hours to get out of the Moon’s sphere of influence, during which the Moon moves by about 8° to 10° around the Earth. For a fast return (Δv about 1 000 m/s) the hand position is within a few degrees of the simulated one. For the slow, minimum-energy return the difference is about 30°, and the simulated flight is shorter than five days, because the spacecraft is already well inside the Moon’s distance when it leaves the sphere. Use the hand numbers to get close, then let the simulation finish the job.`}</p>
           </div>
         </section>
@@ -161,10 +229,10 @@
 
         <section class="section">
           <h2><span class="idx">0.7</span>${T`Lab: the trans-Earth planner`}</h2>
-          <div class="prose"><p>${T`Pick a scenario. Choose the Δv of the burn, its position φ in lunar orbit, and the revolution. The plan runs through the patched-conic simulation as you type: the Earth–Moon view shows the whole trajectory, the lunar view shows the burn. The results show the vacuum perigee, the entry angle, the flight time and the verdict. Where a scenario allows a midcourse correction, enter its time and Δv. Objectives are checked when you press <b>Execute</b>. “Solve φ” hands the burn position to Mission Control, and the corridor objective is then not credited.`}</p></div>
+          <div class="prose"><p>${T`Pick a scenario. Choose the Δv of the burn, its position φ in lunar orbit, and the revolution. The plan runs through the patched-conic simulation as you type: the Earth–Moon view shows the whole trajectory, the lunar view shows the burn, and the entry view zooms on the arrival at the Earth, against the corridor. The results show the vacuum perigee, the entry angle, the flight time and the verdict. Where a scenario allows a midcourse correction, enter its time and Δv. Objectives are checked when you press <b>Execute</b>. “Solve φ” hands the burn position to Mission Control, and the corridor objective is then not credited.`}</p></div>
           <div class="lab tl-lab" id="hw">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Trans-Earth planner`}</h3><span class="spacer"></span>
-              <div class="seg" id="hw-view" role="group" aria-label="${T`View`}"><button data-v="em" aria-pressed="true">${T`Earth–Moon`}</button><button data-v="moon" aria-pressed="false">${T`Lunar orbit`}</button></div>
+              <div class="seg" id="hw-view" role="group" aria-label="${T`View`}"><button data-v="em" aria-pressed="true">${T`Earth–Moon`}</button><button data-v="moon" aria-pressed="false">${T`Lunar orbit`}</button><button data-v="entry" aria-pressed="false">${T`Entry`}</button></div>
             </div>
             <div class="stage"><canvas id="hw-cv" aria-label="${T`Trans-Earth trajectory: the lunar orbit with the burn point, and the path from the Moon to the Earth`}"></canvas><div class="overlay" id="hw-ov"></div><div class="badge" id="hw-badge"></div></div>
             <div class="tl-side">
@@ -185,6 +253,7 @@
                   <label><span>${T`revolution k`}</span><input type="text" inputmode="numeric" id="hw-rev" autocomplete="off"></label>
                 </div>
                 <div class="btn-row"><button class="btn primary" id="hw-go">${T`Execute`}</button><button class="btn" id="hw-solve">${T`Solve φ`}</button><button class="btn" id="hw-work">${T`Show the working`}</button></div>
+                <div class="hw-exec" id="hw-exec" aria-live="polite"></div>
                 <dl class="readout" id="hw-steps"></dl>
               </div>
               <div class="tl-group">
@@ -244,15 +313,30 @@
       res.opts = opts;
       render(q);
       view.redraw();
-      if (execute) credit(q);
+      if (execute) report(q, credit(q)); else $('#hw-exec').textContent = '';
     }
 
+    // after Execute: what was flown, the result, and for each objective of this scenario whether it counted
+    function report(q, checks) {
+      const el = $('#hw-exec'), v = VERDICT[res.outcome];
+      const head = T`Burn executed: Δv ${f(q.dv, 1)} m/s at φ = ${f(q.phi, 2)}°, revolution ${q.rev}. Result: ${T(v[0])}.`;
+      el.innerHTML = `<b>${head}</b><ul>${checks.map(([ok, t]) => `<li><span class="verdict ${ok ? 'ok' : 'no'}">${ok ? '✓' : '✗'}</span> ${t}</li>`).join('')}</ul>`;
+      el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    }
+
+    // award the objectives this run meets; return [met, explanation] per objective that applies to the scenario
     function credit(q) {
-      const r = res, ref = Ph.handMinEnergy(sc.alt, 40e3);
-      if (scenKey === 'nominal' && !peeked && Math.abs(q.dv - ref.dv) <= 10) Progress.done('homeward', 'dv');
-      if (scenKey !== 'disp' && !assisted && !r.mccT && r.outcome === 'corridor') Progress.done('homeward', 'corr');
-      if (scenKey === 'landing' && r.outcome === 'corridor' && r.tEI != null && Math.abs(r.tEI - sc.target) <= sc.window) Progress.done('homeward', 'rev');
-      if (scenKey === 'disp' && r.mccT && Math.abs(q.mdv) <= 4 && r.outcome === 'corridor') Progress.done('homeward', 'mcc');
+      const r = res, ref = Ph.handMinEnergy(sc.alt, 40e3), inCorr = r.outcome === 'corridor', out = [];
+      const check = (id, ok, yes, no) => { if (ok) Progress.done('homeward', id); out.push([ok, ok ? yes : no]); };
+      if (scenKey === 'nominal') check('dv', !peeked && Math.abs(q.dv - ref.dv) <= 3, T`Δv objective: your Δv matches the minimum-energy burn.`,
+        peeked ? T`Δv objective: not counted, the working was shown for this scenario.` : T`Δv objective: your Δv is not within 3 m/s of the minimum-energy burn. Check the hand calculation.`);
+      if (scenKey !== 'disp') check('corr', !assisted && !r.mccT && inCorr, T`Corridor objective: you placed the burn yourself and the entry is in the corridor.`,
+        assisted ? T`Corridor objective: not counted, φ came from Solve φ.` : T`Corridor objective: the entry is not in the corridor yet.`);
+      if (scenKey === 'landing') check('rev', inCorr && r.tEI != null && Math.abs(r.tEI - sc.target) <= sc.window, T`Revolution objective: splashdown is inside the window, in the corridor.`,
+        !inCorr ? T`Revolution objective: get the entry into the corridor first.` : T`Revolution objective: splashdown is outside the window. Try another revolution.`);
+      if (scenKey === 'disp') check('mcc', !!r.mccT && Math.abs(q.mdv) <= 4 && inCorr, T`Correction objective: the midcourse correction brought the entry back into the corridor.`,
+        !r.mccT ? T`Correction objective: no midcourse correction was executed.` : Math.abs(q.mdv) > 4 ? T`Correction objective: the correction is larger than 4 m/s.` : T`Correction objective: the entry is not in the corridor yet.`);
+      return out;
     }
 
     const VERDICT = {
@@ -315,7 +399,7 @@
       ctx.clearRect(0, 0, w, h);
       UI.stars(ctx, w, h, K, 80);
       if (!res) return;
-      if (mode === 'em') drawEM(ctx, w, h, K); else drawMoon(ctx, w, h, K);
+      if (mode === 'em') drawEM(ctx, w, h, K); else if (mode === 'moon') drawMoon(ctx, w, h, K); else drawEntry(ctx, w, h, K);
     };
     function drawEM(ctx, w, h, K) {
       const r = res, cx = w * 0.42, cy = h / 2, s = Math.min(w * 0.58, h / 2 - 14) / (Ph.D * 1.02);
@@ -376,6 +460,53 @@
       ctx.fillStyle = K.muted; ctx.textAlign = 'center'; ctx.fillText(T`Thick arc: out of contact with the Earth`, w / 2, h - 10);
     }
 
+    // zoom on the arrival: altitude against distance along the ground, every path lined up where it crosses 122 km.
+    // The corridor is the fan between the steepest and the shallowest allowed path.
+    function drawEntry(ctx, w, h, K) {
+      const r = res, X0 = -2200e3, X1 = 2300e3, A0 = -25e3, A1 = 330e3, pad = 22;
+      const P = (x, a) => [w * (x - X0) / (X1 - X0), h - pad - (h - pad - 26) * (a - A0) / (A1 - A0)];
+      const line = (pts, to) => { ctx.beginPath(); let on = false; for (const [x, a] of pts) { if (a < 0 || a > A1 * 1.05) { on = false; continue; } const q = P(x, a); if (on) ctx.lineTo(...q); else { ctx.moveTo(...q); on = true; } } ctx.stroke(); };
+      const cut = (pts, before) => pts.filter(([x]) => (before ? x <= 0 : x >= 0));
+      const steep = Ph.entryProfile(Ph.returnConic(Ph.perigeeForGamma(Ph.CORRIDOR.steep)), X0, X1), shallow = Ph.entryProfile(Ph.returnConic(Ph.perigeeForGamma(Ph.CORRIDOR.shallow)), X0, X1);
+      const ei = P(0, Ph.REI - RE), g0 = P(0, 0);
+      // atmosphere, ground
+      const gr = ctx.createLinearGradient(0, ei[1], 0, g0[1]); gr.addColorStop(0, 'transparent'); gr.addColorStop(1, K.trace);
+      ctx.globalAlpha = 0.22; ctx.fillStyle = gr; ctx.fillRect(0, ei[1], w, g0[1] - ei[1]); ctx.globalAlpha = 1;
+      ctx.fillStyle = K.earth; ctx.fillRect(0, g0[1], w, h - g0[1]);
+      ctx.strokeStyle = K.muted; ctx.lineWidth = 1; ctx.setLineDash([4, 5]); ctx.beginPath(); ctx.moveTo(0, ei[1]); ctx.lineTo(w, ei[1]); ctx.stroke(); ctx.setLineDash([]);
+      // corridor: filled up to the entry interface, its two edges continued in vacuum
+      ctx.fillStyle = K.good; ctx.globalAlpha = 0.2; ctx.beginPath();
+      cut(steep, true).forEach(([x, a], i) => { const q = P(x, a); if (i) ctx.lineTo(...q); else ctx.moveTo(...q); });
+      cut(shallow, true).reverse().forEach(([x, a]) => ctx.lineTo(...P(x, a)));
+      ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+      ctx.strokeStyle = K.good; ctx.lineWidth = 1; line(cut(steep, true)); line(cut(shallow, true));
+      ctx.setLineDash([3, 4]); line(cut(steep, false)); line(cut(shallow, false)); ctx.setLineDash([]);
+      // the flown path: solid down to 122 km, dashed after (the path it would follow without air)
+      ctx.font = `10px ${K.mono}`;
+      if (r.cE) {
+        const xPeri = 1500e3;   // where the mid-corridor path has its perigee
+        const pts = Ph.entryProfile(r.cE, X0, X1, xPeri), col = r.outcome === 'corridor' ? K.trace : r.outcome === 'steep' ? K.bad : K.warn;
+        ctx.strokeStyle = col; ctx.lineWidth = 2.2;
+        if (r.gamma != null) { line(cut(pts, true)); ctx.setLineDash([5, 5]); line(cut(pts, false)); ctx.setLineDash([]);
+          ctx.fillStyle = col; ctx.beginPath(); ctx.arc(ei[0], ei[1], 4, 0, 7); ctx.fill();
+          ctx.textAlign = 'left'; ctx.fillText(`γ = ${f(r.gamma, 2)}°`, ei[0] + 8, ei[1] - 8);
+        } else line(pts);
+        const low = pts.reduce((b, q) => (q[1] < b[1] ? q : b));
+        if (low[1] > 0 && low[1] < A1 && low[0] > X0 && low[0] < X1) { const q = P(...low); ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.fillText(T`vacuum perigee ${f(low[1] / 1e3, 0)} km`, q[0], q[1] - 8); }
+      }
+      ctx.fillStyle = K.muted; ctx.textAlign = 'left';
+      ctx.fillText(T`entry interface, 122 km`, 8, ei[1] - 6);
+      ctx.fillText(T`atmosphere`, 8, (ei[1] + g0[1]) / 2 + 4);
+      ctx.textAlign = 'right';
+      ctx.fillText(T`too shallow: skips out`, w - 8, P(X1, shallow[shallow.length - 1][1])[1] - 8 < 14 ? 14 : ei[1] - 6);
+      ctx.fillText(T`too steep`, w - 8, g0[1] - 8);
+      ctx.fillStyle = K.good; ctx.textAlign = 'left';
+      const cl = P(...shallow.reduce((b, q) => (Math.abs(q[1] - 215e3) < Math.abs(b[1] - 215e3) && q[0] < 0 ? q : b), [X0, 1e9]));
+      ctx.fillText(T`corridor: ${f(Ph.CORRIDOR.shallow, 1)}° to ${f(Ph.CORRIDOR.steep, 1)}°`, cl[0] + 12, cl[1]);
+      ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+      ctx.fillText(T`Altitude stretched; dashed: the path without air`, w / 2, h - 7);
+    }
+
     // ---- wiring ----
     $('#hw-scen').addEventListener('change', (e) => { scenKey = e.target.value; load(); });
     $('#hw-go').addEventListener('click', () => run(true));
@@ -385,7 +516,7 @@
       el.addEventListener('input', () => { if (el.id === 'hw-phi') assisted = false; run(false); });
       el.addEventListener('keydown', (e) => { if (e.key === 'Enter') run(true); });
     });
-    UI.seg(root, '#hw-view', (v) => { mode = v; view.redraw(); });
+    UI.seg(root, '#hw-view', (v) => { mode = v; $('#hw-ov').hidden = v === 'entry'; view.redraw(); });
     $('#hw-scen').value = scenKey;
     load();
   }

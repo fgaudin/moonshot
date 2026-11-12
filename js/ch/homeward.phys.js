@@ -303,7 +303,27 @@
     return (f(step) - f(-step)) / (2 * step);
   }
 
-  const P = { muE, muM, RE, RM, D, VM, W, REI, R_SOI, CORRIDOR, conic, stateAt, tPeri, nuAt, nuAtR, lunarOrbit, phiAt, tTEI, parkState, moonPos, moonVel,
+  /* ---------- entry zoom: altitude against downrange distance, lined up on the entry interface ---------- */
+  // vacuum perigee altitude (m) that gives the entry angle gammaDeg on a return from the Moon's distance
+  function perigeeForGamma(gammaDeg) {
+    let lo = -500e3, hi = 121e3;                             // gamma rises (less steep) with the perigee
+    for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (gammaFromPerigee(m) < gammaDeg) lo = m; else hi = m; }
+    return (lo + hi) / 2;
+  }
+  const returnConic = (rpAlt) => { const rp = RE + rpAlt; return { p: 2 * rp * D / (rp + D), e: (D - rp) / (D + rp), rp }; };
+  // points [downrange m, altitude m] of the conic c (p, e) near the Earth, for downrange from x0 to x1; x = 0 at the
+  // entry interface (inbound). A path that never comes down to 122 km is lined up on xPeri (its perigee) instead.
+  function entryProfile(c, x0, x1, xPeri = 0, n = 240) {
+    const cs = (c.p / REI - 1) / c.e, nuEI = cs >= -1 && cs <= 1 && c.p / (1 + c.e) < REI ? -Math.acos(cs) : null;
+    const ref = nuEI != null ? nuEI : -xPeri / RE, out = [];
+    for (let i = 0; i <= n; i++) {
+      const x = x0 + (x1 - x0) * i / n, nu = ref + x / RE;
+      out.push([x, c.p / (1 + c.e * Math.cos(nu)) - RE]);
+    }
+    return out;
+  }
+
+  const P = { perigeeForGamma, returnConic, entryProfile, muE, muM, RE, RM, D, VM, W, REI, R_SOI, CORRIDOR, conic, stateAt, tPeri, nuAt, nuAtR, lunarOrbit, phiAt, tTEI, parkState, moonPos, moonVel,
     fly, posAt, samples, handMinEnergy, handGivenDv, gammaFromPerigee, solvePhi, solveMCC, sensitivity };
   root.Phys_homeward = P;
   if (typeof module !== 'undefined' && module.exports) module.exports = P;
