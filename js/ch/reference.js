@@ -187,6 +187,17 @@
               <li>${T`<b>The Martian</b> (2015, Ridley Scott). Fiction, but careful with orbits. The rescue uses a flyby of the Earth to turn the ship back toward Mars, a gravity assist, and ends with a rendezvous where the relative velocity is what matters.`} <span class="chips">${mv('freereturn', 'docking')}</span></li>
             </ul>
           </div>
+        </section>
+
+        <section class="section">
+          <h2><span class="idx">I</span>${T`At the table`}</h2>
+          <div class="prose">
+            <p>${T`Two board games that run on the same rules as this manual: every move costs velocity change, and the rocket has to carry its own fuel.`}</p>
+            <ul class="movies">
+              <li>${T`<b>Leaving Earth</b> (2015, Joseph Fatula). The space race from 1956 to 1976. Each manoeuvre has a difficulty, its velocity change, and you build rockets stage by stage until their thrust can push the mass across it. Untested hardware fails, so you test it first, as the real programmes did.`} <span class="chips">${mv('rockets', 'maneuvers', 'moon')}</span></li>
+              <li>${T`<b>High Frontier 4 All</b> (2020, Phil Eklund). The solar system drawn as a map of burns: each step costs fuel, and gravity wells cost the most. Engines trade thrust against efficiency, and water mined out there is fuel you no longer have to lift.`} <span class="chips">${mv('rockets', 'burns', 'timing')}</span></li>
+            </ul>
+          </div>
         </section>`;
     },
   });
