@@ -317,4 +317,7 @@ I18N.add('de', {
   "Δv margin": "Δv-Reserve",
   "margin · Δv budget": "Reserve · Δv-Budget",
   "The Δv left in a stage after the planned burns and their 3σ dispersions are paid for, as a percentage of the Δv needed.": "Das Δv, das in einer Stufe übrig bleibt, nachdem die geplanten Brennphasen und ihre 3σ-Streuungen bezahlt sind, als Prozentsatz des benötigten Δv.",
+  "Bingo": "Bingo",
+  "bingo call · bingo fuel": "Bingo-Ruf · Bingo-Treibstoff",
+  "Mission Control's call during a lunar landing when the descent stage reached its reserve of about 20 s of propellant, the minimum still needed for a safe abort. After bingo the crew had to land at once or abort. Mission Control counted down to it: “60 seconds”, “30 seconds”, then bingo.": "Ruf der Missionskontrolle bei einer Mondlandung, sobald die Abstiegsstufe ihre Reserve von etwa 20 s Treibstoff erreichte, das Minimum für einen sicheren Abbruch. Nach Bingo musste die Besatzung sofort landen oder abbrechen. Die Missionskontrolle zählte darauf herunter: „60 Sekunden“, „30 Sekunden“, dann Bingo.",
 });

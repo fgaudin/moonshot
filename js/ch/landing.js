@@ -31,7 +31,7 @@
             <div class="eq">\\[ t_{hover} = \\frac{I_{sp}\\,g_0}{g_☾}\\,\\ln\\frac{m_0}{m_0 - m_{prop}} \\]</div>
             ${Sym.where(['thover', 'isp', 'g0', 'gM', 'ln', 'm0h', 'mprop'])}
             ${Primer.box('log', false, 'refresher')}
-            <div class="callout history"><b>1202</b>${T`Five minutes into Apollo 11's descent the guidance computer raised program alarms 1202 and 1201: “executive overflow”. The rendezvous radar, left on as a safety backup, was stealing CPU cycles through a hardware quirk. The software, designed by Margaret Hamilton's team at MIT, restarted and dropped low-priority tasks while it kept flying. Twenty-six-year-old guidance officer Steve Bales made the “go” call. Then Armstrong saw that P64 was heading for a boulder field beside West crater. He took over in P66, flew 400 m further, and landed with about 45 seconds of propellant before the bingo call.`}</div>
+            <div class="callout history"><b>1202</b>${T`Five minutes into Apollo 11's descent the guidance computer raised program alarms 1202 and 1201: “executive overflow”. The rendezvous radar, left on as a safety backup, was stealing CPU cycles through a hardware quirk. The software, designed by Margaret Hamilton's team at MIT, restarted and dropped low-priority tasks while it kept flying. Twenty-six-year-old guidance officer Steve Bales made the “go” call. Then Armstrong saw that P64 was heading for a boulder field beside West crater. He took over in P66, flew 400 m further, and landed less than 20 seconds before the bingo call, as far as Mission Control could tell.`}</div>
           </div>
         </section>
 
