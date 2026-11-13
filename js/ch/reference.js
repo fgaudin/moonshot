@@ -19,6 +19,15 @@
   const mv = (...ids) => ids.filter((id) => App.chapters[id]).map((id) => `<a class="gl-mod" href="#${id}">→ ${Progress.code(id)} ${T(App.chapters[id].title)}</a>`).join(' ');
   App.css('glossary', `
     .movies li { margin-bottom: .7rem; } .movies .chips { display: inline-flex; flex-wrap: wrap; gap: .2rem .7rem; }
+    .ref-toc ol { list-style: none; margin: 0; padding: 0; columns: 2 14rem; column-gap: 2rem; }
+    .ref-toc li { break-inside: avoid; padding: .2rem 0; }
+    .ref-toc a { display: flex; gap: .7rem; align-items: baseline; text-decoration: none; }
+    .ref-toc a:hover { text-decoration: underline; }
+    .ref-toc .idx { font: 500 .8rem/1 var(--f-mono); color: var(--accent); min-width: 1ch; }
+    .section > h2 { scroll-margin-top: 1rem; }
+    .ref-top { margin-left: auto; font: 500 .72rem var(--f-mono); color: var(--muted); text-decoration: none; white-space: nowrap; }
+    .ref-top:hover { color: var(--accent); }
+    .refs h3 { margin: 1.4rem 0 .5rem; font-size: 1rem; } .refs h3:first-child { margin-top: .5rem; }
     .gl-search { max-width: 24rem; margin: .5rem 0 1rem; }
     .glossary { margin: 0; display: grid; gap: .1rem; }
     .gl-entry { padding: .55rem 0; border-top: 1px solid var(--line); }
@@ -156,15 +165,36 @@
 
         <section class="section">
           <h2><span class="idx">F</span>${T`Sources and further reading`}</h2>
-          <div class="prose">
+          <div class="prose refs">
+            <h3>${T`Sources for the course`}</h3>
             <ul>
               <li>J. J. Sellers, <i>Understanding Space: An Introduction to Astronautics</i>, McGraw-Hill.</li>
               <li>${T`R. R. Bate, D. D. Mueller, J. E. White (and J. W. Saylor, 2nd ed.), <i>Fundamentals of Astrodynamics</i>, Dover.`}</li>
+              <li>${T`R. H. Battin, <i>An Introduction to the Mathematics and Methods of Astrodynamics</i>, AIAA, for the Apollo guidance mathematics.`}</li>
+              <li>I. Asimov, <i>Understanding Physics</i>, Walker, 1966.</li>
+              <li>${T`H. J. Allen &amp; A. J. Eggers, <i>A Study of the Motion and Aerodynamic Heating of Ballistic Missiles Entering the Earth’s Atmosphere at High Supersonic Speeds</i>, NACA Report 1381, 1958.`}</li>
+              <li>W. D. Woods, <i>How Apollo Flew to the Moon</i>, Springer-Praxis, 2008.</li>
+              <li>F. O’Brien, <i>The Apollo Guidance Computer: Architecture and Operation</i>, Springer-Praxis, 2010.</li>
+              <li>D. Baker, <i>NASA Mercury</i>, Haynes Owners’ Workshop Manual.</li>
+              <li>D. Woods &amp; D. M. Harland, <i>NASA Gemini</i>, Haynes Owners’ Workshop Manual.</li>
+              <li>D. Woods, <i>NASA Saturn V</i>, Haynes Owners’ Workshop Manual.</li>
+              <li>C. Riley &amp; P. Dolling, <i>NASA Apollo 11</i>, Haynes Owners’ Workshop Manual.</li>
+              <li>${T`NASA Manned Spacecraft Center, <i>Apollo 11 Flight Plan</i>, AS-506/CSM-107/LM-5, final version, 1 July 1969.`} <a href="https://apollojournals.org/alsj/a11/a11-fltplan.html" target="_blank" rel="noopener">apollojournals.org</a></li>
               <li>${T`NASA, <i>Apollo 11 Mission Report</i>, MSC-00171, November 1969.`}</li>
               <li>Saturn V Flight Evaluation Report, AS-506 (Apollo 11), MPR-SAT-FE-69-9.</li>
-              <li>${T`H. J. Allen &amp; A. J. Eggers, <i>A Study of the Motion and Aerodynamic Heating of Ballistic Missiles Entering the Earth’s Atmosphere at High Supersonic Speeds</i>, NACA Report 1381, 1958.`}</li>
-              <li>${T`R. H. Battin, <i>An Introduction to the Mathematics and Methods of Astrodynamics</i>, AIAA, for the Apollo guidance mathematics.`}</li>
               <li>${T`D. Woods &amp; F. O’Brien, <i>Apollo Flight Journal</i>, history.nasa.gov/afj: annotated transcripts of every mission.`}</li>
+            </ul>
+            <h3>${T`Further reading`}</h3>
+            <ul>
+              <li>L. S. Swenson, J. M. Grimwood, C. C. Alexander, <i>This New Ocean: A History of Project Mercury</i>, NASA SP-4201, 1966.</li>
+              <li>J. D. Clark, <i>Ignition! An Informal History of Liquid Rocket Propellants</i>, Rutgers University Press, 1972.</li>
+              <li>M. Collins, <i>Carrying the Fire</i>, Farrar, Straus and Giroux, 1974.</li>
+              <li>A. Chaikin, <i>A Man on the Moon</i>, Viking, 1994.</li>
+              <li>J. Lovell &amp; J. Kluger, <i>Apollo 13</i> (first published as <i>Lost Moon</i>), Houghton Mifflin, 1994.</li>
+              <li>G. Kranz, <i>Failure Is Not an Option</i>, Simon &amp; Schuster, 2000.</li>
+              <li>N. Conrad &amp; H. A. Klausner, <i>Rocketman: Astronaut Pete Conrad’s Incredible Ride to the Moon and Beyond</i>, NAL, 2005.</li>
+              <li>C. Hadfield, <i>An Astronaut’s Guide to Life on Earth</i>, Little, Brown, 2013.</li>
+              <li>J. Kluger, <i>Apollo 8: The Thrilling Story of the First Mission to the Moon</i>, Henry Holt, 2017.</li>
             </ul>
           </div>
         </section>
@@ -178,8 +208,9 @@
         <section class="section">
           <h2><span class="idx">H</span>${T`At the movies`}</h2>
           <div class="prose">
-            <p>${T`Five films to watch once you know what is on the screen. Each one shows something this manual teaches.`}</p>
+            <p>${T`Six films to watch once you know what is on the screen. Each one shows something this manual teaches.`}</p>
             <ul class="movies">
+              <li>${T`<b>The Right Stuff</b> (1983, Philip Kaufman). From Chuck Yeager’s rocket plane to the Mercury Seven. John Glenn’s orbital flight in Friendship 7 comes home with a warning that the heat shield may be loose, so the retrorocket pack is left strapped on through entry.`} <span class="chips">${mv('rockets', 'orbits', 'entry')}</span></li>
               <li>${T`<b>Hidden Figures</b> (2016, Theodore Melfi). Katherine Johnson, Dorothy Vaughan and Mary Jackson at NASA Langley. Johnson computed trajectories by hand: where a capsule comes down, and when to fire to get there. John Glenn asked for her to check the IBM computer’s numbers before his 1962 orbital flight. She later worked on trajectories for Apollo 11, and her backup procedures and charts helped bring Apollo 13 home.`} <span class="chips">${mv('orbits', 'entry', 'freereturn')}</span></li>
               <li>${T`<b>Apollo 13</b> (1995, Ron Howard). The free return, the burn of the lunar module’s descent engine to get back onto it, the manual burn steered by keeping the Earth in the window, and an entry corridor that must not be missed.`} <span class="chips">${mv('freereturn', 'burns', 'entry')}</span></li>
               <li>${T`<b>Apollo 11</b> (2019, Todd Douglas Miller). A documentary made only from the 1969 footage and recordings, much of it 70 mm film never shown before. Launch, trans-lunar injection, the landing with its program alarms, and the return.`} <span class="chips">${mv('ascent', 'moon', 'landing')}</span></li>
@@ -199,6 +230,22 @@
             </ul>
           </div>
         </section>`;
+      // table of contents from the section headings; the URL hash is the router, so scroll instead of linking to #anchors
+      const heads = [...page.querySelectorAll('.section > h2')];
+      const toc = document.createElement('nav');
+      toc.className = 'ref-toc'; toc.setAttribute('aria-label', T`Contents`);
+      toc.innerHTML = `<ol>${heads.map((h, i) => `<li><a href="#reference" data-i="${i}"><span class="idx">${h.querySelector('.idx').textContent}</span>${[...h.childNodes].filter((n) => !n.classList?.contains('idx')).map((n) => n.textContent).join('').trim()}</a></li>`).join('')}</ol>`;
+      toc.addEventListener('click', (e) => {
+        const a = e.target.closest('a[data-i]'); if (!a) return;
+        e.preventDefault(); heads[+a.dataset.i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      page.querySelector('.note').after(toc);
+      // a "back to top" link at the right of every section heading, added after the contents read the headings
+      heads.forEach((h) => h.insertAdjacentHTML('beforeend', `<a class="ref-top" href="#reference">↑ ${T`Back to top`}</a>`));
+      page.addEventListener('click', (e) => {
+        if (!e.target.closest('.ref-top')) return;
+        e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     },
   });
 
