@@ -16,7 +16,7 @@
   const norm = (a) => Math.hypot(a[0], a[1], a[2]);
   const unit = (a) => mul(a, 1 / norm(a));
   P.vec = { add, sub, mul, dot, cross, norm, unit };
-  const wrap = (x) => ((x % TAU) + TAU) % TAU;
+  const wrap = (x) => { const y = ((x % TAU) + TAU) % TAU; return y >= TAU ? 0 : y; };
 
   // ---- formulas of the theory ----
   P.circV = (r) => Math.sqrt(mu / r);

@@ -342,7 +342,7 @@
             <p>${T`Sooner or later every mission must answer the question “where will the spacecraft be at time \\(t\\)?” The angle \\(\\nu\\) does not grow uniformly with time, so Kepler introduced two auxiliary angles. The <b>eccentric anomaly</b> \\(E\\) is measured at the centre of the ellipse, on an auxiliary circle of radius \\(a\\). The <b>mean anomaly</b> \\(M\\) does grow uniformly, at the mean motion \\(n\\):`}</p>
             <div class="eq">\\[ n = \\sqrt{\\frac{\\mu}{a^3}}, \\qquad M = n\\,(t - t_p) = E - e\\sin E \\]</div>
             ${Sym.where(['n', 'a', 'mu', 'Mm', 't', 'tp', 'E', 'e'])}
-            <div class="eq">\\[ \\tan\\frac{\\nu}{2} = \\sqrt{\\frac{1+e}{1-e}}\;\\tan\\frac{E}{2} \\]</div>
+            <div class="eq">\\[ \\tan\\frac{\\nu}{2} = \\sqrt{\\frac{1+e}{1-e}}\\;\\tan\\frac{E}{2} \\]</div>
             ${Sym.where(['nu', 'E', 'e', 'tan'], N`This converts the helper angle E into the real position angle ν.`)}
             ${Primer.box('iteration')}
             <p>${T`Going from position to time is direct. Going from time to position means solving Kepler’s equation for \\(E\\), which has no closed-form solution. Newton’s iteration \\(E_{k+1} = E_k - (E_k - e\\sin E_k - M)/(1 - e\\cos E_k)\\) converges in a few steps; that is what the lab above runs on every frame. A universal-variable form of the equation also covers parabolas and hyperbolas. The Apollo Guidance Computer used that approach (Battin’s formulation) in its conic routines.`}</p>

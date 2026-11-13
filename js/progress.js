@@ -95,7 +95,7 @@
     },
     landing: {
       name: N`The Last 500 Metres`, topic: 'landing', glyph: 'lander',
-      briefing: N`The computer has brought you to low gate, but the landing site is a boulder field. You have the stick, sixty-odd seconds of propellant to spare and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.`,
+      briefing: N`The computer has brought you down to 500 m, but the landing site is a boulder field. You have the stick, about two minutes of propellant and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.`,
       objectives: [
         { id: 'land', text: N`Land the Lunar Module safely` },
         { id: 'pad', text: N`Land on the pad with at least 30 s of hover propellant left` },
@@ -132,9 +132,10 @@
     code: (id) => (MODULES[id] ? MODULES[id].code : ''),
     // modules defined in their own chapter file: Progress.register('id', { name, topic, glyph, briefing, objectives, debrief })
     register(id, def) { MODULES[id] = def; withCode(id); rebuild(); },
-    callsign: () => (state.name ? state.name : T('Candidate')),
+    // the callsign is injected into innerHTML (briefings, certificate): '<' and '>' are never kept
+    callsign: () => (state.name ? String(state.name).replace(/[<>]/g, '') : T('Candidate')),
     hasCallsign: () => !!state.name,
-    setCallsign(n) { state.name = String(n || '').trim().slice(0, 24); save(); },
+    setCallsign(n) { state.name = String(n || '').replace(/[<>]/g, '').trim().slice(0, 24); save(); },
     isDone: (mod, id) => !!state.done[`${mod}.${id}`],
     count(mod) { const m = MODULES[mod]; return m ? m.objectives.filter((o) => Progress.isDone(mod, o.id)).length : 0; },
     complete(mod) { const m = MODULES[mod]; return !!m && Progress.count(mod) === m.objectives.length; },

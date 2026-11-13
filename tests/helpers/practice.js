@@ -5,7 +5,8 @@ function checkGenerators(practice, runs = 40) {
   for (const g of practice.gens) for (let i = 0; i < runs; i++) {
     const p = g.make();
     assert.ok(Number.isFinite(p.answer), `${g.title}: answer ${p.answer}`);
-    assert.ok(p.q && p.sol && p.hint && p.unit, `${g.title}: question, hint, solution and unit`);
+    // unit may be '' for a dimensionless answer (eccentricity, thrust-to-weight)
+    assert.ok(p.q && p.sol && p.hint && typeof p.unit === 'string', `${g.title}: question, hint, solution and unit`);
     assert.ok(!/NaN|undefined/.test(p.q + p.sol + p.hint), `${g.title}: NaN or undefined in the text`);
     assert.ok(Math.abs(p.answer) > 1e-3, `${g.title}: answer ${p.answer} too close to zero for a relative tolerance`);
   }

@@ -15,9 +15,9 @@ An internet connection is needed only for MathJax and the web fonts (both from C
 
 ## How it is organised
 
-You play an astronaut candidate. Each chapter is a **training module** (TM-1 … TM-18) with a briefing,
+You play an astronaut candidate. Each chapter is a **training module** (TM-1 … TM-19) with a briefing,
 objectives that the simulators detect automatically, and a mission patch when all objectives are met.
-Earn all eighteen patches for the "go for launch" certificate on the home page. Folded **math refreshers**
+Earn all nineteen patches for the "go for launch" certificate on the home page. Folded **math refreshers**
 (vectors, trigonometry, powers, derivatives, integrals, logarithms, ellipses, relative velocity, iteration,
 interpolation, angles that wrap around, constant acceleration) appear where each
 notion first matters; all of them are on the Math Toolkit page. Greek letters show their name on hover,
@@ -41,14 +41,15 @@ photographs (public domain, credited and linked to images.nasa.gov) tie each mod
 | Timing | When to Burn | Phasing clock: phase angle, wait time, TIG on the mission clock |
 | 3D orbits | Plane Changes | Rotatable 3D globe: plane changes as PAD components, combined burns, launch azimuth |
 | Docking | Docking | Docking simulator in the target's orbital frame (Clohessy–Wiltshire), COAS sight, braking gates from 2 km, four scenarios |
-| TLI → LOI | Going to the Moon | Earth–Moon three-body simulator vs patched conics, free return, MCC solver, LOI |
+| TLI → LOI | Going to the Moon | Earth–Moon three-body simulator vs patched conics, TLI aiming, LOI |
+| Translunar coast | Free Return | Free return and corrections: figure-eight trajectory, timing shift, MCC solver |
 | Descent planning | Planning a Powered Descent | Descent planner: DOI, ignition point, braking throttle, hover margin |
 | Descent | Landing on the Moon | Lunar lander with real LM numbers and P66 mode |
 | Trans-Earth | Planning the Return | Trans-Earth planner: TEI Δv and position, entry corridor, midcourse correction |
 | Entry | Coming Home | Entry corridor explorer with a live corridor map |
 | Capstone | Mission Control | Mission planning desk: Δv budget with margins and RSS dispersions, printable PADs, readback drill, aborts |
 | Ground school | Math Toolkit | Twelve refreshers with interactive widgets |
-| Simulator room | Practice | 104 problem generators with worked solutions, 48 concept questions |
+| Simulator room | Practice | over 100 problem generators with worked solutions, over 50 concept questions |
 
 ## Languages
 
@@ -90,3 +91,8 @@ tmp/                scratch: Node test scripts, screenshots (safe to delete)
 
 Physics can be tested headless, e.g. `node tmp/t6.js` (free-return search) or `node tmp/t_practice.js`.
 Append `?focus=<lab id>` to a URL to jump straight to a lab (e.g. `?focus=tl#moon`).
+
+## License
+
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): share and adapt it, with credit, not for
+commercial use, and under the same license. The NASA photographs are public domain. See `LICENSE`.

@@ -100,7 +100,7 @@ I18N.add('de', {
   "The angle of the velocity above the local horizontal: 0° when flying level, 90° straight up, negative when descending. It is zero at periapsis and apoapsis.": "Der Winkel der Geschwindigkeit über der lokalen Horizontalen: 0° im Horizontalflug, 90° senkrecht nach oben, negativ beim Sinken. An der Periapsis und der Apoapsis ist er null.",
   "Free-return trajectory": "Freie Rückkehrbahn",
   "free return": "freie Rückkehr",
-  "A path to the Moon that swings around it and comes back to Earth with no engine burn, so the crew still gets home if the main engine fails. Apollo 8, 10 and 11 flew one.": "Ein Weg zum Mond, der ihn umrundet und ohne Triebwerkszündung zur Erde zurückführt, sodass die Crew auch dann nach Hause kommt, wenn das Haupttriebwerk ausfällt. Apollo 8, 10 und 11 flogen eine solche.",
+  "A path to the Moon that swings around it and comes back to Earth with no engine burn, so the crew still gets home if the main engine fails. Apollo 8, 10 and 11 were launched onto one.": "Ein Weg zum Mond, der ihn umrundet und ohne Triebwerkszündung zur Erde zurückführt, sodass die Crew auch dann nach Hause kommt, wenn das Haupttriebwerk ausfällt. Apollo 8, 10 und 11 wurden auf eine solche geschickt.",
   "g (multiples of gravity)": "g (Vielfache der Erdbeschleunigung)",
   "g-load · G-force": "g-Belastung · g-Kraft",
   "A way to state acceleration as a multiple of Earth's standard gravity, 9.81 m/s². At 4 g you feel four times your normal weight.": "Eine Möglichkeit, eine Beschleunigung als Vielfaches der Normalfallbeschleunigung der Erde anzugeben, 9,81 m/s². Bei 4 g spürst du das Vierfache deines normalen Gewichts.",
@@ -323,4 +323,7 @@ I18N.add('de', {
   "Ballistic entry": "Ballistischer Eintritt",
   "ballistic reentry": "ballistischer Wiedereintritt",
   "An entry without lift: only drag and gravity act on the vehicle, as on a cannonball, so nothing holds it up or steers it. It brakes harder than a lifting entry at the same speed and angle. Mercury capsules and warheads enter this way; Apollo did not. Not to be confused with the ballistic coefficient, which every vehicle has.": "Ein Eintritt ohne Auftrieb: Auf das Fahrzeug wirken nur Luftwiderstand und Schwerkraft, wie auf eine Kanonenkugel, sodass nichts es trägt oder steuert. Er bremst stärker als ein Eintritt mit Auftrieb bei gleicher Geschwindigkeit und gleichem Winkel. Mercury-Kapseln und Sprengköpfe treten so ein; Apollo nicht. Nicht zu verwechseln mit dem ballistischen Koeffizienten, den jedes Fahrzeug hat.",
+  'CDR, CMP, LMP': 'CDR, CMP, LMP',
+  'commander · command module pilot · lunar module pilot': 'Kommandant · Pilot des Kommandomoduls · Pilot der Mondfähre',
+  'The three crew roles on Apollo. The commander (CDR) and the lunar module pilot (LMP) flew the LM to the surface; the command module pilot (CMP) stayed in lunar orbit in the CSM and flew its dockings. Apollo 11: Neil Armstrong, Edwin “Buzz” Aldrin and Michael Collins.': 'Die drei Crew-Rollen bei Apollo. Der Kommandant (CDR) und der Pilot der Mondfähre (LMP) flogen das LM zur Oberfläche; der Pilot des Kommandomoduls (CMP) blieb im CSM in der Mondumlaufbahn und flog dessen Andockmanöver. Apollo 11: Neil Armstrong, Edwin „Buzz“ Aldrin und Michael Collins.',
 });

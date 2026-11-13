@@ -100,6 +100,7 @@
           </div>
           <p class="note">${T`Approximate values from the Apollo 11 Mission Report. GET is ground elapsed time from liftoff, 16 July 1969, 13:32 UTC (Coordinated Universal Time).`}</p>
           <p class="note">${T`<b>Who flies what.</b> CSM: command and service module, the crew’s ship to the Moon and back; its main engine is the SPS (service propulsion system) and its small attitude thrusters the RCS (reaction control system). LM: lunar module, the lander; DPS and APS are its descent and ascent engines. S-IVB: the third stage of the Saturn V. TLI, LOI and TEI are the burns that leave Earth orbit, enter lunar orbit and leave it again.`}</p>
+          <p class="note">${T`<b>The crew.</b> Every Apollo crew had three roles. On Apollo 11, Neil Armstrong, the commander (CDR), and Edwin “Buzz” Aldrin, the lunar module pilot (LMP), landed in the LM <i>Eagle</i>. Michael Collins, the command module pilot (CMP), stayed in lunar orbit aboard the CSM <i>Columbia</i>; he flew both dockings, with the LM on the way out and with Eagle’s ascent stage on its return from the surface.`}</p>
         </section>
 
         <section class="section" id="go">

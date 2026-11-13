@@ -62,11 +62,11 @@
             <p>${T`Faster still, the path becomes an ellipse. At \\(\\sqrt2\\) times circular speed the shot never returns: it has reached <b>escape velocity</b>, where kinetic energy matches the depth of the gravity well.`}</p>
             <div class="eq">\\[ \\tfrac12 v_{\\text{esc}}^2 - \\frac{\\mu}{r} = 0 \\quad\\Longrightarrow\\quad v_{\\text{esc}} = \\sqrt{\\frac{2\\mu}{r}} \\]</div>
             ${Sym.where(['ke', 'pe', 'vesc'], N`Escape means just enough kinetic energy to climb out of the gravity well, so the total energy is zero.`)}
-            <p>${T`Try it below. Find the speed that gives a circle, then the speed that escapes. Notice that every shot fired horizontally passes back through the cannon's position if it misses the Earth.`}</p>
+            <p>${T`Try it below. Find the speed that gives a circle, then the speed that escapes. Notice that every bound shot fired horizontally passes back through the cannon's position if it misses the Earth.`}</p>
           </div>
           <div class="lab" id="cannon">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Newton’s cannon`}</h3><span class="spacer"></span>
-              <div class="btn-row"><button class="btn" data-v="7.85" data-kind="circular">${T`Circular`}</button><button class="btn" data-v="11.1" data-kind="escape">${T`Escape`}</button><button class="btn" id="cn-clear">${T`Clear traces`}</button><button class="btn primary" id="cn-fire">${T`Fire ▸`}</button></div></div>
+              <div class="btn-row"><button class="btn" id="cn-clear">${T`Clear traces`}</button><button class="btn primary" id="cn-fire">${T`Fire ▸`}</button></div></div>
             <div class="stage" style="min-height:440px"><canvas id="cn-cv" aria-label="${T`Earth with a cannon on a mountain and the trajectory of the shot`}"></canvas><div class="overlay" id="cn-ov"></div><div class="badge" id="cn-badge"></div></div>
             <div class="controls">
               ${UI.slider({ id: 'cn-v', label: T`Muzzle speed`, min: 0, max: 12.5, step: 0.01, value: 7.2, unit: 'km/s' })}
@@ -83,7 +83,7 @@
             <p>${T`Combine the second law with gravitation for a small body \\(m\\) near a large one \\(M\\). If the bodies are spherically symmetric, no other forces act and \\(m \\ll M\\), then the motion of \\(m\\) relative to \\(M\\) obeys`}</p>
             <div class="eq">\\[ \\ddot{\\vec r} + \\frac{\\mu}{r^3}\\,\\vec r = \\vec 0 \\]</div>
             ${Sym.where(['rddot', 'vecr', 'r', 'mu'], N`Read it as: acceleration = μ/r² pointing back toward the planet’s centre. (μ/r³ times the vector r⃗, whose length is r, gives a length of μ/r².)`)}
-            <p>${T`This is the <b>two-body equation of motion</b>, the starting point of module ${Progress.code('orbits')}. A sphere's gravity acts as if all its mass sat at the centre; Newton proved this shell theorem and needed calculus, which he invented, to do it. Real missions add perturbations: Earth's oblateness (its slight bulge at the equator, measured by the coefficient \\(J_2\\)), the Sun and Moon, drag, solar pressure. Over a few orbits two-body motion describes the trajectory well. Over days the perturbations add up, which is why spacecraft are tracked and their orbits corrected.`}</p>
+            <p>${T`This is the <b>two-body equation of motion</b>, the starting point of module ${Progress.code('orbits')}. A sphere's gravity acts as if all its mass sat at the centre; Newton proved this shell theorem, and developed calculus along the way. Real missions add perturbations: Earth's oblateness (its slight bulge at the equator, measured by the coefficient \\(J_2\\)), the Sun and Moon, drag, solar pressure. Over a few orbits two-body motion describes the trajectory well. Over days the perturbations add up, which is why spacecraft are tracked and their orbits corrected.`}</p>
           </div>
         </section>
 
@@ -355,11 +355,6 @@
     };
     root.querySelector('#cn-fire').addEventListener('click', fire);
     root.querySelector('#cn-clear').addEventListener('click', () => { traces.length = 0; view.redraw(); });
-    root.querySelectorAll('[data-v]').forEach((b) => b.addEventListener('click', () => {
-      const h = ctl.read()['cn-h'] * 1000, r = C.RE + h;
-      const vv = b.dataset.kind === 'circular' ? Math.sqrt(C.muE / r) : Math.sqrt(2 * C.muE / r);
-      ctl.set('cn-v', (vv / 1000).toFixed(2)); ctl.set('cn-a', 0); ctl.update();
-    }));
     UI.loop((dt) => {
       if (!shot) return;
       shot.clock += dt * shot.warp;

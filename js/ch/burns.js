@@ -99,7 +99,7 @@
           <div class="prose">
             <p>${T`The engine’s thrust is constant but the spacecraft gets lighter as it burns, so the acceleration grows. The burn time follows from the rocket equation, not from Δv divided by the initial acceleration:`}</p>
             <div class="eq">\\[ \\begin{gathered} t_b = \\frac{m_0\\,I_{sp}\\,g_0}{F}\\left(1 - e^{-\\Delta v/(I_{sp}\\,g_0)}\\right) \\\\ m_{prop} = m_0\\left(1 - e^{-\\Delta v/(I_{sp}\\,g_0)}\\right) \\end{gathered} \\]</div>
-            ${Sym.where(['tb', ['m_0', N`mass at ignition`, 'kg'], 'isp', 'g0', 'Fth', 'dv', ['m_{prop}', N`propellant used by the burn`, 'kg']], N`For a 214 m/s burn of the Apollo CSM (28.8 t, 91 kN, 314 s), t_b = 65 s and 1 900 kg of propellant.`)}
+            ${Sym.where(['tb', ['m_0', N`mass at ignition`, 'kg'], 'isp', 'g0', 'Fth', 'dv', ['m_{prop}', N`propellant used by the burn`, 'kg']], N`For a 214 m/s burn of the Apollo CSM (28.8 t, 91 kN, 314 s), t_b = 65 s and 1 930 kg of propellant.`)}
             ${Primer.box('log')}
           </div>
         </section>

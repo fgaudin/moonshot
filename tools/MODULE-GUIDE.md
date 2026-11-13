@@ -5,7 +5,7 @@ teaches astrodynamics and rocket science through the Apollo program. Readers are
 (ASCANs) of a training program; their maths is French "terminale S" from long ago: comfortable with algebra and
 vectors, rusty on derivatives and integrals. Everything is metric (SI).
 
-**The app never mentions Kerbal Space Program or any game.** It uses Earth, the Moon and Apollo. The methods must
+**Modules never mention Kerbal Space Program or any game** (only the Reference page lists games as further material). They use Earth, the Moon and Apollo. The methods must
 transfer to any planetary system, but the examples are real.
 
 Read before starting: `js/ch/burns.js` and `js/ch/moon.js` (structure, voice, lab layout), `js/practice.js` (problem

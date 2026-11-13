@@ -229,6 +229,16 @@
               <li>${T`<b>High Frontier 4 All</b> (2020, Phil Eklund). The solar system drawn as a map of burns: each step costs fuel, and gravity wells cost the most. Engines trade thrust against efficiency, and water mined out there is fuel you no longer have to lift.`} <span class="chips">${mv('rockets', 'burns', 'timing')}</span></li>
             </ul>
           </div>
+        </section>
+
+        <section class="section">
+          <h2><span class="idx">J</span>${T`At the keyboard`}</h2>
+          <div class="prose">
+            <p>${T`A video game that flies by the same physics.`}</p>
+            <ul class="movies">
+              <li>${T`<b>Kerbal Space Program</b> (2015, Squad). Run the space programme of the Kerbals, on a planet about a tenth the size of Earth. Its flight model is the one of this manual: patched conics between spheres of influence, and burns planned as manoeuvre nodes split into prograde, normal and radial components, like a PAD. You build the rockets stage by stage, and a gravity turn flown too late shows at once where the Δv goes.`} <span class="chips">${mv('ascent', 'burns', 'moon')}</span></li>
+            </ul>
+          </div>
         </section>`;
       // table of contents from the section headings; the URL hash is the router, so scroll instead of linking to #anchors
       const heads = [...page.querySelectorAll('.section > h2')];

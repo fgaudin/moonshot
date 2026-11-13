@@ -87,7 +87,7 @@
       opts: [N`CAPCOM`, N`FIDO`, N`RETRO`, N`EECOM`], a: 2,
       why: N`RETRO, the Retrofire Officer, computed the way home and the aborts. FIDO planned the outbound trajectory and the burns that shape it, and CAPCOM only voiced the result to the crew. EECOM watched the spacecraft’s power and life-support systems.` },
     { q: N`Why does the crew read every PAD back to the CAPCOM?`,
-      opts: [N`The loop is often too noisy to hear a PAD clearly the first time`, N`One wrong digit can mean a wrong burn; the readback proves it was heard right`, N`The loop works only if every PAD is echoed back`, N`The computer only accepts numbers that the crew has spoken aloud`], a: 1,
+      opts: [N`It gives the CAPCOM time to read the next line while the crew copies`, N`One wrong digit can mean a wrong burn; the readback proves it was heard right`, N`The loop works only if every PAD is echoed back`, N`The computer only accepts numbers that the crew has spoken aloud`], a: 1,
       why: N`Voice links drop and mishear numbers. A readback closes the loop: the sender hears what the receiver wrote and corrects it before the crew loads anything into the computer.` },
     { q: N`Two independent errors, 3 m/s and 4 m/s, act on a burn. What is their combined size?`,
       opts: [N`7 m/s`, N`5 m/s`, N`3.5 m/s`, N`1 m/s`], a: 1,
@@ -489,8 +489,10 @@
         <dt>${T`Ascent Δv (fixed)`}</dt><dd>${f(b.ascentDv, 0)} m/s</dd>`;
       // objective: the heavier payload, fixed by the candidate, with at least 5 % on every stage
       if (touched && scen === 'heavy') {
-        const okAll = M.STAGE_ORDER.filter((id) => !b.stages[id].depletion && b.stages[id].planned > 0).every((id) => b.stages[id].marginPct >= 5 && st[id].prop <= M.STAGES[id].cap + 1e-6);
-        if (okAll) Progress.done('mcc', 'margin');
+        const okAll = M.STAGE_ORDER.filter((id) => !b.stages[id].depletion && b.stages[id].planned > 0).every((id) => b.stages[id].marginPct >= 5);
+        // only propellant loads and the payload may change: engines, dry masses and tank limits are fixed facts
+        const fixed = M.STAGE_ORDER.every((id) => st[id].isp === M.STAGES[id].isp && st[id].dry === M.STAGES[id].dry && st[id].prop <= M.STAGES[id].cap + 1e-6);
+        if (okAll && fixed) Progress.done('mcc', 'margin');
       }
     }
     root.querySelectorAll('input[type=text], select').forEach((el) => {

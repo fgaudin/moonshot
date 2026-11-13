@@ -7,7 +7,7 @@
 
   App.chapter({
     id: 'landing', phase: N`Descent`, title: N`Landing on the Moon`, lab: N`Lunar lander`,
-    blurb: N`Take over from the computer 150 m above a boulder field, with 60 seconds of fuel and a 1202 alarm.`,
+    blurb: N`Take over from the computer 500 m above a boulder field, with two minutes of propellant and a 1202 alarm.`,
     render(page) {
       page.innerHTML = `
         ${App.header({
@@ -31,7 +31,7 @@
             <div class="eq">\\[ t_{hover} = \\frac{I_{sp}\\,g_0}{g_☾}\\,\\ln\\frac{m_0}{m_0 - m_{prop}} \\]</div>
             ${Sym.where(['thover', 'isp', 'g0', 'gM', 'ln', 'm0h', 'mprop'])}
             ${Primer.box('log', false, 'refresher')}
-            <div class="callout history"><b>1202</b>${T`Five minutes into Apollo 11's descent the guidance computer raised program alarms 1202 and 1201: “executive overflow”. The rendezvous radar, left on as a safety backup, was stealing CPU cycles through a hardware quirk. The software, designed by Margaret Hamilton's team at MIT, restarted and dropped low-priority tasks while it kept flying. Twenty-six-year-old guidance officer Steve Bales made the “go” call. Then Armstrong saw that P64 was heading for a boulder field beside West crater. He took over in P66, flew 400 m further, and landed less than 20 seconds before the bingo call, as far as Mission Control could tell.`}</div>
+            <div class="callout history"><b>1202</b>${T`Five minutes into Apollo 11's descent the guidance computer raised program alarms 1202 and 1201: “executive overflow”. The rendezvous radar, left on as a safety backup, was stealing CPU cycles through a hardware quirk. The software, designed by Margaret Hamilton's team at MIT, restarted and dropped low-priority tasks while it kept flying. Twenty-six-year-old guidance officer Steve Bales made the “go” call. Then Armstrong saw that P64 was heading for a boulder field beside West crater. He took over in P66 about 150 m up and flew on past the boulders. Mission Control called “60 seconds”, then “30 seconds”: the time left before the bingo call, when the crew must land or abort. Eagle touched down about 20 seconds before bingo. Post-flight analysis found about 45 seconds of propellant left: sloshing in the tank had fooled the low-level sensor. Eagle came down about 6.5 km beyond the centre of its target ellipse. Most of that was a navigation error already present at the start of the descent; Armstrong’s detour added about 600 m.`}</div>
           </div>
         </section>
 
@@ -149,7 +149,11 @@
     UI.onCleanup(() => { running = false; window.removeEventListener('keydown', wkd); window.removeEventListener('keyup', ku); });
     const nudge = (k) => {
       if (p66()) S.rodCmd = Math.max(-8, Math.min(2, S.rodCmd + (k === 'up' ? 0.3 : -0.3)));
-      else { S.thr = snapThr(Math.max(0, Math.min(100, S.thr + (k === 'up' ? 5 : -5)))); thrEl.value = S.thr; }
+      else {
+        // a key press steps 5% and jumps over the forbidden band in the direction of travel (snapThr alone would stick at its edges)
+        const v = Math.max(0, Math.min(100, S.thr + (k === 'up' ? 5 : -5)));
+        S.thr = v > 65 && v < 92.5 ? (k === 'up' ? 92.5 : 65) : v; thrEl.value = S.thr;
+      }
     };
     root.querySelectorAll('[data-k]').forEach((b) => {
       const k = b.dataset.k;
@@ -199,14 +203,18 @@
       if (S.h - g > 2500 || Math.abs(S.x) > 3000) { running = false; ended = true; setBadge(T`Abort: out of range`, 'bad'); }
     }
     const hoverLeft = () => S.prop / ((S.m * GM) / (DPS.isp * C.g0));
+    const BINGO = 20;   // s of hover propellant kept for an abort at the bingo call
 
     function callouts() {
       const tl = hoverLeft(), alt = S.h - groundAt(S.x);
       const once = (k, txt) => { if (!calls.includes(k)) { calls.push(k); say(txt); } };
       if (S.t > 1) once('1202', T`PROGRAM ALARM 1202… Houston: “We’re go on that alarm.”`);
-      if (S.prop < 120) once('low', T`LOW LEVEL light: about 5% of the descent propellant left.`);
-      if (tl < 60) once('60', T`Houston: “Sixty seconds.”`);
-      if (tl < 30) once('30', T`Houston: “Thirty seconds.” Bingo comes after this: land or abort.`);
+      // Apollo 11 sequence: the LOW LEVEL sensor (5.6% of the load, about 116 s of firing left) starts a countdown to
+      // bingo, which keeps 20 s for an abort; Houston calls the time left to bingo, not to empty tanks
+      if (tl < 110) once('low', T`LOW LEVEL light: under two minutes of propellant left. Houston starts the countdown to bingo.`);
+      if (tl < BINGO + 60) once('60', T`Houston: “Sixty seconds.”`);
+      if (tl < BINGO + 30) once('30', T`Houston: “Thirty seconds.” Bingo comes after this: land or abort.`);
+      if (tl < BINGO) once('bingo', T`Houston: “Bingo.” Land now or abort: the rest is the abort reserve.`);
       if (S.prop <= 0) once('dry', T`Descent propellant depleted. Fire the ascent engine to abort!`);
       if (alt < 30 && Math.abs(S.vh) < 2) once('dust', T`“${UI.fmt(alt, 0)} m, down ${UI.fmt(-S.vh, 1)}, picking up some dust.”`);
     }

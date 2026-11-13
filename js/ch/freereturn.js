@@ -258,7 +258,7 @@
         [[0, 0], T`Earth`, 'm'], [pol(28 * D2, rp + 6), T`parking orbit`, 'm l'],
         [vadd(P0, [8, -12]), T`TLI on schedule`, 'l'], [vadd(P1, [-2, -20]), T`TLI 3 s earlier`, 'tr r'],
         [vadd(pol(w0 - dphi / 2, rp + 30), [8, -2]), 'Δφ', 'l'], [pol(aA - dphi / 2, 162), 'Δφ', ''],
-        [vadd(pol(aA, D), [-2, 14]), T`arrival on schedule`, 'r'], [vadd(A1, [10, 2]), T`arrival, TLI earlier`, 'tr l'],
+        [vadd(pol(aA, D), [-2, 14]), T`arrival on schedule`, 'r'], [vadd(A1, [10, 2]), T`arrival, TLI earlier`, 'tr l wrap narrow'],
         [vadd(pol(aA - dphi / 2, D + 16), [10, -4]), '<i>D</i>Δφ = <i>v</i><sub>☾</sub>Δ<i>t</i>', 'acc l'],
         [vadd(M, [16, -14]), T`Moon`, 'm l'], [vadd(M, vadd(vmul(tang(aM), 40), [-8, 2])), '<i>v</i><sub>☾</sub>', 'm r'],
         [pol(96 * D2, D + 16), T`Moon’s orbit`, 'm'],
@@ -296,7 +296,7 @@
   /* ---------------- Chapter ---------------- */
   App.chapter({
     id: 'freereturn', phase: N`Translunar coast`, title: N`Free Return`, lab: N`Free return and corrections`,
-    blurb: N`What a lunar flyby does seen from Earth, the free return that saved Apollo 13, and how to aim and correct a trajectory that is sensitive to a tenth of a metre per second.`,
+    blurb: N`What a lunar flyby does seen from Earth, the free return that brought Apollo 13 home, and how to aim and correct a trajectory that is sensitive to a tenth of a metre per second.`,
     render(page) {
       const mc = Progress.code('moon');
       page.innerHTML = `
@@ -325,7 +325,7 @@
           <h2><span class="idx">0.2</span>${T`The free return`}</h2>
           <div class="prose">
             <p>${T`A <b>free return</b> is the flyby whose turn sends the spacecraft back to Earth with a perigee inside the <b>entry corridor</b>: the narrow band of perigee heights, about 20 to 65 km in the lab, where the capsule neither skips off the atmosphere nor dives into it too steeply (module ${Progress.code('entry')}). The perigee is measured as if the Earth had no air, the <b>vacuum perigee</b>. In the rotating frame, where the Earth–Moon line stands still, the path traces the famous <b>figure eight</b>. Patched conics can design one: in the lab, a TLI of 3 160 m/s at −132.333° passes 369 km from the Moon and comes back to a 52 km vacuum perigee.`}</p>
-            <p>${T`Apollo 8, 10 and 11 flew free-return trajectories, so that a dead main engine would still mean coming home. Apollo 12 onward used <b>hybrid</b> trajectories to reach landing sites the free return could not. They left the free return with a midcourse burn of the Service Propulsion System. On Apollo 13 an oxygen tank exploded 56 hours out, crippling the Service Module and making its engine too risky to use. The crew fired the Lunar Module’s descent engine for 35 seconds to get <i>back</i> on a free return, then burned again two hours after closest approach (PC+2), back on the near side, to speed up the return. Neither burn was needed to turn the spacecraft around: the Moon did that.`}</p>
+            <p>${T`Apollo 8, 10 and 11 were launched onto free-return trajectories, so that a dead main engine would still mean coming home. Apollo 12 onward used <b>hybrid</b> trajectories to reach landing sites the free return could not. They left the free return with a midcourse burn of the Service Propulsion System. On Apollo 13 an oxygen tank exploded 56 hours out, crippling the Service Module and making its engine too risky to use. The crew fired the Lunar Module’s descent engine for 35 seconds to get <i>back</i> on a free return, then burned again two hours after closest approach (PC+2), back on the near side, to speed up the return. Neither burn was needed to turn the spacecraft around: the Moon did that.`}</p>
           </div>
         </section>
 
@@ -340,11 +340,11 @@
             <ol>
               <li>${T`<i>Free return</i>: press <i>Play</i> and follow it home. Watch the hyperbola swing around the far side of the Moon, then the return graze the Earth inside the corridor.`}</li>
               <li>${T`<i>TLI half a second late</i>: the burn position is off by 0.03°. The return perigee drops to 1 250 km below the surface, far too steep for entry. That is how sensitive a free return is.`}</li>
-              <li>${T`Press <i>Mission Control: solve MCC</i>. Less than 0.8 m/s, 26.7 hours after launch, brings the return back into the corridor. Sections ${App.sec('freereturn', 4)} to ${App.sec('freereturn', 6)} show how to compute such a burn by hand.`}</li>
+              <li>${T`Press <i>Mission Control: solve MCC</i>. Less than 0.8 m/s, 26.7 hours after launch, brings the return back into the corridor. Mission Control’s answer earns no credit: load <i>TLI half a second late</i> again and find such a burn yourself with the MCC slider (the arrow keys move it by 5 mm/s). Sections ${App.sec('freereturn', 4)} to ${App.sec('freereturn', 6)} show how to compute such a burn by hand.`}</li>
               <li>${T`Back to <i>Free return</i>. Switch the physics model to <i>Three-body (reality)</i> and tick the ghost: same burns, a different flight, and it hits the Moon. Section ${App.sec('freereturn', 7)} explains why. Fix it: move the TLI burn position until the flight comes home again (it takes about 0.15°), fine-tune with the MCC, and play it to entry interface.`}</li>
             </ol>
           </div>
-          ${MoonLab.markup({ id: 'fr', title: N`Free return and corrections`, presets: PRESETS, start: 'free', mcc: true, earthZoom: true, moonSpan: 1.2e7, angRange: [-136, -131], angStep: 0.001, detail: 'return' })}
+          ${MoonLab.markup({ id: 'fr', title: N`Free return and corrections`, presets: PRESETS, start: 'free', mcc: true, earthZoom: true, moonSpan: 1.2e7, angRange: [-136, -131], angStep: 0.001, mccMax: 10, detail: 'return' })}
           <p class="note">${T`Planar model with the Moon on a circular orbit. Real Apollo trajectories were three-dimensional, with the Moon's 5° orbital inclination and its eccentric orbit, the Sun's pull and Earth's oblateness all included. The physics and the sensitivity are the same.`}</p>
         </section>
 
@@ -357,7 +357,7 @@
             ${Sym.where([['\\Delta b', N`change of the aim offset you want`, 'm'], ['\\Delta t', N`how much later the transfer reaches the Moon’s orbit, relative to the Moon’s schedule`, 's'], ['v_☾', N`the Moon’s orbital speed, 1.02 km/s`, 'm/s'], ['\\psi', N`angle between the Moon’s velocity and \\(v_\\infty\\) (not the angle θ at the sphere boundary, which is measured from \\(v_{sc}\\))`, N`rad or °`]], N`Timing does nothing when \\(v_\\infty\\) lies along the Moon’s path (sin ψ = 0) and works best when it lies across it. For this transfer, arriving later makes b smaller.`)}
             ${figTiming()}
             <p>${T`For this transfer \\(\\psi = 129^\\circ\\), so \\(\\sin\\psi = 0.78\\), and \\(v_☾ = 1.0245\\) km/s. For \\(\\Delta b = -1\\,066\\) km: \\(\\Delta t = 1\\,066/(1.0245\\times0.78) = 1\\,334\\) s. Arrive 22 minutes late, while the Moon covers 1 367 km. The figure above opens on this delay; set its slider back to 1 334 s to check.`}</p>
-            <p>${T`Nobody delays the Moon. You move the TLI point instead. Moving the burn by \\(\\Delta\\phi\\) along the parking orbit turns the whole transfer by \\(\\Delta\\phi\\) about Earth. At the Moon’s distance \\(D\\) that is a sideways shift \\(D\\,\\Delta\\phi\\), the same as the Moon being \\(v_☾\\Delta t\\) away, so \\(\\Delta\\phi = \\omega_☾\\,\\Delta t\\), with \\(\\omega_☾ = v_☾/D = 2.66\\times10^{-6}\\) rad/s. Here \\(\\Delta\\phi = 0.20^\\circ\\). In a 185 km parking orbit the spacecraft covers 0.068° per second, so the burn must start <b>3.0 seconds earlier</b>. Three seconds of burn timing move the periselene by almost 800 km. That is why TLI windows are counted in seconds.`}</p>
+            <p>${T`Nobody delays the Moon. You move the TLI point instead. Moving the burn by \\(\\Delta\\phi\\) along the parking orbit turns the whole transfer by \\(\\Delta\\phi\\) about Earth. At the Moon’s distance \\(D\\) that is a sideways shift \\(D\\,\\Delta\\phi\\), the same as the Moon being \\(v_☾\\Delta t\\) away, so \\(\\Delta\\phi = \\omega_☾\\,\\Delta t\\), with \\(\\omega_☾ = v_☾/D = 2.66\\times10^{-6}\\) rad/s. Here \\(\\Delta\\phi = 0.20^\\circ\\). In a 185 km parking orbit the spacecraft covers 0.068° per second, so the burn must start <b>3.0 seconds earlier</b>. Three seconds of burn timing move the periselene by about 700 km. That is why TLI windows are counted in seconds.`}</p>
             ${figTLIShift()}
             <p>${T`Check it in the lab. Moving the TLI point by −0.204° gives a periselene of 199 km, not 110 km. The straight-line picture is a first estimate: Earth’s pull curves the path, and the geometry changes a little as you shift it. The simulator moves \\(b\\) by 4 663 km per degree of TLI point where the formula gives 5 229 km, about 11% less. Section ${App.sec('freereturn', 6)} removes that error.`}</p>
           </div>
@@ -414,7 +414,7 @@
 
       let needRescue = false;
       MoonLab.mount(page.querySelector('#fr'), {
-        id: 'fr', presets: PRESETS, mcc: true, earthZoom: true, moonSpan: 1.2e7, angRange: [-136, -131], angStep: 0.001, detail: 'return', startPaused: true,
+        id: 'fr', presets: PRESETS, mcc: true, earthZoom: true, moonSpan: 1.2e7, angRange: [-136, -131], angStep: 0.001, mccMax: 10, detail: 'return', startPaused: true,
         // both need the flight played through to entry interface; a preset counts for the first (the watching step),
         // the three-body one needs the candidate's own controls (no preset flies home in that model)
         onFlown(s, t, c) {
@@ -424,7 +424,8 @@
         },
         onResult(s, c) {
           const ok = c.inCorridor(s);
-          // rescue: the trajectory was bad before the MCC changes (set by the TLI, a preset or the model), and the MCC fixes it
+          // rescue: the trajectory was bad before the MCC changes (set by the TLI, a preset or the model), and the candidate's own
+          // MCC fixes it (the solver reports its own source, fr-solve, so Mission Control's answer does not count)
           if (c.src !== 'fr-mcc') needRescue = !ok;
           if (c.src === 'fr-mcc' && needRescue && ok) Progress.done('freereturn', 'rescue');
         },

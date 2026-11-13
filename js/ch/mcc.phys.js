@@ -47,7 +47,8 @@
     return h * 3600 + m * 60 + sec;
   };
   P.fmtGET = (t) => {
-    const h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = Math.round(t % 60);
+    t = Math.round(t);
+    const h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = t % 60;
     const p2 = (x) => String(x).padStart(2, '0');
     return `${String(h).padStart(3, '0')}:${p2(m)}:${p2(s)}`;
   };

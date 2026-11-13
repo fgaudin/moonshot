@@ -124,4 +124,7 @@ I18N.add('de', {
   "Further reading": "Weiterführende Literatur",
   "Contents": "Inhalt",
   "Back to top": "Nach oben",
+  "At the keyboard": "An der Tastatur",
+  "A video game that flies by the same physics.": "Ein Videospiel, das nach derselben Physik fliegt.",
+  "<b>Kerbal Space Program</b> (2015, Squad). Run the space programme of the Kerbals, on a planet about a tenth the size of Earth. Its flight model is the one of this manual: patched conics between spheres of influence, and burns planned as manoeuvre nodes split into prograde, normal and radial components, like a PAD. You build the rockets stage by stage, and a gravity turn flown too late shows at once where the Δv goes.": "<b>Kerbal Space Program</b> (2015, Squad). Leite das Raumfahrtprogramm der Kerbals, auf einem Planeten von etwa einem Zehntel der Größe der Erde. Sein Flugmodell ist das dieses Handbuchs: verbundene Kegelschnitte zwischen Einflusssphären und Manöver, geplant als Manöverknoten mit prograden, normalen und radialen Komponenten, wie ein PAD. Du baust die Raketen Stufe für Stufe, und ein zu spät geflogener Gravity Turn zeigt sofort, wohin das Δv geht.",
 });

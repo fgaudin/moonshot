@@ -169,13 +169,13 @@
   }
   // 18.1, third equation: the descent rate
   function figSink() {
-    const F = frame(460, 140, 96, 34), L = 230, tip = vmul(T_, L);
+    const F = frame(460, 140, 44, 34), L = 230, tip = vmul(T_, L);
     return figure(F, T`The velocity drawn as the long side of a right triangle. Its horizontal side is the speed along the ground, v cos γ. Its vertical side is the descent rate, v sin γ.`,
       `<path class="f-mu-thin f-dash" d="${F.path([[0, 0], [tip[0], 0]])}"/>${F.arc([0, 0], 62, 0, GAM, 'f-mu-thin')}
        ${F.arrow([0, 0], tip, 'f-tr', 'f-tr-fill')}
        ${F.arrow([tip[0], 0], tip, 'f-ac-ln', 'f-ac-fill')}
        ${capsule(F, [0, 0], 0.8)}`,
-      [[vadd(vmul(T_, L * 0.55), [-10, -16]), '<i>v</i>', 'tr r'], [[tip[0] * 0.6, 12], T`along the ground: <i>v</i> cos <i>γ</i>`, 'm'], [[tip[0] + 8, tip[1] / 2], T`descent rate: <i>v</i> sin <i>γ</i>`, 'acc l wrap'], [[76, -14], '<i>γ</i>', 'm']],
+      [[vadd(vmul(T_, L * 0.55), [-10, -16]), '<i>v</i>', 'tr r'], [[tip[0] * 0.6, 12], T`along the ground: <i>v</i> cos <i>γ</i>`, 'm'], [[tip[0] + 8, tip[1] / 2], T`descent rate: <i>v</i> sin <i>γ</i>`, 'acc l wrap narrow'], [[76, -14], '<i>γ</i>', 'm']],
       T`The steeper the path, the larger the share of the speed that goes into losing altitude. Apollo, at 11 km/s and −6.5°, came down at ${fm(11 * Math.sin(6.5 * D2), 1)} km/s.`);
   }
 
@@ -250,7 +250,7 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('entry')} · Entry & splashdown`,
           title: T`Coming Home`,
-          lede: T`The Command Module arrived at 11 km/s carrying 60 megajoules per kilogram, fourteen times the energy of the same mass of TNT. The atmosphere had to absorb all of it in about ten minutes.`,
+          lede: T`The Command Module arrived at 11 km/s carrying 60 megajoules per kilogram, about fourteen and a half times the energy of the same mass of TNT. The atmosphere had to absorb all of it in about ten minutes.`,
           refs: [T`Sellers · Returning from Space: Re-entry`, T`Allen & Eggers, NACA Report 1381 (1958)`],
         })}
         ${Progress.briefing('entry', { theory: 'theory', lab: 'en', math: 'refresher', mathLabel: N`Derivatives and exponentials.` })}
@@ -288,7 +288,7 @@
             ${Primer.box('log')}
             <p>${T`A blunt capsule does brake sooner than a slim body, but not harder. What β changes is <b>where</b> the braking happens, and the second formula says so: the air density at the peak, \\(\\rho^*\\), is proportional to β. A blunt, light capsule (low β) is stopped by thin air, high up. A slim, heavy body (high β) cuts through that thin air almost without slowing and loses its speed lower down, in air that is denser by the same factor as its β is larger. The two effects cancel, and the peak is the same.`}</p>
             ${figPeak()}
-            <p>${T`The difference is in the speed the body still has when it reaches the dense air. At 30 km the capsule of the figure is down to ${fm(AE.at(AE.capsule, 30e3).v / 1e3, 0)} km/s, while the slim body still flies at almost ${fm(AE.at(AE.slim, 30e3).v / 1e3, 0)} km/s. Heating grows with the cube of the speed and with the density (section ${App.sec('entry', 3)}), so the slim body gets far hotter, and it is still fast near the ground. A warhead is built for exactly that: to arrive fast. A capsule needs the opposite: to lose its speed high up, in thin air. This is why warheads are slim and capsules are blunt.`}</p>
+            <p>${T`The difference is in the speed the body still has when it reaches the dense air. At 30 km the capsule of the figure is down to ${fm(AE.at(AE.capsule, 30e3).v / 1e3, 0)} km/s, while the slim body still flies at almost ${fm(AE.at(AE.slim, 30e3).v / 1e3, 0)} km/s. Heating grows with the cube of the speed and with the square root of the density (section ${App.sec('entry', 3)}), so the slim body gets far hotter, and it is still fast near the ground. A warhead is built for exactly that: to arrive fast. A capsule needs the opposite: to lose its speed high up, in thin air. This is why warheads are slim and capsules are blunt.`}</p>
             <p>${T`The formula assumes a straight path. At lunar-return speed the real path curves away from the Earth (\\(v^2/r > g\\)), so at shallow angles it overestimates. For 11 km/s at −6.5° it predicts 36 g, while the lab’s full simulation of a ballistic capsule gives about 16 g. That is still lethal, which is why Apollo needed lift.`}</p>
           </div>
         </section>
@@ -342,7 +342,7 @@
               <div class="mini"><h4>${T`Corridor map: flight-path angle × bank`}</h4><canvas id="en-map" style="cursor:crosshair" aria-label="${T`Map of entry outcomes over flight-path angle and bank angle. Click to choose.`}"></canvas></div>
             </div>
           </div>
-          <p class="note">${T`Corridor map: each cell is a full simulation at the current speed and L/D. <span style="color:var(--good)">■</span> safe (≤ 10 g, captured) · <span style="color:var(--trace)">■</span> skip-out · <span style="color:var(--bad)">■</span> over 10 g. Click the map to fly that case. Command Module: 5 500 kg, C<sub>D</sub> 1.3, 3.9 m diameter, so β ≈ 355 kg/m². Constant bank angle. The real Apollo guidance varied the bank to hold about 4–6.5 g and steer toward the recovery ship, so its peak was lower than this simple model gives.`}</p>
+          <p class="note">${T`Corridor map: each cell is a full simulation at the current speed and L/D. <span style="color:var(--good)">■</span> safe (≤ 10 g, captured) · <span style="color:var(--trace)">■</span> skip-out · <span style="color:var(--bad)">■</span> over 10 g. Click the map to fly that case. Command Module: 5 500 kg, C<sub>D</sub> 1.3, 3.9 m diameter, so β ≈ 353 kg/m². Constant bank angle. The real Apollo guidance varied the bank to hold about 4–6.5 g and steer toward the recovery ship, so its peak was lower than this simple model gives.`}</p>
         </section>
 
         ${Archive.capsule('hornet')}
@@ -447,7 +447,7 @@
     const num = (id) => { const t = String($(id).value).replace(/\s|\u202f/g, '').replace('−', '-').replace(',', '.'); if (t === '') return NaN; const v = Number(t); return isFinite(v) ? v : NaN; };
     const set = (id, v) => { $(id).value = UI.dec(String(v)); };
     const km = (deg) => deg / ER.DEG * ER.RE / 1000, STRETCH = 4, ANIM = 6000;
-    let scen = 'low', fl = null, lead = NaN, dv = NaN, tSim = null, done = false, raf = 0, peeked = false;
+    let scen = 'low', fl = null, lead = NaN, dv = NaN, tSim = null, done = false, raf = 0, peekedBy = {};
     const view = UI.canvas($('#er-cv'), null);
     UI.onCleanup(() => cancelAnimationFrame(raf));
 
@@ -501,6 +501,7 @@
       if (fl.ok) checks.push([gOK, gOK ? T`Entry angle ${fm(fl.g.gammaDeg, 2)}°: inside the planned ${fm(AIM.gMax, 1)}° to ${fm(AIM.gMin, 1)}°.` : fl.g.gammaDeg > AIM.gMax ? T`Entry angle ${fm(fl.g.gammaDeg, 2)}°: too shallow. Burn more.` : T`Entry angle ${fm(fl.g.gammaDeg, 2)}°: too steep. Burn less.`]);
       if (m != null) checks.push([Math.abs(m) <= AIM.tol, Math.abs(m) <= AIM.tol ? T`Within ${AIM.tol} km of the ship.` : m > 0 ? T`Too far: you fired too late. Fire when the ship is further ahead.` : T`Too short: you fired too early. Fire when the ship is less far ahead.`]);
       const all = m != null && gOK && Math.abs(m) <= AIM.tol;
+      const peeked = !!peekedBy[scen];
       if (all && !peeked) Progress.done('entry', 'site');
       if (all) checks.push([!peeked, peeked ? T`Objective not counted: the working was shown for this orbit.` : T`Objective met: your own burn and lead angle.`]);
       el.innerHTML = `<b>${head}</b><ul>${checks.map(([ok, t]) => `<li><span class="verdict ${ok ? 'ok' : 'no'}">${ok ? '✓' : '✗'}</span> ${t}</li>`).join('')}</ul>`;
@@ -584,15 +585,15 @@
     };
 
     // ---- wiring ----
-    $('#er-scen').addEventListener('change', (e) => { scen = e.target.value; peeked = false; stepsHint(); plan(); });
+    $('#er-scen').addEventListener('change', (e) => { scen = e.target.value; stepsHint(); plan(); });
     root.querySelectorAll('#er-dv, #er-lead').forEach((el) => { el.addEventListener('input', plan); el.addEventListener('keydown', (e) => { if (e.key === 'Enter') fire(); }); });
     root.querySelectorAll('.er-nudge button').forEach((bt) => bt.addEventListener('click', () => {
       const id = '#' + bt.parentNode.dataset.for, v = num(id);
       if (isFinite(v)) { set(id, +(v + +bt.dataset.d).toFixed(2)); plan(); }
     }));
     $('#er-go').addEventListener('click', fire);
-    $('#er-cal').addEventListener('click', () => { plan(); steps(peeked); });
-    $('#er-work').addEventListener('click', () => { plan(); peeked = true; steps(true); });
+    $('#er-cal').addEventListener('click', () => { plan(); steps(!!peekedBy[scen]); });
+    $('#er-work').addEventListener('click', () => { plan(); peekedBy[scen] = true; steps(true); });
     set('#er-dv', 100); set('#er-lead', 90); stepsHint(); plan();
   }
 

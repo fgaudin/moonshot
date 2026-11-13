@@ -291,7 +291,7 @@
       t = 0;
       const total = dv1 + dv2 + dvp;
       if (touched && body === BODY.earth && altOf(v['mv-h1']) <= 400e3 && Math.abs(altOf(v['mv-h2']) - 35786e3) < 500e3 && v['mv-di'] >= 28 && total < 4400) Progress.done('maneuvers', 'geo');
-      if (body === BODY.moon && r2 > r1) Progress.done('maneuvers', 'lor');
+      if (touched && body === BODY.moon && r2 > r1) Progress.done('maneuvers', 'lor');
       root.querySelector('#mv-ro').innerHTML = `
         <dt>${T`v₁ circular`}</dt><dd>${UI.fmt(v1 / 1000, 3)} km/s</dd>
         <dt>${down ? T`v at transfer apoapsis` : T`v at transfer periapsis`}</dt><dd>${UI.fmt(vtp / 1000, 3)} km/s</dd>
@@ -305,7 +305,7 @@
         <dt class="sub">${T`Rendezvous with a target on orbit 2`}</dt>
         <dt>${T`Lead angle α`}</dt><dd class="hl">${UI.fmt(((lead * 180 / Math.PI) % 360 + 540) % 360 - 180, 1)}°</dd>
         <dt>${T`Synodic period`}</dt><dd>${UI.fmtTime(syn)}</dd>
-        ${bi ? `<dt class="sub">${T`Bi-elliptic (<i>r<sub>b</sub></i> = 3 <i>r</i>₂)`}</dt><dt>${T`Total Δv`}</dt><dd style="color:${bi.dv < dv1 + dv2 ? 'var(--good)' : 'inherit'}">${UI.fmt(bi.dv, 1)} m/s</dd><dt>${T`Time of flight`}</dt><dd>${UI.fmtTime(bi.tof)}</dd>` : ''}`;
+        ${bi ? `<dt class="sub">${T`Bi-elliptic (<i>r<sub>b</sub></i> = 3 <i>r</i>₂)`}</dt><dt>${T`Total Δv`}</dt><dd style="color:${bi.dv < dv1 + Math.abs(v2 - vta) ? 'var(--good)' : 'inherit'}">${UI.fmt(bi.dv, 1)} m/s</dd><dt>${T`Time of flight`}</dt><dd>${UI.fmtTime(bi.tof)}</dd>` : ''}`;
     });
     root.querySelector('#mv-body').addEventListener('change', () => ctl.update());
     root.querySelector('#mv-split').addEventListener('change', () => ctl.update());

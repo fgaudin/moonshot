@@ -7,7 +7,7 @@
   const P = {};
 
   // [0, 2π) and (−π, π]
-  P.wrap = (x) => ((x % TWO_PI) + TWO_PI) % TWO_PI;
+  P.wrap = (x) => { const y = ((x % TWO_PI) + TWO_PI) % TWO_PI; return y >= TWO_PI ? 0 : y; };
   P.wrapPi = (x) => { const y = P.wrap(x); return y > Math.PI ? y - TWO_PI : y; };
 
   // mean motion of a circular orbit (or any orbit of semi-major axis a)

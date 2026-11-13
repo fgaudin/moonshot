@@ -103,15 +103,23 @@
         sol: R`\[ \phi_{req} = ${f(req, 2)}^\circ,\quad n_1 - n_2 = ${f((n1 - n2) * D * 60, 4)}\ ^\circ/\mathrm{min},\quad t = \frac{${f(now, 0)}^\circ - ${f(req, 2)}^\circ}{n_1 - n_2} = ${f(wait, 1)}\ \mathrm{min} \]` };
     } },
     { title: N`Required phase at liftoff`, make() {
-      const hL = rnd(15, 20), hC = rnd(100, 120, 5), tA = rnd(400, 480, 10), dd = rnd(250, 400, 10);
-      const L = Pt.liftoff(muM, RM, hL * 1e3, hC * 1e3, tA, dd * 1e3 / RM), ph = L.phiLift * D, nC = L.nC * D * 60;
+      let hL, hC, tA, dd, L;
+      do {   // redraw when the angle is too small for a relative tolerance to be reachable by hand
+        hL = rnd(15, 20); hC = rnd(100, 120, 5); tA = rnd(400, 480, 10); dd = rnd(250, 400, 10);
+        L = Pt.liftoff(muM, RM, hL * 1e3, hC * 1e3, tA, dd * 1e3 / RM);
+      } while (Math.abs(L.phiLift * D) < 1.5);
+      const ph = L.phiLift * D, nC = L.nC * D * 60;
       return { q: T`An LM lifts off from the Moon (μ = 4 902.8 km³/s², R = 1 737.4 km). The ascent takes <b>${tA} s</b>, covers <b>${dd} km</b> over the ground and ends in a circular orbit at <b>${hL} km</b> altitude. The LM then flies a Hohmann transfer to the CSM’s circular orbit at <b>${hC} km</b> altitude. Ignore the Moon’s rotation. By what angle must the CSM be ahead of the launch site at liftoff? Give the angle in degrees (negative if it must be behind).`, answer: ph, unit: '°', tol: 0.02,
         hint: T`The LM arrives at θ<sub>asc</sub> + 180° after t<sub>asc</sub> + t<sub>H</sub>. The CSM moves n<sub>C</sub> times that time. It must start the difference behind the arrival point.`,
         sol: R`\[ \theta_{asc} = \frac{${dd}}{1737.4} = ${f(dd / RM * 1e3 * D, 2)}^\circ,\quad t_H = ${f(L.tH, 0)}\ \mathrm{s},\quad n_C = ${f(nC, 4)}\ ^\circ/\mathrm{min} \]\[ \phi_{lift} = \theta_{asc} + 180^\circ - n_C(t_{asc} + t_H) = ${f(dd / RM * 1e3 * D, 2)}^\circ + 180^\circ - ${f(L.nC * (tA + L.tH) * D, 2)}^\circ = ${f(ph, 2)}^\circ \]` };
     } },
     { title: N`Liftoff time from the overhead pass`, make() {
-      const hL = rnd(15, 20), hC = rnd(100, 120, 5), tA = rnd(400, 480, 10), dd = rnd(250, 400, 10), pass = rnd(100, 130) * 3600 + rnd(0, 59) * 60;
-      const L = Pt.liftoff(muM, RM, hL * 1e3, hC * 1e3, tA, dd * 1e3 / RM), delay = Pt.liftoffDelay(L.phiLift, 0, L.nC), nC = L.nC * D * 60;
+      let hL, hC, tA, dd, L, delay;
+      do {   // redraw when the delay is so short that 1% of it is a second or less
+        hL = rnd(15, 20); hC = rnd(100, 120, 5); tA = rnd(400, 480, 10); dd = rnd(250, 400, 10);
+        L = Pt.liftoff(muM, RM, hL * 1e3, hC * 1e3, tA, dd * 1e3 / RM); delay = Pt.liftoffDelay(L.phiLift, 0, L.nC);
+      } while (delay < 600);
+      const pass = rnd(100, 130) * 3600 + rnd(0, 59) * 60, nC = L.nC * D * 60;
       return { q: T`An LM on the Moon will lift off for a direct ascent: <b>${tA} s</b> of climb over <b>${dd} km</b> of ground to a circular orbit at <b>${hL} km</b> altitude, then a Hohmann transfer to the CSM at <b>${hC} km</b> altitude (ignore the Moon’s rotation). The CSM passes directly overhead at GET <b>${Pt.fmtGET(pass)}</b>. How many minutes after that pass is liftoff? Give the first liftoff time after the pass.`, answer: delay / 60, unit: 'min', tol: 0.01,
         hint: T`Find φ<sub>lift</sub> first, then bring it into 0° to 360° and divide by the CSM’s rate. The result is less than one CSM period.`,
         sol: R`\[ \phi_{lift} = ${f(L.phiLift * D, 2)}^\circ \to ${f(Pt.wrap(L.phiLift) * D, 2)}^\circ,\qquad t = \frac{${f(Pt.wrap(L.phiLift) * D, 2)}^\circ}{${f(nC, 4)}\ ^\circ/\mathrm{min}} = ${f(delay / 60, 2)}\ \mathrm{min}\ \Rightarrow\ \mathrm{GET} = ${Pt.fmtGET(pass + delay)} \]` };

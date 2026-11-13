@@ -284,7 +284,7 @@
   const MCC_MAX = 1;   // m/s: the MCC slider spans ±MCC_MAX, fine enough to hit a 45 km corridor by hand
   const MoonLab = {
     /* cfg: { id, title, presets, start: preset key, loi, mcc (also enables the model switch), earthZoom, detail: 'moon' | 'return',
-             moonSpan: fixed width of the Moon zoom in m (else it follows the spacecraft), startPaused: open paused at launch, angRange / dvRange: slider limits, angStep: burn-position step in degrees } */
+             moonSpan: fixed width of the Moon zoom in m (else it follows the spacecraft), startPaused: open paused at launch, mccMax: MCC slider limit in m/s (default MCC_MAX), angRange / dvRange: slider limits, angStep: burn-position step in degrees } */
     markup(cfg) {
       const id = cfg.id, st = cfg.presets[cfg.start];
       const flight = `<div class="tl-group ml-ctl"><h4>${T`Flight`}</h4>
@@ -295,7 +295,7 @@
           ${UI.slider({ id: `${id}-loidv`, label: T`LOI Δv`, min: 800, max: 960, step: 1, value: st.loiDv || 900, unit: 'm/s' })}` : ''}
         </div>`;
       const mc = cfg.mcc ? `<div class="tl-group ml-ctl"><h4>${T`Mission Control`}</h4>
-          ${UI.slider({ id: `${id}-mcc`, label: T`MCC at GET 26:42 (along-track)`, min: -MCC_MAX, max: MCC_MAX, step: 0.005, value: st.mcc || 0, unit: 'm/s' })}
+          ${UI.slider({ id: `${id}-mcc`, label: T`MCC at GET 26:42 (along-track)`, min: -(cfg.mccMax || MCC_MAX), max: cfg.mccMax || MCC_MAX, step: 0.005, value: st.mcc || 0, unit: 'm/s' })}
           <button class="btn" id="${id}-solve">${T`Mission Control: solve MCC for 40 km entry`}</button>
           <div class="ctl"><span class="mono note">${T`Physics model`}</span><div class="seg" id="${id}-model" role="group" aria-label="${T`Physics model`}"><button data-v="patched" aria-pressed="true">${T`Patched conics (plan)`}</button><button data-v="three" aria-pressed="false">${T`Three-body (reality)`}</button></div></div>
           <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="${id}-ghost"> ${T`Show the other model as a ghost`}</label>
@@ -367,10 +367,10 @@
         const btn = e.currentTarget, v = ctl.read();
         btn.textContent = T`Computing…`;
         setTimeout(() => {
-          const dv = Phys.solveMCC({ ...simOpts(v), mcc: { t: MCC_T, dv: 0 } }, 40000, MCC_MAX, simFor(model));
-          if (dv == null) { btn.textContent = T`No fix within ±1 m/s: adjust TLI`; return; }
+          const dv = Phys.solveMCC({ ...simOpts(v), mcc: { t: MCC_T, dv: 0 } }, 40000, cfg.mccMax || MCC_MAX, simFor(model));
+          if (dv == null) { btn.textContent = T`No fix within ±${cfg.mccMax || MCC_MAX} m/s: adjust TLI`; return; }
           btn.textContent = T`RTCC solution: ${dv >= 0 ? '+' : ''}${UI.dec(dv.toFixed(3))} m/s. Solve again`;
-          ctl.set(`${id}-mcc`, (Math.round(dv / 0.005) * 0.005).toFixed(3)); tNow = 0; playing = true; setPlayLabel(); touched = true; ctl.update(`${id}-mcc`);
+          ctl.set(`${id}-mcc`, (Math.round(dv / 0.005) * 0.005).toFixed(3)); tNow = 0; playing = true; setPlayLabel(); touched = true; ctl.update(`${id}-solve`);   // its own source: Mission Control's answer earns no MCC objective
         }, 30);
       });
       UI.seg(root, `#${id}-view`, (f) => { frameName = f; draw(); });
@@ -640,7 +640,7 @@
             <div class="eq">\\[ v_p = \\sqrt{\\mu_\\oplus\\left(\\frac{2}{r_p} - \\frac{2}{r_p + r_a}\\right)} = 10.93\\ \\mathrm{km/s} \\]</div>
             <div class="eq">\\[ \\Delta v_{TLI} = v_p - \\sqrt{\\frac{\\mu_\\oplus}{r_p}} = 10.93 - 7.79 = 3.14\\ \\mathrm{km/s} \\]</div>
             ${Sym.where(['vp', 'muE', 'rpT', 'raT', 'dvtli'])}
-            <p>${T`A minimum-energy ellipse would take five days to reach apogee. Burning slightly more, about 3.15–3.18 km/s, shortens the trip to three days at little cost. Apollo 11’s TLI was about 3.18 km/s; the simulator below needs 3.16 km/s because its model of the Earth–Moon system is simpler.`}</p>
+            <p>${T`A minimum-energy ellipse would take five days to reach apogee. Burning slightly more, about 3.15–3.18 km/s, shortens the trip to three days at little cost. Apollo 11’s S-IVB delivered about 3.18 km/s in a burn of nearly six minutes, part of it lost to gravity; the simulator below needs 3.16 km/s because its model of the Earth–Moon system is simpler.`}</p>
             <p>${T`The <b>phase angle</b> also matters. The Moon goes once round the Earth in 27.3 days, so it moves 360° / 27.3 ≈ 13.2° per day. During a three-day trip it covers about 3 × 13.2° = 40°. The burn must put the apogee where the Moon <i>will be</i> on arrival, about 40° ahead of where it is at the burn.`}</p>
           </div>
         </section>
@@ -662,7 +662,7 @@
             <div class="eq">\\[ r_1^2 = D^2 + r_{SOI}^2 - 2\\,D\\,r_{SOI}\\cos\\lambda_1, \\qquad \\sin\\gamma_1 = \\frac{r_{SOI}}{r_1}\\sin\\lambda_1 \\]</div>
             <div class="eq">\\[ v_{sc}^2 = v_0^2 - \\frac{2\\mu_\\oplus}{r_0} + \\frac{2\\mu_\\oplus}{r_1}, \\qquad \\cos\\phi_1 = \\frac{r_0\\,v_0}{r_1\\,v_{sc}}, \\qquad \\theta = \\phi_1 - \\gamma_1 \\]</div>
             ${Sym.where([['\\lambda_1', N`angle at the Moon between the Moon–Earth line and the entry point on the sphere`, N`rad or °`], ['r_1', N`distance from the Earth’s centre to the entry point`, 'm'], ['\\gamma_1', N`angle at the Earth between the spacecraft and the Moon`, N`rad or °`], 'Dem', 'rsoi', ['r_0, v_0', N`radius and speed just after TLI, at perigee`, N`m, m/s`], 'muE', ['\\phi_1', N`flight-path angle at the entry point, measured from the local horizontal`, N`rad or °`]], N`\\(\\lambda_1\\) is chosen; \\(r_1\\), \\(\\gamma_1\\), \\(v_{sc}\\) and \\(\\phi_1\\) are derived from it.`)}
-            <p>${T`In the lab’s transfer: TLI leaves \\(r_0\\) = 6 563 km at \\(v_0\\) = 10.953 km/s and reaches the sphere at \\(\\lambda_1\\) = 43.3°, read from the simulated flight. Then \\(r_1\\) = 339 298 km, \\(\\gamma_1\\) = 7.7°, \\(v_{sc}\\) = 0.924 km/s and \\(\\phi_1\\) = 76.8°, so θ = 76.8° − 7.7° = 69.1° from the Moon’s direction of motion. Then \\(v_{rel} = \\sqrt{0.924^2 + 1.0245^2 - 2\\times0.924\\times1.0245\\times\\cos 69.1^\\circ}\\) = 1.108 km/s. The spacecraft is slower than the Moon, but it moves in a different direction, so relative to the Moon it is fast.`}</p>
+            <p>${T`In the lab’s transfer: TLI leaves \\(r_0\\) = 6 563 km at \\(v_0\\) = 10.953 km/s and reaches the sphere at \\(\\lambda_1\\) = 43.3°, read from the simulated flight. Then \\(r_1\\) = 339 298 km, \\(\\gamma_1\\) = 7.7°, \\(v_{sc}\\) = 0.924 km/s and \\(\\phi_1\\) = 76.8°, so θ = 76.8° − 7.7° = 69.1° from the Moon’s direction of motion. Then</p><div class="eq">\\[ v_{rel} = \\sqrt{0.924^2 + 1.0245^2 - 2\\times0.924\\times1.0245\\times\\cos 69.1^\\circ} = 1.108\\ \\mathrm{km/s} \\]</div><p>The spacecraft is slower than the Moon, but it moves in a different direction, so relative to the Moon it is fast.`}</p>
             <p>${T`Inside the sphere the Moon’s gravity speeds the spacecraft up as it falls in and slows it down as it climbs out. Energy conservation relative to the Moon gives its speed at any distance \\(r\\) from the Moon’s centre:`}</p>
             <div class="eq">\\[ v^2 = v_\\infty^2 + \\frac{2\\mu_☾}{r} \\]</div>
             ${Sym.where([['v', N`speed relative to the Moon at distance \\(r\\)`, 'm/s'], 'vinf', 'muM', ['r', N`distance from the Moon’s centre`, 'm']], N`It holds at every point of the hyperbola.`)}

@@ -152,7 +152,7 @@
         sol: stepsTex(read, sol) + R`\[ r_p = \frac{p}{1+e} = ${f(sol.rp / 1e3, 1)}\ \mathrm{km}\ \Rightarrow\ h_p = r_p - R_\oplus = ${f(sol.altP / 1e3, 0)}\ \mathrm{km} \]` };
     } },
     { title: N`A speed error near circular`, make() {
-      const alt = pick([185, 300, 400, 550]), dv = rnd(0.5, 3, 0.5), r = (RE + alt) * 1e3, n = Math.sqrt(mu * 1e9 / (r * r * r));
+      const alt = pick([185, 300, 400, 550]), dv = rnd(0.5, 3, 0.5), r = RE + alt * 1e3, n = Math.sqrt(mu / (r * r * r));
       const ans = 4 * dv / n / 1e3;
       return { q: T`A spacecraft is in a nearly circular orbit at <b>${f(alt, 0)} km</b> altitude. Its speed reading is wrong by <b>${f(dv, 1)} m/s</b>. By about how many kilometres does the computed opposite apsis move? Use Δh ≈ 4 Δv / n.`, answer: ans, unit: 'km', tol: 0.05,
         hint: T`n = √(μ/r³) is the mean motion in rad/s. Use metres per second and metres, then convert.`,
@@ -281,7 +281,7 @@
           <div class="prose">
             <p>${T`On Apollo the crew did not do this alone. The Manned Space Flight Network tracked the spacecraft by radar and Doppler from ground stations around the world. Mission Control in Houston computed the state vector and <b>uplinked</b> it to the guidance computer. That was the main source of the onboard state.`}</p>
             <p>${T`The command module also carried a sextant and a scanning telescope. The crew could measure angles between stars and landmarks or the horizon, and the computer turned them into a state vector. This was the independent backup, for use when communications were lost, and a check on the ground’s numbers.`}</p>
-            <p>${T`Ground tracking is accurate because the stations are large and the computers are big, but it depends on the radio link. Onboard measurements are coarser but always available. The difference between the two is the main reason a crew might disagree with the ground, and what the second half of this course exploits.`}</p>
+            <p>${T`Ground tracking is accurate because the stations are large and the computers are big, but it depends on the radio link. Onboard measurements are coarser but always available.`}</p>
           </div>
         </section>
 
@@ -343,7 +343,10 @@
     const sgn = (x, d = 1) => (x >= 0 ? '+' : '−') + f(Math.abs(x), d);
 
     function setup() {
-      const sc = SCEN[scenKey], o = Pn.orbit(sc.altP * 1e3, sc.altA * 1e3, sc.nu0), tS = take * SNAP_STEP;
+      const sc = SCEN[scenKey], o = Pn.orbit(sc.altP * 1e3, sc.altA * 1e3, sc.nu0);
+      let tS = take * SNAP_STEP;
+      // a suborbital path ends in the ground: take each reading at the next moment the spacecraft is above the atmosphere
+      if (o.rp < RE) { tS = 0; for (let k = 0; k <= take; k++) { if (k) tS += SNAP_STEP; while (Pn.stateAt(o, tS).alt < 120e3) tS += 30; } }
       const rng = seeded(1000 * (Object.keys(SCEN).indexOf(scenKey) + 1) + (take + (sc.seedAdd || 0)) * 7 + 13);
       const exact = Pn.readings(o, tS);
       const disp = roundRead(Pn.noisy(exact, Pn.PRECISION[prec], rng));

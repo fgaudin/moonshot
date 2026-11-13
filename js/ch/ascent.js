@@ -58,7 +58,7 @@
             <div class="eq">${T`\\[ \\Delta v_{design} = v_{orbit} + \\underbrace{\\int g\\sin\\gamma\\,dt}_{\\text{gravity loss}} + \\underbrace{\\int \\frac{D}{m}\\,dt}_{\\text{drag loss}} + \\underbrace{\\int \\frac{F}{m}(1-\\cos\\alpha)\\,dt}_{\\text{steering loss}} - v_{rotation} \\]`}</div>
             ${Sym.where([['\\Delta v_{design}', N`total velocity change the rocket must be able to deliver`, 'm/s'], 'vorbit', 'integral', 'g', 'gamma', 'D', 'm', 'Fth', 'alpha', 'vrot'], N`In words: orbital speed + what gravity steals while you climb + what the air steals + what is wasted by not pointing exactly along the path − the free speed from Earth’s spin.`)}
             ${Primer.box('integral', false, 'refresher') + Primer.box('trig')}
-            <p>${T`<b>Gravity loss</b> is the thrust spent holding the vehicle up while its path is still steep (\\(\\gamma\\) is the flight-path angle). It is the largest loss, often 1–1.5 km/s, and it is why low thrust-to-weight rockets are inefficient. <b>Drag loss</b> is small for a big rocket, around 40 m/s for the Saturn V, but drag sets the <b>maximum dynamic pressure</b> \\(q = \\tfrac12\\rho v^2\\) that the structure must survive. <b>Steering loss</b> comes from thrust that isn’t aligned with the velocity.`}</p>
+            <p>${T`<b>Gravity loss</b> is the thrust spent holding the vehicle up while its path is still steep (\\(\\gamma\\) is the flight-path angle). It is the largest loss, often 1.2–1.8 km/s, and it is why low thrust-to-weight rockets are inefficient. <b>Drag loss</b> is small for a big rocket, around 40 m/s for the Saturn V, but drag sets the <b>maximum dynamic pressure</b> \\(q = \\tfrac12\\rho v^2\\) that the structure must survive. <b>Steering loss</b> comes from thrust that isn’t aligned with the velocity.`}</p>
             <p>${T`Why a misaligned thrust is a loss comes down to vectors. A force pointing the same way as the velocity speeds the vehicle up. Pointing the opposite way, it slows it down. At 90° it changes neither the speed nor the energy: it only turns the path. At any angle in between it does both. Its part along the velocity, \\(F\\cos\\alpha\\), changes the speed; its part across, \\(F\\sin\\alpha\\), turns the path.`}</p>
             ${figForceAngle()}
             <p>${T`So only \\(F\\cos\\alpha\\) builds speed, and the remaining fraction \\(1-\\cos\\alpha\\) of the thrust is the steering loss. That is why it stays small: at 10° off the velocity, \\(\\cos\\alpha = 0.985\\) and only 1.5 % of the thrust is lost to turning. Gravity follows the same rule. Its part along the path, \\(g\\sin\\gamma\\), is the gravity loss, and its part across the path is what bends the trajectory over in the gravity turn of the next section.`}</p>
@@ -144,7 +144,7 @@
     const ctl = UI.bindControls(root, fmts, (v) => {
       sim = Phys.simulateAscent({ kickTime: v['as-kt'], kickAngle: v['as-ka'], targetAlt: v['as-alt'] * 1000, latitude: v['as-lat'], east: v['as-dir'] !== 'west' });
       play = UI.reducedMotion() ? sim.t : 0;
-      if (sim.outcome === 'crash' || sim.outcome === 'burnout') Progress.done('ascent', 'fail');
+      if (touched && (sim.outcome === 'crash' || sim.outcome === 'burnout')) Progress.done('ascent', 'fail');
       if (touched && sim.outcome === 'orbit' && sim.perigee >= 150e3) Progress.done('ascent', 'orbit');
       readout(v);
       minis.forEach((m) => m.redraw());
@@ -180,7 +180,7 @@
         <dt>${T`− Drag loss`}</dt><dd>${UI.fmt(L.drag, 0)}</dd>
         <dt>${T`− Steering loss`}</dt><dd>${UI.fmt(L.steering, 0)}</dd>
         <dt>${s.rotV >= 0 ? '+' : '−'} ${T`Earth rotation`}</dt><dd>${UI.fmt(Math.abs(s.rotV), 0)}</dd>
-        <dt>${T`= Final inertial speed`}</dt><dd class="hl">${UI.fmt(s.v, 0)}</dd>`;
+        <dt>${T`≈ Final inertial speed`}</dt><dd class="hl">${UI.fmt(s.v, 0)}</dd>`;
       void target;
     }
 

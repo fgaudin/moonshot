@@ -68,8 +68,7 @@ I18N.add('fr', {
     'Vous avez navigué jusqu’à la Lune et retour, {name}. Place maintenant aux cinq cents mètres les plus difficiles de toute la mission.',
   // TM-8
   'The Last 500 Metres': 'Les 500 derniers mètres',
-  'The computer has brought you to low gate, but the landing site is a boulder field. You have the stick, sixty-odd seconds of propellant to spare and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.':
-    'L’ordinateur a mené le LM jusqu’au « low gate », mais le site d’alunissage est un champ de rochers. Vous avez le manche, une soixantaine de secondes d’ergols en réserve et une alarme au tableau de bord. Restez calme, {name}. Pilotez comme Neil.',
+  'The computer has brought you down to 500 m, but the landing site is a boulder field. You have the stick, about two minutes of propellant and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.': 'L’ordinateur a mené le LM jusqu’à 500 m, mais le site d’alunissage est un champ de rochers. Vous avez le manche, environ deux minutes d’ergols et une alarme au tableau de bord. Restez calme, {name}. Pilotez comme Neil.',
   'Land the Lunar Module safely': 'Poser le module lunaire en toute sécurité',
   'Land on the pad with at least 30 s of hover propellant left': 'Se poser sur l’aire visée avec au moins 30 s d’ergols de vol stationnaire en réserve',
   'Qualify: answer 2 landing problems correctly': 'Qualification : résoudre correctement 2 problèmes d’alunissage',

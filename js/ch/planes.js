@@ -313,7 +313,7 @@
             <p>${T`A plane change turns the velocity vector without changing its length. Two velocity vectors of equal length v, an angle Δi apart, form an isosceles triangle. The Δv is its third side:`}</p>
             <div class="eq">\\[ \\Delta v = 2\\,v\\,\\sin\\frac{\\Delta i}{2} \\]</div>
             ${Sym.where(['dv', 'v', 'di'], N`v is the speed at the burn, the same before and after. Use radians or degrees consistently in the sine.`)}
-            <p>${T`Take the geostationary example. At 35 786 km the circular speed is 3 075 m/s, so tilting by 28.5° costs 2 × 3 075 × sin 14.25° = <b>1 514 m/s</b>. At 300 km the speed is 7 730 m/s and the same 28.5° costs <b>3 803 m/s</b>. The plane change is proportional to the speed, so it is cheapest where the spacecraft is slowest: high up, or at the apoapsis of an ellipse.`}</p>
+            <p>${T`Take the geostationary example. At 35 786 km the circular speed is 3 075 m/s, so tilting by 28.5° costs 2 × 3 075 × sin 14.25° = <b>1 514 m/s</b>. At 300 km the speed is 7 726 m/s and the same 28.5° costs <b>3 803 m/s</b>. The plane change is proportional to the speed, so it is cheapest where the spacecraft is slowest: high up, or at the apoapsis of an ellipse.`}</p>
             <p>${T`<b>Why at a node.</b> The new plane must contain the spacecraft’s position, because the spacecraft is not going to jump. The old and the new plane share only one line through the Earth’s centre. For a change of inclination at fixed Ω, that line is the line of nodes. So the burn happens at the ascending or the descending node. Burning elsewhere turns the plane about a different axis, and the node itself moves: Ω changes as well as i.`}</p>
             <p>${T`A small change costs little. The 0.6° correction of the first lab scenario in a 185 km orbit is 2 × 7 793 × sin 0.3° = 82 m/s. Even a degree of tilt is a real amount of propellant in low orbit, which is why launch teams work hard to put the rocket in the right plane from the start.`}</p>
           </div>
@@ -359,8 +359,8 @@
             <p>${T`The formula holds for the velocity in an inertial frame, the one that does not turn with the Earth. The pilot flies relative to the ground, which moves east at v<sub>eq</sub> cos φ (408 m/s at 28.5°, from v<sub>eq</sub> = 465 m/s). Subtract it from the eastward part of the velocity:`}</p>
             <div class="eq">\\[ \\tan\\beta_{rot} = \\frac{v_{orb}\\sin\\beta - v_{eq}\\cos\\phi}{v_{orb}\\cos\\beta} \\]</div>
             ${Sym.where([['\\beta_{rot}', N`the azimuth to fly relative to the rotating ground`, N`rad or °`], ['v_{orb}', N`inertial speed at insertion (7.79 km/s at 185 km)`, 'm/s'], ['v_{eq}', N`speed of the ground at the equator, 465 m/s`, 'm/s']], N`Numerator: the eastward speed the rocket must add to the ground’s motion. Denominator: the northward speed, which the Earth does not provide.`)}
-            <p>${T`Example: from 28.5° N to a 32.5° orbit at 7 793 m/s. Inertial: sin β = cos 32.5° / cos 28.5° = 0.9594, so β = 73.7°. Flown relative to the ground, β<sub>rot</sub> = 72.8°. A pilot who steered 73.7° on the ground would end 0.4° low in inclination, which is about 50 m/s of plane change in low orbit. Apollo launches from Florida were limited to azimuths between 72° and 108°.`}</p>
-            <p>${T`<b>Launch windows.</b> The orbit plane is fixed in space and the Earth turns once in 23 h 56 min. The launch site passes under the target plane twice a day: once going north, once going south. Those two moments are the launch windows. At other times, you need a plane change in orbit or a different azimuth with a different inclination. In the example, the two windows are about 4.2 hours apart, and the next pair follows 19.8 hours later (the lab shows the times). The northeast window corresponds to the northbound crossing.`}</p>
+            <p>${T`Example: from 28.5° N to a 32.5° orbit at 7 793 m/s. Inertial: sin β = cos 32.5° / cos 28.5° = 0.9597, so β = 73.7°. Flown relative to the ground, β<sub>rot</sub> = 72.8°. A pilot who steered 73.7° on the ground would end 0.4° low in inclination, which is about 50 m/s of plane change in low orbit. Apollo launches from Florida were limited to azimuths between 72° and 108°.`}</p>
+            <p>${T`<b>Launch windows.</b> The orbit plane is fixed in space and the Earth turns once in 23 h 56 min. The launch site passes under the target plane twice a day: once going north, once going south. Those two moments are the launch windows. At other times, you need a plane change in orbit or a different azimuth with a different inclination. In the example, the two windows are about 4.2 hours apart, and the next pair follows 19.7 hours later (the lab shows the times). The northeast window corresponds to the northbound crossing.`}</p>
           </div>
         </section>
 
@@ -519,7 +519,7 @@
       const m = [];
       if (o.pure) m.push(o.isPure ? T`The orbit shape is unchanged.` : T`The speed changed: the orbit is no longer the same shape. A pure plane change keeps the speed.`);
       if (S.sc.combined) m.push(o.reached ? T`Geostationary orbit reached.` : T`The orbit is not yet the circular equatorial target.`);
-      if (peeked) m.push(T`No objective credit for this attempt.`);
+      if (o.noCredit) m.push(T`No objective credit for this attempt.`);
       b.textContent = (S.sc.combined ? (o.reached && o.dv <= 1.03 * S.opt) : (o.planeErr <= 0.1 && (!o.pure || o.isPure))) ? T`Target met` : T`Target not met`;
       b.className = 'badge ' + (b.textContent === T`Target met` ? '' : 'bad');
       if (m.length) box.innerHTML += `<dt></dt><dd class="note" style="text-align:left">${m.join(' ')}</dd>`;
@@ -544,8 +544,9 @@
       const planeErr = P.planeAngle(fin.hv, P.normalOf(tg.i, tg.O)) * deg;
       const a0 = S.el.a, isPure = Math.abs(fin.a - a0) / a0 < 0.01 && fin.e < 0.005 + S.el.e;
       const reached = sc.combined && fin.i * deg < 0.2 && fin.e < 0.01 && Math.abs(fin.a - tg.a) < 300e3;
-      outcome = { fin, planeErr, dv: r.dvTotal, pure: !!sc.pure, isPure, reached };
+      outcome = { fin, planeErr, dv: r.dvTotal, pure: !!sc.pure, isPure, reached, noCredit: peeked };
       const credit = touched && !peeked;
+      endPeek();
       if (credit) {
         if (sc.pure && planeErr <= 0.1 && isPure) Progress.done('planes', 'plane');
         if (sc.combined && reached && r.dvTotal <= 1.03 * S.opt) Progress.done('planes', 'cheap');
@@ -565,9 +566,14 @@
       const inc = L.el.i * deg, okAz = Math.abs(az - S.neG * deg) <= 0.5 || Math.abs(az - S.seG * deg) <= 0.5;
       outcome = { az, inc, inert: L.az * deg, okAz };
       if (touched && !peeked && okAz) Progress.done('planes', 'az');
+      endPeek();
       tEnd = L.el.T; tNow = 0; playing = !UI.reducedMotion();
       renderInfo(); renderResult(); syncSlider(); setPlay(); view.redraw();
     }
+
+    // "Show the solution" costs the credit of the next attempt only (the one flown with it); after it, a credited
+    // attempt again needs the candidate's own edit of the fields
+    function endPeek() { if (peeked) { peeked = false; touched = false; } }
 
     function solve() {
       peeked = true;

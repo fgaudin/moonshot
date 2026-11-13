@@ -53,3 +53,56 @@ test('deorbit lab: flight samples, miss distance and the hand method agree', () 
   }
   assert.equal(flight(400e3, 80).ok, false);   // too small a burn: no entry
 });
+
+test('text numbers of section 10.5: worked example, roll steering, sensitivity', () => {
+  const { workedExample, ER } = loadChapter('entry', ['workedExample', 'ER']);
+  const Phys = require('../js/physics.js'), W = workedExample();
+  // 200 km, 120 m/s: entry angle in the corridor, the vacuum arc and the hand method of the text
+  assert.ok(W.g.gammaDeg < -1 && W.g.gammaDeg > -2.5 && W.g.hp < 0);
+  assert.equal(W.g.angDeg.toFixed(2), '51.73');
+  assert.equal(W.L.total.toFixed(2), '82.75');
+  // "with lift up the same entry flies 35.9°, lift sideways 24.0° at 9 g"
+  const run = (bank) => Phys.simulateEntry({ v0: W.g.vEI, gamma0: W.g.gammaDeg, bank, ld: 0.3 });
+  assert.equal((run(0).range / ER.RE * ER.DEG).toFixed(1), '35.9');
+  const side = run(90);
+  assert.equal((side.range / ER.RE * ER.DEG).toFixed(1), '24.0');
+  assert.equal(Math.round(side.maxG), 9);
+  // "five seconds late is 35 km"
+  assert.equal(Math.round(W.late * 5), 35);
+  // late burn: the ground speed of the capsule is a little under the 7.78 km/s orbital speed
+  assert.ok(W.late + ER.wE * ER.RE / 1000 < Math.sqrt(C_muE() / (ER.RE + 200e3)) / 1e3 * 1.0001);
+  // sign of the sensitivities: more Δv, lower perigee, steeper entry, shorter landing
+  assert.ok(W.sens.hpPerMs < 0 && W.sens.gPerMs < 0 && W.sens.totKm < 0);
+  function C_muE() { return Phys.C.muE; }
+});
+
+test('lab: no NaN and always terminates over the slider ranges', () => {
+  const Phys = require('../js/physics.js');
+  for (let v = 7; v <= 12; v += 1) for (let g = -10; g <= -3; g += 1.75) for (const b of [0, 90, 180]) for (const ld of [0, 0.3, 0.5]) {
+    const s = Phys.simulateEntry({ v0: v * 1e3, gamma0: g, bank: b, ld });
+    assert.ok(Number.isFinite(s.maxG) && Number.isFinite(s.range) && s.t < 2999, `${v} ${g} ${b} ${ld}`);
+  }
+});
+
+test('lab objectives are reachable: a skip and a <8 g capture at lunar-return speed', () => {
+  const Phys = require('../js/physics.js');
+  const skip = Phys.simulateEntry({ v0: 11030, gamma0: -5, bank: 90, ld: 0.3 });
+  assert.equal(skip.outcome, 'skip');
+  const ok = Phys.simulateEntry({ v0: 11030, gamma0: -5.85, bank: 80, ld: 0.3 });
+  assert.ok(ok.outcome === 'landed' && ok.maxG < 8);
+  // the Apollo 11 preset itself is not enough for the objective (8.3 g)
+  assert.ok(Phys.simulateEntry({ v0: 11030, gamma0: -6.5, bank: 45, ld: 0.3 }).maxG > 8);
+});
+
+test('entry practice generators and quiz are sound', () => {
+  const { checkGenerators } = require('./helpers/practice.js');
+  const { practice } = loadChapter('entry', []);
+  checkGenerators(practice, 40);
+});
+
+test('figure 18.2 geometry has no NaN', () => {
+  const { AE } = loadChapter('entry', ['AE']);
+  for (const b of [AE.capsule, AE.slim]) for (let h = 0; h <= 80e3; h += 5e3) {
+    const r = AE.at(b, h); assert.ok(Number.isFinite(r.v) && Number.isFinite(r.a) && r.v > 0);
+  }
+});

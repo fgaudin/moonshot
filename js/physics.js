@@ -120,7 +120,7 @@
   /* opts: kickTime (s), kickAngle (deg), targetAlt (m), latitude (deg), east (bool) */
   function simulateAscent(opts) {
     const veh = opts.vehicle || SATURN_V;
-    const kickT = opts.kickTime ?? 12, kickA = (opts.kickAngle ?? 2.2) * Math.PI / 180;
+    const kickT = opts.kickTime ?? 16, kickA = (opts.kickAngle ?? 0.7) * Math.PI / 180;   // lab nominal (the old 12 s / 2.2° default crashed)
     const hT = opts.targetAlt ?? 185000;
     const lat = (opts.latitude ?? 28.5) * Math.PI / 180;
     const dir = opts.east === false ? -1 : 1;
@@ -202,12 +202,15 @@
         return [s[2], s[3] / s[0], s[3] * s[3] / s[0] - C.muE / (s[0] * s[0]) + ar, -s[2] * s[3] / s[0] + at];
       };
       // loss bookkeeping (Sellers, "Getting to Orbit": gravity, drag, steering losses)
+      // measured against the air-relative path (the one the gravity turn follows and the crew flies): against the
+      // inertial path, which starts horizontal (Earth's spin), the vertical rise would be booked as steering loss
       const vin = Math.hypot(y[2], y[3]);
       const gammaIn = Math.atan2(y[2], Math.abs(y[3]));
+      const gammaRel = Math.atan2(vr, vtr * dir);
       const gloc = C.muE / (y[0] * y[0]);
-      lossG += gloc * Math.sin(gammaIn) * dt;
+      lossG += gloc * Math.sin(gammaRel) * dt;
       lossD += drag / mass * dt;
-      lossS += accT * (1 - Math.cos(beta - gammaIn)) * dt;
+      lossS += accT * (1 - Math.cos(beta - gammaRel)) * dt;
       dvIdeal += accT * dt;
       if (q > maxQ.q) maxQ = { q, t, h };
       const gl = Math.hypot(accT * Math.cos(beta) - drag / mass * (vtr / (vrel || 1)), accT * Math.sin(beta) - drag / mass * (vr / (vrel || 1))) / C.g0;
@@ -330,7 +333,7 @@
         const vx = y[2] - ve[0], vy = y[3] - ve[1];
         const rx = y[0] - e[0], ry = y[1] - e[1];
         const v = Math.hypot(vx, vy);
-        const fpa = Math.asin((rx * vx + ry * vy) / (rE * v));
+        const fpa = Math.asin(Math.max(-1, Math.min(1, (rx * vx + ry * vy) / (rE * v))));
         const el = elementsFromRV(rE, v, fpa, C.muE);
         perigee = { alt: el.rp - C.RE, t, v, fpa };
         pts.push({ t, x: y[0], y: y[1], ex: e[0], ey: e[1], mx: m[0], my: m[1], rE, rM });
@@ -411,7 +414,7 @@
     // conic elements of a state relative to a body (2-D): energy, eccentricity, periapsis
     const conicOf = (s, mu) => {
       const r = Math.hypot(s[0], s[1]), v = Math.hypot(s[2], s[3]);
-      const fpa = Math.asin((s[0] * s[2] + s[1] * s[3]) / (r * v));
+      const fpa = Math.asin(Math.max(-1, Math.min(1, (s[0] * s[2] + s[1] * s[3]) / (r * v))));
       return { r, v, el: elementsFromRV(r, v, fpa, mu) };
     };
     while (t < tMax) {

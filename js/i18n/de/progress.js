@@ -68,8 +68,7 @@ I18N.add('de', {
     'Du bist zum Mond und zurück navigiert, {name}. Jetzt kommen die schwierigsten fünfhundert Meter der ganzen Mission.',
   // TM-8
   'The Last 500 Metres': 'Die letzten 500 Meter',
-  'The computer has brought you to low gate, but the landing site is a boulder field. You have the stick, sixty-odd seconds of propellant to spare and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.':
-    'Der Computer hat dich bis zum Low Gate gebracht, aber der Landeplatz ist ein Geröllfeld. Du hast den Steuerknüppel, gut sechzig Sekunden Treibstoffreserve und einen Alarm auf dem Panel. Bleib ruhig, {name}. Flieg wie Neil.',
+  'The computer has brought you down to 500 m, but the landing site is a boulder field. You have the stick, about two minutes of propellant and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.': 'Der Computer hat dich bis auf 500 m heruntergebracht, aber der Landeplatz ist ein Geröllfeld. Du hast den Steuerknüppel, etwa zwei Minuten Treibstoff und einen Alarm auf dem Panel. Bleib ruhig, {name}. Flieg wie Neil.',
   'Land the Lunar Module safely': 'Lande die Mondlandefähre sicher',
   'Land on the pad with at least 30 s of hover propellant left': 'Lande auf dem Landefeld mit mindestens 30 s Schwebetreibstoff in Reserve',
   'Qualify: answer 2 landing problems correctly': 'Qualifikation: Löse 2 Landeaufgaben richtig',
