@@ -616,7 +616,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('moon')} · Trans-lunar injection to lunar orbit`,
           title: T`Going to the Moon`,
-          lede: T`A target three days away, moving at 1 km/s, and two bodies pulling at once. No formula solves that exactly. Apollo’s planners cut the trip into pieces that each have a simple solution: an orbit around the Earth, then an orbit around the Moon. This module builds that method, patched conics, and flies it.`,
           refs: [T`Sellers · Interplanetary Travel`, T`BMW ch. 7 Lunar Trajectories`, T`BMW ch. 8 Interplanetary Trajectories`],
         })}
         ${Progress.briefing('moon', { theory: 'theory', lab: 'tl', math: 'refresher', mathLabel: N`Powers and roots.` })}

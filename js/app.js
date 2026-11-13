@@ -101,6 +101,7 @@
     if (target && target.tagName === 'DETAILS') target.open = true;
     if (keepScroll === true) window.scrollTo(0, y);
     else if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
+    Progress.dockPlace();   // the objectives button shows once the briefing's list is out of view
   }
 
   /* Numbering is computed from the module order: TM-n codes and section numbers n.k.

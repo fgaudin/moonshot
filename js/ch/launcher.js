@@ -46,7 +46,7 @@
 
   Progress.register('launcher', {
     name: N`Your Own Launcher`, topic: 'launcher', glyph: 'launcher',
-    briefing: N`Mission Control does not fly a rocket the way you flew the Saturn V, {name}. It designs the pitch program on the ground, runs it in a simulation, reads the result and adjusts the table. In this module you become the flight dynamics officer of a new vehicle. You will see why an engine pushes harder in vacuum, why the first stage is built for thrust and the upper stage for efficiency, where 9.4 km/s go on the way to orbit, and how a short table of numbers steers a rocket into a circle.`,
+    briefing: N`The Saturn V flew a pitch program that engineers had computed, simulated and adjusted for months. Now you are the flight dynamics officer of a new vehicle. Find what its engines really deliver, split the work between its stages, and write the short table of numbers that steers it into a circular orbit. Expect the first drafts to fall short; the real tables were tuned the same way.`,
     objectives: [
       { id: 'twr', text: N`Design a custom vehicle with liftoff TWR above 1.2, at least 9.5 km/s of vacuum Δv and a payload of at least 2.5 % of liftoff mass` },
       { id: 'orbit', text: N`Edit the pitch program yourself until the vehicle reaches an orbit with periapsis above 150 km` },
@@ -54,7 +54,7 @@
       { id: 'own', text: N`Reach orbit (periapsis above 150 km) with a vehicle that meets the design targets of the first objective` },
       { id: 'qual', text: N`Qualify: answer 2 launcher problems correctly` },
     ],
-    debrief: N`You can now read a thrust curve, size the stages of a launcher and tune a pitch table until the periapsis clears the atmosphere, {name}. Next, the manoeuvres that start once you are in orbit.`,
+    debrief: N`You can now read a thrust curve, size the stages of a launcher and tune a pitch table until the periapsis clears the atmosphere. Next, the manoeuvres that start once you are in orbit.`,
   });
 
   /* ---------------- Primer: interpolation in a table ---------------- */
@@ -176,7 +176,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('launcher')} · Launch vehicle`,
           title: T`Your Own Launcher`,
-          lede: T`The Saturn V flew a pitch program that engineers had computed, simulated and adjusted for months. This module gives you the same job for a new vehicle: understand what the engines really deliver, split the work between the stages, and write the table that steers the rocket to orbit.`,
           refs: [T`Sellers · Understanding Space`, T`Sutton & Biblarz · Rocket Propulsion Elements`, T`BMW · Fundamentals of Astrodynamics`],
         })}
         ${Progress.briefing('launcher', { theory: 'theory', lab: 'ln', math: 'refresher', mathLabel: N`Interpolation in a table.` })}

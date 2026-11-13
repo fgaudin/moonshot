@@ -87,7 +87,7 @@
 
   Progress.register('homeward', {
     name: N`Planning the Return`, topic: 'homeward', glyph: 'homeward',
-    briefing: N`The landing is done, {name}, and the hardest burn of the flight is still ahead. There is no second chance at trans-Earth injection: the engine fires once, behind the Moon, out of radio contact. In this module you work the patched conics backwards, from the Earth entry corridor to the burn in lunar orbit. You choose the speed, the place and the revolution, and you learn how little room for error the corridor leaves.`,
+    briefing: N`Going to the Moon was the easy direction: the target was big. Coming home, it is a band of perigee altitudes about 55 km wide, 384 000 km away, and the burn that aims for it fires once, behind the Moon, out of radio contact. Work the patched conics backwards, from the entry corridor to the burn in lunar orbit, and see how little room for error the corridor leaves.`,
     objectives: [
       { id: 'dv', text: N`Nominal return: execute a trans-Earth injection with the Δv from your own hand calculation (within 3 m/s)` },
       { id: 'corr', text: N`Aim a return burn yourself, without Mission Control’s solver, so the entry angle falls inside the corridor` },
@@ -95,7 +95,7 @@
       { id: 'mcc', text: N`Fix a dispersed burn with a midcourse correction of 4 m/s or less so the entry angle is back in the corridor` },
       { id: 'qual', text: N`Qualify: answer 2 trans-Earth problems correctly` },
     ],
-    debrief: N`You can now turn an entry corridor into a burn in lunar orbit, and you know why the burn is so exact and why the way home needs a correction, {name}. Next comes the other end of the trip: the entry itself.`,
+    debrief: N`You can now turn an entry corridor into a burn in lunar orbit, and you know why the burn is so exact and why the way home needs a correction. Next comes the other end of the trip: the entry itself.`,
   });
 
   /* ---------------- Practice ---------------- */
@@ -163,7 +163,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('homeward')} · Trans-Earth`,
           title: T`Planning the Return`,
-          lede: T`Going to the Moon was the easy direction: the target was big. Coming back, the target is a slot of about 55 km in perigee altitude, 384 000 km away. This module works the patched conics backwards: from the entry corridor, to the Earth ellipse, to the Moon’s sphere of influence, to a single burn in lunar orbit.`,
           refs: [T`Sellers · Understanding Space`, T`BMW · Fundamentals of Astrodynamics`, T`Apollo Operations Handbook`],
         })}
         ${Progress.briefing('homeward', { theory: 'theory', lab: 'hw', math: 'refresher', mathLabel: N`Subtracting velocity vectors.` })}

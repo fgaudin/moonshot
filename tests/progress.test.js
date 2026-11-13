@@ -55,7 +55,7 @@ test('callsign: trimmed, limited, and never carries markup characters', () => {
   const e = makeEnv();
   e.Progress.setCallsign('  <img src=x onerror=1>Eagle-with-a-very-long-name-indeed  ');
   assert.ok(!/[<>]/.test(e.Progress.callsign())); assert.ok(e.Progress.callsign().length <= 24);
-  e.Progress.setCallsign(''); assert.equal(e.Progress.hasCallsign(), false); assert.equal(e.Progress.callsign(), 'Candidate');
+  e.Progress.setCallsign(''); assert.equal(e.Progress.hasCallsign(), false); assert.equal(e.Progress.callsign(), 'ASCAN');
 });
 
 test('storage that throws does not break Progress, UI.store or I18N', () => {
@@ -121,4 +121,66 @@ test('no stale hard-coded module codes in chapter text', () => {
     const hits = fs.readFileSync(f, 'utf8').split('\n').filter((l) => /['"`>\s]TM-\d+/.test(l) && !/^\s*(\/\/|\*)/.test(l) && !/Progress\.code|\.code/.test(l));
     assert.deepEqual(hits, [], path.basename(f));
   }
+});
+
+test('module pages open with the briefing only: no header lede, and the briefing names the module', () => {
+  // the lede repeated the briefing; it was merged into it (non-module pages keep theirs)
+  for (const id of Progress.ORDER) {
+    const src = fs.readFileSync(path.join(__dirname, '../js/ch', id + '.js'), 'utf8');
+    assert.ok(!/\blede:\s*T`/.test(src), `${id}: module page has a lede again`);
+    assert.ok(Progress.MODULES[id].briefing.length > 120, `${id}: briefing too short to stand as the intro`);
+  }
+});
+
+test('the callsign is used sparingly in the text (the briefing and debrief headers carry it)', () => {
+  const uses = Progress.ORDER.flatMap((id) => ['briefing', 'debrief'].filter((k) => Progress.MODULES[id][k].includes('{name}')).map((k) => `${id} ${k}`));
+  assert.ok(uses.length <= 6, `{name} in ${uses.length} briefings/debriefs: ${uses.join(', ')}`);
+  for (const id of Progress.ORDER) for (const k of ['briefing', 'debrief']) assert.ok((Progress.MODULES[id][k].match(/\{name\}/g) || []).length <= 1, `${id} ${k}: callsign twice`);
+  // headers: "Briefing for <callsign>" once a callsign is set, plain "Briefing" before
+  const e2 = makeEnv(), head = (P) => (P.briefing('newton', {}) + P.debrief('newton', {})).match(/class="eyebrow">[^<]*/g).join(' | ');
+  assert.ok(!e2.Progress.hasCallsign()); assert.doesNotMatch(head(e2.Progress), / for /); assert.match(head(e2.Progress), />Briefing\b/);
+  e2.Progress.setCallsign('Lindbergh');
+  assert.match(head(e2.Progress), /Briefing for Lindbergh/); assert.match(head(e2.Progress), /debrief for Lindbergh/);
+});
+
+test('ASCAN: the default callsign, explained in the first briefing and in the glossary', () => {
+  const e = makeEnv();
+  assert.equal(e.Progress.callsign(), 'ASCAN');
+  const b = e.Progress.briefing('newton', {});
+  assert.match(b, /Welcome to your first module, ASCAN\. NASA calls its trainees ASCANs, short for astronaut candidates/);
+  assert.ok(e.Glossary && JSON.stringify(e.Glossary).includes('ASCAN') || fs.readFileSync(path.join(__dirname, '../js/glossary.js'), 'utf8').includes('term: N`ASCAN`'));
+  // the headers stay plain without a callsign; ASCAN is only for the sentences that address the candidate
+  assert.match(b, /class="eyebrow">Briefing</);
+});
+
+test('home: without a callsign the flight record and the certificate name nobody', () => {
+  // "ASCAN has completed…" read oddly on a certificate: it says "You have completed…" until a callsign is set
+  const src = fs.readFileSync(path.join(__dirname, '../js/ch/home.js'), 'utf8');
+  assert.match(src, /P\.hasCallsign\(\) \? T`Flight record: \$\{P\.callsign\(\)\}` : T`Flight record`/);
+  assert.match(src, /You have completed all \$\{P\.ORDER\.length\} training modules[^`]*and are hereby declared`/);
+  assert.match(src, /has completed all \$\{P\.ORDER\.length\} training modules[^`]*and is hereby declared`/);
+  assert.ok(!/=== T\('Candidate'\)/.test(src), 'the callsign field does not compare with a default name');
+});
+
+test('objectives dock: every module briefing brings a corner button with the live count and the checklist', () => {
+  const e = makeEnv();
+  for (const id of e.Progress.ORDER) {
+    const html = e.Progress.briefing(id, {}), m = e.Progress.MODULES[id];
+    assert.match(html, new RegExp(`class="obj-dock away" data-dock="${id}"`), `${id}: dock present, hidden until the briefing scrolls away`);
+    assert.match(html, new RegExp(`data-count-of="${id}">0/${m.objectives.length}<`), `${id}: count`);
+    const dock = html.slice(html.indexOf('obj-dock-panel'));
+    for (const o of m.objectives) assert.ok(dock.includes(`data-obj="${id}.${o.id}"`), `${id}.${o.id} listed in the dock`);
+    assert.match(html, /id="briefing"/); assert.match(dock, /data-dock-back/);
+  }
+});
+
+test('certificate date: the day training was completed, not today, and it moves only after a reset', () => {
+  const e = makeEnv(), P = e.Progress, day = 86400e3, t0 = Date.UTC(2026, 6, 20, 20, 17);
+  const all = (t) => { const done = {}; P.ORDER.forEach((id, i) => P.MODULES[id].objectives.forEach((o, j) => { done[`${id}.${o.id}`] = t - (i * 10 + j) * day; })); return done; };
+  e.UI.store.set('progress', { done: all(t0) });
+  const e2 = makeEnv({ storage: e.store });   // a later visit reads the stored record
+  assert.equal(e2.Progress.completedAt().getTime(), t0, 'the last objective earned dates the certificate');
+  const src = fs.readFileSync(path.join(__dirname, '../js/ch/home.js'), 'utf8');
+  assert.match(src, /P\.completedAt\(\)/); assert.doesNotMatch(src, /\$\{new Date\(\)\.toLocaleDateString/);
+  e2.Progress.resetModule(P.ORDER[0]); assert.equal(e2.Progress.completedAt(), null, 'no date while a module is unfinished');
 });

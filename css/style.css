@@ -317,6 +317,21 @@ table.data input { width: 6.5rem; text-align: right; padding: .35rem .4rem; }
 }
 .toast b { display: block; font: 600 .7rem/1.2 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
 .toast.patch { border: 2px solid var(--accent); }
+/* objectives dock (module pages): corner button + checklist panel; toasts move up above it */
+.obj-dock { position: fixed; z-index: 55; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: flex-end; gap: .5rem; transition: opacity .2s, transform .2s; }
+.obj-dock.away { opacity: 0; transform: translateY(8px); pointer-events: none; }
+.obj-dock-btn { font: 600 .74rem/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--ink); border: 0; border-radius: 999px; padding: .65rem 1rem; box-shadow: var(--shadow); cursor: pointer; }
+.obj-dock-btn:hover, .obj-dock-btn[aria-expanded="true"] { background: var(--accent); }
+.obj-dock-n { margin-left: .35rem; opacity: .85; }
+.obj-dock-panel { width: min(24rem, calc(100vw - 32px)); max-height: min(60vh, 28rem); overflow: auto; background: var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 10px; box-shadow: var(--shadow); padding: .8rem .9rem; }
+.obj-dock-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .55rem; }
+.obj-dock-head b { font: 600 .72rem/1.2 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.obj-dock-x { border: 0; background: none; color: var(--muted); font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0 .2rem; }
+.obj-dock-panel .objectives li { font-size: .88rem; }
+.obj-dock-back { display: inline-block; margin-top: .6rem; font: .78rem/1.2 var(--f-mono); color: var(--accent); }
+body:has(.obj-dock:not(.away)) .toasts { bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
+body:has(.obj-dock-panel:not([hidden])) .toasts { bottom: auto; top: calc(16px + env(safe-area-inset-top, 0px)); }   /* open panel: toasts go to the top */
+@media print { .obj-dock { display: none; } }
 .toast.out { opacity: 0; transform: translateY(6px); transition: all .5s ease; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(10px); } }
 
@@ -360,6 +375,7 @@ table.data input { width: 6.5rem; text-align: right; padding: .35rem .4rem; }
   border: 2px solid var(--accent); border-radius: 12px; padding: 1.4rem; display: flex; flex-direction: column; align-items: center; gap: .5rem;
   text-align: center; background: var(--panel); max-width: 40rem;
 }
+.cert-text { display: contents; }   /* name + sentence, swapped when the callsign changes */
 .cert-name { font: 700 2.4rem/1 var(--f-display); text-transform: uppercase; }
 .certificate p { margin: 0; max-width: 46ch; }
 .cert-go { font: 700 1.8rem/1 var(--f-display); color: var(--accent); letter-spacing: .08em; }

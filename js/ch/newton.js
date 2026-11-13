@@ -12,7 +12,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('newton')} · Foundations`,
           title: T`Newton & Gravity`,
-          lede: T`Isaac Newton published the physics of spaceflight in 1687. Every trajectory in this manual, Apollo’s included, is his second law applied to his law of gravitation.`,
           refs: [T`Sellers · Understanding Orbits`, T`BMW §1.2–1.3 The n-body and two-body problems`],
         })}
         ${Progress.briefing('newton', { theory: 'theory', lab: 'cannon', math: 'refresher', mathLabel: N`Vectors, derivatives and powers of ten.` })}

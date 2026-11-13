@@ -8,58 +8,58 @@
   const MODULES = {
     newton: {
       name: N`Falling Around the World`, topic: 'newton', glyph: 'cannon',
-      briefing: N`Welcome to your first module, {name}. Before you touch a rocket you need to understand why things fall, and why an orbit is simply a fall that never hits the ground. Newton worked it out with a cannon on an impossibly tall mountain. Today you get to fire it.`,
+      briefing: N`Welcome to your first module, {name}. NASA calls its trainees ASCANs, short for astronaut candidates, and that is what you are until every patch is earned. Isaac Newton published the physics of spaceflight in 1687: every trajectory in this manual, Apollo’s included, is his second law applied to his law of gravitation. He explained why an orbit is a fall that never hits the ground with a cannon on an impossibly tall mountain. Today you get to fire it.`,
       objectives: [
         { id: 'orbit', text: N`Fire a cannonball into orbit around the Earth` },
         { id: 'escape', text: N`Fire one fast enough to escape Earth for good` },
         { id: 'qual', text: N`Qualify: answer 2 Newton & gravity problems correctly` },
       ],
-      debrief: N`Good shooting, {name}. You now know the two numbers that rule spaceflight: circular speed and escape speed. Next you learn to read the shape of any orbit.`,
+      debrief: N`Good shooting. You now know the two numbers that rule spaceflight: circular speed and escape speed. Next you learn to read the shape of any orbit.`,
     },
     orbits: {
       name: N`Reading the Ellipse`, topic: 'orbits', glyph: 'ellipse',
-      briefing: N`In flight, Houston will read you numbers like “one-eleven by three-twelve”. A navigator must see the orbit in those numbers: its size, its shape, where you are on it and when you will be somewhere else. This module teaches you to.`,
+      briefing: N`In flight, Houston will read you numbers like “one-eleven by three-twelve”. A navigator must see the orbit in them. The two-body problem has an exact answer, the conic sections: energy fixes the orbit’s size, angular momentum its shape, and Kepler’s equation tells you where you will be and when.`,
       objectives: [
         { id: 'circle', text: N`Design a circular orbit (eccentricity below 0.01) by hand` },
         { id: 'high', text: N`Design an orbit whose apogee reaches geostationary altitude (35 786 km, where a circular orbit keeps pace with the Earth’s rotation)` },
         { id: 'qual', text: N`Qualify: answer 2 orbit problems correctly` },
       ],
-      debrief: N`You read orbits like a flight dynamics officer now, {name}. Time to meet the machine that puts you on one.`,
+      debrief: N`You read orbits like a flight dynamics officer now. Next: finding your own orbit from the instruments on board.`,
     },
     rockets: {
       name: N`The Rocket Equation`, topic: 'rockets', glyph: 'rocket',
-      briefing: N`Every engineer on the program respects one equation more than any other. It explains why your rocket is 110 metres tall to send a 5-tonne capsule home, and why it falls apart into stages on the way up. Learn it well, {name}. It decides what is possible.`,
+      briefing: N`A rocket is a machine for throwing mass backward very fast, and one equation rules it. It explains why your rocket is 110 metres tall to send a 5-tonne capsule home, and why it falls apart into stages on the way up. Every engineer on the program respects it more than any other. Learn it well: it decides what is possible.`,
       objectives: [
         { id: 'single', text: N`See for yourself why a single-stage Saturn V cannot reach orbit` },
         { id: 'grounded', text: N`Build a rocket too heavy for its first stage to leave the pad` },
         { id: 'heavy', text: N`Design a launcher that reaches the Moon (≥ 12.5 km/s) with at least 50 t, and still lifts off with TWR ≥ 1.1` },
         { id: 'qual', text: N`Qualify: answer 2 rocket-equation problems correctly` },
       ],
-      debrief: N`You can size a rocket on the back of an envelope, {name}. Now ride one.`,
+      debrief: N`You can size a rocket on the back of an envelope. Before you ride one, you need to know the air it climbs through.`,
     },
     ascent: {
       name: N`Riding the Saturn V`, topic: 'ascent', glyph: 'ascent',
-      briefing: N`Eleven minutes and forty seconds. That is how long the ride to orbit lasts, and every second of it is a trade between climbing out of the air and turning sideways to build speed. You will fly the pitch-over yourself. Expect to lose a few rockets, {name}; that is what simulators are for.`,
+      briefing: N`Orbit is a matter of speed: 185 km up, 7.8 km/s sideways. The ride takes eleven minutes and forty seconds, and every second of it trades climbing out of the air against turning sideways to build speed. You will fly the pitch-over yourself. Expect to lose a few rockets, {name}; that is what simulators are for.`,
       objectives: [
         { id: 'fail', text: N`Lose a vehicle: find a pitch-over that ends in disaster` },
         { id: 'orbit', text: N`Fly your own launch into a stable parking orbit (perigee ≥ 150 km)` },
         { id: 'qual', text: N`Qualify: answer 2 launch problems correctly` },
       ],
-      debrief: N`Parking orbit achieved, {name}. From here on, every change of path is a burn you plan.`,
+      debrief: N`Parking orbit achieved. Next you write the pitch program of a new launcher yourself.`,
     },
     maneuvers: {
       name: N`Changing Orbits`, topic: 'maneuvers', glyph: 'transfer',
-      briefing: N`In orbit, intuition lies. Speed up and you end up slower; to catch someone ahead, you brake. Your lunar module pilot will one day have to find the command module in lunar orbit with no second chance. Plan your transfers carefully, {name}.`,
+      briefing: N`A burn changes your velocity at one point, and the whole orbit through that point changes with it. In orbit, intuition lies: speed up and you end up slower; to catch someone ahead, you brake. One day your lunar module pilot will have to find the command module in lunar orbit, with no second chance. Plan your transfers carefully.`,
       objectives: [
         { id: 'geo', text: N`Plan a transfer from low Earth orbit (LEO) to geostationary orbit (GEO) including the 28.5° plane change for under 4.4 km/s` },
         { id: 'lor', text: N`Plan the LM ascent-stage rendezvous with the CSM in lunar orbit` },
         { id: 'qual', text: N`Qualify: answer 2 manoeuvre problems correctly` },
       ],
-      debrief: N`Transfers and rendezvous are second nature now, {name}. Next stop: the Moon.`,
+      debrief: N`Transfers and rendezvous are second nature now. Next: turning a transfer into numbers a crew can fly.`,
     },
     burns: {
       name: N`When, How Much, Which Way`, topic: 'burns', glyph: 'node',
-      briefing: N`Until now a burn was a number in an equation. On a real mission it is a time, three numbers and a direction, read up by the capsule communicator and keyed in by the crew. Get one of them wrong and the flight goes wrong. This module trains both ends of that loop, {name}: computing the burn at Mission Control, and flying it in the spacecraft.`,
+      briefing: N`Mission Control computes, the crew executes. Between them travels a short list of numbers, read up by the capsule communicator and keyed in by the crew: when to ignite, how much velocity to add in which direction, and how long the engine runs. Get one of them wrong and the flight goes wrong. You will work both ends of that loop.`,
       objectives: [
         { id: 'circ', text: N`Circularize a 200 × 1 000 km orbit at 1 000 km` },
         { id: 'hohmann', text: N`Fly a two-burn Hohmann transfer to a circular 2 000 km orbit` },
@@ -67,11 +67,11 @@
         { id: 'long', text: N`With the small 8 kN stage, reach an apoapsis of 5 000 km (± 100 km) in one burn` },
         { id: 'qual', text: N`Qualify: answer 2 burn-planning problems correctly` },
       ],
-      debrief: N`You can plan a burn and fly it, {name}. From here on, every burn of the mission is just another PAD.`,
+      debrief: N`You can plan a burn and fly it. From here on, every burn of the mission is just another PAD. Next: when to fire it.`,
     },
     docking: {
       name: N`Two Ships, One Line`, topic: 'docking', glyph: 'docking',
-      briefing: N`Three hours after launch, coasting away from Earth, your spacecraft must turn around and dock with the lunar module stowed on top of the spent rocket stage. After the landing you will do it again in lunar orbit, with no second chance. Your instinct says: point the noses at each other and push. Space will teach you otherwise, {name}.`,
+      briefing: N`Rendezvous brings two spacecraft within a few hundred metres. Docking closes the last gap. Three hours after launch, your spacecraft must turn around and dock with the lunar module stowed on top of the spent rocket stage; after the landing you do it again in lunar orbit, with no second chance. Your instinct says: point the noses at each other and push. Orbital mechanics still has a say.`,
       objectives: [
         { id: 'tde', text: N`Complete transposition and docking with the LM` },
         { id: 'soft', text: N`Dock gently: contact at 10 cm/s or less` },
@@ -81,38 +81,38 @@
         { id: 'terminal', text: N`Terminal phase: fly from 2 km to 100 m without exceeding the braking gates` },
         { id: 'qual', text: N`Qualify: answer 2 docking problems correctly` },
       ],
-      debrief: N`Hard dock, {name}. You can now join two spacecraft into one. Next: the long coast to the Moon.`,
+      debrief: N`Hard dock. You can now join two spacecraft into one. Next: the long coast to the Moon.`,
     },
     moon: {
       name: N`Translunar Navigation`, topic: 'moon', glyph: 'soi',
-      briefing: N`A target three days away that moves at a kilometre per second, and two bodies pulling on you at once. Before anyone flies it, someone plans it with pencil and paper: an orbit around the Earth, a switch at the edge of the Moon’s sphere of influence, an orbit around the Moon. Plan the trip, aim it and brake into lunar orbit, {name}.`,
+      briefing: N`A target three days away, moving at a kilometre per second, and two bodies pulling on you at once. No formula solves that exactly. Apollo’s planners cut the trip into pieces that each have a simple answer: an orbit around the Earth, a switch at the edge of the Moon’s sphere of influence, an orbit around the Moon. Plan the trip that way, aim it, and brake into lunar orbit.`,
       objectives: [
         { id: 'reach', text: N`Aim the TLI yourself to pass the Moon at an Apollo-like periselene, 100 to 300 km, and fly it to periselene` },
         { id: 'loi', text: N`Match Apollo 11’s first lunar orbit: brake into an orbit with its low point at 100–130 km and its high point at 280–340 km, and fly it through the LOI burn` },
         { id: 'qual', text: N`Qualify: answer 2 lunar trajectory problems correctly` },
       ],
-      debrief: N`You can plan a trip to the Moon, aim it and brake into orbit, {name}. Next: the trajectory that brings you home on its own if the engine dies.`,
+      debrief: N`You can plan a trip to the Moon, aim it and brake into orbit. Next: the trajectory that brings you home on its own if the engine dies.`,
     },
     landing: {
       name: N`The Last 500 Metres`, topic: 'landing', glyph: 'lander',
-      briefing: N`The computer has brought you down to 500 m, but the landing site is a boulder field. You have the stick, about two minutes of propellant and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.`,
+      briefing: N`Twelve and a half minutes from 15 km and 1.7 km/s to standstill, paid for with 2 km/s of Δv. The computer has brought you down to 500 m, but the landing site is a boulder field. You have the stick, about two minutes of propellant and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.`,
       objectives: [
         { id: 'land', text: N`Land the Lunar Module safely` },
         { id: 'pad', text: N`Land on the pad with at least 30 s of hover propellant left` },
         { id: 'qual', text: N`Qualify: answer 2 landing problems correctly` },
       ],
-      debrief: N`Contact light, {name}. One last test: getting home alive.`,
+      debrief: N`Contact light. Next: the long way home, starting with the burn that leaves lunar orbit.`,
     },
     entry: {
       name: N`Threading the Corridor`, topic: 'entry', glyph: 'capsule',
-      briefing: N`You come home at 11 kilometres per second into a corridor two degrees wide. Too shallow and you skip off into space; too steep and the deceleration crushes you. The only control you have is which way the capsule’s lift points. Find the corridor, {name}.`,
+      briefing: N`You come home at 11 km/s carrying 60 megajoules per kilogram, about fourteen and a half times the energy of the same mass of TNT, and the atmosphere has about ten minutes to absorb it. The corridor is two degrees wide: too shallow and you skip back into space, too steep and the deceleration crushes you. Your only control is which way the capsule’s lift points.`,
       objectives: [
         { id: 'skip', text: N`Find the overshoot boundary: make a capsule skip out` },
         { id: 'safe', text: N`Fly a lunar-return entry captured with a peak below 8 g` },
         { id: 'site', text: N`Deorbit from Earth orbit and splash down within 50 km of the recovery ship, with your own burn and lead angle` },
         { id: 'qual', text: N`Qualify: answer 2 re-entry problems correctly` },
       ],
-      debrief: N`Splashdown, {name}. Welcome home.`,
+      debrief: N`Splashdown. Welcome home, {name}. One module left: the team on the ground that flew the mission with you.`,
     },
   };
   // module order follows the app's chapter order; codes (TM-n) are computed from it
@@ -133,7 +133,8 @@
     // modules defined in their own chapter file: Progress.register('id', { name, topic, glyph, briefing, objectives, debrief })
     register(id, def) { MODULES[id] = def; withCode(id); rebuild(); },
     // the callsign is injected into innerHTML (briefings, certificate): '<' and '>' are never kept
-    callsign: () => (state.name ? String(state.name).replace(/[<>]/g, '') : T('Candidate')),
+    // without a callsign: ASCAN, NASA's name for an astronaut candidate (explained in the TM-1 briefing and the glossary)
+    callsign: () => (state.name ? String(state.name).replace(/[<>]/g, '') : 'ASCAN'),
     hasCallsign: () => !!state.name,
     setCallsign(n) { state.name = String(n || '').replace(/[<>]/g, '').trim().slice(0, 24); save(); },
     isDone: (mod, id) => !!state.done[`${mod}.${id}`],
@@ -141,6 +142,13 @@
     complete(mod) { const m = MODULES[mod]; return !!m && Progress.count(mod) === m.objectives.length; },
     totals() { let d = 0, n = 0; for (const k of ORDER) { d += Progress.count(k); n += MODULES[k].objectives.length; } return { d, n, patches: ORDER.filter(Progress.complete).length }; },
     nextModule() { return ORDER.find((k) => !Progress.complete(k)) || null; },
+    // when training was completed: the time of the last objective earned (each is stored with Date.now()), or null
+    // while a module is unfinished. It moves only if objectives are reset and earned again.
+    completedAt() {
+      if (Progress.totals().patches !== ORDER.length) return null;
+      let t = 0; for (const k of ORDER) for (const o of MODULES[k].objectives) t = Math.max(t, +state.done[`${k}.${o.id}`] || 0);
+      return t > 1e12 ? new Date(t) : null;   // a stored true/1 (no timestamp) is not a date
+    },
     // qualification objectives are recomputed from practice scores at every start, so those go too
     reset() { state = { name: state.name, done: {} }; save(); UI.store.set('stats', {}); },
     // one module only: its objectives and the practice score of its topic, which would re-earn the qualification
@@ -267,6 +275,7 @@
       const m = el.dataset.patchOf; el.innerHTML = patchSVG(m, Progress.complete(m), +el.dataset.size || 72);
     });
     document.querySelectorAll('[data-reset-obj]').forEach((b) => { b.hidden = !Progress.count(b.dataset.resetObj); });
+    document.querySelectorAll('[data-count-of]').forEach((el) => { const m = el.dataset.countOf; el.textContent = `${Progress.count(m)}/${MODULES[m].objectives.length}`; });
   }
 
   Progress.briefing = (mod, opts = {}) => {
@@ -278,10 +287,10 @@
       opts.math && `<a class="choice" href="#${opts.math}" data-jump="${opts.math}" data-open="1"><b>${T`Refresh the math first`}</b><span>${opts.mathLabel ? T(opts.mathLabel) : T`A quick ground-school refresher.`}</span></a>`,
     ].filter(Boolean).join('');
     return `
-      <aside class="briefing" aria-label="${T`Mission briefing`}">
+      <aside class="briefing" id="briefing" aria-label="${T`Mission briefing`}">
         <div class="brief-head">
           <span class="avatar" aria-hidden="true">V</span>
-          <div><span class="eyebrow">${T`Training module ${m.code} · briefing`}</span><b class="brief-title">${T(m.name)}</b></div>
+          <div><span class="eyebrow">${Progress.hasCallsign() ? T`Briefing for ${Progress.callsign()}` : T`Briefing`}</span><b class="brief-title">${T(m.name)}</b></div>
           <div class="brief-patch" data-patch-of="${mod}" data-size="64">${patchSVG(mod, Progress.complete(mod), 64)}</div>
         </div>
         <p class="brief-text">${fill(m.briefing)}</p>
@@ -290,15 +299,60 @@
         <ul class="objectives">${checklist(mod)}</ul>
         <button class="obj-reset" data-reset-obj="${mod}" ${Progress.count(mod) ? '' : 'hidden'}>${T`Reset the objectives of this module`}</button>
         ${choices ? `<h3 class="brief-h">${T`How do you want to start?`}</h3><div class="choices">${choices}</div>` : ''}
-      </aside>`;
+      </aside>
+      ${dock(mod)}`;
   };
+
+  /* Objectives dock: a corner button on every module page that opens the checklist, so a candidate deep in a lab
+     can read what is asked without scrolling back to the briefing. Hidden while the briefing's own list is in view. */
+  function dock(mod) {
+    const m = MODULES[mod];
+    return `<div class="obj-dock away" data-dock="${mod}">
+        <div class="obj-dock-panel" id="obj-dock-panel" role="dialog" aria-label="${T`Objectives`}" hidden>
+          <div class="obj-dock-head"><b>${T`Objectives`} · ${m.code}</b><button class="obj-dock-x" type="button" aria-label="${T`Close`}">×</button></div>
+          <ul class="objectives">${checklist(mod)}</ul>
+          <a class="obj-dock-back" href="#briefing" data-dock-back="1">${T`Back to the briefing`}</a>
+        </div>
+        <button class="obj-dock-btn" type="button" aria-expanded="false" aria-controls="obj-dock-panel">${T`Objectives`} <span class="obj-dock-n" data-count-of="${mod}">${Progress.count(mod)}/${m.objectives.length}</span></button>
+      </div>`;
+  }
+  const dockOpen = (d, open) => {
+    d.querySelector('.obj-dock-panel').hidden = !open;
+    d.querySelector('.obj-dock-btn').setAttribute('aria-expanded', String(open));
+  };
+  document.addEventListener('click', (e) => {
+    const d = e.target.closest && e.target.closest('.obj-dock');
+    if (!d) return;
+    if (e.target.closest('.obj-dock-btn')) dockOpen(d, d.querySelector('.obj-dock-panel').hidden);
+    else if (e.target.closest('.obj-dock-x')) dockOpen(d, false);
+    else if (e.target.closest('[data-dock-back]')) {
+      e.preventDefault(); dockOpen(d, false);
+      const b = document.getElementById('briefing');
+      if (b) b.scrollIntoView({ behavior: UI.reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.obj-dock').forEach((d) => { if (!d.querySelector('.obj-dock-panel').hidden) { dockOpen(d, false); d.querySelector('.obj-dock-btn').focus(); } });
+  });
+  // show the button only once the briefing's checklist has scrolled out of view (an open panel stays)
+  const dockPlace = () => {
+    const d = document.querySelector('.obj-dock');
+    if (!d) return;
+    const list = document.querySelector('#briefing .objectives'), r = list && list.getBoundingClientRect();
+    const inView = r && r.bottom > 0 && r.top < innerHeight;
+    d.classList.toggle('away', !!inView && d.querySelector('.obj-dock-panel').hidden);
+  };
+  window.addEventListener('scroll', dockPlace, { passive: true });
+  window.addEventListener('resize', dockPlace);
+  Progress.dockPlace = dockPlace;
 
   Progress.debrief = (mod, opts = {}) => {
     const m = MODULES[mod], i = ORDER.indexOf(mod), next = ORDER[i + 1];
     const nc = next && App.chapters[next];
     return `
       <aside class="debrief" aria-label="${T`Debrief`}">
-        <span class="eyebrow">${T`${m.code} · debrief`}</span>
+        <span class="eyebrow">${Progress.hasCallsign() ? T`${m.code} · debrief for ${Progress.callsign()}` : T`${m.code} · debrief`}</span>
         <p class="brief-text">${fill(m.debrief)}</p>
         <ul class="objectives compact">${checklist(mod)}</ul>
         <h3 class="brief-h">${T`Where to now?`}</h3>

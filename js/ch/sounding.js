@@ -58,7 +58,7 @@
 
   Progress.register('sounding', {
     name: N`Measuring an Atmosphere`, topic: 'sounding', glyph: 'sounding',
-    briefing: N`Every ascent and every entry in this course leans on one thing you have not measured yet: the air, {name}. On a new world nobody hands you a table. You send up sounding rockets, read a pressure gauge on the way, and fit a model to the numbers. In this module you do exactly that on four unknown atmospheres, and you find out how much a good fit depends on how high you fly.`,
+    briefing: N`Every ascent and every entry in this course leans on one thing nobody has measured for you yet: the air. On a new world there is no table to look it up in. You send up sounding rockets, small research rockets that fly straight up and fall back, read a pressure gauge on the way, and fit a straight line to the numbers. Four unknown atmospheres are waiting, and how high you fly decides how much you learn.`,
     objectives: [
       { id: 'reach', text: N`Launch a rocket yourself that climbs above two scale heights` },
       { id: 'hfit', text: N`Estimate the scale height H within 5 % of the truth` },
@@ -66,7 +66,7 @@
       { id: 'beta', text: N`Find the ballistic coefficient β from the coast deceleration, within 20 %` },
       { id: 'qual', text: N`Qualify: answer 2 atmosphere problems correctly` },
     ],
-    debrief: N`You can now turn a column of noisy pressure readings into a model of the air, and you know why a rocket that barely leaves the pad teaches you so little, {name}. Next the ascent itself: the air you just measured decides how hard the rocket is pushed on the way up.`,
+    debrief: N`You can now turn a column of noisy pressure readings into a model of the air, and you know why a rocket that barely leaves the pad teaches you so little. Next the ascent itself: the air you just measured decides how hard the rocket is pushed on the way up.`,
   });
 
   /* ---------------- Practice ---------------- */
@@ -145,7 +145,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('sounding')} · Sounding`,
           title: T`Measuring an Atmosphere`,
-          lede: T`Before a rocket can be sized for its ascent, or a capsule for its entry, someone has to know how the air thins with height. On a new world nobody knows. This module shows how a handful of sounding rockets (small research rockets that fly straight up and come back down), one pressure gauge and a straight-line fit give the answer.`,
           refs: [T`Sellers · Understanding Space`, T`U.S. Standard Atmosphere, 1976 (NOAA, NASA, USAF)`],
         })}
         ${Progress.briefing('sounding', { theory: 'theory', lab: 'sd', math: 'refresher', mathLabel: N`What dp/dh means.` })}

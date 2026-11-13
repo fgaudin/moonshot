@@ -214,7 +214,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('docking')} · Docking`,
           title: T`Docking`,
-          lede: T`Rendezvous brings two spacecraft within a few hundred metres. Docking closes the last gap, a slow, precise dance where every push lasts forever and orbital mechanics still has a say.`,
           refs: [T`Sellers · Maneuvering in Space (rendezvous)`, T`BMW ch. 3 Basic Orbital Maneuvers`, T`Apollo Operations Handbook, CSM docking system`],
         })}
         ${Progress.briefing('docking', { theory: 'theory', lab: 'dk', math: 'refresher', mathLabel: N`Vectors and relative velocity.` })}

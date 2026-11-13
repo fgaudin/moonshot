@@ -13,7 +13,7 @@
 
   Progress.register('descent', {
     name: N`Planning a Powered Descent`, topic: 'descent', glyph: 'descent',
-    briefing: N`You will not fly this descent yet, {name}. You will plan it. Where does the engine start, how hard does it push, how much propellant is left to hover, and how far from the site will you land if you ignite five seconds late? Every number can be computed by hand before the simulation checks you.`,
+    briefing: N`A lander has no air to slow it and no second chance. Its engine must remove about 1.7 km/s of orbital speed, over a chosen spot. This time you plan the descent; the flying comes in the next module. Where the engine starts, how hard it pushes, how much propellant is left to hover, how far off you land if you ignite five seconds late: all of it is arithmetic you can do on paper before the simulation checks you.`,
     objectives: [
       { id: 'doi', text: N`Set a descent orbit insertion Δv within 2 m/s of the value that puts periapsis at 15 km` },
       { id: 'site', text: N`Land within 2 km of the site in the Apollo 11-like scenario` },
@@ -21,7 +21,7 @@
       { id: 'reserve', text: N`Land within 2 km of the site with the heavy lander and keep at least 60 s of hover margin` },
       { id: 'qual', text: N`Qualify: answer 2 descent-planning problems correctly` },
     ],
-    debrief: N`You can now plan where a descent starts, how long it lasts and what it leaves in the tanks, {name}. Next comes the real thing: the piloted final landing.`,
+    debrief: N`You can now plan where a descent starts, how long it lasts and what it leaves in the tanks. Next comes the real thing: the piloted final landing.`,
   });
 
   /* ---------------- Primer ---------------- */
@@ -155,7 +155,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('descent')} · Descent planning`,
           title: T`Planning a Powered Descent`,
-          lede: T`A lander coming down on the Moon has no air to slow it and no second chance. The engine must remove about 1.7 km/s of orbital speed, and it must do it over a chosen spot. The plan comes first: a small burn to lower the orbit, an ignition point, a braking throttle and a margin of propellant. Every part of it is arithmetic you can do on paper.`,
           refs: [T`Sellers · Understanding Space`, T`BMW · Fundamentals of Astrodynamics`, T`Apollo 11 Mission Report (NASA)`],
         })}
         ${Progress.briefing('descent', { theory: 'theory', lab: 'ds', math: 'refresher', mathLabel: N`Constant acceleration.` })}

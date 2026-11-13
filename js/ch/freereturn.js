@@ -6,14 +6,14 @@
 
   Progress.register('freereturn', {
     name: N`Free Return`, topic: 'freereturn', glyph: 'figure8',
-    briefing: N`Three days of coasting towards a target moving at a kilometre per second. Get the trans-lunar burn right and the Moon itself will swing you home if anything breaks. Apollo 13 had already left that path when its oxygen tank exploded; a short burn put it back on, and the Moon brought the crew home. Get it wrong by a tenth of a metre per second and you will need Mission Control. You are in Mission Control today, {name}.`,
+    briefing: N`Swing around the Moon on the right side and it throws you back to Earth with no engine burn. Apollo 13 had already left that path when its oxygen tank exploded; a short burn put it back on, and the Moon brought the crew home. The path is so sensitive that a fraction of a second of burn timing moves the return by a thousand kilometres, so it is corrected on the way. You are in Mission Control today, and your plan will meet the real, three-body Moon.`,
     objectives: [
       { id: 'free', text: N`Fly a free return all the way home: play it to entry interface, inside the entry corridor` },
       { id: 'rescue', text: N`Rescue a bad trajectory with a midcourse correction` },
       { id: 'reality', text: N`In the three-body model, bring the free return back into the corridor and fly it home to entry interface` },
       { id: 'qual', text: N`Qualify: answer 2 free-return problems correctly` },
     ],
-    debrief: N`You navigated to the Moon and back, {name}. Next: planning the descent from lunar orbit to the surface.`,
+    debrief: N`You navigated to the Moon and back. Next: planning the descent from lunar orbit to the surface.`,
   });
 
   const PRESETS = {
@@ -303,7 +303,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('freereturn')} · Translunar coast`,
           title: T`Free Return`,
-          lede: T`Swing around the Moon on the correct side and it throws you back to Earth without an engine burn. That path brought Apollo 13 home. It is also so sensitive that a fraction of a second of burn timing moves the return by a thousand kilometres, so it is corrected on the way. This module does both with the patched-conic tools of module ${mc}, then checks them against reality.`,
           refs: [T`Sellers · Interplanetary Travel`, T`BMW ch. 7 Lunar Trajectories`],
         })}
         ${Progress.briefing('freereturn', { theory: 'theory', lab: 'fr', math: 'refresher', mathLabel: N`Adding and subtracting vectors.` })}

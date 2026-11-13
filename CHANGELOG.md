@@ -3,6 +3,49 @@
 What changed and why, in more detail than the commit messages. Newest first. Module numbers (TM-n, section n.k)
 follow the current `ORDER` in `js/app.js`.
 
+## 2026-11-13 — briefings replace the chapter intros, callsign used sparingly, ASCAN, objectives button
+
+- **One intro per module.** The header lede repeated the briefing (in half the modules almost word for word), so
+  the 19 module pages lose their lede and each briefing absorbs what the lede added: the physical idea or the
+  striking fact (Newton in 1687, conics and Kepler's equation, 60 MJ/kg on entry, orbit as a matter of speed…).
+  Briefings drop their "In this module you will…" lists, which the Objectives right below already give. Pages
+  without a briefing (toolkit, practice, reference, glossary) keep their lede.
+- **Callsign.** It closed almost every briefing and debrief (", {name}."), which read like a mail merge. The
+  briefing header now says "Briefing for <callsign>" (just "Briefing" until one is set) and the debrief header
+  "TM-n · debrief for <callsign>" ("TM-n · debrief" until then). The briefing header no longer repeats "Training
+  module TM-n", already in the page header. In the text the callsign stays at six moments: the welcome (TM-1),
+  the first launch (TM-6), the landing (TM-16), splashdown (TM-18) and the capstone (TM-19, briefing and debrief).
+- **ASCAN** replaces "Candidate" as the name used before a callsign is chosen: NASA's own nickname for astronaut
+  candidates, the same in every language. The TM-1 welcome explains it ("NASA calls its trainees ASCANs, short for
+  astronaut candidates, and that is what you are until every patch is earned") and the glossary has an entry. The
+  home page's callsign field no longer compares with the default text to decide whether it is empty.
+- **Home page without a callsign:** the record heading is just "Flight record", and the certificate reads "You have
+  completed all 19 training modules… and are hereby declared GO FOR LAUNCH" (it said "Candidate has completed…"),
+  with a note asking for a callsign to put a name on it. Entering one updates the heading and the certificate at once.
+- **Home page free-return animation:** an endless loop at constant speed. It used to step through the simulation's
+  points, which are spaced in time, so the spacecraft rushed past the Earth and the Moon and crawled far out, then
+  paused and restarted. It now advances by distance along the drawn path (12 s per lap), with the whole figure eight
+  drawn faintly and a fading trail behind the spacecraft; the GET clock still shows the mission time at the dot.
+  Entry and TLI are joined behind the Earth's disc, so the loop wraps without a jump. With reduced motion the full
+  path is drawn still.
+- **Certificate date:** it showed today's date at every visit. It now shows the day training was completed: the time
+  of the last objective earned, which each objective already stores (`Progress.completedAt()`). It changes only if
+  objectives are reset and earned again.
+- **Debriefs announced the wrong next module** in five places, left from an older module order: TM-2 (said the
+  rocket, next is navigation), TM-4 ("Now ride one", next is sounding), TM-6 (said burns, next is the launcher),
+  TM-8 ("Next stop: the Moon", next is burns), TM-16 ("One last test", two modules follow). TM-9 and TM-18 now
+  name their next module too.
+- **Objectives button.** Most objectives are earned in the labs, far below the briefing. Every module page now has
+  an "Objectives n/N" button in the bottom-right corner, shown once the briefing's own list has scrolled out of view.
+  It opens a panel with the checklist (ticked live as objectives complete) and a "Back to the briefing" link; the
+  panel stays open while you work and closes with its button, × or Escape. Objective toasts move above the button,
+  or to the top of the screen while the panel is open, so they never cover it. Not printed.
+- Tests: module pages have no lede, the callsign appears in at most six briefings/debriefs and once in each, and
+  the headers read "Briefing" / "Briefing for <callsign>"; ASCAN is the default and is explained; every module
+  briefing brings the objectives dock with its count and full checklist.
+- Translations pending (WIP in `tests/i18n.test.js`): progress.js and the chapters that define their own briefing
+  (descent, sounding, freereturn, planes, homeward, launcher, mcc, timing, navigation), the glossary and home.
+
 ## 2026-11-13 — full review, translations, license
 
 ### Physics and lab behaviour

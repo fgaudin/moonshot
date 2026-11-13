@@ -39,7 +39,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('burns')} · Mission Control`,
           title: T`Planning a Burn`,
-          lede: T`Mission Control computes, the crew executes. Between them travels a short list of numbers: when to ignite, how much velocity to add in which direction, and how long the engine will run. This module teaches you to produce that list and to fly it.`,
           refs: [T`Sellers · Maneuvering in Space`, T`BMW ch. 3 Basic Orbital Maneuvers`, T`Apollo Operations Handbook, maneuver PADs`],
         })}
         ${Progress.briefing('burns', { theory: 'theory', lab: 'mc', math: 'refresher', mathLabel: N`Vectors (dot products) and logarithms.` })}

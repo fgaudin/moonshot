@@ -104,7 +104,7 @@
 
   Progress.register('navigation', {
     name: N`Where Are We?`, topic: 'navigation', glyph: 'tracking',
-    briefing: N`Nobody hands you the apoapsis, {name}. You get an altitude, a speed, a climb rate and a clock. In this module you turn those four numbers into an orbit, predict where it leads, and learn how far you can trust the answer.`,
+    briefing: N`A spacecraft has no dial that says “apoapsis”. It has an altitude, a speed, a climb rate and a clock, and everything else is computed. Turn those four numbers into an orbit, predict where it leads, and find out how far one bad reading carries into the answer.`,
     objectives: [
       { id: 'clean', text: N`Find the periapsis and apoapsis of a parking or transfer orbit from exact readings` },
       { id: 'sub', text: N`Show that the suborbital trajectory dips below the surface (periapsis altitude within tolerance)` },
@@ -112,7 +112,7 @@
       { id: 'tapo', text: N`Predict the time to apoapsis within tolerance` },
       { id: 'qual', text: N`Qualify: answer 2 navigation problems correctly` },
     ],
-    debrief: N`You can now read an orbit off four instrument numbers, and you know why a speed error hurts more than a climb-rate error, {name}. Next comes the rocket that gets you up there.`,
+    debrief: N`You can now read an orbit off four instrument numbers, and you know why a speed error hurts more than a climb-rate error. Next comes the rocket that gets you up there.`,
   });
 
   /* ---------------- Practice ---------------- */
@@ -198,7 +198,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('navigation')} · Navigation`,
           title: T`Where Are We?`,
-          lede: T`A spacecraft has no dial that says “apoapsis”. It has an altitude, a speed, a climb rate and a clock. Everything else is computed. This module shows the computation, the prediction that follows from it, and how instrument errors spread into the answer.`,
           refs: [T`Sellers · Understanding Space`, T`BMW · Fundamentals of Astrodynamics`, T`Apollo Operations Handbook`],
         })}
         ${Progress.briefing('navigation', { theory: 'theory', lab: 'nv', math: 'refresher', mathLabel: N`Sine, cosine and arcsine.` })}

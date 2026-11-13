@@ -38,7 +38,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('rockets')} · Ignition`,
           title: T`Rocket Science`,
-          lede: T`A rocket is a machine for throwing mass backward very fast. How fast decides how much velocity it can buy, and the logarithm in the rocket equation decides how dearly.`,
           refs: [T`Sellers · Rockets and Launch Vehicles`, T`Sutton & Biblarz, Rocket Propulsion Elements (for depth)`],
         })}
         ${Progress.briefing('rockets', { theory: 'theory', lab: 'st', math: 'refresher', mathLabel: N`Rates of change and logarithms.` })}

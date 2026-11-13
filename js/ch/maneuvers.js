@@ -146,7 +146,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('maneuvers')} · Manoeuvres`,
           title: T`Orbital Manoeuvres`,
-          lede: T`A rocket burn changes the velocity at one point, and the orbit through that point changes with it. Changing orbits means choosing where to burn.`,
           refs: [T`Sellers · Maneuvering in Space`, T`BMW ch. 3 Basic Orbital Maneuvers`],
         })}
         ${Progress.briefing('maneuvers', { theory: 'theory', lab: 'mv', math: 'refresher', mathLabel: N`Trigonometry and the law of cosines.` })}

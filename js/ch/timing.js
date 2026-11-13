@@ -11,7 +11,7 @@
 
   Progress.register('timing', {
     name: N`When to Burn`, topic: 'timing', glyph: 'clock',
-    briefing: N`A perfect burn at the wrong moment sends you to the right orbit while your target is on the other side of the planet, {name}. In this module you compute when to start a maneuver so that you arrive where the target will be: the required phase angle, the wait, and the ignition time on the mission clock.`,
+    briefing: N`A perfect burn at the wrong moment puts you in the right orbit while your target is on the other side of the planet. The transfer tells you where to go and how hard to push. It does not tell you when. Working out when takes three numbers: the phase angle, the wait, and the ignition time on the mission clock.`,
     objectives: [
       { id: 'phase', text: N`Type the required phase angle for a Hohmann rendezvous, within 1°` },
       { id: 'tig', text: N`Choose a TIG that brings the chaser to the target within the set miss distance (Earth orbit or lunar orbit)` },
@@ -19,7 +19,7 @@
       { id: 'long', text: N`Solve the long wait, where the synodic period matters` },
       { id: 'qual', text: N`Qualify: answer 2 timing problems correctly` },
     ],
-    debrief: N`You can now say not only how to burn but when, and you know why the lower orbit always catches up, {name}. Next the orbit plane: what changes when the target is not in yours.`,
+    debrief: N`You can now say when to burn as well as how, and you know why the lower orbit always catches up. Next the orbit plane: what changes when the target is not in yours.`,
   });
 
   /* ---------------- Primer ---------------- */
@@ -168,7 +168,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('timing')} · Timing`,
           title: T`When to Burn`,
-          lede: T`The transfer orbit tells you where to go and how hard to push. It does not tell you when. Start too early or too late and you arrive at the right place while the target is somewhere else. This module computes the moment.`,
           refs: [T`Sellers · Understanding Space`, T`BMW · Fundamentals of Astrodynamics`],
         })}
         ${Progress.briefing('timing', { theory: 'theory', lab: 'pc', math: 'refresher', mathLabel: N`Angles that wrap around.` })}

@@ -32,6 +32,11 @@
           <span class="meter" aria-label="${T`${n} of ${all} objectives`}"><i style="width:${100 * n / all}%"></i></span><span class="pc-sub">${T`${n}/${all} objectives`}</span></span></a>`;
       }).join('');
       const certified = tot.patches === mods.length;
+      // without a callsign the record and the certificate name nobody (ASCAN is a rank, not a name for a diploma)
+      const recordTitle = () => (P.hasCallsign() ? T`Flight record: ${P.callsign()}` : T`Flight record`);
+      const certText = () => (P.hasCallsign()
+        ? `<b class="cert-name">${P.callsign()}</b><p>${T`has completed all ${P.ORDER.length} training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared`}</p>`
+        : `<p>${T`You have completed all ${P.ORDER.length} training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and are hereby declared`}</p>`);
       // the entry buttons appear twice, under the hero and again at the foot of the page
       const entryButtons = `
               <a class="btn primary" href="#${next || 'practice'}">${next ? (tot.d ? T`Continue: ${nextMod.code} ${T(nextMod.name)} →` : T`Report for training: ${nextMod.code} →`) : T`Keep your skills sharp →`}</a>
@@ -45,7 +50,7 @@
             <p class="lede">${T`You have been selected. Between you and the launch pad stand ${P.ORDER.length} training modules: the same physics Apollo’s crews and flight controllers had to master, from Newton’s laws to the heat shield. Each module has a briefing, a simulator to fly and objectives to meet. Earn all ${P.ORDER.length} mission patches and you are <b>go for launch</b>.`}</p>
             <form class="enrol" id="enrol" autocomplete="off">
               <label for="callsign">${T`Your callsign`}</label>
-              <input type="text" id="callsign" maxlength="24" placeholder="${T`e.g. Eagle, or your name`}" value="${P.callsign() === T('Candidate') ? '' : P.callsign().replace(/"/g, '&quot;')}">
+              <input type="text" id="callsign" maxlength="24" placeholder="${T`e.g. Eagle, or your name`}" value="${!P.hasCallsign() ? '' : P.callsign().replace(/"/g, '&quot;')}">
               <button class="btn" type="submit">${T`Save`}</button>
               <span class="note" id="enrol-msg" aria-live="polite"></span>
             </form>
@@ -75,18 +80,18 @@
         </section>
 
         <section class="section" id="record">
-          <h2><span class="idx">★</span>${T`Flight record: ${P.callsign()}`}</h2>
+          <h2><span class="idx">★</span>${recordTitle()}</h2>
           <div class="record-sum">
             <span class="meter big" aria-label="${T`${tot.d} of ${tot.n} objectives`}"><i style="width:${100 * tot.d / tot.n}%"></i></span>
             <span class="mono note">${T`${tot.d} of ${tot.n} objectives · ${tot.patches} of ${mods.length} patches`}</span>
           </div>
           ${certified ? `<div class="certificate">
             <span class="eyebrow">${T`Moonshot Academy · Certificate of training`}</span>
-            <b class="cert-name">${P.callsign()}</b>
-            <p>${T`has completed all ${P.ORDER.length} training modules of the Astronaut Candidate Program, from Newton’s cannon to atmospheric entry, and is hereby declared`}</p>
+            <div class="cert-text">${certText()}</div>
             <b class="cert-go">${T`GO FOR LAUNCH`}</b>
-            <span class="mono note">${T`Vega, Chief Flight Instructor`} · ${new Date().toLocaleDateString(I18N.locale(), { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-          </div>` : ''}
+            <span class="mono note">${T`Vega, Chief Flight Instructor`} · ${(P.completedAt() || new Date()).toLocaleDateString(I18N.locale(), { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+          </div>
+          <p class="note" id="cert-ask"${P.hasCallsign() ? ' hidden' : ''}>${T`Enter a callsign above to put your name on the certificate.`}</p>` : ''}
           <div class="patch-grid">${patches}</div>
           <p class="note">${T`The modules follow the mission in order. The theory follows Sellers’ <i>Understanding Space</i> for physical intuition and Bate, Mueller &amp; White’s <i>Fundamentals of Astrodynamics</i> (BMW) for the mathematics. Objectives are checked by the simulators themselves; your record is kept in this browser.`}</p>
         </section>
@@ -116,8 +121,11 @@
       page.querySelector('#enrol').addEventListener('submit', (e) => {
         e.preventDefault();
         P.setCallsign(page.querySelector('#callsign').value);
-        page.querySelector('#enrol-msg').textContent = T`Welcome aboard, ${P.callsign()}.`;
-        page.querySelector('#record h2').innerHTML = `<span class="idx">★</span>${T`Flight record: ${P.callsign()}`}`;
+        page.querySelector('#enrol-msg').textContent = P.hasCallsign() ? T`Welcome aboard, ${P.callsign()}.` : '';
+        page.querySelector('#record h2').innerHTML = `<span class="idx">★</span>${recordTitle()}`;
+        const ct = page.querySelector('.cert-text'), ask = page.querySelector('#cert-ask');
+        if (ct) ct.innerHTML = certText();
+        if (ask) ask.hidden = P.hasCallsign();
         App.refreshRail();
       });
       let armed = false;
@@ -177,6 +185,23 @@
         const th = w0 * p.t, dx = p.x - p.ex, dy = p.y - p.ey;
         return { t: p.t, x: dx * Math.cos(th) + dy * Math.sin(th), y: -dx * Math.sin(th) + dy * Math.cos(th) };
       });
+      // Endless loop at constant speed on screen: the dot advances by distance along the drawn path (the simulation's
+      // points are spaced in time, dense near the Earth and the Moon, sparse far out), with a fading trail. The path
+      // starts and ends at the Earth (TLI, then entry), so it wraps without a visible jump.
+      // close the loop: entry and TLI are ~10 000 km apart around the Earth, a bridge hidden by the Earth's disc
+      rot.push({ x: rot[0].x, y: rot[0].y, t: rot[rot.length - 1].t });
+      const along = [0];
+      for (let i = 1; i < rot.length; i++) along.push(along[i - 1] + Math.hypot(rot[i].x - rot[i - 1].x, rot[i].y - rot[i - 1].y));
+      const total = along[along.length - 1];
+      // the point at a fraction f of the path length: index of the last full point before it, and the interpolated point
+      const at = (f) => {
+        const d = Math.min(1, Math.max(0, f)) * total;
+        let lo = 0, hi = along.length - 1;
+        while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (along[mid] <= d) lo = mid; else hi = mid; }
+        const a = rot[lo], b = rot[hi], u = along[hi] > along[lo] ? Math.min(1, (d - along[lo]) / (along[hi] - along[lo])) : 0;
+        return { i: lo, x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u, t: a.t + (b.t - a.t) * u };
+      };
+      const LAP = 12, TRAIL = 0.28, PIECES = 28;   // seconds per lap; trail length as a fraction of the path
       let prog = UI.reducedMotion() ? 1 : 0;
       const hero = UI.canvas(page.querySelector('#hero-cv'), null);
       const draw = (ctx, w, h) => {
@@ -185,32 +210,43 @@
         UI.stars(ctx, w, h, K, 90);
         const s = (w * 0.72) / Phys.C.DEM, cx = w * 0.16, cy = h * 0.5;
         const P = (x, y) => [cx + x * s, cy - y * s];
+        // the stretch of path between fractions f1 < f2 (both in 0…1)
+        const stretch = (f1, f2) => {
+          const a = at(f1), b = at(f2);
+          ctx.beginPath(); ctx.moveTo(...P(a.x, a.y));
+          for (let i = a.i + 1; i <= b.i; i++) ctx.lineTo(...P(rot[i].x, rot[i].y));
+          ctx.lineTo(...P(b.x, b.y)); ctx.stroke();
+        };
         // Moon orbit arc
         ctx.strokeStyle = K.line; ctx.setLineDash([3, 5]); ctx.lineWidth = 1;
         ctx.beginPath(); ctx.arc(cx, cy, Phys.C.DEM * s, -0.5, 0.5); ctx.stroke(); ctx.setLineDash([]);
-        const n = Math.max(2, Math.floor(rot.length * prog));
-        ctx.strokeStyle = K.accent; ctx.lineWidth = 1.8; ctx.beginPath();
-        for (let i = 0; i < n; i++) { const [x, y] = P(rot[i].x, rot[i].y); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-        ctx.stroke();
+        ctx.strokeStyle = K.accent; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+        if (UI.reducedMotion()) { ctx.lineWidth = 1.8; stretch(0, 1); }
+        else {
+          // the whole figure eight faintly, then the trail brightening towards the spacecraft
+          ctx.globalAlpha = 0.22; ctx.lineWidth = 1.2; stretch(0, 1);
+          ctx.lineWidth = 2;
+          for (let k = 0; k < PIECES; k++) {
+            const f1 = prog - TRAIL * (1 - k / PIECES), f2 = prog - TRAIL * (1 - (k + 1) / PIECES);
+            ctx.globalAlpha = 0.15 + 0.85 * (k + 1) / PIECES;
+            if (f2 <= 0) stretch(f1 + 1, f2 + 1);
+            else if (f1 < 0) { stretch(f1 + 1, 1); stretch(0, f2); }
+            else stretch(f1, f2);
+          }
+          ctx.globalAlpha = 1;
+        }
         UI.drawEarth(ctx, cx, cy, Math.max(3, Phys.C.RE * s), K);
         const [mx, my] = P(Phys.C.DEM, 0);
         UI.drawMoon(ctx, mx, my, Math.max(2, Phys.C.RM * s), K);
-        const last = rot[n - 1], [sx, sy] = P(last.x, last.y);
+        const tip = at(prog), [sx, sy] = P(tip.x, tip.y);
         ctx.fillStyle = K.ink; ctx.beginPath(); ctx.arc(sx, sy, 3, 0, 7); ctx.fill();
         ctx.font = `10px ${K.mono}`; ctx.fillStyle = K.muted; ctx.textAlign = 'center';
         ctx.fillText(T`EARTH`, cx, cy + 16); ctx.fillText(T`MOON`, mx, my + 14);
         ctx.textAlign = 'left'; ctx.fillStyle = K.ink;
-        ctx.fillText('GET ' + UI.fmtTime(last.t), w * 0.32, h * 0.86);
+        ctx.fillText('GET ' + UI.fmtTime(tip.t), w * 0.32, h * 0.86);
       };
       hero.draw = draw; hero.redraw();
-      if (!UI.reducedMotion()) {
-        let hold = 0;
-        UI.loop((dt) => {
-          if (prog >= 1) { hold += dt; if (hold > 2.5) { prog = 0; hold = 0; } }
-          else prog = Math.min(1, prog + dt / 7);
-          hero.redraw();
-        });
-      }
+      if (!UI.reducedMotion()) UI.loop((dt) => { prog = (prog + dt / LAP) % 1; hero.redraw(); });
       void cv;
     },
   });

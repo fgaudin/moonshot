@@ -15,14 +15,14 @@
 
   Progress.register('planes', {
     name: N`Plane Changes`, topic: 'planes', glyph: 'planes',
-    briefing: N`Everything so far happened in one flat plane, {name}. Real orbits are tilted, and the tilt costs propellant. In this module you leave the page: you describe an orbit in three dimensions, tilt it at the cheapest point, write the burn as a PAD with a normal component, and choose the launch azimuth that puts a rocket into the right plane in the first place.`,
+    briefing: N`Every module so far kept the orbit in one flat plane. Real orbits are tilted, and turning the plane is the most expensive manoeuvre in the book. Where you burn decides the price, and a well-chosen launch azimuth avoids paying it at all.`,
     objectives: [
       { id: 'plane', text: N`Change the orbit plane to within 0.1° of the target with a pure plane change at a node` },
       { id: 'cheap', text: N`Reach geostationary orbit from the transfer orbit with a combined burn within 3% of the minimum Δv` },
       { id: 'az', text: N`Find the launch azimuth for the target inclination within 0.5°` },
       { id: 'qual', text: N`Qualify: answer 2 plane-change problems correctly` },
     ],
-    debrief: N`You can now tilt an orbit where it is cheapest, write the burn as a PAD, and aim a launch at a plane, {name}. Next comes docking, where the plane must match exactly before anything else can.`,
+    debrief: N`You can now tilt an orbit where it is cheapest, write the burn as a PAD, and aim a launch at a plane. Next comes docking, where the plane must match exactly before anything else can.`,
   });
 
   /* ---------------- Practice ---------------- */
@@ -283,7 +283,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('planes')} · 3D orbits`,
           title: T`Plane Changes`,
-          lede: T`Every module so far kept the orbit in one flat plane. Real orbits are tilted, and turning the plane is the most expensive manoeuvre in the book. This module shows where to do it, how to write the burn, and how a launch azimuth fixes the plane before the rocket ever leaves the ground.`,
           refs: [T`Sellers · Understanding Space`, T`BMW · Fundamentals of Astrodynamics`, T`Apollo Operations Handbook`],
         })}
         ${Progress.briefing('planes', { theory: 'theory', lab: 'pl', math: 'refresher', mathLabel: N`Vectors and the law of cosines.` })}

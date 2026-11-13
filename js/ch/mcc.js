@@ -9,7 +9,7 @@
   /* ---------------- Progress and practice ---------------- */
   Progress.register('mcc', {
     name: N`Mission Control`, topic: 'mcc', glyph: 'console',
-    briefing: N`Every maneuver you flew in this course was computed by someone, checked by someone else and read to a crew over a radio. Today you sit on both sides of that loop, {name}. You will build a Δv budget with honest margins, fill in the PADs, and decide an abort with the clock running.`,
+    briefing: N`A spacecraft flies by physics, but a mission flies by people, procedures and margins. Every maneuver you flew in this course was computed by someone, checked by someone else and read to a crew over a radio. Today you sit on both sides of that loop, {name}: build a Δv budget with honest margins, fill in the PADs, and decide an abort with the clock running.`,
     objectives: [
       { id: 'margin', text: N`Fix the heavier-payload budget: at least 5 % margin on every stage` },
       { id: 'rss', text: N`Combine four independent error sources by root-sum-square` },
@@ -234,7 +234,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('mcc')} · Capstone`,
           title: T`Mission Control`,
-          lede: T`A spacecraft flies by physics, but a mission flies by people, procedures and margins. This capstone shows how a team on the ground runs a lunar mission: who computes what, how the numbers travel to the crew, how big the errors are and how much reserve covers them.`,
           refs: [T`Sellers · Understanding Space`, T`Apollo Operations Handbook`, T`NASA Apollo Flight Journal and mission reports`],
         })}
         ${Progress.briefing('mcc', { theory: 'theory', lab: 'mcc-lab', math: 'refresher', mathLabel: N`Exponentials and logarithms, and combining errors.` })}

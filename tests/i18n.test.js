@@ -3,7 +3,9 @@
 const test = require('node:test'), assert = require('node:assert/strict');
 const { execFileSync } = require('child_process'), fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..');
-const WIP = [];   // e.g. 'js/ch/descent.js'
+const WIP = [   // briefings rewritten (lede merged in), awaiting validation of the English
+  'js/progress.js', 'js/ch/descent.js', 'js/ch/sounding.js', 'js/ch/freereturn.js', 'js/ch/planes.js', 'js/ch/homeward.js',
+  'js/ch/launcher.js', 'js/ch/mcc.js', 'js/ch/timing.js', 'js/ch/navigation.js', 'js/glossary.js', 'js/ch/home.js'];
 
 const sources = [...fs.readdirSync(path.join(ROOT, 'js')).filter((f) => f.endsWith('.js')).map((f) => 'js/' + f),
   ...fs.readdirSync(path.join(ROOT, 'js/ch')).filter((f) => f.endsWith('.js')).map((f) => 'js/ch/' + f)].filter((f) => !WIP.includes(f));

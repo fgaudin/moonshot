@@ -13,7 +13,6 @@
         ${App.header({
           eyebrow: T`Training module ${Progress.code('landing')} · Powered descent & ascent`,
           title: T`Landing on the Moon`,
-          lede: T`Twelve and a half minutes from 15 km altitude and 1.7 km/s to standstill on the surface, paid for with 2 km/s of Δv. The Moon has no air, so every metre per second comes from the engine.`,
           refs: [T`Sellers · Rockets and Launch Vehicles`, T`Apollo 11 Mission Report (MSC-00171) §5`],
         })}
         ${Progress.briefing('landing', { theory: 'theory', lab: 'ld', math: 'refresher', mathLabel: N`Logarithms.` })}
