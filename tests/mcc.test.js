@@ -99,7 +99,7 @@ test('GET parse and format: strict, signed format; voiced numbers digit by digit
   for (const lang of ['en', 'fr', 'de']) {
     const ph = all[lang], finals = ph.final_digits !== false;
     const clips = {}; new Function('CapcomClips', require('fs').readFileSync(require('path').join(__dirname, `../audio/capcom-${lang}.js`), 'utf8'))({ add: (l, o) => Object.assign(clips, o) });
-    const need = [...Array(10).keys()].flatMap((i) => ['d' + i, ...(finals ? [`d${i}_end`] : [])]).concat(['point', 'minus', 'readback', 'intro_man', 'intro_tei', 'intro_ent'],
+    const need = [...Array(10).keys()].flatMap((i) => ['d' + i, ...(finals && !(ph.no_final || []).includes('d' + i) ? [`d${i}_end`] : [])]).concat(['point', 'minus', 'readback', 'intro_man', 'intro_tei', 'intro_ent'],
       ['tig', 'dvp', 'dvn', 'dvr', 'dv', 'alpha', 'beta', 'tb', 'gei', 'eitime', 'vei', 'range', 'gmax', 'lat', 'lon']);
     for (const k of need) assert.ok(clips[k], `${lang} clip ${k}`);
     assert.equal(Object.keys(clips).length, need.length, lang);

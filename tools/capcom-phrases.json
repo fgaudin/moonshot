@@ -1,5 +1,5 @@
 {
-  "_comment": "Spoken pieces of CAPCOM's PAD readout (js/ch/mcc.js). Generate with tools/capcom-voice.py, which explains how each piece is cut out of a short phrase. frame: two throw-away words around a digit. Each language follows its own radio habits: niner (en), zwo (de). Spelled for the voice, not for the eye: write 'pad' in lowercase (in capitals the voice spells it), fr 'Youstonne' (the French say Houston that way), 'padde' (a final d is silent in French). digit_gap: seconds between the clips of a number (default 0.03; negative overlaps them). Fusing 'X virgule' into one clip was tried and dropped: the French voice swallows « virgule » when it is not on its own. point_gap: seconds after the decimal mark (default: digit_gap).",
+  "_comment": "Spoken pieces of CAPCOM's PAD readout (js/ch/mcc.js). Generate with tools/capcom-voice.py, which explains how each piece is cut out of a short phrase. frame: two throw-away words around a digit. Each language follows its own radio habits: niner (en), zwo (de). Spelled for the voice, not for the eye: write 'pad' in lowercase (in capitals the voice spells it), fr 'Youstonne' (the French say Houston that way), 'padde' (a final d is silent in French). digit_gap: seconds between the clips of a number (default 0.03; negative overlaps them). Fusing 'X virgule' into one clip was tried and dropped: the French voice swallows « virgule » when it is not on its own. point_gap: seconds after the decimal mark (default: digit_gap). final_digits: false skips the falling last-digit clips; the player then uses the list clip (French: the falling « cinq », « zéro » came out clipped or mumbled). cut: 'aligned' cuts at the aligned word with fixed margins instead of following the sound past it (the default, 'follow', keeps final consonants such as the k of « cinq »). slow: per-clip speaking rate (above 1 is slower), e.g. French « un », which is much shorter than the other digits. no_final: digits whose falling last-digit clip is left out (the player uses the level clip): English 'zero' came out as 'ero' in every falling take.",
   "voices": {
     "en": {
       "model": "en_US-ryan-high",
@@ -57,6 +57,9 @@
       "frame": [
         "ready",
         "done"
+      ],
+      "no_final": [
+        "d0"
       ]
     },
     "fr": {
@@ -102,7 +105,11 @@
         "readback": "Répétez quand vous êtes prêts."
       },
       "digit_gap": 0.0,
-      "point_gap": 0.1
+      "point_gap": 0.1,
+      "final_digits": false,
+      "slow": {
+        "d1": 1.35
+      }
     },
     "de": {
       "frame": [

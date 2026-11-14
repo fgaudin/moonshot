@@ -1,5 +1,35 @@
+# project
 tmp/
-.claude
-tools/node_modules/
 CLAUDE.md
+.claude
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+coverage/
+
+# Python (tools/capcom-voice.py)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# editors
 .vscode
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# local secrets
+.env
+.env.*

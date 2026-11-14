@@ -25,7 +25,12 @@ A review of every module (content, physics, practice generators, architecture), 
   CAPCOM speaks the page's language: French (Piper "fr_FR-upmc-medium", speaker Pierre, CC BY-SA 4.0; spelled
   "Youstonne" and "padde" so that it says them the French way; "virgule", "Répétez quand vous êtes prêts") and German
   ("de_DE-thorsten-high", CC0; "zwo" for 2 as in German radio, "Komma", "Bitte zurücklesen"). Each clip set carries
-  its own timing: in French the digits join with no gap and a short breath follows « virgule ». The readback counts only if the PAD was not shown. Without Web Audio, or if the clips fail to load, the written PAD
+  its own timing: in French the digits join with no gap and a short breath follows « virgule ». French uses the level
+  list clips for every digit (its falling last-digit clips came out clipped: « cin », « zéo »). Each cut follows the
+  sound past the aligned word end, so final consonants are kept, but stops 60 ms short of a next word said in the same
+  breath (« six, fin » gave « sif », "one, done" gave "one a"). The French « un » is spoken 35 % slower, in line
+  with the other digits. Takes approved by ear are locked in `tools/capcom-takes/<lang>/<key>.wav` (English "one", "niner"
+  and both "eight"s, French « six »); English "zero" at the end of a number uses the level clip (every falling take said "ero") and reused by the generator; `--only d1,d9` redoes just those clips and keeps the rest of the file. The readback counts only if the PAD was not shown. Without Web Audio, or if the clips fail to load, the written PAD
   is used and must be hidden before copying. Clips: `audio/capcom-en.js`, made by `tools/capcom-voice.py` from
   `tools/capcom-phrases.json` (base64 in a script so it also works from file://). CAPCOM speaks English in every language, as in Apollo.
   TM-19 §0.3 explains why digits are read one at a time and 9 is “niner”.
