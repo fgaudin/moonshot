@@ -60,3 +60,10 @@ test('concept questions: valid index, distinct options, explanation present', ()
   const noQuiz = [...withGen].filter((t) => !Practice.QUIZ.some((q) => q.topic === t));
   assert.deepEqual(noQuiz, []);
 });
+
+test('typed answers: separators, unicode minus, percent; trailing text is rejected', () => {
+  const P = Practice.parseNum;
+  assert.equal(P('1,234'), 1234); assert.equal(P('1,234.5'), 1234.5); assert.equal(P('7 784'), 7784);
+  assert.equal(P('−0.924'), -0.924); assert.equal(P('5%'), 5); assert.equal(P('1.2e3'), 1200); assert.equal(P('0,5'), 0.5);
+  for (const bad of ['7.78 km/s', '12abc', '1/2', '10^3', '', '-']) assert.ok(Number.isNaN(P(bad)), bad);
+});

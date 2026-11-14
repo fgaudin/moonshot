@@ -17,9 +17,9 @@
     name: N`Plane Changes`, topic: 'planes', glyph: 'planes',
     briefing: N`Every module so far kept the orbit in one flat plane. Real orbits are tilted, and turning the plane is the most expensive manoeuvre in the book. Where you burn decides the price, and a well-chosen launch azimuth avoids paying it at all.`,
     objectives: [
-      { id: 'plane', text: N`Change the orbit plane to within 0.1° of the target with a pure plane change at a node` },
+      { id: 'plane', text: N`Change the orbit plane to within 0.1° of the target with a pure plane change at a node, each PAD component within 3 %` },
       { id: 'cheap', text: N`Reach geostationary orbit from the transfer orbit with a combined burn within 3% of the minimum Δv` },
-      { id: 'az', text: N`Find the launch azimuth for the target inclination within 0.5°` },
+      { id: 'az', text: N`Find the azimuth to fly over the rotating ground for the target inclination, within 0.5°` },
       { id: 'qual', text: N`Qualify: answer 2 plane-change problems correctly` },
     ],
     debrief: N`You can now tilt an orbit where it is cheapest, write the burn as a PAD, and aim a launch at a plane. Next comes docking, where the plane must match exactly before anything else can.`,
@@ -51,10 +51,10 @@
     } },
     { title: N`Combined plane and speed change`, make() {
       const v1 = rnd(1500, 1700, 10) / 1000, v2 = 3.0747, di = rnd(20, 30, 1), dv = Math.sqrt(v1 * v1 + v2 * v2 - 2 * v1 * v2 * Math.cos(di * D2R));
-      const sep = (v2 - v1) + 2 * v2 * Math.sin(di * D2R / 2);
+      const sep = 2 * v1 * Math.sin(di * D2R / 2) + (v2 - v1);   // the cheaper separate order: turn at v1 (slow), then circularize
       return { q: T`A transfer orbit reaches apogee at <b>${f(v1, 3)} km/s</b> with an inclination of ${di}° above the equator. One burn must make it a geostationary orbit: circular, speed <b>3.075 km/s</b>, inclination 0°. What is the Δv of that single combined burn?`, answer: dv * 1000, unit: 'm/s', tol: 0.01,
         hint: T`Law of cosines on the two velocity vectors, with the angle Δi between them.`,
-        sol: R`\[ \Delta v = \sqrt{v_1^2 + v_2^2 - 2v_1v_2\cos\Delta i} = \sqrt{${f(v1, 3)}^2 + 3.075^2 - 2\times${f(v1, 3)}\times3.075\cos ${di}^\circ} = ${f(dv * 1000, 0)}\ \mathrm{m/s} \]` + `<p>${T`Doing the two jobs separately would cost ${f(sep * 1000, 0)} m/s.`}</p>` };
+        sol: R`\[ \Delta v = \sqrt{v_1^2 + v_2^2 - 2v_1v_2\cos\Delta i} = \sqrt{${f(v1, 3)}^2 + 3.075^2 - 2\times${f(v1, 3)}\times3.075\cos ${di}^\circ} = ${f(dv * 1000, 0)}\ \mathrm{m/s} \]` + `<p>${T`Doing the two jobs separately, even in the cheaper order (turn first, at the slower ${f(v1, 3)} km/s, then circularize), would cost ${f(sep * 1000, 0)} m/s.`}</p>` };
     } },
     { title: N`Launch azimuth`, make() {
       const lat = pick([28.5, 34.7, 45.9]), inc = lat + rnd(3, 25, 1), az = Math.asin(Math.cos(inc * D2R) / Math.cos(lat * D2R)) * deg;
@@ -62,11 +62,13 @@
         hint: T`sin β = cos i / cos φ. Use the arcsine, which gives the northeast solution (below 90°).`,
         sol: R`\[ \sin\beta = \frac{\cos i}{\cos\phi} = \frac{\cos ${f(inc, 0)}^\circ}{\cos ${f(lat, 1)}^\circ} = ${f(Math.cos(inc * D2R) / Math.cos(lat * D2R), 4)} \Rightarrow \beta = ${f(az, 2)}^\circ \]` };
     } },
-    { title: N`Lowest inclination from a site`, make() {
-      const s = pick(SITES);
-      return { q: T`What is the lowest orbital inclination, in degrees, that a rocket can reach from ${T(s.name)} (latitude ${f(s.lat, 1)}° N) without a plane change in orbit?`, answer: s.lat, unit: '°', tol: 0.01,
-        hint: T`The orbit plane passes through the Earth’s centre and the launch site, so the site cannot be farther from the equator than the orbit plane allows.`,
-        sol: R`\[ i_{min} = \phi = ${f(s.lat, 1)}^\circ \quad (\beta = 90^\circ,\ \text{due east}) \]` };
+    { title: N`Azimuth to fly over the ground`, make() {
+      const site = pick(SITES.filter((x) => x.lat > 20 && x.lat < 50)), lat = site.lat, inc = lat + rnd(2, 20, 1), v = 7793;
+      const bI = Math.asin(Math.cos(inc * D2R) / Math.cos(lat * D2R)), w = P.vEq * Math.cos(lat * D2R);
+      const bR = Math.atan2(v * Math.sin(bI) - w, v * Math.cos(bI)) * deg;
+      return { q: T`From ${T(site.name)} (latitude ${f(lat, 1)}° N) a rocket launches northeast into a 185 km orbit of inclination <b>${f(inc, 0)}°</b>, with an insertion speed of 7 793 m/s. The ground there moves east at ${f(w, 0)} m/s. What azimuth must the pilot fly, measured relative to the rotating ground?`, answer: bR, unit: '°', tol: 0.005,
+        hint: T`First the inertial azimuth, sin β = cos i / cos φ. Then remove the ground’s eastward speed from the eastward part of the velocity: tan β_rot = (v sin β − v_ground) / (v cos β).`,
+        sol: R`\[ \sin\beta = \frac{\cos ${f(inc, 0)}^\circ}{\cos ${f(lat, 1)}^\circ} \Rightarrow \beta = ${f(bI * deg, 2)}^\circ \] \[ \tan\beta_{rot} = \frac{7793\sin\beta - ${f(w, 0)}}{7793\cos\beta} \Rightarrow \beta_{rot} = ${f(bR, 2)}^\circ \]` + `<p>${T`Flying the inertial ${f(bI * deg, 2)}° over the ground would end in the wrong plane.`}</p>` };
     } },
   ], [
     { q: N`A spacecraft must change its orbital plane. Where in a noncircular orbit is that cheapest?`, opts: [N`At a node, at apoapsis (lowest speed)`, N`At periapsis, where the speed is highest and the burn shortest`, N`Anywhere: the cost does not depend on the position`, N`Halfway between the nodes, where the planes are furthest apart`], a: 0, why: N`Δv = 2v sin(Δi/2) is proportional to the speed at the burn. The burn must also be at a node, where both planes contain the spacecraft. In a transfer orbit whose apoapsis is at a node, both conditions are met.` },
@@ -290,6 +292,7 @@
         <section class="section" id="theory">
           <h2><span class="idx">11.1</span>${T`Describing a tilted orbit`}</h2>
           <div class="prose">
+            <p>${T`Every Apollo flight left Cape Canaveral, at 28.5° N, and a rocket cannot put its orbit closer to the equator than its launch site (section ${App.sec('planes', 5)}). The plane of that orbit stays fixed in space while the Earth turns under it: a spacecraft inclined at 28.5° passes over latitudes from 28.5° south to 28.5° north and nowhere else. An orbit in a different plane is a different orbit, and reaching it costs Δv. A geostationary satellite launched from Florida must remove those 28.5° somewhere; a lunar module must lift off into the plane of the command module. To say which plane, and how far apart two planes are, takes a few angles.`}</p>
             <p>${T`An orbit lies in a plane through the Earth’s centre. Two angles say which plane. Take the equatorial plane as the reference, with the x axis pointing at the vernal equinox (a fixed direction among the stars) and the z axis at the north pole.`}</p>
             <ul>
               <li>${T`The <b>inclination</b> <i>i</i> is the angle between the orbit plane and the equator, from 0° to 180°. Prograde orbits have i < 90°.`}</li>
@@ -302,7 +305,6 @@
             ${Sym.where([['\\hat h', N`unit vector perpendicular to the orbit plane (direction of the angular momentum)`, ''], ['i', N`inclination: angle between the orbit plane and the equatorial plane`, N`rad or °`], ['\\Omega', N`right ascension of the ascending node: where the orbit crosses the equator going north, measured from the vernal equinox`, N`rad or °`], ['\\theta', N`the angle between two orbit planes`, N`rad or °`]], N`The second formula is the dot product of the two h vectors. When only i changes (same Ω), it reduces to θ = |i₁ − i₂|. To change both i and Ω you need the full θ.`)}
             ${figPlane3D()}
             ${Primer.box('vectors', false, 'refresher')}
-            <p>${T`Inclination matters because the plane stays fixed in space while the Earth turns under it. A spacecraft that is 28.5° inclined passes over latitudes from 28.5° south to 28.5° north and nowhere else. An orbit with a different plane is a different orbit, and reaching it costs Δv.`}</p>
           </div>
         </section>
 
@@ -517,11 +519,21 @@
       box.innerHTML = html;
       const m = [];
       if (o.pure) m.push(o.isPure ? T`The orbit shape is unchanged.` : T`The speed changed: the orbit is no longer the same shape. A pure plane change keeps the speed.`);
+      if (o.pure && !o.padOk) m.push(T`The burn does not match the exact PAD within 3 % per component: check the prograde part, −v (1 − cos Δi), and the normal part, v sin Δi.`);
       if (S.sc.combined) m.push(o.reached ? T`Geostationary orbit reached.` : T`The orbit is not yet the circular equatorial target.`);
       if (o.noCredit) m.push(T`No objective credit for this attempt.`);
-      b.textContent = (S.sc.combined ? (o.reached && o.dv <= 1.03 * S.opt) : (o.planeErr <= 0.1 && (!o.pure || o.isPure))) ? T`Target met` : T`Target not met`;
+      b.textContent = (S.sc.combined ? (o.reached && o.dv <= 1.03 * S.opt) : (o.planeErr <= 0.1 && (!o.pure || (o.isPure && o.padOk)))) ? T`Target met` : T`Target not met`;
       b.className = 'badge ' + (b.textContent === T`Target met` ? '' : 'bad');
       if (m.length) box.innerHTML += `<dt></dt><dd class="note" style="text-align:left">${m.join(' ')}</dd>`;
+    }
+
+    // a pure plane change: one burn whose components match the exact PAD (11.3) within PAD_TOL (0.1 m/s at least),
+    // so that a normal-only burn, which turns the plane almost as well for a small Δi, is not enough
+    const PAD_TOL = 0.03;
+    function padMatches(b) {
+      const v = P.circV(S.sc.el.a), pd = P.pad(v, v, S.dI, 1);
+      const near = (x, want) => Math.abs(x - want) <= Math.max(PAD_TOL * Math.abs(want), 0.1);
+      return near(b.pro, pd.pro) && near(Math.abs(b.nor), Math.abs(pd.nor)) && Math.abs(b.rad) <= 0.1;
     }
 
     // ---------- execute ----------
@@ -537,17 +549,22 @@
       }
       if (!burns.length) { outcome = { error: T`Enter at least one non-zero burn component.` }; renderResult(); return; }
       const r = P.execute(S.s0, burns);
-      if (r.burns.some((b) => b.error)) { outcome = { error: r.burns.find((b) => b.error).error === 'circular' ? T`A circular orbit has no apoapsis or periapsis. Choose a node, or a value of u.` : T`An equatorial orbit has no nodes.` }; renderResult(); return; }
+      if (r.burns.some((b) => b.error)) {
+        const err = r.burns.find((b) => b.error).error;
+        outcome = { error: err === 'circular' ? T`A circular orbit has no apoapsis or periapsis. Choose a node, or a value of u.` : err === 'open' ? T`That burn puts the spacecraft on an escape path: the orbit is no longer closed. Check the size of the components.` : T`An equatorial orbit has no nodes.` };
+        renderResult(); return;
+      }
       res = r;
       const sc = S.sc, fin = r.final, tg = sc.target;
       const planeErr = P.planeAngle(fin.hv, P.normalOf(tg.i, tg.O)) * deg;
       const a0 = S.el.a, isPure = Math.abs(fin.a - a0) / a0 < 0.01 && fin.e < 0.005 + S.el.e;
       const reached = sc.combined && fin.i * deg < 0.2 && fin.e < 0.01 && Math.abs(fin.a - tg.a) < 300e3;
-      outcome = { fin, planeErr, dv: r.dvTotal, pure: !!sc.pure, isPure, reached, noCredit: peeked };
+      const padOk = !!sc.pure && burns.length === 1 && padMatches(burns[0]);
+      outcome = { fin, planeErr, dv: r.dvTotal, pure: !!sc.pure, isPure, padOk, reached, noCredit: peeked };
       const credit = touched && !peeked;
       endPeek();
       if (credit) {
-        if (sc.pure && planeErr <= 0.1 && isPure) Progress.done('planes', 'plane');
+        if (sc.pure && planeErr <= 0.1 && isPure && padOk) Progress.done('planes', 'plane');
         if (sc.combined && reached && r.dvTotal <= 1.03 * S.opt) Progress.done('planes', 'cheap');
       }
       const tl = r.legs[r.legs.length - 1].t0, fT = isFinite(fin.T) ? fin.T : 3600;

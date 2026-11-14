@@ -60,6 +60,16 @@ test('practice generators and concept questions of the topic burns', () => {
     const p = g.make();
     if (g.title === 'Circularization burn') assert.ok(p.answer > 0 && p.answer < 700, `circularize ${p.answer}`);
     if (g.title === 'Burn time') assert.ok(p.answer > 0 && p.answer < 2000);
-    if (g.title === 'Centring the burn') assert.ok(p.answer > 3600);
+    if (g.title === 'Centring the burn') assert.ok(p.answer > 600 && p.answer < 3600 && /\d{3}:\d\d:\d\d/.test(p.q), `centring ${p.answer}`);   // seconds after the full hour, GET as hhh:mm:ss
   }
+});
+
+test('after "Show Mission Control’s solution", no objective until the scenario is reloaded', () => {
+  const src = require('fs').readFileSync(require('path').join(__dirname, '../js/ch/burns.js'), 'utf8');
+  assert.ok(/if \(!touched \|\| peeked\) return;/.test(src), 'checkObjectives guards on peeked');
+  const solve = src.slice(src.indexOf("$('#mc-solve').addEventListener"), src.indexOf("$('#mc-reload')"));
+  assert.ok(/peeked = true/.test(solve));
+  // peeked is cleared only by the scenario change handler (reload dispatches it)
+  assert.equal([...src.matchAll(/peeked = false/g)].length, 2, 'declaration + scenario change');
+  assert.ok(/scenKey = e\.target\.value; touched = false; peeked = false;/.test(src));
 });

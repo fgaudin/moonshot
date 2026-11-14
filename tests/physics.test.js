@@ -158,3 +158,17 @@ test('TLI and patched models: no-burn and NaN inputs terminate without throwing'
   const p = Phys.simulatePatched({ dv: 3160, burnAngle: -132.303 });
   assert.ok(p.conic.soiIn && p.conic.soiIn.vinf > 800 && p.conic.soiIn.vinf < 1300);
 });
+
+test('shared entry corridor: perigee altitudes match the flight-path angles; apsis burns do not wait a full orbit', () => {
+  const H = require('../js/ch/homeward.phys.js'), K = Phys.C.corridor;
+  assert.ok(Math.abs(H.perigeeForGamma(K.steep) - K.periLow) < 1000, String(H.perigeeForGamma(K.steep)));
+  assert.ok(Math.abs(H.perigeeForGamma(K.shallow) - K.periHigh) < 1000, String(H.perigeeForGamma(K.shallow)));
+  assert.equal(H.CORRIDOR, K);
+  const O = Phys.Orbit2D, mu = Phys.C.muE;
+  for (let i = 0; i < 400; i++) {
+    const el = O.elems(O.stateAt({ p: 9e6, e: 0.2 + i / 400, w: i * 0.37, h: Math.sqrt(mu * 9e6) }, i % 2 ? Math.PI : 0, mu), mu);
+    if (el.e >= 1) continue;
+    const dt = O.timeBetween(el, el.nu, i % 2 ? Math.PI : 0, mu);
+    assert.ok(dt < 1, `case ${i}: waits ${dt} s`);
+  }
+});

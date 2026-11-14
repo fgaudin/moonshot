@@ -4,6 +4,8 @@
   const { C } = Phys;
 
   const fx = (n) => n.toFixed(1);
+  // a typed value against the exact one: within rel (fraction) or abs, whichever is larger
+  const planCheck = (x, want, rel, abs = 0) => Math.abs(x - want) <= Math.max(Math.abs(want) * rel, abs);
   const pct = (x, w) => (100 * x / w).toFixed(2) + '%';
   const lbsOf = (W, H) => (list) => list.map(([x, y, t, c]) => `<span class="lb ${c || ''}" style="left:${pct(x, W)};top:${pct(y, H)}">${t}</span>`).join('');
   const arrowSvg = (x1, y1, x2, y2, cls) => {
@@ -136,7 +138,9 @@
     .hm-step { margin: .3rem 0 0; min-height: 2.6em; font: 500 .8rem/1.3 var(--f-mono); color: var(--ink); }
     .af-v-ln { fill: none; stroke: var(--trace); stroke-width: 2; } .af-v-fill { fill: var(--trace); }
     .af-f-ln { fill: none; stroke: var(--accent); stroke-width: 2.4; } .af-f-fill { fill: var(--accent); }
-    #mv-ro .sub i { text-transform: none; }`);
+    #mv-ro .sub i { text-transform: none; }
+    .mv-plan { display: grid; gap: .5rem; margin-top: .6rem; }
+    .mv-q { color: var(--muted); }`);
 
   App.chapter({
     id: 'maneuvers', phase: N`Manoeuvres`, title: N`Orbital Manoeuvres`, lab: N`Transfer & rendezvous planner`,
@@ -153,7 +157,7 @@
         <section class="section" id="theory">
           <h2><span class="idx">5.1</span>${T`The Hohmann transfer`}</h2>
           <div class="prose">
-            <p>${T`Walter Hohmann showed in 1925 that the cheapest two-impulse way between coplanar circular orbits is an ellipse tangent to both. Its perigee touches the inner orbit and its apogee the outer one. Both burns are made along the velocity, where they change energy most efficiently:`}</p>
+            <p>${T`Walter Hohmann showed in 1925 that the cheapest two-impulse way between coplanar circular orbits is an ellipse tangent to both. Its periapsis touches the inner orbit and its apoapsis the outer one. Both burns are <b>prograde</b>, along the velocity (a <b>retrograde</b> burn points against it), where they change energy most efficiently:`}</p>
             <div class="eq">\\[ a_t = \\frac{r_1 + r_2}{2} \\]</div>
             ${Sym.where(['at', 'r1', 'r2'])}
             <div class="eq">\\[ \\Delta v_1 = \\sqrt{\\mu\\left(\\frac{2}{r_1}-\\frac{1}{a_t}\\right)} - \\sqrt{\\frac{\\mu}{r_1}}, \\qquad \\Delta v_2 = \\sqrt{\\frac{\\mu}{r_2}} - \\sqrt{\\mu\\left(\\frac{2}{r_2}-\\frac{1}{a_t}\\right)} \\]</div>
@@ -176,13 +180,7 @@
             ${Sym.where(['dv', 'vi', 'vf', 'di'], N`The law of cosines (Al-Kashi in French schools) applied to the triangle of the two velocity vectors.`)}
             ${Primer.box('trig', false, 'refresher')}
             ${figPlaneTriangle()}
-            <p>${T`Geostationary missions combine the final circularization with the plane change at apogee for exactly this reason. From a 185 km orbit inclined at 28.5°, the plan is flown in three steps:`}</p>
-            <ol>
-              <li>${T`<b>Burn 1 in low orbit, prograde, in the old plane.</b> It raises the apogee to 35 786 km: 2.46 km/s. Do not tilt here. At 7.8 km/s, turning the velocity by 28.5° would cost 3.84 km/s on its own.`}</li>
-              <li>${T`<b>Coast half an orbit to apogee.</b> The plane can only be changed where the old and new planes cross, at a node. For geostationary orbit the new plane is the equator, so burn 1 is made as the craft crosses the equator. The apogee, half an orbit later, then lies over the equator too.`}</li>
-              <li>${T`<b>Burn 2 at apogee does both jobs.</b> It raises the speed from 1.60 to 3.07 km/s and turns it by 28.5° in one burn of 1.84 km/s, instead of 1.48 km/s to circularize plus 1.51 km/s to turn. The engine points 53° out of the orbit plane from prograde, towards the side of the new plane. The total is 4.30 km/s.`}</li>
-            </ol>
-            <p>${T`A last refinement: moving about 2° of the tilt into burn 1 saves another 24 m/s, because a small turn added to a large burn costs almost nothing (the law of cosines again). Try the three options in the lab. Module ${Progress.code('planes')} returns to plane changes in full: finding the nodes, the prograde and normal components of the burn on the PAD, and the launch azimuth.`}</p>
+            <p>${T`Geostationary missions work exactly this way. From a parking orbit inclined at 28.5°, burn 1 raises the apogee to 35 786 km and does not tilt: at 7.8 km/s a turn is at its most expensive. The plane change waits half an orbit for the apogee, where the craft is slowest, and is folded into the circularization burn there. The figure shows that combined burn. Try the three options in the lab. Module ${Progress.code('planes')} returns to this plan in full: where the planes cross, the components of the burn on the PAD, and a last refinement that moves a little of the tilt into burn 1.`}</p>
           </div>
         </section>
 
@@ -197,8 +195,17 @@
               ${UI.slider({ id: 'mv-h1', label: T`Initial orbit altitude`, min: 0, max: 1, step: 0.001, value: 0.027 })}
               ${UI.slider({ id: 'mv-h2', label: T`Final orbit altitude`, min: 0, max: 1, step: 0.001, value: 0.694 })}
               ${UI.slider({ id: 'mv-di', label: T`Plane change Δi`, min: 0, max: 60, step: 0.5, value: 28.5, unit: '°' })}
-              <div class="ctl"><label for="mv-split"><span>${T`Plane change done…`}</span></label><select id="mv-split"><option value="leo">${T`separately, at r₁`}</option><option value="separate">${T`separately, at r₂`}</option><option value="combined">${T`combined with apogee burn`}</option></select></div>
+              <div class="ctl"><label for="mv-split"><span>${T`Plane change done…`}</span></label><select id="mv-split"><option value="leo">${T`separately, at r₁`}</option><option value="separate">${T`separately, at r₂`}</option><option value="combined">${T`combined with the burn at r₂`}</option></select></div>
               <dl class="readout" id="mv-ro"></dl>
+              <div class="mv-plan">
+                <p class="note" style="margin:0">${T`The planner shows the two circular orbits. Work out the transfer by hand (sections ${App.sec('maneuvers', 1)}, ${App.sec('maneuvers', 2)} and ${App.sec('maneuvers', 5)}), enter your numbers, then check. Within 1 % (0.2° for the angle) counts, and the lab then reveals its own numbers.`}</p>
+                <div class="mc-fields">
+                  <label>${T`total Δv (m/s)`}<input type="text" inputmode="decimal" id="mv-adv" autocomplete="off"></label>
+                  <label>${T`phase angle φ (°)`}<input type="text" inputmode="decimal" id="mv-alead" autocomplete="off"></label>
+                </div>
+                <div class="btn-row"><button class="btn primary" id="mv-check">${T`Check my plan`}</button><button class="btn" id="mv-show">${T`Show the solution`}</button></div>
+                <div id="mv-verdict"></div>
+              </div>
             </div>
           </div>
         </section>
@@ -206,7 +213,7 @@
         <section class="section">
           <h2><span class="idx">5.4</span>${T`When Hohmann is not the cheapest`}</h2>
           <div class="prose">
-            <p>${T`Above \\(r_2/r_1 \\approx 15.58\\) a <b>bi-elliptic</b> transfer is cheaper than a Hohmann transfer for any far apoapsis \\(r_b > r_2\\). Between 11.94 and 15.58 it is cheaper only if \\(r_b\\) is far enough out. It burns out to a far apoapsis \\(r_b > r_2\\), raises its periapsis there for almost nothing, then falls back and circularizes at \\(r_2\\). The flight takes much longer. The lab shows the bi-elliptic cost, with \\(r_b = 3 r_2\\), whenever the ratio is large enough. In practice the time penalty usually rules it out.`}</p>
+            <p>${T`Above \\(r_2/r_1 \\approx 15.58\\) a <b>bi-elliptic</b> transfer is cheaper than a Hohmann transfer for any far apoapsis \\(r_b > r_2\\). Between 11.94 and 15.58 it is cheaper only if \\(r_b\\) is far enough out. It burns out to a far apoapsis \\(r_b > r_2\\), raises its periapsis there for almost nothing, then falls back and circularizes at \\(r_2\\). The flight takes much longer. Along with its solution, the lab shows the bi-elliptic cost with \\(r_b = 3 r_2\\) once the ratio passes 11.94; with an apoapsis that close it only beats Hohmann above a ratio of about 13.3 (shown in green). In practice the time penalty usually rules it out.`}</p>
             ${figBiElliptic()}
           </div>
         </section>
@@ -214,9 +221,9 @@
         <section class="section">
           <h2><span class="idx">5.5</span>${T`Rendezvous: lunar orbit rendezvous`}</h2>
           <div class="prose">
-            <p>${T`A chaser in a lower orbit moves faster in angle than its target, so it gains on it. To meet with a Hohmann transfer, the chaser must start when the target is ahead by the right angle, the <b>lead angle</b>: during the transfer the target moves on while the chaser travels 180°. The lab shows the lead angle for each transfer; module ${Progress.code('timing')} derives it, as the phase angle, and turns it into an ignition time.`}</p>
-            <p>${T`If the geometry is wrong, wait. The relative angle changes at \\(\\omega_{chaser} - \\omega_{tgt}\\) per second, giving a <b>synodic period</b> between opportunities: the time until the same alignment comes round again (module ${Progress.code('timing')}). To catch up with a target ahead in the <i>same</i> orbit, burn <b>retrograde</b> (against the direction of flight; <b>prograde</b> is along it), drop into a lower and faster phasing orbit, and come back up. In orbit you slow down to speed up.`}</p>
-            <div class="callout history"><b>${T`Houbolt’s gamble`}</b>${T`In 1961 NASA engineer John Houbolt argued, against fierce opposition, that the CSM should stay in lunar orbit while a light, specialized lander went down and came back up to rendezvous. Lunar orbit rendezvous cut the mass to be landed and relaunched so much that a single Saturn V could do the job. No one had yet performed a rendezvous in space. Gemini 6A and 7 did it in December 1965 and proved it possible. Apollo 11’s ascent stage met Columbia about 3.5 hours after leaving Tranquility Base, using the coelliptic sequence (CSI, CDH, TPI) that Buzz Aldrin had helped develop for his doctoral thesis.`}</div>
+            <p>${T`A chaser in a lower orbit moves faster in angle than its target, so it gains on it. To meet with a Hohmann transfer, the chaser must start when the target is ahead by the right angle, the <b>phase angle</b> φ (some books call it the lead angle): during the transfer the target moves on while the chaser travels 180°, so φ = 180° − (the angle the target covers during the transfer). Module ${Progress.code('timing')} derives it in full and turns it into an ignition time.`}</p>
+            <p>${T`If the geometry is wrong, wait. The relative angle changes at \\(\\omega_{chaser} - \\omega_{tgt}\\) per second, giving a <b>synodic period</b> between opportunities: the time until the same alignment comes round again (module ${Progress.code('timing')}). To catch up with a target ahead in the <i>same</i> orbit, burn <b>retrograde</b>, drop into a lower and faster phasing orbit, and come back up. In orbit you slow down to speed up.`}</p>
+            <div class="callout history"><b>${T`Houbolt’s gamble`}</b>${T`In 1961 NASA engineer John Houbolt argued, against fierce opposition, that the CSM should stay in lunar orbit while a light, specialized lander went down and came back up to rendezvous. Lunar orbit rendezvous cut the mass to be landed and relaunched so much that a single Saturn V could do the job. No one had yet performed a rendezvous in space. Gemini 6A and 7 did it in December 1965 and proved it possible. Apollo 11’s ascent stage met Columbia about 3.5 hours after leaving Tranquility Base, using the coelliptic sequence that Buzz Aldrin had helped develop for his doctoral thesis. Three burns: CSI (coelliptic sequence initiation) set the catch-up rate; CDH (constant delta height) made the LM’s orbit <i>coelliptic</i>, a constant height below the CSM’s all the way round; TPI (terminal phase initiation) started the final transfer up to the CSM.`}</div>
           </div>
         </section>
 
@@ -248,10 +255,9 @@
       moon: { body: 'earth', h1: 185e3, h2: 384400e3 - C.RE, di: 0, split: 'combined' },
       lor: { body: 'moon', h1: 18e3, h2: 111e3, di: 0, split: 'combined' },
     };
-    // objectives count only after the candidate has changed a control themselves (not a preset)
-    let touched = false;
-    root.addEventListener('input', () => { touched = true; }, true);
-    root.addEventListener('change', (e) => { touched = e.target.id !== '-'; }, true);
+    // the transfer numbers stay hidden until the candidate has computed them: objectives come from a correct typed plan,
+    // never from reading the planner. "Show the solution" reveals them without credit until the orbits are changed.
+    let revealed = false, peeked = false, last = null;
     const view = UI.canvas(root.querySelector('#mv-cv'), null);
 
     const km = (m) => UI.fmt(m / 1000, 0);
@@ -286,31 +292,54 @@
         const b3 = Math.sqrt(mu * (2 / r2 - 1 / a2)) - v2;
         bi = { dv: b1 + b2 + Math.abs(b3), tof: Math.PI * (Math.sqrt(a1 ** 3 / mu) + Math.sqrt(a2 ** 3 / mu)) };
       }
-      plan = { r1, r2, at, e: Math.abs(r2 - r1) / (r1 + r2), v1, v2, vtp, vta, dv1, dv2, dvp, tof, w1, w2, lead, syn, down, bi, di };
+      const total = dv1 + dv2 + dvp, leadDeg = ((lead * 180 / Math.PI) % 360 + 540) % 360 - 180;
+      const key = [v['mv-body'], v['mv-h1'], v['mv-h2'], v['mv-di'], split].join('|');
+      if (key !== last) { last = key; revealed = false; peeked = false; root.querySelector('#mv-verdict').innerHTML = ''; }
+      plan = { r1, r2, at, e: Math.abs(r2 - r1) / (r1 + r2), v1, v2, vtp, vta, dv1, dv2, dvp, tof, w1, w2, lead, syn, down, bi, di, total, leadDeg,
+        geo: body === BODY.earth && altOf(v['mv-h1']) <= 400e3 && Math.abs(altOf(v['mv-h2']) - 35786e3) < 500e3 && v['mv-di'] >= 28 && total < 4400,
+        lor: body === BODY.moon && r2 > r1 };
       t = 0;
-      const total = dv1 + dv2 + dvp;
-      if (touched && body === BODY.earth && altOf(v['mv-h1']) <= 400e3 && Math.abs(altOf(v['mv-h2']) - 35786e3) < 500e3 && v['mv-di'] >= 28 && total < 4400) Progress.done('maneuvers', 'geo');
-      if (touched && body === BODY.moon && r2 > r1) Progress.done('maneuvers', 'lor');
-      root.querySelector('#mv-ro').innerHTML = `
-        <dt>${T`v₁ circular`}</dt><dd>${UI.fmt(v1 / 1000, 3)} km/s</dd>
-        <dt>${down ? T`v at transfer apoapsis` : T`v at transfer periapsis`}</dt><dd>${UI.fmt(vtp / 1000, 3)} km/s</dd>
-        <dt>Δv₁</dt><dd>${UI.fmt(dv1, 1)} m/s</dd>
-        <dt>${down ? T`v at transfer periapsis` : T`v at transfer apoapsis`}</dt><dd>${UI.fmt(vta / 1000, 3)} km/s</dd>
-        <dt>${T`v₂ circular`}</dt><dd>${UI.fmt(v2 / 1000, 3)} km/s</dd>
-        <dt>Δv₂${di > 0 && split === 'combined' ? T` (incl. plane)` : ''}</dt><dd>${UI.fmt(dv2, 1)} m/s</dd>
-        ${dvp ? `<dt>${T`Plane change alone`}</dt><dd>${UI.fmt(dvp, 1)} m/s</dd>` : ''}
-        <dt>${T`Total Δv`}</dt><dd class="hl">${UI.fmt(total, 1)} m/s</dd>
-        <dt>${T`Time of flight`}</dt><dd>${UI.fmtTime(tof)}</dd>
-        <dt class="sub">${T`Rendezvous with a target on orbit 2`}</dt>
-        <dt>${T`Lead angle α`}</dt><dd class="hl">${UI.fmt(((lead * 180 / Math.PI) % 360 + 540) % 360 - 180, 1)}°</dd>
-        <dt>${T`Synodic period`}</dt><dd>${UI.fmtTime(syn)}</dd>
-        ${bi ? `<dt class="sub">${T`Bi-elliptic (<i>r<sub>b</sub></i> = 3 <i>r</i>₂)`}</dt><dt>${T`Total Δv`}</dt><dd style="color:${bi.dv < dv1 + Math.abs(v2 - vta) ? 'var(--good)' : 'inherit'}">${UI.fmt(bi.dv, 1)} m/s</dd><dt>${T`Time of flight`}</dt><dd>${UI.fmtTime(bi.tof)}</dd>` : ''}`;
+      showReadout();
     });
+    function showReadout() {
+      const { r1, r2, v1, v2, vtp, vta, dv1, dv2, dvp, tof, syn, down, bi, di, total, leadDeg } = plan, split = root.querySelector('#mv-split').value;
+      const H = (x) => (revealed ? x : '<span class="mv-q">?</span>');
+      root.querySelector('#mv-ro').innerHTML = `
+        <dt>μ</dt><dd>${UI.fmt(body.mu / 1e9, 1)} km³/s²</dd>
+        <dt><i>r</i>₁ · <i>r</i>₂</dt><dd>${UI.fmt(r1 / 1000, 0)} · ${UI.fmt(r2 / 1000, 0)} km</dd>
+        <dt>${T`v₁ circular`}</dt><dd>${UI.fmt(v1 / 1000, 3)} km/s</dd>
+        <dt>${down ? T`v at transfer apoapsis` : T`v at transfer periapsis`}</dt><dd>${H(UI.fmt(vtp / 1000, 3) + ' km/s')}</dd>
+        <dt>Δv₁</dt><dd>${H(UI.fmt(dv1, 1) + ' m/s')}</dd>
+        <dt>${down ? T`v at transfer periapsis` : T`v at transfer apoapsis`}</dt><dd>${H(UI.fmt(vta / 1000, 3) + ' km/s')}</dd>
+        <dt>${T`v₂ circular`}</dt><dd>${UI.fmt(v2 / 1000, 3)} km/s</dd>
+        <dt>Δv₂${di > 0 && split === 'combined' ? T` (incl. plane)` : ''}</dt><dd>${H(UI.fmt(dv2, 1) + ' m/s')}</dd>
+        ${dvp ? `<dt>${T`Plane change alone`}</dt><dd>${H(UI.fmt(dvp, 1) + ' m/s')}</dd>` : ''}
+        <dt>${T`Total Δv`}</dt><dd class="hl">${H(UI.fmt(total, 1) + ' m/s')}</dd>
+        <dt>${T`Time of flight`}</dt><dd>${H(UI.fmtTime(tof))}</dd>
+        <dt class="sub">${T`Rendezvous with a target on orbit 2`}</dt>
+        <dt>${T`Phase angle φ`}</dt><dd class="hl">${H(UI.fmt(leadDeg, 1) + '°')}</dd>
+        <dt>${T`Synodic period`}</dt><dd>${H(UI.fmtTime(syn))}</dd>
+        ${bi && revealed ? `<dt class="sub">${T`Bi-elliptic (<i>r<sub>b</sub></i> = 3 <i>r</i>₂)`}</dt><dt>${T`Total Δv`}</dt><dd style="color:${bi.dv < dv1 + Math.abs(v2 - vta) ? 'var(--good)' : 'inherit'}">${UI.fmt(bi.dv, 1)} m/s</dd><dt>${T`Time of flight`}</dt><dd>${UI.fmtTime(bi.tof)}</dd>` : ''}`;
+    }
+    const num = (id) => Practice.parseNum(root.querySelector(id).value);
+    root.querySelector('#mv-check').addEventListener('click', () => {
+      const box = root.querySelector('#mv-verdict'), dv = num('#mv-adv'), al = num('#mv-alead');
+      if (!isFinite(dv) && !isFinite(al)) { box.innerHTML = `<p class="note">${T`Enter the total Δv in m/s, the phase angle in degrees, or both.`}</p>`; return; }
+      const okDv = isFinite(dv) && planCheck(dv, plan.total, 0.01), okAl = isFinite(al) && planCheck(al, plan.leadDeg, 0.01, 0.2);
+      const line = (ok, what) => `<span style="color:var(${ok ? '--good' : '--bad'})">${ok ? '✓' : '✗'} ${what}</span>`;
+      box.innerHTML = `<p class="note">${[isFinite(dv) ? line(okDv, T`total Δv`) : '', isFinite(al) ? line(okAl, T`phase angle`) : ''].filter(Boolean).join(' &nbsp; ')}
+        ${peeked ? `<br>${T`The solution was shown for these orbits: change them for a new problem to earn credit.`}` : ''}</p>`;
+      if ((okDv || okAl) && !revealed) { revealed = true; showReadout(); }
+      if (peeked) return;
+      if (okDv && plan.geo) Progress.done('maneuvers', 'geo');
+      if (okAl && plan.lor) Progress.done('maneuvers', 'lor');
+    });
+    root.querySelector('#mv-show').addEventListener('click', () => { peeked = true; revealed = true; showReadout(); });
+    root.querySelectorAll('.mv-plan input').forEach((el) => el.addEventListener('keydown', (e) => { if (e.key === 'Enter') root.querySelector('#mv-check').click(); }));
     root.querySelector('#mv-body').addEventListener('change', () => ctl.update());
     root.querySelector('#mv-split').addEventListener('change', () => ctl.update());
     root.querySelectorAll('[data-p]').forEach((b) => b.addEventListener('click', () => {
       const p = presets[b.dataset.p];
-      touched = false;
       root.querySelector('#mv-body').value = p.body; body = BODY[p.body];
       ctl.set('mv-h1', uOf(p.h1)); ctl.set('mv-h2', uOf(p.h2)); ctl.set('mv-di', p.di);
       root.querySelector('#mv-split').value = p.split;
@@ -361,11 +390,11 @@
       ctx.font = `10px ${tk.mono}`; ctx.fillStyle = tk.accent; ctx.textAlign = 'left';
       ctx.beginPath(); ctx.arc(b1x, b1y, 5, 0, 7); ctx.fill(); ctx.fillText('Δv₁', b1x + 8, b1y - 6);
       ctx.beginPath(); ctx.arc(b2x, b2y, 5, 0, 7); ctx.fill(); ctx.textAlign = 'right'; ctx.fillText(T`Δv₂ · meet`, b2x - 8, b2y - 6);
-      // lead angle wedge at t=0
+      // phase angle wedge at t=0
       ctx.strokeStyle = tk.trace; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(...P(r2, 0)); ctx.moveTo(cx, cy); ctx.lineTo(...P(r2, lead)); ctx.stroke();
       ctx.beginPath(); ctx.arc(cx, cy, Math.min(r1, r2) * s * 0.55, -lead, 0, lead < 0); ctx.stroke(); ctx.globalAlpha = 1;
       ctx.fillStyle = tk.trace; ctx.textAlign = 'left';
-      const [lx, ly] = P(Math.min(r1, r2) * 0.62, lead / 2); ctx.fillText('α', lx, ly);
+      const [lx, ly] = P(Math.min(r1, r2) * 0.62, lead / 2); ctx.fillText('φ', lx, ly);
       // craft
       ctx.fillStyle = tk.trace; ctx.beginPath(); ctx.arc(target[0], target[1], 5, 0, 7); ctx.fill();
       ctx.fillStyle = tk.accent; ctx.beginPath(); ctx.arc(chaser[0], chaser[1], 5, 0, 7); ctx.fill();

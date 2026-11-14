@@ -55,3 +55,17 @@ test('force-angle figure and event labels', () => {
   assert.equal(eventLabel('S-II burnout'), 'S-II burnout');
   assert.equal(eventLabel('Liftoff'), 'Liftoff');
 });
+
+test('4.3 lab text: what the presets and the comparison callout say', () => {
+  const nominal = run(16, 0.7, 185, 28.5, true), lofted = run(24, 0.3, 185, 28.5, true);
+  // "Late and gentle" reaches orbit but costs about 1 km/s more in gravity + steering loss and about 60 t of propellant
+  near((lofted.losses.gravity + lofted.losses.steering) - (nominal.losses.gravity + nominal.losses.steering), 2270, 400, 'extra loss');
+  near((nominal.propLeft - lofted.propLeft) / 1e3, 60, 5, 'extra propellant');
+  // the callout: nominal 185 x 195 km in about ten minutes, Max Q about 22 kPa
+  near(nominal.perigee / 1e3, 185, 2); near(nominal.apogee / 1e3, 195, 3);
+  near(nominal.t, 600, 30); near(nominal.maxQ.q / 1e3, 22, 1.5);
+  const s1 = nominal.trace.find((p) => p.stage === 1);
+  assert.ok(s1.h > 67e3 && s1.t > 161, 'S-IC cutoff later and higher than Apollo 11');
+  // west costs 2 x 408 m/s more than east
+  near(2 * 408, 816, 0);
+});

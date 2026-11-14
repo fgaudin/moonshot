@@ -130,7 +130,8 @@
   P.normalOf = (i, O) => [Math.sin(O) * Math.sin(i), -Math.cos(O) * Math.sin(i), Math.cos(i)];
 
   // fly a list of impulsive burns from state s0. Each burn: { when: 'in'|'an'|'dn'|'apo'|'peri', minutes, pro, nor, rad }.
-  // Returns legs (state at the start of each coast, start time) and per-burn results.
+  // Returns legs (state at the start of each coast, start time) and per-burn results; a burn that leaves the orbit
+  // open (escape) is flagged error: 'open' and ends the list.
   P.execute = (s0, burns) => {
     let s = { r: s0.r.slice(), v: s0.v.slice() }, t = 0;
     const legs = [{ t0: 0, s }], out = [];
@@ -145,6 +146,8 @@
       const after = P.elements(s.r, s.v);
       out.push({ ...b, tig: t, dv: sa.dv, before, after, vBefore: vb, vAfter: norm(s.v), r: sb.r });
       legs.push({ t0: t, s });
+      // an escape (e ≥ 1) has no period, apsis or next node: the ellipse formulas would give NaN, so stop here
+      if (!(after.e < 1)) { out[out.length - 1].error = 'open'; break; }
     }
     return { legs, burns: out, final: P.elements(s.r, s.v), finalState: s, dvTotal: out.reduce((x, b) => x + (b.dv || 0), 0) };
   };

@@ -81,3 +81,10 @@ test('practice generators and concept questions are well formed', () => {
   const { practice } = loadChapter('docking', []);
   checkGenerators(practice); checkQuiz(practice);
 });
+
+test('7.3 drift from a height difference: ẋ = −1.5 n z, 3π|z| per orbit (≈ 9.4 |z|), same as the difference of mean motions', () => {
+  const mu = 4.9028e12, r = 1737.4e3 + 110e3, z = -50, n = Math.sqrt(mu / r ** 3);
+  const viaRates = (Math.sqrt(mu / (r + z) ** 3) - n) * r;          // angle gained per second, as along-track metres
+  assert.ok(Math.abs(viaRates - (-1.5 * n * z)) / Math.abs(viaRates) < 0.01, `${viaRates} vs ${-1.5 * n * z}`);
+  assert.ok(Math.abs(3 * Math.PI - 9.4) < 0.05);
+});

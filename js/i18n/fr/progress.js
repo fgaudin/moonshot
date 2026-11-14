@@ -2,87 +2,51 @@
 I18N.add('fr', {
   // TM-1
   'Falling Around the World': 'Tomber autour du monde',
-  'Welcome to your first module, {name}. Before you touch a rocket you need to understand why things fall, and why an orbit is simply a fall that never hits the ground. Newton worked it out with a cannon on an impossibly tall mountain. Today you get to fire it.':
-    'Bienvenue dans votre premier module, {name}. Avant de toucher une fusée, vous devez comprendre pourquoi les objets tombent, et pourquoi une orbite n’est qu’une chute qui ne touche jamais le sol. Newton l’a compris avec un canon posé sur une montagne impossiblement haute. Aujourd’hui, c’est vous qui tirez.',
-  'Fire a cannonball into orbit around the Earth': 'Mettre un boulet de canon en orbite autour de la Terre',
+'Fire a cannonball into orbit around the Earth': 'Mettre un boulet de canon en orbite autour de la Terre',
   'Fire one fast enough to escape Earth for good': 'Tirer un boulet assez vite pour quitter la Terre pour de bon',
   'Qualify: answer 2 Newton & gravity problems correctly': 'Qualification : résoudre correctement 2 problèmes sur Newton et la gravitation',
-  'Good shooting, {name}. You now know the two numbers that rule spaceflight: circular speed and escape speed. Next you learn to read the shape of any orbit.':
-    'Joli tir, {name}. Vous connaissez maintenant les deux nombres qui gouvernent le vol spatial : la vitesse circulaire et la vitesse de libération. Prochaine étape : lire la forme de n’importe quelle orbite.',
-  // TM-2
+// TM-2
   'Reading the Ellipse': 'Lire l’ellipse',
-  'In flight, Houston will read you numbers like “one-eleven by three-twelve”. A navigator must see the orbit in those numbers: its size, its shape, where you are on it and when you will be somewhere else. This module teaches you to.':
-    'En vol, Houston vous annoncera des nombres comme « cent onze sur trois cent douze ». Un navigateur doit voir l’orbite dans ces nombres : sa taille, sa forme, l’endroit où vous vous trouvez et le moment où vous serez ailleurs. Ce module vous l’apprend.',
-  'Design a circular orbit (eccentricity below 0.01) by hand': 'Concevoir à la main une orbite circulaire (excentricité inférieure à 0,01)',
+'Design a circular orbit (eccentricity below 0.01) by hand': 'Concevoir à la main une orbite circulaire (excentricité inférieure à 0,01)',
   'Qualify: answer 2 orbit problems correctly': 'Qualification : résoudre correctement 2 problèmes d’orbites',
-  'You read orbits like a flight dynamics officer now, {name}. Time to meet the machine that puts you on one.':
-    'Vous lisez désormais les orbites comme un spécialiste de la dynamique du vol, {name}. Place à la machine qui vous y envoie.',
-  // TM-3
+// TM-3
   'The Rocket Equation': 'L’équation de la fusée',
-  'Every engineer on the program respects one equation more than any other. It explains why your rocket is 110 metres tall to send a 5-tonne capsule home, and why it falls apart into stages on the way up. Learn it well, {name}. It decides what is possible.':
-    'Chaque ingénieur du programme respecte une équation plus que toute autre. Elle explique pourquoi votre fusée mesure 110 mètres pour ramener une capsule de 5 tonnes, et pourquoi elle se sépare en étages pendant la montée. Apprenez-la bien, {name}. C’est elle qui décide de ce qui est possible.',
-  'See for yourself why a single-stage Saturn V cannot reach orbit': 'Constater par vous-même pourquoi une Saturn V à un seul étage ne peut pas atteindre l’orbite',
+'See for yourself why a single-stage Saturn V cannot reach orbit': 'Constater par vous-même pourquoi une Saturn V à un seul étage ne peut pas atteindre l’orbite',
   'Build a rocket too heavy for its first stage to leave the pad': 'Construire une fusée trop lourde pour que son premier étage la fasse décoller',
   'Design a launcher that reaches the Moon (≥ 12.5 km/s) with at least 50 t, and still lifts off with TWR ≥ 1.1':
     'Concevoir un lanceur qui envoie au moins 50 t vers la Lune (≥ 12,5 km/s) et décolle encore avec un TWR ≥ 1,1',
   'Qualify: answer 2 rocket-equation problems correctly': 'Qualification : résoudre correctement 2 problèmes sur l’équation de la fusée',
-  'You can size a rocket on the back of an envelope, {name}. Now ride one.':
-    'Vous savez dimensionner une fusée sur un coin de table, {name}. Maintenant, montez à bord.',
-  // TM-4
+// TM-4
   'Riding the Saturn V': 'À bord de la Saturn V',
-  'Eleven minutes and forty seconds. That is how long the ride to orbit lasts, and every second of it is a trade between climbing out of the air and turning sideways to build speed. You will fly the pitch-over yourself. Expect to lose a few rockets, {name}; that is what simulators are for.':
-    'Onze minutes et quarante secondes. C’est la durée du trajet jusqu’à l’orbite, et chaque seconde est un compromis entre sortir de l’atmosphère et s’incliner à l’horizontale pour prendre de la vitesse. Vous piloterez vous-même le basculement. Attendez-vous à perdre quelques fusées, {name} ; les simulateurs servent à ça.',
-  'Lose a vehicle: find a pitch-over that ends in disaster': 'Perdre un véhicule : trouver un basculement qui finit en catastrophe',
+'Lose a vehicle: find a pitch-over that ends in disaster': 'Perdre un véhicule : trouver un basculement qui finit en catastrophe',
   'Fly your own launch into a stable parking orbit (perigee ≥ 150 km)': 'Piloter votre propre lancement jusqu’à une orbite de parking stable (périgée ≥ 150 km)',
   'Qualify: answer 2 launch problems correctly': 'Qualification : résoudre correctement 2 problèmes de lancement',
-  'Parking orbit achieved, {name}. From here on, every change of path is a burn you plan.':
-    'Orbite de parking atteinte, {name}. Désormais, chaque changement de trajectoire est une poussée que vous planifiez.',
-  // TM-5
+// TM-5
   'Changing Orbits': 'Changer d’orbite',
-  'In orbit, intuition lies. Speed up and you end up slower; to catch someone ahead, you brake. Your lunar module pilot will one day have to find the command module in lunar orbit with no second chance. Plan your transfers carefully, {name}.':
-    'En orbite, l’intuition ment. Accélérez et vous finirez plus lent ; pour rattraper quelqu’un devant vous, vous freinez. Votre pilote du module lunaire devra un jour retrouver le module de commande en orbite lunaire, sans seconde chance. Planifiez vos transferts avec soin, {name}.',
-  'Plan the LM ascent-stage rendezvous with the CSM in lunar orbit': 'Planifier le rendez-vous de l’étage de remontée du LM avec le CSM en orbite lunaire',
-  'Qualify: answer 2 manoeuvre problems correctly': 'Qualification : résoudre correctement 2 problèmes de manœuvres',
-  'Transfers and rendezvous are second nature now, {name}. Next stop: the Moon.':
-    'Transferts et rendez-vous sont devenus une seconde nature, {name}. Prochain arrêt : la Lune.',
-  // TM-6
+'Qualify: answer 2 manoeuvre problems correctly': 'Qualification : résoudre correctement 2 problèmes de manœuvres',
+// TM-6
   'Two Ships, One Line': 'Deux vaisseaux, une seule ligne',
-  'Three hours after launch, coasting away from Earth, your spacecraft must turn around and dock with the lunar module stowed on top of the spent rocket stage. After the landing you will do it again in lunar orbit, with no second chance. Your instinct says: point the noses at each other and push. Space will teach you otherwise, {name}.':
-    'Trois heures après le lancement, en route loin de la Terre, votre vaisseau doit faire demi-tour et s’amarrer au module lunaire logé au sommet de l’étage de fusée épuisé. Après l’alunissage, vous recommencerez en orbite lunaire, sans seconde chance. Votre instinct vous dit : pointez les nez l’un vers l’autre et poussez. L’espace vous apprendra le contraire, {name}.',
-  'Complete transposition and docking with the LM': 'Réussir la transposition et l’amarrage avec le LM',
+'Complete transposition and docking with the LM': 'Réussir la transposition et l’amarrage avec le LM',
   'Dock gently: contact at 10 cm/s or less': 'S’amarrer en douceur : contact à 10 cm/s ou moins',
   'Live the Gemini 4 paradox: thrust straight at a target ahead and miss it': 'Vivre le paradoxe de Gemini 4 : pousser droit vers une cible située devant vous et la manquer',
   'Dock with the ascent stage in lunar orbit': 'S’amarrer à l’étage de remontée en orbite lunaire',
   'Real mode: dock using only the COAS and the numbers for the last 30 m': 'Mode réel : s’amarrer sur les 30 derniers mètres avec le seul COAS et les chiffres',
   'Qualify: answer 2 docking problems correctly': 'Qualification : résoudre correctement 2 problèmes d’amarrage',
-  'Hard dock, {name}. You can now join two spacecraft into one. Next: the long coast to the Moon.':
-    'Amarrage rigide, {name}. Vous savez maintenant réunir deux vaisseaux en un seul. Prochaine étape : la longue croisière vers la Lune.',
-  // TM-7
+// TM-7
   'Translunar Navigation': 'Navigation translunaire',
-  'Three days of coasting towards a target moving at a kilometre per second. Get the trans-lunar burn right and the Moon itself will swing you home if anything breaks, as it did for Apollo 13. Get it wrong by a tenth of a metre per second and you will need Mission Control. You are in Mission Control today, {name}.':
-    'Trois jours de croisière vers une cible qui file à un kilomètre par seconde. Réussissez la poussée translunaire et, en cas de panne, la Lune elle-même vous renverra vers la Terre, comme pour Apollo 13. Ratez-la d’un dixième de mètre par seconde et vous aurez besoin du contrôle de mission. Aujourd’hui, le contrôle de mission, c’est vous, {name}.',
-  'Fly a free return that comes home inside the entry corridor': 'Réussir un retour libre qui revient dans le couloir de rentrée',
-  'Rescue a bad trajectory with a midcourse correction': 'Sauver une mauvaise trajectoire par une correction à mi-parcours',
+'Rescue a bad trajectory with a midcourse correction': 'Sauver une mauvaise trajectoire par une correction à mi-parcours',
   'Qualify: answer 2 lunar trajectory problems correctly': 'Qualification : résoudre correctement 2 problèmes de trajectoire lunaire',
-  'You navigated to the Moon and back, {name}. Now the hardest five hundred metres of the whole mission.':
-    'Vous avez navigué jusqu’à la Lune et retour, {name}. Place maintenant aux cinq cents mètres les plus difficiles de toute la mission.',
-  // TM-8
+// TM-8
   'The Last 500 Metres': 'Les 500 derniers mètres',
-  'The computer has brought you down to 500 m, but the landing site is a boulder field. You have the stick, about two minutes of propellant and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.': 'L’ordinateur a mené le LM jusqu’à 500 m, mais le site d’alunissage est un champ de rochers. Vous avez le manche, environ deux minutes d’ergols et une alarme au tableau de bord. Restez calme, {name}. Pilotez comme Neil.',
-  'Land the Lunar Module safely': 'Poser le module lunaire en toute sécurité',
+'Land the Lunar Module safely': 'Poser le module lunaire en toute sécurité',
   'Land on the pad with at least 30 s of hover propellant left': 'Se poser sur l’aire visée avec au moins 30 s d’ergols de vol stationnaire en réserve',
   'Qualify: answer 2 landing problems correctly': 'Qualification : résoudre correctement 2 problèmes d’alunissage',
-  'Contact light, {name}. One last test: getting home alive.': 'Contact light, {name}. Une dernière épreuve : revenir sur Terre en vie.',
-  // TM-9
+// TM-9
   'Threading the Corridor': 'Viser le couloir',
-  'You come home at 11 kilometres per second into a corridor two degrees wide. Too shallow and you skip off into space; too steep and the deceleration crushes you. The only control you have is which way the capsule’s lift points. Find the corridor, {name}.':
-    'Vous rentrez à 11 kilomètres par seconde dans un couloir large de deux degrés. Trop rasant, vous rebondissez vers l’espace ; trop raide, la décélération vous écrase. Votre seule commande est l’orientation de la portance de la capsule. Trouvez le couloir, {name}.',
-  'Find the overshoot boundary: make a capsule skip out': 'Trouver la limite haute du couloir : faire rebondir une capsule hors de l’atmosphère',
+'Find the overshoot boundary: make a capsule skip out': 'Trouver la limite haute du couloir : faire rebondir une capsule hors de l’atmosphère',
   'Fly a lunar-return entry captured with a peak below 8 g': 'Réussir une rentrée au retour de la Lune, capturée, avec un pic inférieur à 8 g',
   'Qualify: answer 2 re-entry problems correctly': 'Qualification : résoudre correctement 2 problèmes de rentrée atmosphérique',
-  'Splashdown, {name}. Welcome home.': 'Amerrissage, {name}. Bienvenue à la maison.',
-
-  // callsign, toasts, patches
+// callsign, toasts, patches
   'Candidate': 'Recrue',
   'Objective complete': 'Objectif atteint',
   'Patch earned: {$0}': 'Écusson obtenu : {$0}',
@@ -99,8 +63,7 @@ I18N.add('fr', {
   'Refresh the math first': 'Réviser d’abord les maths',
   'A quick ground-school refresher.': 'Un rapide rappel du cours au sol.',
   'Mission briefing': 'Briefing de mission',
-  'Training module {$0} · briefing': 'Module de formation {$0} · briefing',
-  'Vega, Chief Flight Instructor': 'Vega, responsable de l’instruction en vol',
+'Vega, Chief Flight Instructor': 'Vega, responsable de l’instruction en vol',
   'Objectives': 'Objectifs',
   'How do you want to start?': 'Par où voulez-vous commencer ?',
 
@@ -117,21 +80,42 @@ I18N.add('fr', {
   'Review the math behind this module.': 'Revoir les maths qui sous-tendent ce module.',
   // When, How Much, Which Way (Planning a burn)
   "When, How Much, Which Way": "Quand, combien, dans quelle direction",
-  "Until now a burn was a number in an equation. On a real mission it is a time, three numbers and a direction, read up by the capsule communicator and keyed in by the crew. Get one of them wrong and the flight goes wrong. This module trains both ends of that loop, {name}: computing the burn at Mission Control, and flying it in the spacecraft.": "Jusqu’ici, une poussée était un nombre dans une équation. Lors d’une vraie mission, c’est un instant, trois nombres et une direction, lus par le capcom et saisis par l’équipage. Si l’un d’eux est faux, le vol tourne mal. Ce module vous entraîne aux deux bouts de cette chaîne, {name} : calculer la poussée au contrôle de mission, et l’exécuter à bord du vaisseau.",
-  "Circularize a 200 × 1 000 km orbit at 1 000 km": "Circulariser une orbite de 200 × 1 000 km à 1 000 km",
+"Circularize a 200 × 1 000 km orbit at 1 000 km": "Circulariser une orbite de 200 × 1 000 km à 1 000 km",
   "Fly a two-burn Hohmann transfer to a circular 2 000 km orbit": "Effectuer un transfert de Hohmann en deux poussées vers une orbite circulaire à 2 000 km",
   "Fly a radial burn of at least 500 m/s and see what it does to the orbit": "Effectuer une poussée radiale d’au moins 500 m/s et observer son effet sur l’orbite",
   "With the small 8 kN stage, reach an apoapsis of 5 000 km (± 100 km) in one burn": "Avec le petit étage de 8 kN, atteindre une apoapside de 5 000 km (± 100 km) en une seule poussée",
   "Qualify: answer 2 burn-planning problems correctly": "Qualification : résoudre correctement 2 problèmes de planification de poussée",
-  "You can plan a burn and fly it, {name}. From here on, every burn of the mission is just another PAD.": "Vous savez planifier une poussée et l’exécuter, {name}. Désormais, chaque poussée de la mission ne sera qu’un PAD de plus.",
-  'Design an orbit whose apogee reaches geostationary altitude (35 786 km, where a circular orbit keeps pace with the Earth’s rotation)': 'Concevoir une orbite dont l’apogée atteint l’altitude géostationnaire (35 786 km, où une orbite circulaire suit la rotation de la Terre)',
-  'Plan a transfer from low Earth orbit (LEO) to geostationary orbit (GEO) including the 28.5° plane change for under 4.4 km/s': 'Planifier un transfert de l’orbite terrestre basse (LEO) vers l’orbite géostationnaire (GEO), changement de plan de 28,5° compris, pour moins de 4,4 km/s',
-  "Terminal phase: fly from 2 km to 100 m without exceeding the braking gates": "Phase terminale : aller de 2 km à 100 m sans dépasser les portes de freinage",
+'Design an orbit whose apogee reaches geostationary altitude (35 786 km, where a circular orbit keeps pace with the Earth’s rotation)': 'Concevoir une orbite dont l’apogée atteint l’altitude géostationnaire (35 786 km, où une orbite circulaire suit la rotation de la Terre)',
+"Terminal phase: fly from 2 km to 100 m without exceeding the braking gates": "Phase terminale : aller de 2 km à 100 m sans dépasser les portes de freinage",
   "Reset the objectives of this module": "Réinitialiser les objectifs de ce module",
   "Click again to clear these objectives and the practice score of this module": "Cliquez à nouveau pour effacer ces objectifs et le score d’entraînement de ce module",
-  "A target three days away that moves at a kilometre per second, and two bodies pulling on you at once. Before anyone flies it, someone plans it with pencil and paper: an orbit around the Earth, a switch at the edge of the Moon’s sphere of influence, an orbit around the Moon. Plan the trip, aim it and brake into lunar orbit, {name}.": "Une cible à trois jours de route qui file à un kilomètre par seconde, et deux astres qui vous attirent en même temps. Avant que quiconque ne vole, quelqu’un planifie le trajet au crayon : une orbite autour de la Terre, un changement à la limite de la sphère d’influence de la Lune, une orbite autour de la Lune. Planifiez le voyage, visez juste et freinez en orbite lunaire, {name}.",
-  "You can plan a trip to the Moon, aim it and brake into orbit, {name}. Next: the trajectory that brings you home on its own if the engine dies.": "Vous savez planifier un voyage vers la Lune, le viser et freiner en orbite, {name}. Prochaine étape : la trajectoire qui vous ramène seule si le moteur vous lâche.",
-  "Aim the TLI yourself to pass the Moon at an Apollo-like periselene, 100 to 300 km, and fly it to periselene": "Visez vous-même la TLI pour passer près de la Lune à un périsélène de type Apollo, entre 100 et 300 km, et volez jusqu’au périsélène",
+"Aim the TLI yourself to pass the Moon at an Apollo-like periselene, 100 to 300 km, and fly it to periselene": "Visez vous-même la TLI pour passer près de la Lune à un périsélène de type Apollo, entre 100 et 300 km, et volez jusqu’au périsélène",
   "Match Apollo 11’s first lunar orbit: brake into an orbit with its low point at 100–130 km and its high point at 280–340 km, and fly it through the LOI burn": "Reproduisez la première orbite lunaire d’Apollo 11 : freinez pour une orbite dont le point bas est à 100–130 km et le point haut à 280–340 km, et volez jusqu’après la poussée LOI",
   "Deorbit from Earth orbit and splash down within 50 km of the recovery ship, with your own burn and lead angle": "Désorbiter depuis l’orbite terrestre et amerrir à moins de 50 km du navire de récupération, avec votre propre poussée et votre propre angle d’avance",
+  "Welcome to your first module, {name}. NASA calls its trainees ASCANs, short for astronaut candidates, and that is what you are until every patch is earned. Isaac Newton published the physics of spaceflight in 1687: every trajectory in this manual, Apollo’s included, is his second law applied to his law of gravitation. He explained why an orbit is a fall that never hits the ground with a cannon on an impossibly tall mountain. Today you get to fire it.": "Bienvenue dans votre premier module, {name}. La NASA appelle ses stagiaires des ASCAN, pour astronaut candidates (candidats astronautes), et c’est ce que vous restez tant que vous n’avez pas mérité chaque écusson. Isaac Newton a publié la physique du vol spatial en 1687\u202f: chaque trajectoire de ce manuel, celles d’Apollo comprises, est sa deuxième loi appliquée à sa loi de la gravitation. Il a expliqué pourquoi une orbite est une chute qui ne touche jamais le sol avec un canon posé sur une montagne impossiblement haute. Aujourd’hui, c’est vous qui tirez.",
+  "Good shooting. You now know the two numbers that rule spaceflight: circular speed and escape speed. Next you learn to read the shape of any orbit.": "Joli tir. Vous connaissez maintenant les deux nombres qui gouvernent le vol spatial\u202f: la vitesse circulaire et la vitesse de libération. Prochaine étape\u202f: lire la forme de n’importe quelle orbite.",
+  "In flight, Houston will read you numbers like “one-eleven by three-twelve”. A navigator must see the orbit in them. The two-body problem has an exact answer, the conic sections: energy fixes the orbit’s size, angular momentum its shape, and Kepler’s equation tells you where you will be and when.": "En vol, Houston vous annoncera des nombres comme «\u202fcent onze sur trois cent douze\u202f». Un navigateur doit voir l’orbite dans ces nombres. Le problème à deux corps a une réponse exacte, les coniques\u202f: l’énergie fixe la taille de l’orbite, le moment cinétique sa forme, et l’équation de Kepler vous dit où vous serez et quand.",
+  "You read orbits like a flight dynamics officer now. Next: finding your own orbit from the instruments on board.": "Vous lisez désormais les orbites comme un spécialiste de la dynamique du vol. Suite\u202f: trouver votre propre orbite à partir des instruments de bord.",
+  "A rocket is a machine for throwing mass backward very fast, and one equation rules it. It explains why your rocket is 110 metres tall to send a 5-tonne capsule home, and why it falls apart into stages on the way up. Every engineer on the program respects it more than any other. Learn it well: it decides what is possible.": "Une fusée est une machine qui projette de la masse vers l’arrière, très vite, et une seule équation la gouverne. Elle explique pourquoi votre fusée mesure 110 mètres pour ramener une capsule de 5 tonnes, et pourquoi elle se sépare en étages pendant la montée. Chaque ingénieur du programme la respecte plus que toute autre. Apprenez-la bien\u202f: c’est elle qui décide de ce qui est possible.",
+  "You can size a rocket on the back of an envelope. Before you ride one, you need to know the air it climbs through.": "Vous savez dimensionner une fusée sur un coin de table. Avant de monter à bord de l’une d’elles, il vous faut connaître l’air qu’elle traverse.",
+  "Orbit is a matter of speed: 185 km up, 7.8 km/s sideways. The ride takes eleven minutes and forty seconds, and every second of it trades climbing out of the air against turning sideways to build speed. You will fly the pitch-over yourself. Expect to lose a few rockets, {name}; that is what simulators are for.": "L’orbite est une affaire de vitesse\u202f: 185 km d’altitude, 7,8 km/s à l’horizontale. Le trajet dure onze minutes et quarante secondes, et chaque seconde est un compromis entre sortir de l’atmosphère et s’incliner à l’horizontale pour prendre de la vitesse. Vous piloterez vous-même le basculement. Attendez-vous à perdre quelques fusées, {name}\u202f; les simulateurs servent à ça.",
+  "Parking orbit achieved. Next you write the pitch program of a new launcher yourself.": "Orbite de parking atteinte. Suite\u202f: vous écrivez vous-même le programme de tangage d’un nouveau lanceur.",
+  "A burn changes your velocity at one point, and the whole orbit through that point changes with it. In orbit, intuition lies: speed up and you end up slower; to catch someone ahead, you brake. One day your lunar module pilot will have to find the command module in lunar orbit, with no second chance. Plan your transfers carefully.": "Une poussée change votre vitesse en un point, et toute l’orbite passant par ce point change avec elle. En orbite, l’intuition ment\u202f: accélérez et vous finirez plus lent\u202f; pour rattraper quelqu’un devant vous, vous freinez. Un jour, votre pilote du module lunaire devra retrouver le module de commande en orbite lunaire, sans seconde chance. Planifiez vos transferts avec soin.",
+  "Compute by hand the total Δv of a transfer from low Earth orbit (LEO) to geostationary orbit (GEO), including the 28.5° plane change, for a plan under 4.4 km/s": "Calculer à la main le Δv total d’un transfert de l’orbite terrestre basse (LEO) vers l’orbite géostationnaire (GEO), changement de plan de 28,5° compris, pour un plan sous 4,4 km/s",
+  "Compute by hand the phase angle for the LM ascent-stage rendezvous with the CSM in lunar orbit": "Calculer à la main l’angle de phase pour le rendez-vous de l’étage de remontée du LM avec le CSM en orbite lunaire",
+  "Transfers and rendezvous are second nature now. Next: turning a transfer into numbers a crew can fly.": "Transferts et rendez-vous sont devenus une seconde nature. Suite\u202f: transformer un transfert en nombres qu’un équipage peut exécuter.",
+  "Mission Control computes, the crew executes. Between them travels a short list of numbers, read up by the capsule communicator and keyed in by the crew: when to ignite, how much velocity to add in which direction, and how long the engine runs. Get one of them wrong and the flight goes wrong. You will work both ends of that loop.": "Le contrôle de mission calcule, l’équipage exécute. Entre les deux circule une courte liste de nombres, lus par le capcom et saisis par l’équipage\u202f: quand allumer, quelle vitesse ajouter et dans quelle direction, et combien de temps le moteur tourne. Si l’un d’eux est faux, le vol tourne mal. Vous allez travailler aux deux bouts de cette chaîne.",
+  "You can plan a burn and fly it. From here on, every burn of the mission is just another PAD. Next: when to fire it.": "Vous savez planifier une poussée et l’exécuter. Désormais, chaque poussée de la mission ne sera qu’un PAD de plus. Suite\u202f: quand l’allumer.",
+  "Rendezvous brings two spacecraft within a few hundred metres. Docking closes the last gap. Three hours after launch, your spacecraft must turn around and dock with the lunar module stowed on top of the spent rocket stage; after the landing you do it again in lunar orbit, with no second chance. Your instinct says: point the noses at each other and push. Orbital mechanics still has a say.": "Le rendez-vous amène deux vaisseaux à quelques centaines de mètres l’un de l’autre. L’amarrage comble le dernier écart. Trois heures après le lancement, votre vaisseau doit faire demi-tour et s’amarrer au module lunaire logé au sommet de l’étage de fusée épuisé\u202f; après l’alunissage, vous recommencez en orbite lunaire, sans seconde chance. Votre instinct vous dit\u202f: pointez les nez l’un vers l’autre et poussez. La mécanique orbitale a encore son mot à dire.",
+  "Hard dock. You can now join two spacecraft into one. Next: the long coast to the Moon.": "Amarrage rigide. Vous savez maintenant réunir deux vaisseaux en un seul. Suite\u202f: la longue croisière vers la Lune.",
+  "A target three days away, moving at a kilometre per second, and two bodies pulling on you at once. No formula solves that exactly. Apollo’s planners cut the trip into pieces that each have a simple answer: an orbit around the Earth, a switch at the edge of the Moon’s sphere of influence, an orbit around the Moon. Plan the trip that way, aim it, and brake into lunar orbit.": "Une cible à trois jours de route, qui file à un kilomètre par seconde, et deux astres qui vous attirent en même temps. Aucune formule ne résout cela exactement. Les planificateurs d’Apollo ont découpé le voyage en morceaux qui ont chacun une réponse simple\u202f: une orbite autour de la Terre, un changement à la limite de la sphère d’influence de la Lune, une orbite autour de la Lune. Planifiez le voyage ainsi, visez juste et freinez en orbite lunaire.",
+  "You can plan a trip to the Moon, aim it and brake into orbit. Next: the trajectory that brings you home on its own if the engine dies.": "Vous savez planifier un voyage vers la Lune, le viser et freiner en orbite. Suite\u202f: la trajectoire qui vous ramène seule si le moteur vous lâche.",
+  "Twelve and a half minutes from 15 km and 1.7 km/s to standstill, paid for with 2 km/s of Δv. The computer has brought you down to 500 m, but the landing site is a boulder field. You have the stick, about two minutes of propellant and an alarm on the panel. Stay calm, {name}. Fly it like Neil did.": "Douze minutes et demie pour passer de 15 km et 1,7 km/s à l’arrêt, payées par 2 km/s de Δv. L’ordinateur a mené le LM jusqu’à 500 m, mais le site d’alunissage est un champ de rochers. Vous avez le manche, environ deux minutes d’ergols et une alarme au tableau de bord. Restez calme, {name}. Pilotez comme Neil.",
+  "Contact light. Next: the long way home, starting with the burn that leaves lunar orbit.": "Contact light. Suite\u202f: le long chemin du retour, à commencer par la poussée qui quitte l’orbite lunaire.",
+  "You come home at 11 km/s carrying 60 megajoules per kilogram, about fourteen and a half times the energy of the same mass of TNT, and the atmosphere has about ten minutes to absorb it. The corridor is two degrees wide: too shallow and you skip back into space, too steep and the deceleration crushes you. Your only control is which way the capsule’s lift points.": "Vous rentrez à 11 km/s en emportant 60 mégajoules par kilogramme, soit environ quatorze fois et demie l’énergie de la même masse de TNT, et l’atmosphère dispose d’environ dix minutes pour l’absorber. Le couloir est large de deux degrés\u202f: trop rasant, vous rebondissez vers l’espace\u202f; trop raide, la décélération vous écrase. Votre seule commande est l’orientation de la portance de la capsule.",
+  "Splashdown. Welcome home, {name}. One module left: the team on the ground that flew the mission with you.": "Amerrissage. Bienvenue à la maison, {name}. Il reste un module\u202f: l’équipe au sol qui a volé la mission avec vous.",
+  "Briefing for {$0}": "Briefing pour {$0}",
+  "Briefing": "Briefing",
+  "Back to the briefing": "Retour au briefing",
+  "{$0} · debrief for {$1}": "{$0} · débriefing pour {$1}",
 });

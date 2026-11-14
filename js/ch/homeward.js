@@ -141,7 +141,8 @@
   registerPractice();
 
   /* ---------------- Lab scenarios ---------------- */
-  const PHI_NOM = Ph.solvePhi({ alt: 110e3, dv: 1000 })[0];
+  const PHI_ROOTS = Ph.solvePhi({ alt: 110e3, dv: 1000 }), PHI_NOM = PHI_ROOTS[0];   // several burn positions come home; the first is the fastest
+  const PHI_ROOTS_H = PHI_ROOTS.map((p) => Ph.fly({ alt: 110e3, dv: 1000, phi: p, rev: 1 }).tof / 3600);
   const SCEN = {
     nominal: { label: N`Nominal return, 60 km orbit`, alt: 60e3, dv: 1000, phi: 0, rev: 1, err: 0, mcc: false,
       task: N`Minimum-energy return from a 60 km orbit, lower than the example in the text: the apogee of the return ellipse is at the Moon’s distance and the vacuum perigee is 40 km. Work out the Δv by hand (the working panel shows the method, but then the Δv objective is not credited), type it in, then find the burn position that brings the entry angle into the corridor.` },
@@ -170,7 +171,7 @@
         <section class="section" id="theory">
           <h2><span class="idx">0.1</span>${T`Start at the end: the return ellipse`}</h2>
           <div class="prose">
-            <p>${T`Planning the way out went forwards: from the parking orbit to the Moon. For the return, start at the Earth. The entry module (${Progress.code('entry')}) fixes what the spacecraft must do on arrival: reach the <b>entry interface</b>, the conventional top of the atmosphere at 122 km, with a flight-path angle of about −6.5°, inside a corridor from −5.3° to −7.4°. Because the speed there is nearly fixed by the energy, that angle is set by the <b>perigee</b> the spacecraft would have in vacuum. A vacuum perigee between about 12 and 65 km altitude is inside the corridor. The middle, 40 km, gives −6.4°.`}</p>
+            <p>${T`Planning the way out went forwards: from the parking orbit to the Moon. For the return, start at the Earth. The spacecraft must arrive in a precise way: reach the <b>entry interface</b>, the conventional top of the atmosphere at 122 km, with a flight-path angle of about −6.5°, inside a corridor from −5.3° to −7.4°. Because the speed there is nearly fixed by the energy, that angle is set by the <b>perigee</b> the spacecraft would have in vacuum. A vacuum perigee between about 12 and 65 km altitude is inside the corridor. The middle, 40 km, gives −6.4°. Where the edges come from (skipping out on one side, too many g on the other) is the subject of the next module, ${Progress.code('entry')}; here, take the corridor as given.`}</p>
             <p>${T`Now choose the shape of the Earth orbit. The spacecraft starts at the Moon’s distance. The cheapest return is an ellipse with its <b>apogee at the Moon’s distance</b> and its perigee at 40 km altitude. It is a transfer ellipse, like the Hohmann transfer of module ${Progress.code('maneuvers')}, run downwards.`}</p>
             <div class="eq">\\[ a = \\frac{D + r_p}{2}, \\qquad v_a = \\sqrt{\\mu_\\oplus\\left(\\frac{2}{D} - \\frac{1}{a}\\right)}, \\qquad t_\\mathrm{flight} = \\pi\\sqrt{\\frac{a^3}{\\mu_\\oplus}} \\]</div>
             ${Sym.where(['a', 'Dem', ['r_p', N`perigee radius: Earth’s radius plus the vacuum perigee altitude (6 378 + 40 = 6 418 km)`, 'm'], ['v_a', N`speed of the spacecraft at the Moon’s distance, at apogee`, 'm/s'], 'muE', ['t_{flight}', N`time from apogee to perigee: half the period`, 's']], N`Half the period, because the spacecraft flies only from apogee to perigee.`)}
@@ -182,9 +183,9 @@
         <section class="section">
           <h2><span class="idx">0.2</span>${T`From the Earth’s view to the Moon’s view`}</h2>
           <div class="prose">
-            <p>${T`The spacecraft must have ${f(h.va, 1)} m/s relative to the Earth at the Moon’s distance. But the Moon itself moves at v<sub>M</sub> = √(μ⊕/D) = ${f(h.vM, 1)} m/s (the real mean is 1.02 km/s). Subtract the two velocity vectors to get the velocity relative to the Moon. They are parallel, so it is a plain subtraction:`}</p>
-            <div class="eq">\\[ v_\\infty = v_M - v_a = ${f(h.vM, 1)} - ${f(h.va, 1)} = ${f(h.vinf, 1)}\\ \\mathrm{m/s} \\]</div>
-            ${Sym.where(['vinf', ['v_M', N`orbital speed of the Moon around the Earth, √(μ⊕/D)`, 'm/s'], ['v_a', N`speed the spacecraft needs relative to the Earth`, 'm/s']], [N`The Moon is faster than the spacecraft needs to be, so v∞ points backwards: the spacecraft leaves the Moon against the Moon’s own motion. This is the patched-conic idea of module {$0}, in reverse: there the spacecraft arrived with a v∞, here it departs with one.`, Progress.code('moon')])}
+            <p>${T`The spacecraft must have ${f(h.va, 1)} m/s relative to the Earth at the Moon’s distance. But the Moon itself moves at v<sub>☾</sub> = √(μ⊕/D) = ${f(h.vM, 1)} m/s. This is the patched-conic value, which treats the Moon as a test mass; counting its own mass, √((μ⊕ + μ☾)/D) gives 1 024.6 m/s, the value the three-body simulator of module ${Progress.code('moon')} uses. This module keeps the simpler value, for the hand calculation and the lab alike. The real mean is 1.02 km/s. Subtract the two velocity vectors to get the velocity relative to the Moon. They are parallel, so it is a plain subtraction:`}</p>
+            <div class="eq">\\[ v_\\infty = v_☾ - v_a = ${f(h.vM, 1)} - ${f(h.va, 1)} = ${f(h.vinf, 1)}\\ \\mathrm{m/s} \\]</div>
+            ${Sym.where(['vinf', ['v_☾', N`orbital speed of the Moon around the Earth, √(μ⊕/D)`, 'm/s'], ['v_a', N`speed the spacecraft needs relative to the Earth`, 'm/s']], [N`The Moon is faster than the spacecraft needs to be, so v∞ points backwards: the spacecraft leaves the Moon against the Moon’s own motion. This is the patched-conic idea of module {$0}, in reverse: there the spacecraft arrived with a v∞, here it departs with one.`, Progress.code('moon')])}
             ${Primer.box('vectors', false, 'refresher')}
             <p>${T`This is the key to the whole module. To fall towards the Earth, the spacecraft must be slower than the Moon in the Earth frame. So it must leave the Moon in the direction opposite to the Moon’s motion.`}</p>
           </div>
@@ -197,12 +198,13 @@
             <div class="eq">\\[ v_{hyp} = \\sqrt{v_\\infty^2 + \\frac{2\\mu_☾}{r}}, \\qquad \\Delta v = v_{hyp} - v_c, \\qquad v_c = \\sqrt{\\frac{\\mu_☾}{r}} \\]</div>
             ${Sym.where(['vinf', 'muM', ['r', N`radius of the lunar orbit: Moon’s radius plus altitude`, 'm'], ['v_{hyp}', N`speed on the departure hyperbola at the burn point`, 'm/s'], ['v_c', N`circular speed of the lunar orbit at radius r`, 'm/s'], 'dv'], N`The same energy argument as for the escape speed: 2μ/r is the square of the escape speed. A hyperbolic excess speed adds to it.`)}
             <p>${T`The numbers: v<sub>c</sub> = ${f(h.vc, 1)} m/s, v<sub>hyp</sub> = ${f(h.vhyp, 1)} m/s, and <b>Δv = ${f(h.dv, 0)} m/s</b>. The real flights used about 1 km/s because they came home in about 2.5 days instead of five: a faster return needs more speed at the Moon and so a bigger burn. The lab lets you trade the two.`}</p>
-            <p>${T`The burn is a prograde push at one point of the orbit, and the hyperbola then bends away. Where must the burn be? The departure hyperbola leaves along an asymptote. Its angle from the burn point (periselene) is the true anomaly at infinity, where r → ∞ in the orbit equation:`}</p>
+            <p>${T`The burn is a prograde push at one point of the orbit, and the hyperbola then bends away. Where must the burn be? Think of the goal first: the spacecraft must end up leaving the Moon backwards, against the Moon's motion around the Earth, so that what is left of its speed seen from the Earth is small and it falls home. In a circular orbit the spacecraft moves in that direction a quarter turn after the far-side midpoint (the point opposite the Earth). But the hyperbola bends: the spacecraft leaves along an asymptote, which lies an angle θ∞ further round than the burn point. The burn must therefore come early by θ∞, less the quarter turn. θ∞ is the true anomaly at infinity, where r → ∞ in the orbit equation:`}</p>
             <div class="eq">\\[ e = 1 + \\frac{r\\,v_\\infty^2}{\\mu_☾}, \\qquad \\cos\\theta_\\infty = -\\frac{1}{e}, \\qquad \\phi \\approx \\theta_\\infty - 90^\\circ \\]</div>
             ${Sym.where(['e', ['\\theta_\\infty', N`angle between the burn point and the asymptote direction, seen from the Moon’s centre`, N`rad or °`], ['\\phi', N`burn position: how far before the far-side midpoint (the point opposite the Earth) the burn takes place, along the orbit`, N`°`]], N`In a circular orbit the velocity is always at right angles to the radius. At the far-side midpoint the spacecraft therefore moves against the Moon’s motion, a quarter turn further round the orbit than the point itself (the small arrow in the figure). That is the direction the asymptote must point. The asymptote lies θ∞ further round than the burn point, so the burn comes θ∞ − 90° before the far-side midpoint.`)}
             <p>${T`For the example e = ${f(h.e, 3)}, θ∞ = ${f(h.thInf * deg, 1)}° and φ ≈ ${f(h.phi, 1)}°. The burn takes place on the <b>far side</b> of the Moon. This was true on every Apollo flight: the spacecraft was behind the Moon, out of radio contact, when the engine fired, and the first sign that it had worked was the signal returning on the other side. In a 110 km orbit that silence lasts about ${f(Phys.lunarLOS(110e3).t / 60, 0)} minutes on every revolution. The first crew to live it was Apollo 8, on Christmas Day 1968.`}</p>
             ${figBurn(h)}
             <p>${T`The hand calculation has limits. It assumes the spacecraft leaves from the Moon’s centre and ignores that it needs about 13 to 18 hours to get out of the Moon’s sphere of influence, during which the Moon moves by about 7° to 10° around the Earth. For a fast return (Δv about 1 000 m/s) the hand position is within a few degrees of the simulated one. For the slow, minimum-energy return the difference is about 30°, and the simulated flight is shorter than five days, because the spacecraft is already well inside the Moon’s distance when it leaves the sphere. Use the hand numbers to get close, then let the simulation finish the job.`}</p>
+            <p>${T`One more trap: for a given Δv, several burn positions can bring the spacecraft home. At 1 000 m/s from 110 km, burns at about ${f(PHI_ROOTS[0], 0)}°, ${f(PHI_ROOTS[1], 0)}° and ${f(PHI_ROOTS[2], 0)}° all reach the corridor, with flight times of ${PHI_ROOTS_H.map((x) => f(x, 0)).join(', ')} hours. The slower ones swing far out before falling back. The hand formula and the lab's “Solve φ” both aim for the fastest. If you scan φ by hand and find an entry with a strange flight time, you have found one of the others.`}</p>
           </div>
         </section>
 
@@ -350,12 +352,15 @@
       const check = (id, ok, yes, no) => { if (ok) Progress.done('homeward', id); out.push([ok, ok ? yes : no]); };
       if (scenKey === 'nominal') check('dv', !peeked && Math.abs(q.dv - ref.dv) <= 3, T`Δv objective: your Δv matches the minimum-energy burn.`,
         peeked ? T`Δv objective: not counted, the working was shown for this scenario.` : T`Δv objective: your Δv is not within 3 m/s of the minimum-energy burn. Check the hand calculation.`);
-      if (scenKey !== 'disp') check('corr', !assisted && !r.mccT && inCorr, T`Corridor objective: you placed the burn yourself and the entry is in the corridor.`,
-        assisted ? T`Corridor objective: not counted, φ came from Solve φ.` : T`Corridor objective: the entry is not in the corridor yet.`);
+      const slow = scenKey === 'fast' && !(r.tof != null && r.tof <= 52 * 3600);   // the fast scenario's mission rule
+      if (scenKey !== 'disp') check('corr', !assisted && !r.mccT && inCorr && !slow, T`Corridor objective: you placed the burn yourself and the entry is in the corridor.`,
+        assisted ? T`Corridor objective: not counted, φ came from Solve φ.` : slow && inCorr ? T`Corridor objective: in the corridor, but the return takes longer than the 52 h mission rule.` : T`Corridor objective: the entry is not in the corridor yet.`);
       if (scenKey === 'landing') check('rev', inCorr && r.tEI != null && Math.abs(r.tEI - sc.target) <= sc.window, T`Revolution objective: splashdown is inside the window, in the corridor.`,
         !inCorr ? T`Revolution objective: get the entry into the corridor first.` : T`Revolution objective: splashdown is outside the window. Try another revolution.`);
-      if (scenKey === 'disp') check('mcc', !!r.mccT && Math.abs(q.mdv) <= 4 && inCorr, T`Correction objective: the midcourse correction brought the entry back into the corridor.`,
-        !r.mccT ? T`Correction objective: no midcourse correction was executed.` : Math.abs(q.mdv) > 4 ? T`Correction objective: the correction is larger than 4 m/s.` : T`Correction objective: the entry is not in the corridor yet.`);
+      // the correction must be what fixes the entry: the same burn without it has to miss the corridor
+      const fixedByBurn = scenKey === 'disp' && !!r.mccT && Ph.fly({ ...r.opts, mcc: undefined }).outcome === 'corridor';
+      if (scenKey === 'disp') check('mcc', !!r.mccT && Math.abs(q.mdv) <= 4 && inCorr && !fixedByBurn, T`Correction objective: the midcourse correction brought the entry back into the corridor.`,
+        !r.mccT ? T`Correction objective: no midcourse correction was executed.` : Math.abs(q.mdv) > 4 ? T`Correction objective: the correction is larger than 4 m/s.` : fixedByBurn ? T`Correction objective: not counted, the burn you changed already reaches the corridor without the correction. Keep the planned burn and let the correction do the fixing.` : T`Correction objective: the entry is not in the corridor yet.`);
       return out;
     }
 
@@ -393,7 +398,7 @@
       peeked = true;
       const h = Ph.handMinEnergy(sc.alt, 40e3), q = inputs(), g = isFinite(q.dv) ? Ph.handGivenDv(sc.alt, q.dv) : null;
       const rows = [
-        [T`return ellipse a`, `${f(h.a / 1e3, 0)} km`], [T`apogee speed v_a`, `${f(h.va, 1)} m/s`], [T`Moon’s speed v_M`, `${f(h.vM, 1)} m/s`], [T`excess speed v∞`, `${f(h.vinf, 1)} m/s`],
+        [T`return ellipse a`, `${f(h.a / 1e3, 0)} km`], [T`apogee speed v_a`, `${f(h.va, 1)} m/s`], [T`Moon’s speed v☾`, `${f(h.vM, 1)} m/s`], [T`excess speed v∞`, `${f(h.vinf, 1)} m/s`],
         [T`circular speed v_c`, `${f(h.vc, 1)} m/s`], [T`speed on hyperbola`, `${f(h.vhyp, 1)} m/s`], ['Δv', `${f(h.dv, 1)} m/s`], ['e', f(h.e, 3)], ['θ∞', `${f(h.thInf * deg, 1)}°`], [T`φ ≈ θ∞ − 90°`, `${f(h.phi, 1)}°`], [T`flight time`, `${f(h.tof / 3600, 1)} h`],
       ];
       if (g) rows.push([T`hand φ at your Δv`, `${f(g.phi, 1)}°`], [T`hand flight time at your Δv`, `${f(g.tof / 3600, 1)} h`]);

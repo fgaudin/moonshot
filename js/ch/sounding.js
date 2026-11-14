@@ -113,7 +113,7 @@
     } },
   ], [
     { q: N`Why do we fit a straight line to ln p against h, rather than fit p against h directly?`, opts: [N`The model becomes a line in ln p, and percentage noise becomes even scatter`, N`Logarithms are easier to read from a table than large pressures`, N`High up, the pressure is too small to plot directly`, N`A straight line can always be made to pass through every point`], a: 0, why: N`Taking the logarithm turns the exponential into ln p = ln p₀ − h/H: slope −1/H, intercept ln p₀. Gauge errors are proportional to the reading, so every point has about the same error in ln p. Fitting p directly would let the few large low-altitude values dominate.` },
-    { q: N`A sounding rocket reaches only half a scale height. What is the main problem for the fit?`, opts: [N`The pressure barely changes, so the noise hides the slope`, N`The pressure is too low for the gauge to read`, N`Powered samples cannot be used in the fit`, N`Nothing: a short flight fixes H as well as a long one`], a: 0, why: N`The uncertainty of the slope is σ/√Sxx, and Sxx grows with the square of the altitude spread. Over half a scale height the pressure drops only about 40 %: about ten times the 3 % noise, yet the scattered points still leave the slope loose. A flight over several scale heights spans a factor of a hundred or more.` },
+    { q: N`A sounding rocket reaches only half a scale height. What is the main problem for the fit?`, opts: [N`The points span too small a range of altitude, so the slope is poorly fixed`, N`The pressure is too low for the gauge to read`, N`Powered samples cannot be used in the fit`, N`Nothing: a short flight fixes H as well as a long one`], a: 0, why: N`The pressure does change, by about 40 % over half a scale height, far more than the 3 % noise. But the uncertainty of the slope is σ/√Sxx, and Sxx grows with the square of the altitude spread. Over half a scale height the line is short, and the scatter can tilt it noticeably; over several scale heights the same scatter barely moves it.` },
     { q: N`Dynamic pressure q = ½ρv² peaks at max-q during an ascent, then falls although the rocket keeps accelerating. Why?`, opts: [N`The density falls faster than the speed squared grows`, N`The engines throttle back to protect the structure`, N`The rocket pitches over, so less speed is vertical`, N`The rocket starts to slow down as the air thins`], a: 0, why: N`Low in the atmosphere the speed is small and the density large. As the rocket climbs, v² grows slowly, while ρ shrinks by a factor e every scale height. The product rises, peaks, then drops: that peak is max-q.` },
   ]);
   registerPractice();
@@ -168,7 +168,7 @@
             ${Sym.where([['M', N`molar mass of the air (Earth 0.02896 kg/mol)`, 'kg/mol'], ['R', N`universal gas constant 8.314`, 'J/(mol·K)'], ['T', N`temperature of the air (assumed constant for now)`, 'K']], N`In words: the pressure loses the same fraction of itself for every metre climbed.`)}
             <p>${T`A quantity that loses a fixed fraction per step follows an exponential. If T is constant, the solution is:`}</p>
             <div class="eq">\\[ p(h) = p_0\\,e^{-h/H}, \\qquad H = \\frac{RT}{Mg} \\]</div>
-            ${Sym.where([['p_0', N`pressure at the datum, h = 0 (the “surface pressure”)`, 'Pa'], ['H', N`scale height: the pressure drops by a factor e = 2.718 (a loss of 63 %) every H of climb`, 'm']], N`Climb 7 H and the pressure has dropped by a factor of about 1 100.`)}
+            ${Sym.where([['p_0', N`pressure at the datum, h = 0 (the “surface pressure”)`, 'Pa'], ['H', N`scale height: the pressure drops by a factor e = 2.718 (a loss of 63 %) every H of climb. From here on H is always the scale height, not the angular momentum H of the navigation module`, 'm']], N`Climb 7 H and the pressure has dropped by a factor of about 1 100.`)}
             ${deriv(T`the exponential atmosphere and the density formula`, `
               <p>${T`Start from the hydrostatic equation \\(dp/dh = -\\rho g\\) of section ${App.sec('sounding', 1)} and the ideal gas law.`}</p>
               <ol>
@@ -239,7 +239,7 @@
           <div class="prose">
             <p>${T`After <b>burnout</b>, when the motor stops, the rocket coasts. Only gravity and drag act. Newton’s second law gives, for a body going up at speed v, with the <b>ballistic coefficient</b> β the mass per unit of drag area (heavy and slim: high β, so drag slows it little):`}</p>
             <div class="eq">\\[ a = -g - \\frac{\\rho v^2}{2\\beta}, \\qquad \\beta = \\frac{m}{C_D A} \\quad\\Longrightarrow\\quad |a| - g = \\frac{\\rho v^2}{2\\beta} \\]</div>
-            ${Sym.where([['a', N`acceleration along the flight path from tracking (negative: slowing down)`, 'm/s²'], 'beta'], N`The deceleration beyond gravity is drag. If you know the ballistic coefficient β you can read the density, ρ = 2β(|a| − g)/v². If you know ρ from your fit, the same reading gives β. On the way down the drag pushes up, so the term changes sign.`)}
+            ${Sym.where([['a', N`acceleration along the flight path from tracking (negative: slowing down); not the intercept a of the fit`, 'm/s²'], 'beta'], N`The deceleration beyond gravity is drag. If you know the ballistic coefficient β you can read the density, ρ = 2β(|a| − g)/v². If you know ρ from your fit, the same reading gives β. On the way down the drag pushes up, so the term changes sign.`)}
             ${deriv(T`the drag deceleration`, `
               <ol>
                 <li><p>${T`Going up, both gravity and drag pull the rocket back, so Newton’s second law (mass times acceleration equals the total force) reads:`}</p><div class="eq">\\[ m\\,a = -m\\,g - D \\]</div></li>
@@ -262,7 +262,9 @@
 
         <section class="section">
           <h2><span class="idx">5.8</span>${T`Lab: the sounding range`}</h2>
-          <div class="prose"><p>${T`The atmosphere is hidden. Pick a motor and a propellant load, launch, and read the telemetry: time, altitude, pressure (±3 %), speed and acceleration. Estimate H and p₀ from the scatter of ln p against h, and type them in. After you submit, the lab shows the least-squares fit of the same data and the true atmosphere. Optionally, find β from a sample taken during the coast. Compare a small and a large rocket: the same noise gives a very different fit.`}</p></div>
+          <div class="prose"><p>${T`The atmosphere is hidden. Pick a motor and a propellant load, launch, and read the telemetry: time, altitude, pressure (±3 %), speed and acceleration. Estimate H and p₀ from the scatter of ln p against h, and type them in. After you submit, the lab shows the least-squares fit of the same data and the true atmosphere. Optionally, find β from a sample taken during the coast. Compare a small and a large rocket: the same noise gives a very different fit.`}</p>
+            <p>${T`<b>How to fit.</b> Quick estimate first: pick two coasting samples far apart in altitude, then \\(H \\approx (h_2 - h_1)/(\\ln p_1 - \\ln p_2)\\) and \\(\\ln p_0 = \\ln p_1 + h_1/H\\). To do better, use all the points: download the CSV, add a column ln p, and either apply the formulas of section ${App.sec('sounding', 4)} or let a spreadsheet do it (its SLOPE and INTERCEPT functions give b and a). Remember that h is measured from the datum, not from the launch site.`}</p>
+            <p>${T`The objective asks for a flight above two scale heights: about 15 km on an Earth-like world, more where the air is light or warm. After you submit, the lab tells you how many scale heights your samples span.`}</p></div>
           <div class="lab tl-lab" id="sd">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Sounding range`}</h3><span class="spacer"></span></div>
             <div class="stage"><canvas id="sd-cv" aria-label="${T`Scatter of the natural logarithm of the measured pressure against altitude, with the fitted lines after you submit`}"></canvas><div class="overlay" id="sd-ov"></div><div class="badge" id="sd-badge"></div></div>
@@ -318,7 +320,8 @@
     const vis = () => (TM ? TM.samples.filter((x) => x.t <= tPlay) : []);
     const view = UI.canvas($('#sd-cv'), null);
     const mini = UI.canvas($('#sd-ht'), null);
-    const hNom = () => D.atm.H || 7500;
+    // the scale height the objective and the span readout use: the hidden one, or for the real layers (no single H) the fitted one
+    const hNom = () => D.atm.H || (FIT && FIT.H) || 7500;
 
     function newDay() {
       D = Ps.makeDay(scenKey, 100 * (SCEN_KEYS.indexOf(scenKey) + 1) + 7 * take + 3);

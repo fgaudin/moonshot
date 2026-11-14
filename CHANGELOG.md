@@ -3,6 +3,73 @@
 What changed and why, in more detail than the commit messages. Newest first. Module numbers (TM-n, section n.k)
 follow the current `ORDER` in `js/app.js`.
 
+## 2026-11-14 — full review: objectives earned honestly, bugs, consistency, clearer sections, CAPCOM's voice
+
+A review of every module (content, physics, practice generators, architecture), then translated.
+
+- **Objectives need the candidate's own work.** Mission Control's solutions no longer earn anything:
+  - TM-9: after "Show Mission Control's solution", nothing counts until the scenario is reloaded (new button).
+  - TM-13/14: the MCC solver sets a flag that only a scenario load clears, so `reality` and `rescue` need a hand-made correction.
+  - TM-8: the planner hides the transfer numbers until a typed Δv or phase angle is checked (1 %, 0.2°); `geo` and `lor` come only from that.
+  - TM-11: `plane` checks each PAD component within 3 %, so a normal-only burn fails the 0.6° trim.
+  - TM-2: the parking-orbit and geostationary presets are removed (GEO is now built by hand); a preset plus a nudge earns nothing; the
+    Molniya preset is explained and made a real 12 h orbit; GTO now reaches GEO altitude.
+  - TM-18: "Too shallow" preset removed. TM-17: the fast return must take ≤ 52 h; `mcc` needs a correction that actually fixes the miss.
+  - TM-19 abort: a new situation each time (four kinds, jittered numbers; the answer is A, C or D), only a right first commit counts,
+    and the screening table appears only once the right option is chosen.
+- **TM-19 PAD readback by ear.** CAPCOM reads the PAD aloud: recorded voice clips (Piper "en_US-ryan-high", CC BY-NC-SA 4.0) joined
+  digit by digit ("niner"), over a simulated radio link (300–3400 Hz, light clipping, a slowly fading voice, hiss with crackles, the carrier keyed on before the first Quindar tone and a squelch tail after the last); the field being read
+  is highlighted. Digits are cut out of a spoken list (calm intonation, consonants intact) with a falling clip for the last digit of
+  each number, field names end on a comma so they lead into the number: Whisper's digit recognition on joined readouts went from
+  44 % (words synthesized alone) to 100 %. The cuts use Piper's phoneme alignments, so they fall exactly at the commas.
+  CAPCOM speaks the page's language: French (Piper "fr_FR-upmc-medium", speaker Pierre, CC BY-SA 4.0; spelled
+  "Youstonne" and "padde" so that it says them the French way; "virgule", "Répétez quand vous êtes prêts") and German
+  ("de_DE-thorsten-high", CC0; "zwo" for 2 as in German radio, "Komma", "Bitte zurücklesen"). The readback counts only if the PAD was not shown. Without Web Audio, or if the clips fail to load, the written PAD
+  is used and must be hidden before copying. Clips: `audio/capcom-en.js`, made by `tools/capcom-voice.py` from
+  `tools/capcom-phrases.json` (base64 in a script so it also works from file://). CAPCOM speaks English in every language, as in Apollo.
+  TM-19 §0.3 explains why digits are read one at a time and 9 is “niner”.
+  The briefing no longer promises a decision "with the clock running" (there was no clock).
+- **Bugs:**
+  - Practice answers: "1,234" is read as 1234 in English, the "−" minus sign and a trailing % are accepted, and trailing text
+    ("7.78 km/s") is refused instead of ignored.
+  - An "at apsis" burn starting at the apsis no longer waits a full orbit (float noise).
+  - TM-11: an escape burn stops with "orbit no longer closed" instead of NaN.
+  - TM-17: a near-parabolic return no longer gives NaN; Solve φ drops roots that never come home.
+  - TM-5: flights always run to the ground. TM-4: zero dry mass no longer gives Infinity; a stage's structure is at least 1/20 of
+    its propellant. TM-7: a bad pitch-table entry is flagged and restored instead of silently dropped.
+  - TM-19: GET entry is strict (sign, "7.5", "1e3" refused), negative GETs format correctly; the TEI PAD is a real ~1 000 m/s
+    burn from a 16–17 t CSM.
+  - TM-16: control keys no longer stick (blur, pointercancel, reset). TM-12: the page scrolls again with the arrow keys.
+  - Animations in TM-1, TM-13 and TM-14 stop when leaving the page.
+- **One value per quantity:** the entry corridor is `Phys.C.corridor` (−5.3° to −7.4°, 12–65 km vacuum perigee) in TM-13, 14, 17
+  and 18; the 10 g limit in practice and lab; the "60 / 30 seconds" calls count down to bingo everywhere, and Apollo 11 landed
+  about 20 s before it. The Moon's speed stays √(μ⊕/D) in TM-17 (the hand calculation depends on it), with a note.
+- **Numbers and statements:**
+  - Bi-elliptic beats Hohmann from r₂/r₁ ≈ 13.3 with the lab's r_b = 3 r₂ (11.94 is the limit for r_b → ∞).
+  - TM-10: the t_wait legend no longer flips the sign; "about 1 200 km".
+  - TM-11: the "separately" cost uses the cheaper order; the azimuth objective says "over the rotating ground".
+  - Apollo 11 parking orbit e ≈ 0.0002; Kepler's third law from all the planets.
+  - The F-1 readout gives Isp ≈ 264/303 s.
+  - TM-6: the lab's simplified vehicle is said so, and the comparison with Apollo 11 is honest.
+  - TM-13 explains why its LOI is ~860 m/s against 889. TM-15 explains Eagle's 23 m/s DOI against the lab's 21.6.
+  - TM-18 explains which roll sets each corridor edge, and why the lab peaks near 8 g.
+- **Clearer sections:**
+  - Terms are defined before use: prograde, CSI/CDH/TPI, potential energy before escape speed, vectors before momentum, high gate
+    in TM-15, launch windows before TM-11.
+  - One name for the phase angle. E_mech for energy (E stays the eccentric anomaly). σ explained in TM-19.
+  - Split or lightened: TM-10 §0.6 (new §0.7), TM-12 §7.4 (with the 1.5 n Δz drift derived), TM-18 §10.5, TM-14 §0.3, TM-17 §0.3.
+  - TM-14: the lab moves to the end (§0.7), after the techniques its objectives need; TLI shifts are also shown in seconds.
+  - TM-8 §5.2 keeps the GEO idea; the numbers stay in TM-11.
+  - TM-5: how to fit the scale height.
+- **Practice:**
+  - New items: acceleration at liftoff, momentum and the third law, the node Ω, ground azimuth, phase angle after a wait, drift in
+    lunar orbit, the price of hovering.
+  - Trivial items removed ("lowest inclination", "time to contact", "mean motion").
+  - "Centring the burn" uses hhh:mm:ss.
+- **Translations:** every new and changed string in French and German (about 215 per language), with the old
+  versions of rewritten strings removed from the dictionaries; the i18n `WIP` list is empty again.
+- **Docs:** the README points to `node --test` instead of scripts in the ignored `tmp/`; `docker-compose.yml` serves `audio/`.
+
 ## 2026-11-13 — briefings replace the chapter intros, callsign used sparingly, ASCAN, objectives button
 
 - **One intro per module.** The header lede repeated the briefing (in half the modules almost word for word), so

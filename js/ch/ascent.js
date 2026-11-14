@@ -61,7 +61,7 @@
             <p>${T`Why a misaligned thrust is a loss comes down to vectors. A force pointing the same way as the velocity speeds the vehicle up. Pointing the opposite way, it slows it down. At 90° it changes neither the speed nor the energy: it only turns the path. At any angle in between it does both. Its part along the velocity, \\(F\\cos\\alpha\\), changes the speed; its part across, \\(F\\sin\\alpha\\), turns the path.`}</p>
             ${figForceAngle()}
             <p>${T`So only \\(F\\cos\\alpha\\) builds speed, and the remaining fraction \\(1-\\cos\\alpha\\) of the thrust is the steering loss. That is why it stays small: at 10° off the velocity, \\(\\cos\\alpha = 0.985\\) and only 1.5 % of the thrust is lost to turning. Gravity follows the same rule. Its part along the path, \\(g\\sin\\gamma\\), is the gravity loss, and its part across the path is what bends the trajectory over in the gravity turn of the next section.`}</p>
-            <p>${T`<b>Earth’s rotation</b> gives a launch due east a free \\(\\omega_\\oplus R_\\oplus\\cos\\phi\\): 465 m/s at the equator, 408 m/s at Cape Canaveral (28.5° N). Launch west and you pay it back twice.`}</p>
+            <p>${T`<b>Earth’s rotation</b> gives a launch due east a free \\(\\omega_\\oplus R_\\oplus\\cos\\phi\\): 465 m/s at the equator, 408 m/s at Cape Canaveral (28.5° N). Launch west and the same 408 m/s counts against you: the rocket must first cancel the ground’s eastward motion, so a westward orbit costs 816 m/s more than an eastward one.`}</p>
           </div>
         </section>
 
@@ -79,10 +79,12 @@
 
         <section class="section">
           <h2><span class="idx">4.3</span>${T`Lab: fly the Saturn V`}</h2>
-          <div class="prose"><p>${T`A planar simulation with Apollo-era numbers: five F-1s whose thrust rises as the air thins, the centre engine shut down at T+135 s, J-2 upper stages, an exponential atmosphere and a rotating Earth. You choose when and how hard to pitch over. Small changes to the kick have large effects: real launch vehicles fly a carefully pre-computed <b>pitch program</b>, a table of tilt angles against time, for this reason.`}</p></div>
+          <div class="prose"><p>${T`A planar simulation with Apollo-era numbers: five F-1s whose thrust rises as the air thins, the centre engine shut down at T+135 s, J-2 upper stages, an exponential atmosphere and a rotating Earth. You choose when and how hard to pitch over. Small changes to the kick have large effects: real launch vehicles fly a carefully pre-computed <b>pitch program</b>, a table of tilt angles against time, for this reason.`}</p>
+            <p>${T`<b>Reading the lab.</b> The ledger adds up where the Δv went. <i>Ideal Δv expended</i> is what the rocket equation gives for the propellant burned so far. Subtract the gravity, drag and steering losses, add the Earth’s rotation, and what is left is about the final inertial speed: the 7.8 km/s of orbit. A better pitch-over shows up as smaller losses and more propellant left in the S-IVB. The presets show the three ways it goes. <i>Nominal</i> is close to Apollo’s. <i>Late and gentle</i> still reaches orbit, because the upper-stage guidance rescues it, but climbing steeply for too long costs over 2 km/s of extra gravity and steering loss, about 60 t of propellant. <i>Too hard</i> tips over in the thick air and is lost. <i>Launch west</i> fights the Earth’s rotation.`}</p>
+            <p>${T`The lab vehicle is simplified: one drag coefficient, an exponential atmosphere, a simple guidance law. It flies a little differently from the real Saturn V (see the comparison below), but the trade it shows, climbing out of the air against turning sideways to build speed, is the real one, and the ledger works the same for any rocket.`}</p></div>
           <div class="lab" id="as">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Saturn V ascent`}</h3><span class="spacer"></span>
-              <div class="btn-row"><button class="btn" data-p="nominal">${T`Nominal`}</button><button class="btn" data-p="lofted">${T`Too late`}</button><button class="btn" data-p="flat">${T`Too hard`}</button><button class="btn" data-p="west">${T`Launch west`}</button><button class="btn primary" id="as-play">${T`▸ Replay`}</button></div></div>
+              <div class="btn-row"><button class="btn" data-p="nominal">${T`Nominal`}</button><button class="btn" data-p="lofted">${T`Late and gentle`}</button><button class="btn" data-p="flat">${T`Too hard`}</button><button class="btn" data-p="west">${T`Launch west`}</button><button class="btn primary" id="as-play">${T`▸ Replay`}</button></div></div>
             <div class="stage" style="min-height:400px"><canvas id="as-cv" aria-label="${T`Ascent trajectory over the curved Earth`}"></canvas><div class="overlay" id="as-ov"></div><div class="badge" id="as-badge"></div></div>
             <div class="controls">
               ${UI.slider({ id: 'as-kt', label: T`Pitch kick time`, min: 5, max: 30, step: 0.5, value: 16, unit: 's' })}
@@ -99,7 +101,7 @@
               <div class="mini"><h4>${T`Acceleration (g)`}</h4><canvas id="as-c4"></canvas></div>
             </div>
           </div>
-          <div class="callout history"><b>${T`Apollo 11, for comparison`}</b>${T`Liftoff 13:32:00 UTC. Max Q 35 kPa at T+83 s, 13.5 km. S-IC cutoff at T+161 s, 67 km, 2.76 km/s. S-II cutoff at T+548 s. S-IVB cutoff and orbit insertion at T+699 s, in a 183 × 186 km orbit. Compare with your flight.`}</div>
+          <div class="callout history"><b>${T`Apollo 11, for comparison`}</b>${T`Liftoff 13:32:00 UTC. Max Q 35 kPa at T+83 s, 13.5 km. S-IC cutoff at T+161 s, 67 km, 2.76 km/s inertial (2.4 km/s relative to the ground). S-II cutoff at T+548 s. S-IVB cutoff and orbit insertion at T+699 s, in a 183 × 186 km orbit. The lab’s nominal flight reaches a 185 × 195 km orbit in about ten minutes, with a lower Max Q (about 22 kPa) and a later, higher S-IC cutoff: its simplified vehicle and atmosphere do not match the real ones exactly. The shape of the flight and the size of the losses are what carry over.`}</div>
         </section>
 
         <section class="section">
@@ -123,6 +125,9 @@
     return EVENTS.includes(l) ? T(l) : l;
   }
 
+  // a parking orbit worth the name: below about 150 km the air drags it down within a day (badge and objective agree)
+  const ORBIT_MIN = 150e3;
+
   function mountAscent(root) {
 
     let sim = null, play = 0;
@@ -134,8 +139,9 @@
     };
     // objectives count only after the candidate has changed a control themselves (not a preset)
     let touched = false;
+    // (ctl.set from a preset fires no event; only the candidate's own input or change does)
     root.addEventListener('input', () => { touched = true; }, true);
-    root.addEventListener('change', (e) => { touched = e.target.id !== '-'; }, true);
+    root.addEventListener('change', () => { touched = true; }, true);
     const view = UI.canvas(root.querySelector('#as-cv'), null);
     const minis = ['#as-c1', '#as-c2', '#as-c3', '#as-c4'].map((s) => UI.canvas(root.querySelector(s), null));
 
@@ -144,11 +150,10 @@
       sim = Phys.simulateAscent({ kickTime: v['as-kt'], kickAngle: v['as-ka'], targetAlt: v['as-alt'] * 1000, latitude: v['as-lat'], east: v['as-dir'] !== 'west' });
       play = UI.reducedMotion() ? sim.t : 0;
       if (touched && (sim.outcome === 'crash' || sim.outcome === 'burnout')) Progress.done('ascent', 'fail');
-      if (touched && sim.outcome === 'orbit' && sim.perigee >= 150e3) Progress.done('ascent', 'orbit');
+      if (touched && sim.outcome === 'orbit' && sim.perigee >= ORBIT_MIN) Progress.done('ascent', 'orbit');
       readout(v);
       minis.forEach((m) => m.redraw());
     });
-    root.querySelector('#as-dir').addEventListener('change', () => ctl.update());
     root.querySelectorAll('[data-p]').forEach((b) => b.addEventListener('click', () => {
       const p = presets[b.dataset.p];
       touched = false;
@@ -160,9 +165,9 @@
     function readout(v) {
       const s = sim, km = (m) => UI.fmt(m / 1000, 0);
       const target = v['as-alt'];
-      const ok = s.outcome === 'orbit' && s.perigee > 120000;
+      const ok = s.outcome === 'orbit' && s.perigee >= ORBIT_MIN;
       const b = root.querySelector('#as-badge');
-      const msg = { orbit: ok ? T`Orbit achieved` : T`Orbit too low, will decay`, crash: T`Lost: vehicle fell back`, burnout: T`Out of propellant`, timeout: T`Guidance timeout` }[s.outcome];
+      const msg = { orbit: ok ? T`Orbit achieved` : T`Orbit too low (perigee under 150 km), will decay`, crash: T`Lost: vehicle fell back`, burnout: T`Out of propellant`, timeout: T`Guidance timeout` }[s.outcome];
       b.textContent = msg;
       b.className = 'badge ' + (ok ? (s.maxQ.q > 40000 ? 'warn' : 'good') : 'bad');
       const L = s.losses;

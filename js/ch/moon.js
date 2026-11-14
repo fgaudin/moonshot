@@ -160,10 +160,12 @@
       raf = requestAnimationFrame(step);
     }
     btn.addEventListener('click', play);
+    UI.onCleanup(() => cancelAnimationFrame(raf));   // leaving the page stops the animation
     if (UI.reducedMotion() || !('IntersectionObserver' in window)) { btn.hidden = false; return; }
     fig.classList.add('playing'); status.textContent = seenEarth; frame(0);
     const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); play(); } }, { threshold: 0.6 });
     io.observe(fig);
+    UI.onCleanup(() => io.disconnect());
   }
 
   /* shared helpers for the static figures below */
@@ -281,7 +283,9 @@
     .tl-lab.ml-two .tl-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     @media (max-width: 860px) { .tl-lab.ml-two .tl-groups { grid-template-columns: minmax(0, 1fr); } }`);
 
-  const MCC_MAX = 1;   // m/s: the MCC slider spans ±MCC_MAX, fine enough to hit a 45 km corridor by hand
+  const MCC_MAX = 1;   // m/s: the MCC slider spans ±MCC_MAX, fine enough to hit the 53 km corridor by hand
+  const CORR = C.corridor, CLO = CORR.periLow, CHI = CORR.periHigh;   // entry corridor as vacuum perigee altitudes (shared with homeward, entry)
+  const corrTxt = () => T`${UI.fmt(CLO / 1000, 0)} to ${UI.fmt(CHI / 1000, 0)} km`;
   const MoonLab = {
     /* cfg: { id, title, presets, start: preset key, loi, mcc (also enables the model switch), earthZoom, detail: 'moon' | 'return',
              moonSpan: fixed width of the Moon zoom in m (else it follows the spacecraft), startPaused: open paused at launch, mccMax: MCC slider limit in m/s (default MCC_MAX), angRange / dvRange: slider limits, angStep: burn-position step in degrees } */
@@ -297,6 +301,7 @@
       const mc = cfg.mcc ? `<div class="tl-group ml-ctl"><h4>${T`Mission Control`}</h4>
           ${UI.slider({ id: `${id}-mcc`, label: T`MCC at GET 26:42 (along-track)`, min: -(cfg.mccMax || MCC_MAX), max: cfg.mccMax || MCC_MAX, step: 0.005, value: st.mcc || 0, unit: 'm/s' })}
           <button class="btn" id="${id}-solve">${T`Mission Control: solve MCC for 40 km entry`}</button>
+          <p class="note" id="${id}-solved" hidden style="margin:0">${T`Mission Control’s correction is set: this flight earns no objective. Load a scenario again to fly your own.`}</p>
           <div class="ctl"><span class="mono note">${T`Physics model`}</span><div class="seg" id="${id}-model" role="group" aria-label="${T`Physics model`}"><button data-v="patched" aria-pressed="true">${T`Patched conics (plan)`}</button><button data-v="three" aria-pressed="false">${T`Three-body (reality)`}</button></div></div>
           <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="${id}-ghost"> ${T`Show the other model as a ghost`}</label>
         </div>` : '';
@@ -333,11 +338,13 @@
         idx = lo;
         if (flown && cfg.onFlown && sim) cfg.onFlown(sim, tNow, { lunarOrbit, inCorridor, model });
       }
-      // objectives count only after the candidate has changed a control themselves (not a preset)
-      let touched = false;
+      // objectives count only after the candidate has changed a control themselves (not a preset), and never once
+      // Mission Control's solver has set the MCC: that lasts until a scenario is loaded again
+      let touched = false, solved = false;
       root.addEventListener('input', () => { touched = true; }, true);
-      root.addEventListener('change', (e) => { touched = e.target.id !== `${id}-preset`; }, true);
-      const inCorridor = (s) => s.outcome === 'entry' && s.retAlt >= 20e3 && s.retAlt <= 65e3 && s.minM.alt < 20000e3;
+      root.addEventListener('change', (e) => { touched = e.target.id !== `${id}-preset`; if (!touched) solved = false; }, true);
+      const own = () => touched && !solved;
+      const inCorridor = (s) => s.outcome === 'entry' && s.retAlt >= CLO && s.retAlt <= CHI && s.minM.alt < 20000e3;
       const view = UI.canvas($('cv'), null), zm = UI.canvas($('zm'), null), ze = cfg.earthZoom ? UI.canvas($('ze'), null) : null;
       const zooms = [zm, ze].filter(Boolean);
       const MCC_T = 26.7 * 3600;
@@ -346,10 +353,10 @@
       const fmts = { [`${id}-dv`]: (x) => UI.fmt(x, 0), [`${id}-ang`]: (x) => x.toFixed(cfg.angStep ? Math.round(-Math.log10(cfg.angStep)) : 2), [`${id}-loidv`]: (x) => UI.fmt(x, 0), [`${id}-mcc`]: (x) => (x > 0 ? '+' : '') + x.toFixed(3), [`${id}-t`]: () => (sim ? 'GET ' + UI.fmtTime(tNow) : '') };
       const ctl = UI.bindControls(root, fmts, (v, src) => {
         if (src === `${id}-t`) { seek(val(v, 't') * tEnd()); playing = false; setPlayLabel(); draw(); zooms.forEach((z) => z.redraw()); return; }
-        sim = simFor(model)(simOpts(v)); sim.touched = touched;
+        sim = simFor(model)(simOpts(v)); sim.touched = own();
         const gh = $('ghost');
         other = gh && gh.checked ? simFor(model === 'patched' ? 'three' : 'patched')(simOpts(v)) : null;
-        if (cfg.onResult) cfg.onResult(sim, { model, touched, src, inCorridor });
+        if (cfg.onResult) cfg.onResult(sim, { model, touched: own(), solved, src, inCorridor });
         seek(playing || atStart ? 0 : Infinity, false); atStart = false;
         summarize(); draw(); zooms.forEach((z) => z.redraw());
       });
@@ -359,7 +366,7 @@
       $('preset').addEventListener('change', (e) => {
         const q = cfg.presets[e.target.value];
         ctl.set(`${id}-dv`, q.dv); ctl.set(`${id}-ang`, q.ang);
-        if (cfg.mcc) { ctl.set(`${id}-mcc`, q.mcc || 0); setModel(q.model || 'patched'); }
+        if (cfg.mcc) { ctl.set(`${id}-mcc`, q.mcc || 0); setModel(q.model || 'patched'); $('solved').hidden = true; }
         if (cfg.loi) { $('loi').checked = !!q.loi; if (q.loiDv) ctl.set(`${id}-loidv`, q.loiDv); }
         playing = true; setPlayLabel(); ctl.update();
       });
@@ -370,7 +377,7 @@
           const dv = Phys.solveMCC({ ...simOpts(v), mcc: { t: MCC_T, dv: 0 } }, 40000, cfg.mccMax || MCC_MAX, simFor(model));
           if (dv == null) { btn.textContent = T`No fix within ±${cfg.mccMax || MCC_MAX} m/s: adjust TLI`; return; }
           btn.textContent = T`RTCC solution: ${dv >= 0 ? '+' : ''}${UI.dec(dv.toFixed(3))} m/s. Solve again`;
-          ctl.set(`${id}-mcc`, (Math.round(dv / 0.005) * 0.005).toFixed(3)); tNow = 0; playing = true; setPlayLabel(); touched = true; ctl.update(`${id}-solve`);   // its own source: Mission Control's answer earns no MCC objective
+          ctl.set(`${id}-mcc`, (Math.round(dv / 0.005) * 0.005).toFixed(3)); tNow = 0; playing = true; setPlayLabel(); solved = true; $('solved').hidden = false; ctl.update(`${id}-solve`);   // Mission Control's answer earns no objective until the scenario is reloaded
         }, 30);
       });
       UI.seg(root, `#${id}-view`, (f) => { frameName = f; draw(); });
@@ -390,12 +397,12 @@
           return [s.minM.alt >= 50e3 && s.minM.alt <= 2000e3 ? 'good' : 'warn', T`Flew past the Moon`, T`Periselene ${km0(s.minM.alt)} km above the surface. Without a braking burn the spacecraft leaves the sphere again.`];
         }
         if (s.outcome === 'entry' || s.outcome === 'impactE') {
-          if (ret >= 20e3 && ret <= 65e3) return near ? ['good', T`Free return: inside the entry corridor`, T`Return perigee ${km0(ret)} km, inside the 20 to 65 km corridor.`] : ['warn', T`Returns to the corridor, but missed the Moon`, T`Return perigee ${km0(ret)} km.`];
-          if (ret < 20e3) return ['bad', T`Returns too steep for entry`, T`Return perigee ${km0(ret)} km, below the 20 to 65 km corridor: the capsule would dive into the air too steeply.`];
-          return ['warn', T`Returns too shallow: skip-out`, T`Return perigee ${km0(ret)} km, above the 20 to 65 km corridor: the capsule would skip off the atmosphere.`];
+          if (ret >= CLO && ret <= CHI) return near ? ['good', T`Free return: inside the entry corridor`, T`Return perigee ${km0(ret)} km, inside the ${corrTxt()} corridor.`] : ['warn', T`Returns to the corridor, but missed the Moon`, T`Return perigee ${km0(ret)} km.`];
+          if (ret < CLO) return ['bad', T`Returns too steep for entry`, T`Return perigee ${km0(ret)} km, below the ${corrTxt()} corridor: the capsule would dive into the air too steeply.`];
+          return ['warn', T`Returns too shallow: skip-out`, T`Return perigee ${km0(ret)} km, above the ${corrTxt()} corridor: the capsule would skip off the atmosphere.`];
         }
         if (s.outcome === 'escape' || s.outcome === 'flung') return ['warn', T`Slingshot: flung into deep space`, T`The Moon added energy: the spacecraft passed it on the wrong side for a return.`];
-        if (isFinite(ret) && ret > 65e3) return ['warn', T`Returns, but misses the atmosphere`, T`Return perigee ${km0(ret)} km: far above the 20 to 65 km corridor.`];
+        if (isFinite(ret) && ret > CHI) return ['warn', T`Returns, but misses the atmosphere`, T`Return perigee ${km0(ret)} km: far above the ${corrTxt()} corridor.`];
         return ['warn', T`Still coasting after 10 days`, ''];
       }
       function summarize() {
@@ -661,7 +668,7 @@
             <div class="eq">\\[ r_1^2 = D^2 + r_{SOI}^2 - 2\\,D\\,r_{SOI}\\cos\\lambda_1, \\qquad \\sin\\gamma_1 = \\frac{r_{SOI}}{r_1}\\sin\\lambda_1 \\]</div>
             <div class="eq">\\[ v_{sc}^2 = v_0^2 - \\frac{2\\mu_\\oplus}{r_0} + \\frac{2\\mu_\\oplus}{r_1}, \\qquad \\cos\\phi_1 = \\frac{r_0\\,v_0}{r_1\\,v_{sc}}, \\qquad \\theta = \\phi_1 - \\gamma_1 \\]</div>
             ${Sym.where([['\\lambda_1', N`angle at the Moon between the Moon–Earth line and the entry point on the sphere`, N`rad or °`], ['r_1', N`distance from the Earth’s centre to the entry point`, 'm'], ['\\gamma_1', N`angle at the Earth between the spacecraft and the Moon`, N`rad or °`], 'Dem', 'rsoi', ['r_0, v_0', N`radius and speed just after TLI, at perigee`, N`m, m/s`], 'muE', ['\\phi_1', N`flight-path angle at the entry point, measured from the local horizontal`, N`rad or °`]], N`\\(\\lambda_1\\) is chosen; \\(r_1\\), \\(\\gamma_1\\), \\(v_{sc}\\) and \\(\\phi_1\\) are derived from it.`)}
-            <p>${T`In the lab’s transfer: TLI leaves \\(r_0\\) = 6 563 km at \\(v_0\\) = 10.953 km/s and reaches the sphere at \\(\\lambda_1\\) = 43.3°, read from the simulated flight. Then \\(r_1\\) = 339 298 km, \\(\\gamma_1\\) = 7.7°, \\(v_{sc}\\) = 0.924 km/s and \\(\\phi_1\\) = 76.8°, so θ = 76.8° − 7.7° = 69.1° from the Moon’s direction of motion. Then</p><div class="eq">\\[ v_{rel} = \\sqrt{0.924^2 + 1.0245^2 - 2\\times0.924\\times1.0245\\times\\cos 69.1^\\circ} = 1.108\\ \\mathrm{km/s} \\]</div><p>The spacecraft is slower than the Moon, but it moves in a different direction, so relative to the Moon it is fast.`}</p>
+            <p>${T`In the lab’s transfer: TLI leaves \\(r_0\\) = 6 563 km at \\(v_0\\) = 10.953 km/s and reaches the sphere at \\(\\lambda_1\\) = 43.3°, read from the simulated flight. The numbers below are the simulation’s; redone by hand from the rounded 43.3°, the last digit moves a little (\\(v_{rel}\\) = 1.106 instead of 1.108 km/s), which changes nothing that follows. \\(r_1\\) = 339 298 km, \\(\\gamma_1\\) = 7.7°, \\(v_{sc}\\) = 0.924 km/s and \\(\\phi_1\\) = 76.8°, so θ = 76.8° − 7.7° = 69.1° from the Moon’s direction of motion. Then</p><div class="eq">\\[ v_{rel} = \\sqrt{0.924^2 + 1.0245^2 - 2\\times0.924\\times1.0245\\times\\cos 69.1^\\circ} = 1.108\\ \\mathrm{km/s} \\]</div><p>The spacecraft is slower than the Moon, but it moves in a different direction, so relative to the Moon it is fast.`}</p>
             <p>${T`Inside the sphere the Moon’s gravity speeds the spacecraft up as it falls in and slows it down as it climbs out. Energy conservation relative to the Moon gives its speed at any distance \\(r\\) from the Moon’s centre:`}</p>
             <div class="eq">\\[ v^2 = v_\\infty^2 + \\frac{2\\mu_☾}{r} \\]</div>
             ${Sym.where([['v', N`speed relative to the Moon at distance \\(r\\)`, 'm/s'], 'vinf', 'muM', ['r', N`distance from the Moon’s centre`, 'm']], N`It holds at every point of the hyperbola.`)}
@@ -693,7 +700,7 @@
               <li>${T`Choose \\(\\lambda_1\\) and compute forward: \\(r_1\\), \\(\\gamma_1\\), \\(\\phi_1\\), θ, \\(v_{rel}\\), \\(v_\\infty\\), and the \\(b\\) this trajectory gives. The time from TLI to the sphere also tells you where the Moon must be at TLI, so where to burn.`}</li>
               <li>${T`Compare with the target, adjust \\(\\lambda_1\\) and repeat until they match. Even \\(v_\\infty\\) changes a little with \\(\\lambda_1\\), which is why this is a loop and not a single formula.`}</li>
             </ol>
-            <p>${T`Planners solve this loop numerically, nudging the departure until the arrival converges on the target. The lab lets you run it by hand the other way round: the TLI burn position is the knob, and <i>Aim offset b</i> under <i>Outcome</i> shows where it lands.`}</p>
+            <p>${T`Planners solve this loop numerically, nudging the departure until the arrival converges on the target. The lab lets you run it by hand the other way round: the TLI burn position is the knob, and <i>Aim offset b</i> under <i>Outcome</i> shows where it lands. The two knobs are linked: burning later in the parking orbit sends the spacecraft out along a slightly different direction, so it crosses the sphere at a different \\(\\lambda_1\\), and a few hundredths of a degree of burn position move \\(b\\) by hundreds of kilometres.`}</p>
           </div>
         </section>
 
@@ -714,7 +721,7 @@
             <ol>
               <li>${T`Scenario <i>Fly past the Moon</i>. Play it and watch the zoom: the blue line ends at the sphere and the orange hyperbola takes over. Read v∞, the periselene and the aim offset b under <i>Outcome</i>, and compare them with sections ${App.sec('moon', 3)} and ${App.sec('moon', 4)}.`}</li>
               <li>${T`Move the TLI burn position by a few hundredths of a degree. The periselene moves by hundreds of kilometres: the timing of one burn aims the whole transfer. Module ${Progress.code('freereturn')} explains why. Aim for Apollo’s band, a periselene between 100 and 300 km, and play the flight to periselene.`}</li>
-              <li>${T`Scenario <i>Capture into lunar orbit</i>: the LOI burn at periselene brakes the spacecraft into orbit, but its low point is only about 90 km up. Lower the LOI Δv until it is no longer captured. Then match Apollo 11’s first lunar orbit, 111 × 313 km: adjust the aim and the LOI Δv for a low point between 100 and 130 km and a high point between 280 and 340 km, and play it through the burn. The high point moves about 5 km for every m/s of LOI.`}</li>
+              <li>${T`Scenario <i>Capture into lunar orbit</i>: the LOI burn at periselene brakes the spacecraft into orbit, but its low point is only about 90 km up. Lower the LOI Δv until it is no longer captured. Then match Apollo 11’s first lunar orbit, 111 × 313 km: adjust the aim and the LOI Δv for a low point between 100 and 130 km and a high point between 280 and 340 km, and play it through the burn. The high point moves about 5 km for every m/s of LOI. Expect about 860 m/s rather than Apollo’s 889: the lab arrives with a slightly different v∞ and flies a simplified planar model, so its numbers differ from the flight’s while the method is the same.`}</li>
             </ol>
           </div>
           ${MoonLab.markup({ id: 'tl', title: N`Earth–Moon trajectory`, presets: PRESETS, start: 'flyby', loi: true, detail: 'moon', dvRange: [3120, 3200], angRange: [-132.8, -131.8] })}

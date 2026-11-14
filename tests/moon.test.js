@@ -7,7 +7,9 @@ test('tests/helpers/lab.js still mirrors MoonLab (MCC time and corridor)', () =>
   const src = fs.readFileSync(path.join(__dirname, '../js/ch/moon.js'), 'utf8');
   assert.match(src, /const MCC_T = 26\.7 \* 3600;/);
   assert.equal(MCC_T, 26.7 * 3600);
-  assert.match(src, /const inCorridor = \(s\) => s\.outcome === 'entry' && s\.retAlt >= 20e3 && s\.retAlt <= 65e3 && s\.minM\.alt < 20000e3;/);
+  assert.match(src, /const inCorridor = \(s\) => s\.outcome === 'entry' && s\.retAlt >= CLO && s\.retAlt <= CHI && s\.minM\.alt < 20000e3;/);
+  assert.match(src, /CORR = C\.corridor, CLO = CORR\.periLow, CHI = CORR\.periHigh/);
+  assert.ok(!/20e3 && |20 to 65/.test(src), 'no corridor number left over from the old 20 to 65 km');
 });
 
 test('practice generators and concept questions are well formed', () => {
@@ -60,4 +62,21 @@ test('13.6 lab scenarios do what the steps say', () => {
   // the Apollo band 100–300 km is reachable with the TLI-point slider (step 0.01° or finer)
   let hit = 0; for (let a = -132.6; a <= -132.3; a += 0.01) { const s = fly({ ...PRESETS.flyby, ang: a }); if (s.outcome !== 'impact' && s.minM.alt >= 100e3 && s.minM.alt <= 300e3) hit++; }
   assert.ok(hit >= 3, 'band reachable');
+});
+
+test('MoonLab: Mission Control’s MCC solver never counts as the candidate’s own work (freereturn reality, rescue)', () => {
+  const src = fs.readFileSync(path.join(__dirname, '../js/ch/moon.js'), 'utf8');
+  const solve = src.slice(src.indexOf("$('solve').addEventListener"), src.indexOf("UI.seg(root, `#${id}-view`"));
+  assert.ok(/solved = true/.test(solve) && !/touched = true/.test(solve));
+  assert.ok(/sim\.touched = own\(\)/.test(src) && /touched: own\(\)/.test(src));
+  assert.ok(/const own = \(\) => touched && !solved;/.test(src));
+  const fr = fs.readFileSync(path.join(__dirname, '../js/ch/freereturn.js'), 'utf8');
+  assert.ok(/c\.model === 'three' && s\.touched\) Progress\.done\('freereturn', 'reality'\)/.test(fr));
+});
+
+test('0.6 lab note: Apollo 11’s 111 × 313 km needs about 860 m/s of LOI in the lab, not 889', () => {
+  const orbit = (dv) => { const s = Phys.simulatePatched({ dv: 3160, burnAngle: -132.41, mcc: null, loi: { dv } });
+    const r = s.pts.filter((q) => q.t > s.loiT).map((q) => q.rM - Phys.C.RM); return [Math.min(...r) / 1e3, Math.max(...r) / 1e3]; };
+  const [lo, hi] = orbit(860); assert.ok(lo > 100 && lo < 130 && hi > 280 && hi < 340, `${lo} × ${hi}`);
+  assert.ok(orbit(889)[1] < 250, 'Apollo’s 889 m/s gives a much lower high point in the lab');
 });

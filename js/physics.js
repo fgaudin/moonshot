@@ -18,6 +18,9 @@
     H: 7200,                     // density scale height, m
     p0: 101325,                  // sea-level pressure, Pa
     entryInterface: 121920,      // 400 000 ft, m
+    // lunar-return entry corridor: flight-path angle at entry interface (deg) and the matching vacuum perigee altitudes (m)
+    // for an 11 km/s return conic (homeward.phys.js perigeeForGamma; tests/physics.test.js checks they agree)
+    corridor: { shallow: -5.3, steep: -7.4, target: -6.5, periLow: 12e3, periHigh: 65e3 },
   };
 
   /* ---------- Two-body orbit relations (2-D, planar) ---------- */
@@ -522,6 +525,7 @@
       const M = (nu) => { let E = eccFromTrue(nu, el.e); if (E < 0) E += 2 * Math.PI; return E - el.e * Math.sin(E); };
       const n = Math.sqrt(mu / Math.pow(el.a, 3));
       let dM = M(nu2) - M(nu1); if (dM < 0) dM += 2 * Math.PI;
+      if (2 * Math.PI - dM < 1e-7) dM = 0;                 // already there (float noise just past the target), not a full orbit                 // already there (float noise just past the target), not a full orbit
       return dM / n;
     },
     // velocity frame: prograde along v; radial in the plane, perpendicular to v, on the side away from the body

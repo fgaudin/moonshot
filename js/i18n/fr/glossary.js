@@ -1,5 +1,8 @@
 /* Glossary (js/glossary.js) — français */
 I18N.add('fr', {
+  "ASCAN": "ASCAN",
+  "astronaut candidate": "astronaut candidate (candidat astronaute)",
+  "NASA’s name for an astronaut in training, before assignment to a flight. It is also how this manual addresses you until you choose a callsign.": "Le nom que la NASA donne à un astronaute en formation, avant son affectation à un vol. C’est aussi ainsi que ce manuel s’adresse à vous tant que vous n’avez pas choisi d’indicatif.",
   "Ablation; stagnation point": "Ablation ; point d’arrêt",
   "ablative heat shield · heat flux": "bouclier thermique ablatif · flux thermique",
   "Ablation: the heat shield chars and erodes, carrying heat away. The stagnation point is the spot at the very front of a blunt body, where heating is greatest.": "Ablation : le bouclier thermique se carbonise et s’érode, ce qui évacue la chaleur. Le point d’arrêt est l’endroit situé tout à l’avant d’un corps émoussé, où l’échauffement est le plus fort.",

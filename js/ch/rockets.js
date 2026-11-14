@@ -45,11 +45,12 @@
         <section class="section" id="theory">
           <h2><span class="idx">3.1</span>${T`The thrust equation`}</h2>
           <div class="prose">
-            <p>${T`Apply Newton’s second and third laws to a control volume around the engine. The force on the rocket is the momentum flux of the exhaust, plus a pressure term at the nozzle exit:`}</p>
+            <p>${T`Draw an imaginary box around the engine and count what leaves it. Every second, the engine throws a mass of gas backwards at high speed: that is momentum leaving the box each second, and by Newton’s second and third laws the gas pushes the rocket forward just as hard. A second, smaller push comes from the gas pressure at the nozzle exit, which is not the same as the air pressure outside:`}</p>
             <div class="eq">\\[ F = \\dot m\\, v_e + (p_e - p_a)\\,A_e \\]</div>
             ${Sym.where(['Fth', 'mdot', 've', 'pexit', 'pa', 'Ae'], N`First term: momentum thrown backwards each second. Second term: extra push (or pull) from the pressure difference at the nozzle exit.`)}
-            ${Primer.box('derivative', false, 'refresher')}
             <p>${T`\\(\\dot m\\) is the propellant mass flow, \\(v_e\\) the exhaust velocity, \\(p_e\\) and \\(A_e\\) the pressure and area at the nozzle exit, and \\(p_a\\) the ambient pressure. As the vehicle climbs, \\(p_a\\) falls and thrust rises. An F-1 gave 6.77 MN at sea level and 7.77 MN in vacuum. Engineers fold both terms into one <b>effective exhaust velocity</b> \\(c = F/\\dot m\\).`}</p>
+            <p>${T`The dot over the m means “per second”: \\(\\dot m\\) is how fast the mass changes, a derivative. The rocket equation below is built from these rates.`}</p>
+            ${Primer.box('derivative', false, 'refresher')}
           </div>
           <div class="lab" id="nz" style="grid-template-columns:minmax(0,1fr) 19rem">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`F-1 engine at altitude`}</h3></div>
@@ -57,7 +58,7 @@
             <div class="controls">
               ${UI.slider({ id: 'nz-h', label: T`Altitude`, min: 0, max: 80, step: 0.5, value: 0, unit: 'km' })}
               <dl class="readout" id="nz-ro"></dl>
-              <p class="note" style="margin:0">${T`ṁ = 2 578 kg/s, v<sub>e</sub> = 2 850 m/s, p<sub>e</sub> = 44 kPa, A<sub>e</sub> = 9.87 m² (values chosen to match the published thrusts).`}</p>
+              <p class="note" style="margin:0">${T`ṁ = 2 615 kg/s, v<sub>e</sub> = 2 805 m/s, p<sub>e</sub> = 44 kPa, A<sub>e</sub> = 9.87 m² (values chosen to match the published thrusts and specific impulses).`}</p>
             </div>
           </div>
         </section>
@@ -110,7 +111,7 @@
             ${Sym.where(['tb', ['m_{prop}', N`propellant mass of the stage`, 'kg'], 'isp', 'g0', 'Fth', ['\\mathrm{TWR}_0', N`thrust-to-weight ratio at ignition, measured against g₀`, '—'], 'm0', 'mf'], N`The second form needs no masses or thrust: only I<sub>sp</sub>, the starting TWR and the fraction of the stage that is propellant.`)}
             <p>${T`A first stage with I<sub>sp</sub> 285 s that burns 73% of its mass lasts \\(285 \\times 0.73 / 1.18 \\approx 176\\) s at TWR 1.18, but 274 s at TWR 0.76 (if it could lift off at all), or 104 s at TWR 2. Halve the burn time and you roughly halve the gravity loss.`}</p>
             <p>${T`<b>Why not lift off at 3?</b> Thrust is not free. Engines are heavy (each F-1 weighed 8.4 t), the structure must carry their push, and a fast climb through thick air brings high drag and dynamic pressure. Crews also have g-limits. Real launchers lift off between about 1.2 and 1.6.`}</p>
-            <p>${T`<b>Upper stages can run below 1.</b> When the S-II lit, at about 67 km, the vehicle was already above most of the air, moving at about 2.4 km/s and still climbing at nearly 1 km/s. It no longer needed to beat gravity head-on: it only had to build horizontal speed before its upward momentum ran out, with the guidance tilting the thrust slightly upward. As speed approaches orbital speed, the Earth curves away beneath the vehicle and gravity is cancelled more and more, until in orbit it is cancelled completely. So the S-II lit at TWR ≈ 0.8 and the S-IVB at ≈ 0.64. A high TWR in vacuum would work too, with no drag to fight, but it would mean carrying heavier engines all the way to orbit. Upper stages trade TWR for mass: one J-2 engine on the S-IVB, five F-1s on the S-IC.`}</p>
+            <p>${T`<b>Upper stages can run below 1.</b> When the S-II lit, at about 67 km, the vehicle was already above most of the air, moving at about 2.4 km/s relative to the ground (2.76 km/s inertial, counting the Earth’s rotation) and still climbing at nearly 1 km/s. It no longer needed to beat gravity head-on: it only had to build horizontal speed before its upward momentum ran out, with the guidance tilting the thrust slightly upward. As speed approaches orbital speed, the Earth curves away beneath the vehicle and gravity is cancelled more and more, until in orbit it is cancelled completely. So the S-II lit at TWR ≈ 0.8 and the S-IVB at ≈ 0.64. A high TWR in vacuum would work too, with no drag to fight, but it would mean carrying heavier engines all the way to orbit. Upper stages trade TWR for mass: one J-2 engine on the S-IVB, five F-1s on the S-IC.`}</p>
           </div>
         </section>
 
@@ -122,6 +123,7 @@
             ${Sym.where(['sumk', 'ispk', 'g0', 'm0k', 'mfk'])}
             <p>${T`Below is the Saturn V as flown on Apollo 11, using approximate masses and an average I<sub>sp</sub> of 285 s for the S-IC across its climb out of the atmosphere. Edit any cell. Load the single-stage version (same propellant, same structure, one stage) and it cannot reach orbit. Make an upper stage much bigger and Δv goes up on paper, but the first stage can no longer lift the stack: watch its TWR.`}</p>
             <p class="note">${T`The first stage’s thrust is its sea-level thrust; upper stages use vacuum thrust. Ideal Δv ignores losses: the 9.3 km/s “to orbit” line already includes typical gravity and drag losses for a liftoff TWR near 1.2.`}</p>
+            <p class="note">${T`Tanks, engines and plumbing have mass. The S-IC carried 16 times its structure in propellant and the S-IVB, with its bulky hydrogen tank, 8. The best ever flown hold about 20 times their own mass, so the builder will not let a stage go lighter than one twentieth of its propellant.`}</p>
           </div>
           <div class="lab" id="st" style="grid-template-columns:minmax(0,1fr)">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Staging builder`}</h3><span class="spacer"></span>
@@ -149,7 +151,7 @@
   });
 
   function mountNozzle(root) {
-    const mdot = 2578, ve = 2850, pe = 44000, Ae = 9.87;
+    const mdot = 2615, ve = 2805, pe = 44000, Ae = 9.87;
     const thrust = (hkm) => mdot * ve + (pe - Phys.pressure(hkm * 1000)) * Ae;
     let hNow = 0;
     const view = UI.canvas(root.querySelector('#nz-cv'), (ctx, w, h) => {
@@ -206,6 +208,11 @@
     }).update();
   }
 
+  // the lightest tanks ever flown hold about 20 times their own mass of propellant (Centaur's pressure-stabilised
+  // balloon tanks; the S-IC managed 16, the S-IVB 8): a stage's structure is at least 1/20 of its propellant
+  const MAX_PROP_RATIO = 20;
+  const minDry = (prop) => Math.max(1, prop / MAX_PROP_RATIO);
+
   // display name of a stage: preset names are marked with N, added stages carry their number
   const stageName = (s) => (s.num ? T`Stage ${s.num}` : T(s.name));
 
@@ -213,7 +220,7 @@
 
     let cfg = JSON.parse(JSON.stringify(PRESETS.saturn));
     const tab = root.querySelector('#st-tab'), checksEl = root.querySelector('#st-checks');
-    let results = [], checks = [], grounded = false;
+    let results = [], checks = [], grounded = false, clamped = null;
     const NEEDS = [{ v: 9.3, l: N`Low Earth orbit ≈ 9.3 km/s` }, { v: 12.48, l: N`+ TLI = 12.5 km/s` }];
 
     // per-stage TWR at ignition and burnout, burn time and a verdict
@@ -244,6 +251,7 @@
       const liftoff = results[0] ? results[0].m0 : cfg.payload;
       const where = cfg.g > 5 ? T`Earth` : T`Moon`;
       const chip = (c) => `<span class="chip twr-${c.level}">${c.msg}</span>`;
+      const num = (x, d) => (isFinite(x) ? UI.fmt(x, d) : '—');
       tab.innerHTML = `<thead><tr><th>${T`Stage`}</th><th>${T`Propellant (t)`}</th><th>${T`Structure (t)`}</th><th>I<sub>sp</sub> (s)</th><th>${T`Thrust (kN)`}</th><th>${T`TWR start → end`}</th><th>${T`Burn (s)`}</th><th>m₀ (t)</th><th>${T`MR`}</th><th>Δv (m/s)</th><th></th></tr></thead><tbody>
         ${cfg.stages.map((s, i) => `<tr><td>${stageName(s)}</td>
           <td><input type="number" step="1" data-i="${i}" data-k="prop" value="${+(s.prop / 1000).toFixed(1)}" aria-label="${T`${stageName(s)} propellant`}"></td>
@@ -252,11 +260,12 @@
           <td><input type="number" step="10" data-i="${i}" data-k="thrust" value="${+(s.thrust / 1000).toFixed(1)}" aria-label="${T`${stageName(s)} thrust`}"></td>
           <td class="twr-cell"><b class="twr-${checks[i].level}">${UI.fmt(checks[i].t0, 2)}</b> → ${UI.fmt(checks[i].t1, 2)}</td>
           <td>${UI.fmt(checks[i].burn, 0)}</td>
-          <td>${UI.fmt(results[i].m0 / 1000, 1)}</td><td>${UI.fmt(results[i].m0 / results[i].mf, 2)}</td><td><b>${UI.fmt(results[i].dv, 0)}</b></td>
+          <td>${UI.fmt(results[i].m0 / 1000, 1)}</td><td>${num(results[i].m0 / results[i].mf, 2)}</td><td><b>${num(results[i].dv, 0)}</b></td>
           <td>${cfg.stages.length > 1 ? `<button class="btn" data-del="${i}" aria-label="${T`Remove ${stageName(s)}`}" style="padding:.3rem .5rem">✕</button>` : ''}</td></tr>`).join('')}
-        <tr><td>${T`Payload`}</td><td colspan="4"><input type="number" step="0.1" data-k="payload" value="${+(cfg.payload / 1000).toFixed(2)}" aria-label="${T`Payload mass`}"> t</td><td colspan="4">${T`Liftoff ${UI.fmt(liftoff / 1000, 1)} t · payload ${UI.fmt(100 * cfg.payload / liftoff, 2)}%`}</td><td><b style="color:${grounded ? 'var(--bad)' : 'var(--accent)'}">${UI.fmt(total, 0)}</b></td><td></td></tr></tbody>`;
+        <tr><td>${T`Payload`}</td><td colspan="4"><input type="number" step="0.1" data-k="payload" value="${+(cfg.payload / 1000).toFixed(2)}" aria-label="${T`Payload mass`}"> t</td><td colspan="4">${T`Liftoff ${UI.fmt(liftoff / 1000, 1)} t · payload ${UI.fmt(100 * cfg.payload / liftoff, 2)}%`}</td><td><b style="color:${grounded ? 'var(--bad)' : 'var(--accent)'}">${num(total, 0)}</b></td><td></td></tr></tbody>`;
       checksEl.innerHTML = `<span class="mono note">${T`Thrust-to-weight (${where} gravity):`}</span> ` + cfg.stages.map((s, i) => `<span class="twr-check">${stageName(s)} ${chip(checks[i])}</span>`).join('') +
-        (grounded ? ` <b class="twr-bad">${T`Grounded: stage 1 cannot lift the stack.`}</b>` : '');
+        (grounded ? ` <b class="twr-bad">${T`Grounded: stage 1 cannot lift the stack.`}</b>` : '') +
+        (clamped ? ` <span class="twr-warn">${T`${stageName(clamped)}: structure raised to ${UI.fmt(clamped.dry / 1000, 2)} t. No tank holds more than ${MAX_PROP_RATIO} times its own mass of propellant.`}</span>` : '');
       view.redraw();
     }
     tab.addEventListener('change', (e) => {
@@ -266,6 +275,9 @@
       else if (t.dataset.k === 'isp') cfg.stages[+t.dataset.i].isp = Math.max(1, val);
       else if (t.dataset.k === 'thrust') cfg.stages[+t.dataset.i].thrust = Math.max(1, val * 1000);
       else cfg.stages[+t.dataset.i][t.dataset.k] = val * 1000;
+      // structure cannot be lighter than real tanks allow (and never zero: an empty stage still has a mass)
+      clamped = null;
+      cfg.stages.forEach((st) => { const lo = minDry(st.prop); if (st.dry < lo) { st.dry = lo; clamped = st; } });
       renderTable();
     });
     tab.addEventListener('click', (e) => {
@@ -277,7 +289,7 @@
       cfg.stages.push({ name: 'Stage ' + (cfg.stages.length + 1), num: cfg.stages.length + 1, prop: 20000, dry: 2500, isp: 421, thrust: 1.033e6 }); renderTable();
     });
     root.querySelectorAll('[data-p]').forEach((b) => b.addEventListener('click', () => {
-      cfg = JSON.parse(JSON.stringify(PRESETS[b.dataset.p])); renderTable();
+      cfg = JSON.parse(JSON.stringify(PRESETS[b.dataset.p])); clamped = null; renderTable();
       if (b.dataset.p === 'single') Progress.done('rockets', 'single');
     }));
 

@@ -11,6 +11,9 @@ your changes under the same license. The full legal text follows; it is the one 
 Not covered by this license:
 - The NASA photographs in img/history/ are in the public domain (NASA Image and Video Library); their credits
   are given in the app.
+- CAPCOM's voice clips in audio/capcom-*.js were synthesized with Piper voices (https://huggingface.co/rhasspy/piper-voices):
+  English en_US-ryan-high (RyanSpeech dataset, CC BY-NC-SA 4.0), French fr_FR-upmc-medium, speaker "pierre"
+  (UPMC Pierre dataset, CC BY-SA 4.0), German de_DE-thorsten-high (Thorsten-Voice dataset, CC0).
 - MathJax and the web fonts are loaded from CDNs under their own licenses, as are the development tools that
   `npm install` fetches into tools/.
 

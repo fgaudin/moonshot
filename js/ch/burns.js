@@ -71,9 +71,10 @@
             </ul>
             <div class="eq">\\[ \\begin{gathered} \\Delta\\vec v = \\Delta v_P\\,\\hat p + \\Delta v_N\\,\\hat n + \\Delta v_R\\,\\hat r \\\\ |\\Delta\\vec v| = \\sqrt{\\Delta v_P^2 + \\Delta v_N^2 + \\Delta v_R^2} \\\\ \\alpha = \\operatorname{atan2}(\\Delta v_R,\\ \\Delta v_P) \\end{gathered} \\]</div>
             ${Sym.where([['\\Delta v_P,\\ \\Delta v_N,\\ \\Delta v_R', N`prograde, normal and radial components of the burn`, 'm/s'], ['\\hat p,\\ \\hat n,\\ \\hat r', N`unit vectors of the maneuver frame (length 1, pure directions)`, '—'], ['\\alpha', N`attitude in the orbit plane: how far the thrust points away from prograde, towards radial`, N`rad or °`]], N`The burn magnitude is Pythagoras in three dimensions. The attitude is the angle of the in-plane components; atan2, the two-argument arctangent of calculators and spreadsheets, keeps the quadrant: 0° is prograde, 180° retrograde, +90° radial out, −90° radial in.`)}
-            <p>${T`<b>Which “radial”?</b> There are two common conventions for the in-plane axis. Apollo used a <b>local vertical</b> frame (LVLH): straight up from the planet, and horizontal. Many planning tools and simulators use a <b>velocity</b> frame: prograde along the velocity, radial perpendicular to it. The two agree only where the flight-path angle γ is zero, at periapsis and apoapsis. Anywhere else, convert:`}</p>
+            <div class="callout"><b>${T`Which “radial”?`}</b>${T`There are two common conventions for the in-plane axis. Apollo used a <b>local vertical</b> frame (LVLH): straight up from the planet, and horizontal. Many planning tools and simulators use a <b>velocity</b> frame: prograde along the velocity, radial perpendicular to it. The two agree only where the flight-path angle γ is zero, at periapsis and apoapsis. Anywhere else, convert:`}
             <div class="eq">\\[ \\begin{aligned} \\Delta v_P &= \\Delta v_H\\cos\\gamma + \\Delta v_V\\sin\\gamma \\\\ \\Delta v_R &= -\\Delta v_H\\sin\\gamma + \\Delta v_V\\cos\\gamma \\end{aligned} \\]</div>
             ${Sym.where([['\\Delta v_H,\\ \\Delta v_V', N`horizontal and vertical (local vertical) components of the same burn`, 'm/s'], 'gamma'], N`A Mission Control that computes in one frame and enters into the other gets a slightly wrong burn. Agree on the frame before you agree on the numbers. This course uses the <b>velocity</b> frame in every lab and on every PAD.`)}
+            </div>
           </div>
         </section>
 
@@ -112,7 +113,9 @@
               <li>${T`<b>Finite-burn losses.</b> As the spacecraft moves, the fixed thrust direction drifts away from the ideal one, so part of the Δv is wasted. The loss grows with the burn time compared with the orbital period. Under a few percent of the period it is negligible; for long burns, Mission Control adds Δv or plans the burn in pieces.`}</li>
             </ul>
             <p>${T`In the lab, a small 8 kN stage tries to raise its apoapsis from 300 km to 5 000 km with the impulsive Δv of 947 m/s, an 18-minute burn. Ignited at the burn point it reaches only about 3 760 km; centred on it, about 4 610 km. Getting to 5 000 km takes more Δv than the plan says.`}</p>
-            <p>${T`<b>Why hold a fixed direction?</b> The plan is one Δv vector at the burn point. Pushing along that direction, centred on the burn point, is the closest a finite burn comes to the planned impulse, and it is how Apollo flew most PAD burns: the computer fixed the Δv vector in space at ignition and pushed along it until the accelerometers had measured all of it. The alternative is to turn with the velocity so that the thrust stays prograde. For a long burn that adds more energy, because all the thrust works along the motion: the 8 kN stage then reaches about 4 820 km instead of 4 610 km. But the periapsis also rises, to about 390 km: the result is a different orbit from the one planned. For burns of a few percent of the period, the two methods give the same orbit. Long burns with a precise target use closed-loop guidance, which steers during the burn towards the required orbit; the S-IVB flew the trans-lunar injection this way. The lab lets you compare the first two.`}</p>
+            <p>${T`<b>Why hold a fixed direction?</b> The plan is one Δv vector at the burn point. Pushing along that direction, centred on the burn point, is the closest a finite burn comes to the planned impulse, and it is how Apollo flew most PAD burns: the computer fixed the Δv vector in space at ignition and pushed along it until the accelerometers had measured all of it.`}</p>
+            <p>${T`<b>Or turn with the velocity.</b> The thrust then stays prograde, so all of it works along the motion and a long burn adds more energy: the 8 kN stage reaches about 4 820 km instead of 4 610 km. But the periapsis also rises, to about 390 km: the result is a different orbit from the one planned. For burns of a few percent of the period, the two methods give the same orbit. The lab lets you compare them.`}</p>
+            <p>${T`<b>Closed-loop guidance.</b> Long burns with a precise target steer during the burn towards the required orbit. The S-IVB flew the trans-lunar injection this way.`}</p>
           </div>
         </section>
 
@@ -140,7 +143,8 @@
                 <div class="ctl"><label for="mc-veh"><span>${T`Vehicle`}</span></label><select id="mc-veh">${Object.entries(VEHICLES).map(([k, v]) => `<option value="${k}">${T(v.name)}</option>`).join('')}</select></div>
                 <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="mc-centre" checked> ${T`Centre each burn on its burn point (TIG = burn point − t<sub>b</sub>/2)`}</label>
                 <label class="mono note" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" id="mc-track"> ${T`During the burn, turn with the velocity (attitude kept relative to prograde) instead of holding a fixed direction`}</label>
-                <button class="btn" id="mc-solve">${T`Show Mission Control’s impulsive solution`}</button>
+                <div class="btn-row"><button class="btn" id="mc-solve">${T`Show Mission Control’s impulsive solution`}</button><button class="btn" id="mc-reload">${T`Reload the scenario`}</button></div>
+                <p class="note" id="mc-peek" hidden style="margin:0">${T`Mission Control’s solution is on the board, so this scenario no longer earns credit. Reload it to fly your own burns.`}</p>
               </div>
               ${[0, 1].map((i) => `
               <div class="tl-group mc-burn" data-i="${i}">
@@ -171,7 +175,7 @@
   });
 
   function mountComputer(root) {
-    let scenKey = 'circ', res = null, tNow = 0, playing = !UI.reducedMotion(), warp = 300, touched = false;
+    let scenKey = 'circ', res = null, tNow = 0, playing = !UI.reducedMotion(), warp = 300, touched = false, peeked = false;
     const $ = (sel) => root.querySelector(sel);
     const num = (id) => { const v = parseFloat(String($(id).value).replace(/\s|\u202f/g, '').replace(',', '.')); return isFinite(v) ? v : 0; };
     const view = UI.canvas($('#mc-cv'), null);
@@ -210,7 +214,7 @@
     }
 
     function checkObjectives(veh) {
-      if (!touched) return;
+      if (!touched || peeked) return;   // after "Show Mission Control’s solution", only a reload earns credit again
       const f = res.final, rp = (f.rp - RE) / 1000, ra = (f.ra - RE) / 1000;
       if (scenKey === 'circ' && f.e < 0.003 && Math.abs(rp - 1000) < 30 && Math.abs(ra - 1000) < 30) Progress.done('burns', 'circ');
       if (scenKey === 'hohmann' && f.e < 0.003 && Math.abs(rp - 2000) < 30 && Math.abs(ra - 2000) < 30) Progress.done('burns', 'hohmann');
@@ -218,13 +222,14 @@
       if (scenKey === 'long' && veh === VEHICLES.low && Math.abs(ra - 5000) <= 100) Progress.done('burns', 'long');
     }
 
-    // the PAD card: what Mission Control would read up for each burn
+    // the PAD card: what Mission Control would read up for each burn (GET as hhh:mm:ss, like a real PAD)
+    const getHMS = (t) => { t = Math.round(t); const p2 = (x) => String(x).padStart(2, '0'); return `${String(Math.floor(t / 3600)).padStart(3, '0')}:${p2(Math.floor(t % 3600 / 60))}:${p2(t % 60)}`; };
     function renderPad(veh) {
       const rows = res.burns.map((b) => `
         <div class="pad-burn">
           <b>${T`PAD · burn ${b.i + 1}`}</b>
           <dl>
-            <dt>TIG</dt><dd>GET ${UI.fmtTime(b.tStart)}</dd>
+            <dt>TIG</dt><dd>GET ${getHMS(b.tStart)}</dd>
             <dt>${T`Burn point`}</dt><dd>GET ${UI.fmtTime(b.tig)}</dd>
             <dt>Δv P / R</dt><dd>${UI.fmt(b.dv * Math.cos(b.attitude), 1)} / ${UI.fmt(b.dv * Math.sin(b.attitude), 1)} m/s</dd>
             <dt>|Δv|</dt><dd>${UI.fmt(b.dv, 1)} m/s</dd>
@@ -330,12 +335,13 @@
     $('#mc-t').addEventListener('input', (e) => { tNow = +e.target.value * res.t; playing = false; setPlay(); draw(); });
     UI.seg(root, '#mc-warp', (v) => { warp = +v; });
     $('#mc-scen').addEventListener('change', (e) => {
-      scenKey = e.target.value; touched = false;
+      scenKey = e.target.value; touched = false; peeked = false; $('#mc-peek').hidden = true;
       $('#mc-veh').value = SCEN[scenKey].vehicle;
       setBurns(scenKey === 'radial' ? [{ when: 'in', minutes: 20, pro: 0, rad: 0 }] : scenKey === 'hohmann' ? [{ when: 'in', minutes: 5, pro: 0, rad: 0 }, { when: 'apo', pro: 0, rad: 0 }] : scenKey === 'circ' ? [{ when: 'apo', pro: 0, rad: 0 }] : [{ when: 'in', minutes: scenKey === 'long' ? 40 : 5, pro: 0, rad: 0 }]);
       playing = true; setPlay(); run();
     });
-    $('#mc-solve').addEventListener('click', () => { setBurns(SCEN[scenKey].solution()); touched = false; playing = true; setPlay(); run(); });
+    $('#mc-solve').addEventListener('click', () => { setBurns(SCEN[scenKey].solution()); touched = false; peeked = true; $('#mc-peek').hidden = false; playing = true; setPlay(); run(); });
+    $('#mc-reload').addEventListener('click', () => $('#mc-scen').dispatchEvent(new Event('change')));
     root.querySelectorAll('.mc-burn select, .mc-burn input, #mc-veh, #mc-centre, #mc-track').forEach((el) => el.addEventListener('change', () => { touched = true; syncFields(); playing = true; setPlay(); run(); }));
 
     UI.loop((dt) => {

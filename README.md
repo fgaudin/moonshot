@@ -83,16 +83,18 @@ js/primers.js       math refreshers, their widgets and the Math Toolkit page
 js/symbols.js       Greek-letter tooltips and the variable legends under equations
 js/history.js       history capsules: NASA photo, story and credit per module
 img/history/        the NASA photographs (WebP, 1280 px)
+audio/capcom-*.js   CAPCOM's voice clips for the PAD readback drill (TM-19) in en/fr/de, base64 MP3, loaded on demand
 js/i18n.js          T/N translation helpers, language loading
 js/i18n/fr|de/      French and German dictionaries, one per source file
-tools/              dev-only: i18n checker, translation guide (I18N.md), module-author guide (MODULE-GUIDE.md)
+tools/              dev-only: i18n checker, translation guide (I18N.md), module-author guide (MODULE-GUIDE.md),
+                    CAPCOM voice generator (capcom-voice.py + capcom-phrases.json, needs Piper and ffmpeg)
 tmp/                scratch: Node test scripts, screenshots (safe to delete)
 ```
 
-Physics can be tested headless, e.g. `node tmp/t6.js` (free-return search) or `node tmp/t_practice.js`.
+Tests: `node --test tests/*.test.js` (physics, every chapter's labs and quoted numbers, practice generators, i18n).
 Append `?focus=<lab id>` to a URL to jump straight to a lab (e.g. `?focus=tl#moon`).
 
 ## License
 
 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): share and adapt it, with credit, not for
-commercial use, and under the same license. The NASA photographs are public domain. See `LICENSE`.
+commercial use, and under the same license. The NASA photographs are public domain; CAPCOM's synthesized voices are Piper voices (credits in `LICENSE`). See `LICENSE`.

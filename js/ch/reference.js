@@ -139,7 +139,7 @@
             <div class="card"><span class="phase">${T`Manoeuvres`}</span>
               <div class="eq">\\[ a_t = \\frac{r_1+r_2}{2},\\quad \\mathrm{TOF} = \\pi\\sqrt{\\frac{a_t^3}{\\mu}} \\]</div>
               <div class="eq">\\[ \\Delta v_{plane} = 2v\\sin\\frac{\\Delta i}{2} \\]</div>
-              <div class="eq">\\[ \\alpha_{lead} = \\pi - \\omega_{tgt}\\,\\mathrm{TOF} \\]</div></div>
+              <div class="eq">\\[ \\phi_{req} = \\pi - \\omega_{tgt}\\,\\mathrm{TOF} \\]</div></div>
             <div class="card"><span class="phase">${T`Lunar &amp; hyperbolic`}</span>
               <div class="eq">\\[ r_{SOI} = D\\left(\\frac{m}{M}\\right)^{2/5} \\]</div>
               <div class="eq">\\[ v^2 = v_\\infty^2 + \\frac{2\\mu}{r},\\quad \\varepsilon = \\frac{v_\\infty^2}{2} \\]</div></div>
@@ -203,6 +203,7 @@
           <h2><span class="idx">G</span>${T`Photographs`}</h2>
           <div class="prose"><p>${T`The archive photographs in this manual are NASA images from the NASA Image and Video Library (images.nasa.gov). Works created by NASA are generally not subject to copyright in the United States; NASA asks to be credited as the source. NASA’s use does not imply its endorsement of this manual. Each photograph links to its original record.`}</p></div>
           ${Archive.credits()}
+          <div class="prose"><p>${T`CAPCOM’s voice in the PAD readback drill (module ${Progress.code('mcc')}) is synthesized with Piper voices by rhasspy: “en_US-ryan-high” (RyanSpeech dataset, CC BY-NC-SA 4.0), “fr_FR-upmc-medium”, speaker Pierre (UPMC Pierre dataset, CC BY-SA 4.0), and “de_DE-thorsten-high” (Thorsten-Voice dataset, CC0).`}</p></div>
         </section>
 
         <section class="section">

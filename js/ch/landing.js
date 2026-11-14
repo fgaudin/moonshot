@@ -30,7 +30,7 @@
             <div class="eq">\\[ t_{hover} = \\frac{I_{sp}\\,g_0}{g_☾}\\,\\ln\\frac{m_0}{m_0 - m_{prop}} \\]</div>
             ${Sym.where(['thover', 'isp', 'g0', 'gM', 'ln', 'm0h', 'mprop'])}
             ${Primer.box('log', false, 'refresher')}
-            <div class="callout history"><b>1202</b>${T`Five minutes into Apollo 11's descent the guidance computer raised program alarms 1202 and 1201: “executive overflow”. The rendezvous radar, left on as a safety backup, was stealing CPU cycles through a hardware quirk. The software, designed by Margaret Hamilton's team at MIT, restarted and dropped low-priority tasks while it kept flying. Twenty-six-year-old guidance officer Steve Bales made the “go” call. Then Armstrong saw that P64 was heading for a boulder field beside West crater. He took over in P66 about 150 m up and flew on past the boulders. Mission Control called “60 seconds”, then “30 seconds”: the time left before the bingo call, when the crew must land or abort. Eagle touched down about 20 seconds before bingo. Post-flight analysis found about 45 seconds of propellant left: sloshing in the tank had fooled the low-level sensor. Eagle came down about 6.5 km beyond the centre of its target ellipse. Most of that was a navigation error already present at the start of the descent; Armstrong’s detour added about 600 m.`}</div>
+            <div class="callout history"><b>1202</b>${T`Five minutes into Apollo 11's descent the guidance computer raised program alarms 1202 and 1201: “executive overflow”. The rendezvous radar, left on as a safety backup, was stealing CPU cycles through a hardware quirk. The software, designed by Margaret Hamilton's team at MIT, restarted and dropped low-priority tasks while it kept flying. Twenty-six-year-old guidance officer Steve Bales made the “go” call. Then Armstrong saw that P64 was heading for a boulder field beside West crater. He took over in P66 about 150 m up and flew on past the boulders. Mission Control called “60 seconds”, then “30 seconds”: the time left before the bingo call, when the crew must land or abort. Eagle touched down about 20 seconds before bingo. Post-flight analysis found about 45 seconds of propellant left: sloshing in the tank had fooled the low-level sensor. Eagle came down about 6 km (4 miles) beyond the centre of its target ellipse. Most of that error was already there when the descent began: the lander's state, as the computer knew it, was off by a few metres per second, enough to carry it kilometres long. Armstrong’s detour past the boulders added a little more.`}</div>
           </div>
         </section>
 
@@ -113,7 +113,7 @@
     let S, running = false, ended = false, keys = {}, calls = [], camG = 0, camS = 0;
     const reset = () => {
       S = { t: 0, x: 0, h: 500, vx: 18, vh: -12, m: 8000, prop: 500, pitch: 0, pitchCmd: 0, thr: 40, rodCmd: -1.0, flame: 0 };
-      calls = []; ended = false;
+      calls = []; ended = false; keys = {};
       root.querySelector('#ld-thr').value = 40;
       say(T`Eagle, Houston. You are go for landing.`);
       setBadge(T`Ready`, '');
@@ -134,7 +134,7 @@
     const snapThr = (v) => (v > 65 && v < 92.5 ? (v < 79 ? 65 : 92.5) : v);
 
     const onKey = (e, down) => {
-      if (!running) return;
+      if (!running && down) return;                       // a key released after the run ended must still be let go
       const k = { ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right' }[e.code];
       if (k) { keys[k] = down; e.preventDefault(); if (down && (k === 'up' || k === 'down')) nudge(k); }
       if (down && e.code === 'KeyP') root.querySelector('#ld-p66').click();
@@ -144,8 +144,10 @@
     stage.addEventListener('keydown', kd); stage.addEventListener('keyup', ku);
     // also accept keys when nothing else has focus and the lab is on screen
     const wkd = (e) => { const r = root.getBoundingClientRect(); if (document.activeElement === document.body && running && r.top < innerHeight && r.bottom > 0) kd(e); };
-    window.addEventListener('keydown', wkd); window.addEventListener('keyup', ku);
-    UI.onCleanup(() => { running = false; window.removeEventListener('keydown', wkd); window.removeEventListener('keyup', ku); });
+    // a keyup lost to another window or tab would leave the lander tilting: let go of everything on blur
+    const release = () => { keys = {}; };
+    window.addEventListener('keydown', wkd); window.addEventListener('keyup', ku); window.addEventListener('blur', release);
+    UI.onCleanup(() => { running = false; window.removeEventListener('keydown', wkd); window.removeEventListener('keyup', ku); window.removeEventListener('blur', release); });
     const nudge = (k) => {
       if (p66()) S.rodCmd = Math.max(-8, Math.min(2, S.rodCmd + (k === 'up' ? 0.3 : -0.3)));
       else {
@@ -158,7 +160,7 @@
       const k = b.dataset.k;
       const on = (e) => { e.preventDefault(); if (!running) return; keys[k] = true; if (k === 'up' || k === 'down') nudge(k); };
       const off = () => { keys[k] = false; };
-      b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off);
+      b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off);
     });
 
     function step(dt) {
@@ -201,7 +203,7 @@
       }
       if (S.h - g > 2500 || Math.abs(S.x) > 3000) { running = false; ended = true; setBadge(T`Abort: out of range`, 'bad'); }
     }
-    const hoverLeft = () => S.prop / ((S.m * GM) / (DPS.isp * C.g0));
+    const hoverLeft = () => DPS.isp * C.g0 / GM * Math.log(S.m / (S.m - S.prop));   // the log form of section 9.1
     const BINGO = 20;   // s of hover propellant kept for an abort at the bingo call
 
     function callouts() {

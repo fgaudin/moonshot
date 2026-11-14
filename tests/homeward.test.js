@@ -130,3 +130,16 @@ test('figBurn and the practice generators', () => {
   for (let i = 0; i < 20; i++) { const p = H.practice.gens[0].make(); assert.ok(p.answer > 980 && p.answer < 1060, `Moon speed ${p.answer}`); }
   for (let i = 0; i < 20; i++) { const p = H.practice.gens[3].make(); assert.ok(p.answer > 500 && p.answer < 1100, `TEI Δv ${p.answer}`); }
 });
+
+test('review fixes: several φ come home (no escape root), a nearly parabolic MCC gives finite numbers, 52 h and MCC credit', () => {
+  const roots = Ph.solvePhi({ alt: 110e3, dv: 1000 });
+  assert.equal(roots.length, 3);
+  const hrs = roots.map((p) => Ph.fly({ alt: 110e3, dv: 1000, phi: p, rev: 1 }).tof / 3600);
+  near(hrs[0], 60, 1, 'fast'); near(hrs[1], 78, 1, 'middle'); near(hrs[2], 235, 2, 'slow');
+  for (const dv of [940, 1000, 1100]) for (const p of Ph.solvePhi({ alt: 110e3, dv })) assert.notEqual(Ph.fly({ alt: 110e3, dv, phi: p }).tof, undefined);
+  const r = Ph.fly({ alt: 480976, dv: 1244, phi: -32.08, rev: 3, mcc: { dt: 59056, dv: 7.4 } });
+  assert.ok(isFinite(r.periAlt), String(r.periAlt));
+  // the dispersed scenario: the planned burn alone misses the corridor, so a correction is needed
+  const d = H.SCEN.disp, plain = Ph.fly({ alt: d.alt, dv: d.dv, phi: d.phi, rev: d.rev, dvErr: d.err });
+  assert.notEqual(plain.outcome, 'corridor');
+});

@@ -122,7 +122,7 @@
   };
 
   // Lab scenarios (numbers only; texts live in the chapter). Altitudes in m, GET of the fix in s, angles in degrees.
-  const muE = 3.986004418e14, RE = 6.378137e6, muM = 4.9028e12, RM = 1.7374e6, DEM = 3.844e8;
+  const muE = 3.986004418e14, RE = 6.378137e6, muM = 4.9028e12, RM = 1.7374e6;
   const deg = Math.PI / 180;
   const mk = (body, h1, h2, t0, th1, phi0) => {
     const mu = body === 'moon' ? muM : muE, R = body === 'moon' ? RM : RE;
@@ -134,7 +134,6 @@
     long: mk('earth', 250e3, 400e3, 7 * 3600 + 40 * 60, 300, 1.5),
     lunar: mk('moon', 18e3, 111e3, 125 * 3600 + 20 * 60, 150, 31),
     ascent: { ...mk('moon', 15e3, 110e3, 124 * 3600 + 11 * 60 + 20, 200, 0), kind: 'ascent', tAsc: 420, thAsc: 300e3 / RM },
-    tli: mk('earth', 185e3, DEM - RE, 1 * 3600 + 30 * 60, 10, -110),
   };
 
   root.Phys_timing = P;

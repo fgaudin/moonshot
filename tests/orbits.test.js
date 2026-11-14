@@ -4,13 +4,13 @@ const { loadChapter, Phys } = require('./helpers/chapter.js');
 const { checkGenerators, checkQuiz } = require('./helpers/practice.js');
 const { topic } = require('./helpers/practiceTopic.js');
 const fs = require('fs'), path = require('path');
-const ch = loadChapter('orbits', ['figConics', 'figGamma', 'figElements', 'SIDEREAL_DAY', 'solveHyperbolic']);
+const ch = loadChapter('orbits', ['figConics', 'figGamma', 'figElements', 'SIDEREAL_DAY', 'solveHyperbolic', 'DESIGNER_PRESETS', 'nearPreset']);
 const { C } = Phys;
 const near = (x, want, tol, what) => assert.ok(Math.abs(x - want) <= tol, `${what}: ${x}, text says ${want}`);
 // the designer's presets (they live inside mountDesigner, so read them from the source)
 const src = fs.readFileSync(path.join(__dirname, '../js/ch/orbits.js'), 'utf8');
 const PRESETS = {};
-for (const m of src.matchAll(/^\s+(leo|geo|gto|molniya|tli|hyp): \{ 'od-h': ([\d.]+), 'od-v': ([\d.]+), 'od-phi': ([\d.-]+) \}/gm)) PRESETS[m[1]] = { h: +m[2], v: +m[3], phi: +m[4] };
+for (const [k, p] of Object.entries(ch.DESIGNER_PRESETS)) PRESETS[k] = { h: p['od-h'], v: p['od-v'], phi: p['od-phi'] };
 const elOf = (p) => Phys.elementsFromRV(C.RE + p.h * 1e3, p.v * 1e3, p.phi * Math.PI / 180, C.muE);
 
 test('2.x figures render without NaN', () => {
@@ -53,18 +53,21 @@ test('Kepler equation: solve, convert, round trip; hyperbolic solver', () => {
 });
 
 test('lab presets do what their buttons promise', () => {
-  assert.equal(Object.keys(PRESETS).length, 6);
-  const leo = elOf(PRESETS.leo), geo = elOf(PRESETS.geo);
-  assert.ok(leo.e < 0.001 && Math.abs(leo.rp - C.RE - 185e3) < 1e3);
-  assert.ok(geo.e < 0.001);
-  near(geo.T, ch.SIDEREAL_DAY, 30, 'geostationary preset period (the spacecraft must stay over the dot)');
-  assert.ok(elOf(PRESETS.gto).e > 0.7 && elOf(PRESETS.molniya).e > 0.7);
+  assert.deepEqual(Object.keys(PRESETS), ['gto', 'molniya', 'tli', 'hyp']);   // no circular preset: circles are designed by hand
+  const gto = elOf(PRESETS.gto), mol = elOf(PRESETS.molniya);
+  near((gto.ra - C.RE) / 1e3, 35786, 10, 'GTO apogee at geostationary altitude');
+  near(mol.T, ch.SIDEREAL_DAY / 2, 60, 'Molniya: half a sidereal day');
+  near((mol.ra - C.RE) / 1e3, 39770, 50, 'Molniya apogee');
   assert.ok(elOf(PRESETS.tli).e < 1 && elOf(PRESETS.tli).ra > C.DEM, 'after TLI the two-body apogee is beyond the Moon');
   assert.ok(elOf(PRESETS.hyp).e > 1 && elOf(PRESETS.hyp).eps > 0);
   // every preset clears the Earth
   for (const [k, p] of Object.entries(PRESETS)) assert.ok(elOf(p).rp > C.RE + 100e3, k);
   // two-body speed at the Apollo 11 TLI burnout point (≈ 10.84 km/s at 330 km) is below escape
   assert.ok(PRESETS.tli.v < Math.sqrt(2 * C.muE / (C.RE + PRESETS.tli.h * 1e3)) / 1e3);
+  // geostationary by hand, as the text says: 35 786 km at about 3.075 km/s takes one sidereal day
+  near(elOf({ h: 35786, v: 3.0747, phi: 0 }).T, ch.SIDEREAL_DAY, 30, 'geostationary period');
+  // Apollo 11 parking orbit 183 x 186 km: e ≈ 0.0002
+  near((186 - 183) / (2 * 6378 + 369), 0.0002, 0.00005, 'parking e');
 });
 
 test('objectives are reachable with the sliders: circle (e < 0.01) and apogee at geostationary altitude', () => {
@@ -75,8 +78,18 @@ test('objectives are reachable with the sliders: circle (e < 0.01) and apogee at
   const rp = C.RE + 250e3, ra = C.RE + 35786e3, a = (rp + ra) / 2, v = Math.sqrt(C.muE * (2 / rp - 1 / a)) / 1e3;
   assert.ok(v > 2.5 && v < 13);
   assert.ok(elOf({ h: 250, v: Math.ceil(v / 0.0005) * 0.0005, phi: 0 }).ra - C.RE >= 35786e3);
-  // the GTO preset is a little short of it (apogee below 35 786 km), so the candidate must raise the speed
-  assert.ok(elOf(PRESETS.gto).ra - C.RE < 35786e3);
+});
+
+test('a preset plus a nudge is not a design by hand; the starting state and a real design are', () => {
+  const st = (h, v, phi) => ({ 'od-h': h, 'od-v': v, 'od-phi': phi });
+  for (const p of Object.values(ch.DESIGNER_PRESETS)) {
+    assert.ok(ch.nearPreset(p));
+    assert.ok(ch.nearPreset({ ...p, 'od-v': p['od-v'] + 0.02 }), 'one speed nudge');
+    assert.ok(ch.nearPreset({ ...p, 'od-h': p['od-h'] + 10 }), 'one altitude nudge');
+  }
+  assert.ok(!ch.nearPreset(st(300, 9.2, 5)), 'starting state');
+  assert.ok(!ch.nearPreset(st(300, 10.18, 0)), 'GTO designed from the starting altitude');
+  assert.ok(elOf({ h: 300, v: 10.18, phi: 0 }).ra - C.RE >= 35786e3);
 });
 
 test('orbits practice: generators match independent hand calculations, quiz keys', () => {

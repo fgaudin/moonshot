@@ -27,7 +27,7 @@
       img: 's69-39593', id: 'S69-39593', date: '1969-07-20', mission: 'Apollo 11',
       title: N`The Trench`,
       alt: N`Mission Control in Houston: rows of consoles facing large projection screens`,
-      story: N`Mission Control during the Apollo 11 moonwalk. The front row, nicknamed the Trench, belonged to the flight dynamics officer (FIDO), the guidance officer and the retrofire officer. Their job was the content of this module: from radar and Doppler tracking they determined the spacecraft’s orbit, predicted where it would be, and computed the next burns on IBM System/360 computers one floor below.`,
+      story: N`Mission Control during the Apollo 11 moonwalk. The front row, nicknamed the Trench, belonged to the flight dynamics officer (FIDO), the guidance officer and the retrofire officer. Their job was the content of this module: from the tracking stations’ measurements of distance and speed (radar, radio ranging, Doppler) they determined the spacecraft’s orbit, predicted where it would be, and computed the next burns on IBM System/360 computers one floor below.`,
     },
     f1: {
       img: '9903405', focus: '50% 85%', date: '1964', mission: 'Saturn V',

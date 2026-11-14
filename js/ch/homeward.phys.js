@@ -10,10 +10,10 @@
   const Phys = root.Phys || (typeof require !== 'undefined' ? require('../physics.js') : null);
   const C = Phys.C;
   const muE = C.muE, muM = C.muM, RE = C.RE, RM = C.RM, D = C.DEM;
-  const VM = Math.sqrt(muE / D), W = VM / D;               // Moon's orbital speed (m/s) and rate (rad/s)
+  const VM = Math.sqrt(muE / D), W = VM / D;               // Moon's orbital speed (m/s) and rate (rad/s): the patched-conic value, Moon's own mass left out (physics.js's three-body model counts it: 1 024.6 m/s)
   const REI = RE + C.entryInterface;                      // entry interface radius (122 km)
   const R_SOI = Phys.R_SOI;
-  const CORRIDOR = { shallow: -5.3, steep: -7.4, target: -6.5 };   // flight-path angle at 122 km, degrees (as module entry)
+  const CORRIDOR = C.corridor;                            // flight-path angle at 122 km, degrees (shared with moon, freereturn, entry)
   const TAU = 2 * Math.PI;
   const wrap = (a) => { a = ((a + Math.PI) % TAU + TAU) % TAU - Math.PI; return a; };
 
@@ -121,6 +121,9 @@
         const arr = arrival(L.c, L.tStart, L.nuStart, L.tp);
         if (!arr || tm < arr.t) {
           const s = stateAt(L.c, nu), r = Math.hypot(s[0], s[1]);
+          // a nearly parabolic, nearly radial conic: ν lands on the asymptote in floating point and the state is not finite.
+          // Such a path is far outside the corridor anyway; leave the correction out rather than return NaN.
+          if (!s.every(isFinite)) return finish();
           const ut = [-L.c.sg * s[1] / r, L.c.sg * s[0] / r];
           const s2 = [s[0], s[1], s[2] + opts.mcc.dv * ut[0], s[3] + opts.mcc.dv * ut[1]];
           const c2 = conic(s2, muE);
@@ -130,6 +133,8 @@
         }
       }
     }
+    return finish();
+    function finish() {
     const last = legs[legs.length - 1];
     cE = last.c;
     res.cE = cE;
@@ -153,6 +158,7 @@
     }
     res.legs = legs;
     return res;
+    }
   }
   // first arrival at the entry interface after (tStart, nuStart) on Earth conic c; null if none within 12 days
   function arrival(c, tStart, nuStart, tp) {
@@ -271,7 +277,9 @@
       }
       pp = p; pv = v;
     }
-    return roots.sort((x, y) => (fly({ ...opts, phi: x }).tof || 1e12) - (fly({ ...opts, phi: y }).tof || 1e12));
+    // keep only burns that actually come home: a root can sit on a conic that is already outbound (perigee passed, escape)
+    const tof = (p) => fly({ ...opts, phi: p, mcc: null, dvErr: 0 }).tof;
+    return roots.filter((p) => tof(p) != null).sort((x, y) => tof(x) - tof(y));
   }
   // horizontal MCC Δv at a given time after TEI that brings the entry angle to the target
   function solveMCC(opts, target = CORRIDOR.target, range = 60) {

@@ -271,7 +271,7 @@
           <div class="prose"><p>${T`Choose a preset or edit the stage sliders to make your own vehicle. Then edit the kick and the pitch table. The simulation is planar, over a round, <b>non-rotating</b> Earth, with the exponential atmosphere of this module. Stage 1 follows a vertical rise, the kick and a gravity turn. Stage 2 follows your table. Stage 2 cuts off when it has the energy of a circular orbit at 200 km: your table decides the shape of the orbit. The preset tables are drafts that do <b>not</b> reach orbit. Only flights after your own edits count for the objectives.`}</p></div>
           <div class="lab tl-lab" id="ln">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Pitch program designer`}</h3><span class="spacer"></span>
-              <div class="ctl" style="margin:0"><select id="ln-pre" aria-label="${T`Vehicle preset`}">${Object.entries(PRESETS).map(([k, p]) => `<option value="${k}">${T(p.label)}</option>`).join('')}<option value="custom">${T`Custom vehicle`}</option></select></div>
+              <div class="ctl" style="margin:0"><select id="ln-pre" aria-label="${T`Vehicle preset`}">${Object.entries(PRESETS).map(([k, p]) => `<option value="${k}">${T(p.label)}</option>`).join('')}<option value="custom" disabled>${T`Custom vehicle`}</option></select></div>
             </div>
             <div class="stage"><canvas id="ln-cv" aria-label="${T`Ascent trajectory over the curved Earth, with the coast after cutoff`}"></canvas><div class="overlay" id="ln-ov"></div><div class="badge" id="ln-badge"></div></div>
             <div class="tl-side">
@@ -497,8 +497,12 @@
     });
     $('#ln-rows').addEventListener('input', (e) => {
       const el = e.target; if (!el.dataset.k) return;
-      const x = num(el.value); rows[+el.dataset.i][el.dataset.k] = x; touchedP = true;
-      if (isFinite(x)) { const v = ctl.read(); evaluate(v); }
+      // only a number is stored; anything else is marked and, when the field is left, the last good value comes back
+      const x = num(el.value), bad = !isFinite(x);
+      el.setAttribute('aria-invalid', String(bad)); el.style.outline = bad ? '2px solid var(--bad)' : '';
+      if (bad) return;
+      rows[+el.dataset.i][el.dataset.k] = x; touchedP = true;
+      evaluate(ctl.read());
     });
     $('#ln-rows').addEventListener('change', (e) => {
       if (!e.target.dataset.k) return;

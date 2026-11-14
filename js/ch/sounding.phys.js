@@ -106,9 +106,13 @@
       return (thrust - D) / m - g(h);
     };
     let t = 0, h = W.site, v = 0, m = day.m + prop;
-    const dt = 0.02, trace = [{ t, h, v, a: acc(0, h, 0, m), m }];
-    let apo = { t: 0, h };
-    while (t < 3000) {
+    const trace = [{ t, h, v, a: acc(0, h, 0, m), m }];
+    let apo = { t: 0, h }, lastPush = 0, escaped = false;
+    // 0.02 s steps, or 0.5 s on a coast where drag is negligible (a large motor on a thin world climbs
+    // thousands of kilometres and stays up for over an hour); the flight always runs to the ground
+    while (t < 1e5) {
+      const coastFree = t > tb && 0.5 * P.atmos(day.atm, h).rho * v * v * day.cd * day.A / m < 1e-6;
+      const dt = coastFree ? 0.5 : 0.02;
       // RK4 on (h, v); mass is linear in time during the burn
       const mAt = (tt) => day.m + Math.max(0, prop - mdot * Math.min(tt, tb));
       const k1h = v, k1v = acc(t, h, v, mAt(t));
@@ -119,9 +123,10 @@
       m = mAt(t);
       if (h > apo.h) apo = { t, h };
       if (h <= W.site && t > 1) { h = W.site; trace.push({ t, h, v, a: acc(t, h, v, m), m }); break; }
-      if (Math.round(t / dt) % 5 === 0) trace.push({ t, h, v, a: acc(t, h, v, m), m });
+      if (t > tb && v > 0 && v * v > 2 * g(h) * (W.R + h)) { escaped = true; trace.push({ t, h, v, a: acc(t, h, v, m), m }); break; }
+      if (t - lastPush >= 0.1 - 1e-9) { trace.push({ t, h, v, a: acc(t, h, v, m), m }); lastPush = t; }
     }
-    return { trace, tb, F, apo, tEnd: t, g, maxQ: maxQ(trace, day) };
+    return { trace, tb, F, apo, tEnd: t, g, escaped, maxQ: maxQ(trace, day) };
   };
   function maxQ(trace, day) {
     let best = { q: 0, t: 0, h: 0 };

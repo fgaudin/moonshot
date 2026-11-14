@@ -107,3 +107,10 @@ test('15 practice: generators and concept questions', () => {
   // every quiz question has a single correct option, listed first-class: no duplicate options
   for (const q of practice.quiz) assert.equal(new Set(q.opts).size, q.opts.length);
 });
+
+test('0.5 high gate: each 500 m lower buys about 15 s of hover for the heavy lander (text)', () => {
+  const sc = SCEN.heavy, base = { m0: sc.m0, prop: sc.prop, delay: sc.delay, pdiRange: (sc.fixedRange ?? DEFAULTS.range) * 1e3, throttle: DEFAULTS.thr / 100 };
+  const flown = (hg) => { const o = nominalOpts({ ...base, hHG: hg }); for (let i = 0; i < 3; i++) o.pdiRange += Pd.simulate(o).td.x; return Pd.simulate(o).margin; };
+  const m = [2500, 2000, 1500, 1000].map(flown);
+  for (let i = 1; i < m.length; i++) assert.ok(m[i] - m[i - 1] > 11 && m[i] - m[i - 1] < 22, `step ${i}: ${m[i] - m[i - 1]} s`);
+});

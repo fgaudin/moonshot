@@ -311,13 +311,13 @@
               <li>${T`<b>Overshoot</b>: too shallow. Even with full lift down the capsule cannot shed enough speed and climbs back out (“skips”) on a long uncontrolled arc.`}</li>
               <li>${T`<b>Undershoot</b>: too steep. Even with full lift up, deceleration exceeds the limit (Apollo design: 10 g) and heating becomes extreme.`}</li>
             </ul>
-            <p>${T`For Apollo, the corridor was about −5.3° to −7.4° at entry interface (122 km). Midcourse corrections on the way home aimed for the middle; Apollo 11 entered at −6.48° and landed 24 km from USS <i>Hornet</i>.`}</p>
+            <p>${T`For Apollo, the corridor was about −5.3° to −7.4° at entry interface (122 km). This is the corridor module ${Progress.code('homeward')} aimed the trans-Earth burn at. Midcourse corrections on the way home aimed for the middle; Apollo 11 entered at −6.48° and landed 24 km from USS <i>Hornet</i>.`}</p>
+            <p>${T`Notice that the two edges use opposite rolls: full lift <i>down</i> sets the shallow edge, full lift <i>up</i> sets the steep one. A capsule held at one bank for the whole entry cannot have both. Lift down captures a shallow entry but then digs in too hard; lift up keeps the load low but lets a shallow entry skip. The corridor map in the lab holds one bank from start to finish, so its safe band is narrower, about −5.5° to −6.75° at 11 km/s. Apollo's guidance changed the bank during the entry: lift down at first to bite into the air, then rolled up to hold the load near 4 to 6 g. That is what made the full 2° usable. The lab's fixed bank is also why its Apollo 11 entry peaks near 8 g, where the real one, flown by the guidance, peaked at about 6.5 g.`}</p>
           </div>
           <div class="prose">
-            <p>${T`The buttons at the top of the lab load five entries to compare:`}</p>
+            <p>${T`The buttons at the top of the lab load four entries to compare. Finding the skip-out boundary is left to you:`}</p>
             <ul>
               <li>${T`<b>Apollo 11</b>: 11.03 km/s at −6.5°, with the capsule’s lift (L/D 0.3) banked 45°, so partly up. About 8 g.`}</li>
-              <li>${T`<b>Too shallow</b>: −5.0°, with the lift rolled sideways. The capsule skips back out.`}</li>
               <li>${T`<b>Too steep</b>: −8.5°. Even with all the lift up, about 19 g.`}</li>
               <li>${T`<b>Ballistic</b>: the Apollo 11 entry with the lift removed (L/D = 0). A <b>ballistic entry</b> is one without lift: only drag and gravity act, as on a cannonball, and nothing holds the capsule up or steers it. It dives into dense air sooner and brakes about twice as hard, about 16 g. Compare it with Apollo 11 to see what lift buys.`}</li>
               <li>${T`<b>From LEO (Gemini)</b>: a return from low Earth orbit, slower (7.8 km/s) and much shallower (−1.5°). About 3 g.`}</li>
@@ -325,7 +325,7 @@
           </div>
           <div class="lab" id="en">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Entry corridor`}</h3><span class="spacer"></span>
-              <div class="btn-row"><button class="btn" data-p="apollo">Apollo 11</button><button class="btn" data-p="shallow">${T`Too shallow`}</button><button class="btn" data-p="steep">${T`Too steep`}</button><button class="btn" data-p="ballistic">${T`Ballistic`}</button><button class="btn" data-p="leo">${T`From LEO (Gemini)`}</button></div></div>
+              <div class="btn-row"><button class="btn" data-p="apollo">Apollo 11</button><button class="btn" data-p="steep">${T`Too steep`}</button><button class="btn" data-p="ballistic">${T`Ballistic`}</button><button class="btn" data-p="leo">${T`From LEO (Gemini)`}</button></div></div>
             <div class="stage" style="min-height:360px;background:var(--panel)"><canvas id="en-cv" aria-label="${T`Altitude versus downrange distance during entry`}"></canvas><div class="badge" id="en-badge"></div></div>
             <div class="controls">
               ${UI.slider({ id: 'en-v', label: T`Entry speed at 122 km`, min: 7.0, max: 12.0, step: 0.01, value: 11.03, unit: 'km/s' })}
@@ -349,9 +349,9 @@
         <section class="section">
           <h2><span class="idx">10.5</span>${T`Landing near a chosen point`}</h2>
           <div class="prose">
-            <p>${T`A capsule cannot steer onto a runway, but a crew and Mission Control can aim it at a patch of ocean some tens of kilometres across. Two things decide where it lands: when the deorbit burn starts and how big it is. This section turns both into a rule for a pocket calculator. The setting is the simplest one: a circular orbit over the equator, flown eastward, so everything happens in one plane and the landing site slides east under the capsule as the Earth turns. A site at another latitude, or an inclined orbit, adds a cross-range offset and a factor cos(latitude) on the Earth's motion. Those are left out here.`}</p>
+            <p>${T`A capsule cannot steer onto a runway, but a crew and Mission Control can aim it at a patch of ocean some tens of kilometres across. Two things decide where it lands: when the deorbit burn starts and how big it is. This section turns both into a rule for a pocket calculator, in five steps: the entry angle, the vacuum arc, the arc in the air, the Earth's turn, and the sensitivities. The setting is the simplest one: a circular orbit over the equator, flown eastward, so everything happens in one plane and the landing site slides east under the capsule as the Earth turns. A site at another latitude, or an inclined orbit, adds a cross-range offset and a factor cos(latitude) on the Earth's motion. Those are left out here.`}</p>
             <h3>${T`1. The deorbit burn and the entry angle`}</h3>
-            <p>${T`Fire retrograde in a circular orbit of radius \\(r_0\\). The burn point becomes the <b>apogee</b> of a new ellipse whose perigee lies deep inside the atmosphere. (In vacuum the perigee would even lie under the ground: the air stops the capsule long before.) What matters is the angle at which the new ellipse crosses the entry interface at 122 km. It sets the g-load and the heating, and it must be inside the corridor of section ${App.sec('entry', 4)}. Vis-viva gives the ellipse, then energy and angular momentum give the entry angle:`}</p>
+            <p>${T`Fire retrograde in a circular orbit of radius \\(r_0\\). The burn point becomes the <b>apogee</b> of a new ellipse whose perigee lies deep inside the atmosphere. (In vacuum the perigee would even lie under the ground: the air stops the capsule long before.) What matters is the angle at which the new ellipse crosses the entry interface at 122 km. It sets the g-load and the heating. A capsule coming from low orbit arrives at 7.8 km/s, not 11, so it needs far less air to slow down and its corridor is much shallower than the lunar one of section ${App.sec('entry', 4)}: about −1.5° to −2.5°. Steeper wastes the lift and raises the load; shallower makes the range long and hard to predict. Vis-viva gives the ellipse, then energy and angular momentum give the entry angle:`}</p>
             <div class="eq">\\[ v_a = \\sqrt{\\frac{\\mu}{r_0}} - \\Delta v, \\qquad a = \\left(\\frac{2}{r_0} - \\frac{v_a^2}{\\mu}\\right)^{-1}, \\qquad e = \\frac{r_0}{a} - 1, \\qquad r_p = 2a - r_0 \\]</div>
             ${Sym.where(['mu', ['r_0', N`radius of the circular orbit: Earth radius plus altitude`, 'm'], ['v_a', N`speed just after the burn: the speed at the apogee of the new ellipse`, 'm/s'], 'dv', 'a', 'e', 'rp'], N`The apogee radius is r₀, so r₀ = a(1 + e), which gives e. A negative perigee altitude is normal: the ellipse is only a way to reach the interface.`)}
             <div class="eq">\\[ v_{EI}^2 = v_a^2 + 2\\mu\\left(\\frac{1}{r_{EI}} - \\frac{1}{r_0}\\right), \\qquad \\cos\\gamma_{EI} = \\frac{r_0\\,v_a}{r_{EI}\\,v_{EI}} \\]</div>
@@ -371,12 +371,11 @@
             <div class="eq">\\[ \\theta_{lead} = \\theta_{vac} + \\theta_{atm} - \\omega_\\oplus\\,\\left(t_{vac} + t_{atm}\\right) \\]</div>
             ${Sym.where([['\\theta_{lead}', N`how far ahead of the capsule, measured along the equator, the landing site must be when the burn starts`, N`°`], ['\\theta_{vac},\\ \\theta_{atm}', N`angle flown in vacuum and in the atmosphere (with the parachute phase)`, N`°`], ['\\omega_\\oplus', N`rotation rate of the Earth: 7.292 × 10⁻⁵ rad/s, 15.04° per hour`, 'rad/s'], ['t_{vac},\\ t_{atm}', N`time from the burn to the interface, and from the interface to splashdown`, 's']], N`Read it as: the capsule flies θ_vac + θ_atm of arc, and the Earth hands back ω·t of it by moving the site towards the capsule's landing point.`)}
             <p>${T`<b>The rule: fire when the landing site is ${f(W.L.lead, 1)}° ahead.</b> Worked out: the capsule flies ${f(W.g.angDeg, 2)}° + ${f(W.atmDeg, 2)}° = ${f(W.L.total, 2)}° in ${f(W.L.time, 0)} s (${f(W.L.time / 60, 1)} min). In that time the Earth turns ${f(W.L.rot, 2)}°. The lead angle is ${f(W.L.total, 2)}° − ${f(W.L.rot, 2)}° = ${f(W.L.lead, 2)}°, which is ${f(W.L.lead / ER.DEG * ER.RE / 1000, 0)} km along the equator. The site comes into that position once every ${f(2 * Math.PI / (Math.sqrt(C.muE / Math.pow(W.g.r0, 3)) - ER.wE) / 60, 0)} minutes (an orbit, plus the Earth's turn), so there is a window on every revolution. Choosing which one is how Mission Control gets daylight and good weather.`}</p>
-            <p>${T`<b>Check against the full motion.</b> Integrating step by step from the burn, with gravity, drag and lift, down to the drogues, the capsule flies 82.75°. The hand method (vacuum arc plus the calibrated atmospheric arc) gives 82.76°, a difference under 0.01°, or 1 km. The vacuum arc alone, integrated without drag, is 51.74° against 51.73° by formula.`}</p>
+            <p class="note">${T`Check against the full motion: integrating step by step from the burn, with gravity, drag and lift, down to the drogues, the capsule flies 82.75°. The hand method gives 82.76°, a difference of about 1 km.`}</p>
             <h3>${T`5. How sensitive is it?`}</h3>
             <p>${T`<b>Late burn.</b> A burn made one second late starts one second further along the orbit, and the whole path shifts with it. The capsule moves over the ground at \\(n R_\\oplus\\) = ${f(W.late + ER.wE * ER.RE / 1000, 2)} km/s (a little less than the 7.78 km/s orbital speed, because the ground is below the orbit), and the site moves ${f(ER.wE * ER.RE / 1000, 2)} km/s the same way. The landing is therefore ${f(W.late, 1)} km further along for each second of delay. Five seconds is 35 km.`}</p>
             <p>${T`<b>Error in Δv.</b> Each 1 m/s too much speed taken off lowers the perigee by ${f(-W.sens.hpPerMs / 1000, 1)} km and steepens the entry by ${f(-W.sens.gPerMs, 4)}°. The capsule lands shorter by ${f(-W.sens.vacKm, 0)} km in the vacuum arc and ${f(-W.sens.atmKm, 0)} km in the atmosphere, and the shorter flight lets the Earth turn a little less. Net result: the landing moves by about <b>${f(-W.sens.totKm, 0)} km per m/s</b>. To land within tens of kilometres, the Δv must be right to about 1 m/s and the burn time to a few seconds. Real burns have a finite length and attitude errors: that is why the roll in the atmosphere and the recovery ships' margin matter.`}</p>
-            <h3>${T`6. Coming back from the Moon`}</h3>
-            <p>${T`From lunar distance there is no burn near the Earth to time. The capsule arrives at the interface at a moment, and the Earth turns 15° per hour under it. The landing longitude is therefore set by the <b>arrival time</b>: chosen by the revolution of the trans-Earth burn (module ${Progress.code('homeward')}, section ${App.sec('homeward', 4)}, one revolution is about 30° of longitude) and trimmed by the last midcourse correction, which can move the arrival by minutes. One minute of arrival time moves the landing by ${f(ER.wE * 60 * ER.RE / 1000, 0)} km along the equator. The range from the interface to splashdown is handled as above, calibrated for the capsule and the entry angle.`}</p>
+            <p class="note">${T`<b>Coming back from the Moon</b>, there is no burn near the Earth to time. The capsule arrives at the interface at a moment, and the Earth turns 15° per hour under it. The landing longitude is therefore set by the <b>arrival time</b>: chosen by the revolution of the trans-Earth burn (module ${Progress.code('homeward')}, section ${App.sec('homeward', 4)}, one revolution is about 30° of longitude) and trimmed by the last midcourse correction, which can move the arrival by minutes. One minute of arrival time moves the landing by ${f(ER.wE * 60 * ER.RE / 1000, 0)} km along the equator. The range from the interface to splashdown is handled as above, calibrated for the capsule and the entry angle.`}</p>
           </div>
           <div class="prose">
             <h3>${T`Lab: splash down next to the ship`}</h3>
@@ -461,7 +460,9 @@
     function plan() {                                      // inputs changed: back to the plan, nothing flown
       cancelAnimationFrame(raf); tSim = null; done = false;
       dv = num('#er-dv'); lead = num('#er-lead');
-      fl = isFinite(dv) && dv > 0 ? flight(AIM.scen[scen].h, dv) : null;
+      // a retrograde burn larger than the orbital speed would reverse the orbit: no entry worth flying
+      const vc = Math.sqrt(C.muE / (C.RE + AIM.scen[scen].h));
+      fl = !(isFinite(dv) && dv > 0) ? null : dv < vc ? flight(AIM.scen[scen].h, dv) : { ok: false, outcome: 'noentry' };
       $('#er-rep').textContent = '';
       render(); view.redraw();
     }
@@ -601,7 +602,6 @@
     const G_LIM = 10;
     const presets = {
       apollo: { 'en-v': 11.03, 'en-g': -6.5, 'en-b': 45, 'en-ld': 0.3 },
-      shallow: { 'en-v': 11.03, 'en-g': -5.0, 'en-b': 90, 'en-ld': 0.3 },
       steep: { 'en-v': 11.03, 'en-g': -8.5, 'en-b': 0, 'en-ld': 0.3 },
       ballistic: { 'en-v': 11.03, 'en-g': -6.5, 'en-b': 0, 'en-ld': 0 },
       leo: { 'en-v': 7.8, 'en-g': -1.5, 'en-b': 0, 'en-ld': 0.18 },
@@ -609,7 +609,7 @@
     // objectives count only after the candidate has changed a control themselves (not a preset)
     let touched = false;
     root.addEventListener('input', () => { touched = true; }, true);
-    root.addEventListener('change', (e) => { touched = e.target.id !== '-'; }, true);
+    root.addEventListener('change', () => { touched = true; }, true);     // presets set values without events
     const view = UI.canvas(root.querySelector('#en-cv'), null);
     const minis = ['#en-c1', '#en-c2', '#en-c3'].map((s) => UI.canvas(root.querySelector(s), null));
     const mapCv = UI.canvas(root.querySelector('#en-map'), null);

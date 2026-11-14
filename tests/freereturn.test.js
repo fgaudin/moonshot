@@ -125,3 +125,9 @@ test('timing figure: arithmetic of 14.4 (Δφ, rate of the parking orbit)', () =
   near(0.2 / 0.068, 3.0, 0.1, 'seconds earlier');
   near(1.0245 * 1334, 1367, 1, 'Moon displacement');
 });
+
+test('TLI shift readout: the "half a second late" preset is about 0.44 s late; −0.204° is 3.0 s early (text 0.3)', () => {
+  const { tliShift, PRESETS: P } = loadChapter('freereturn', ['tliShift', 'PRESETS']);
+  const late = tliShift(P.late.ang); assert.ok(late.sec > 0.4 && late.sec < 0.5, String(late.sec));
+  assert.ok(Math.abs(tliShift(-132.333 - 0.204).sec + 3.0) < 0.05);
+});

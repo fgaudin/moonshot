@@ -1,5 +1,6 @@
 /* Reference (js/ch/reference.js) — français */
 I18N.add('fr', {
+  "CAPCOM’s voice in the PAD readback drill (module {$0}) is synthesized with Piper voices by rhasspy: “en_US-ryan-high” (RyanSpeech dataset, CC BY-NC-SA 4.0), “fr_FR-upmc-medium”, speaker Pierre (UPMC Pierre dataset, CC BY-SA 4.0), and “de_DE-thorsten-high” (Thorsten-Voice dataset, CC0).": "La voix du CAPCOM dans l’exercice de collationnement des PAD (module {$0}) est synthétisée avec des voix Piper de rhasspy : « en_US-ryan-high » (jeu de données RyanSpeech, CC BY-NC-SA 4.0), « fr_FR-upmc-medium », locuteur Pierre (jeu de données UPMC Pierre, CC BY-SA 4.0), et « de_DE-thorsten-high » (jeu de données Thorsten-Voice, CC0).",
   'Flight data file': 'Documentation de vol',
   'Reference': 'Référence',
   'Constants, the formula sheet and sources.': 'Constantes, formulaire et sources.',

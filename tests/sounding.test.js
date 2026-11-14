@@ -75,3 +75,13 @@ test('lab: burn time scales with the load and the thrust is constant', () => {
 });
 
 test('practice: generators and quiz', () => { checkGenerators(practice); checkQuiz(practice); });
+
+test('every flight runs to the ground, even a large motor on the thin world (apogee over 2 000 km)', () => {
+  for (const world of Object.keys(Ps.WORLDS)) for (const motor of Object.keys(Ps.MOTORS)) for (let seed = 1; seed <= 8; seed++) {
+    const day = Ps.makeDay(world, seed), fl = Ps.fly(day, motor, 1), last = fl.trace[fl.trace.length - 1];
+    assert.ok(!fl.escaped && last.h === day.W.site && fl.tEnd > fl.apo.t, `${world} ${motor} ${seed}: ends at ${last.h} m, t ${fl.tEnd}`);
+    for (let i = 1; i < fl.trace.length; i++) assert.ok(fl.trace[i].t > fl.trace[i - 1].t);
+  }
+  const day = Ps.makeDay('thin', 1), fl = Ps.fly(day, 'large', 1);
+  assert.ok(fl.apo.h > 2e6 && fl.tEnd > 3000, `${fl.apo.h} ${fl.tEnd}`);
+});

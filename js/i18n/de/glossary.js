@@ -1,5 +1,8 @@
 /* Glossary (js/glossary.js) — Deutsch */
 I18N.add('de', {
+  "ASCAN": "ASCAN",
+  "astronaut candidate": "astronaut candidate (Astronautenanwärter)",
+  "NASA’s name for an astronaut in training, before assignment to a flight. It is also how this manual addresses you until you choose a callsign.": "So nennt die NASA Astronautinnen und Astronauten in der Ausbildung, bevor sie einem Flug zugeteilt sind. So spricht dich dieses Handbuch auch an, bis du ein Rufzeichen gewählt hast.",
   "Ablation; stagnation point": "Ablation; Staupunkt",
   "ablative heat shield · heat flux": "ablativer Hitzeschild · Wärmestrom",
   "Ablation: the heat shield chars and erodes, carrying heat away. The stagnation point is the spot at the very front of a blunt body, where heating is greatest.": "Ablation: Der Hitzeschild verkohlt und erodiert und führt dabei Wärme ab. Der Staupunkt ist die Stelle ganz vorn an einem stumpfen Körper, an der die Aufheizung am größten ist.",

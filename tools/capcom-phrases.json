@@ -1,0 +1,149 @@
+{
+  "_comment": "Spoken pieces of CAPCOM's PAD readout (js/ch/mcc.js). Generate with tools/capcom-voice.py, which explains how each piece is cut out of a short phrase. frame: two throw-away words around a digit. Each language follows its own radio habits: niner (en), zwo (de). Spelled for the voice, not for the eye: write 'pad' in lowercase (in capitals the voice spells it), fr 'Youstonne' (the French say Houston that way), 'padde' (a final d is silent in French).",
+  "voices": {
+    "en": {
+      "model": "en_US-ryan-high",
+      "license": "CC BY-NC-SA 4.0 (RyanSpeech dataset), Piper voice by rhasspy"
+    },
+    "fr": {
+      "model": "fr_FR-upmc-medium",
+      "speaker": 1,
+      "license": "CC BY-SA 4.0 (UPMC Pierre dataset), Piper voice by rhasspy"
+    },
+    "de": {
+      "model": "de_DE-thorsten-high",
+      "license": "CC0 (Thorsten-Voice dataset), Piper voice by rhasspy"
+    }
+  },
+  "phrases": {
+    "en": {
+      "digits": [
+        "zero",
+        "one",
+        "two",
+        "three",
+        "four",
+        "five",
+        "six",
+        "seven",
+        "eight",
+        "niner"
+      ],
+      "point": "point",
+      "minus": "minus",
+      "fields": {
+        "tig": "Time of ignition",
+        "dvp": "Delta V prograde",
+        "dvn": "Delta V normal",
+        "dvr": "Delta V radial",
+        "dv": "Delta V total",
+        "alpha": "Attitude alpha",
+        "beta": "Attitude beta",
+        "tb": "Burn time",
+        "gei": "Entry angle",
+        "eitime": "Entry interface",
+        "vei": "Velocity at entry interface",
+        "range": "Range to go",
+        "gmax": "Max G",
+        "lat": "Splashdown latitude",
+        "lon": "Splashdown longitude"
+      },
+      "lines": {
+        "intro_man": "Apollo, this is Houston with your maneuver pad. Ready to copy.",
+        "intro_tei": "Apollo, this is Houston with your TEI pad. Ready to copy.",
+        "intro_ent": "Apollo, this is Houston with your entry pad. Ready to copy.",
+        "readback": "Read back when ready."
+      },
+      "frame": [
+        "ready",
+        "done"
+      ]
+    },
+    "fr": {
+      "frame": [
+        "prêt",
+        "fin"
+      ],
+      "digits": [
+        "zéro",
+        "un",
+        "deux",
+        "trois",
+        "quatre",
+        "cinq",
+        "six",
+        "sept",
+        "huit",
+        "neuf"
+      ],
+      "point": "virgule",
+      "minus": "moins",
+      "fields": {
+        "tig": "Heure d'allumage",
+        "dvp": "Delta V prograde",
+        "dvn": "Delta V normal",
+        "dvr": "Delta V radial",
+        "dv": "Delta V total",
+        "alpha": "Attitude alpha",
+        "beta": "Attitude bêta",
+        "tb": "Durée de poussée",
+        "gei": "Angle d'entrée",
+        "eitime": "Interface d'entrée",
+        "vei": "Vitesse à l'interface d'entrée",
+        "range": "Distance à parcourir",
+        "gmax": "Charge maximale",
+        "lat": "Latitude d'amerrissage",
+        "lon": "Longitude d'amerrissage"
+      },
+      "lines": {
+        "intro_man": "Apollo, ici Youstonne, avec votre padde de manœuvre. Prêt à copier.",
+        "intro_tei": "Apollo, ici Youstonne, avec votre padde d'injection vers la Terre. Prêt à copier.",
+        "intro_ent": "Apollo, ici Youstonne, avec votre padde de rentrée. Prêt à copier.",
+        "readback": "Répétez quand vous êtes prêts."
+      }
+    },
+    "de": {
+      "frame": [
+        "bereit",
+        "Ende"
+      ],
+      "digits": [
+        "null",
+        "eins",
+        "zwo",
+        "drei",
+        "vier",
+        "fünf",
+        "sechs",
+        "sieben",
+        "acht",
+        "neun"
+      ],
+      "point": "Komma",
+      "minus": "minus",
+      "fields": {
+        "tig": "Zündzeitpunkt",
+        "dvp": "Delta V prograd",
+        "dvn": "Delta V normal",
+        "dvr": "Delta V radial",
+        "dv": "Delta V gesamt",
+        "alpha": "Lage Alpha",
+        "beta": "Lage Beta",
+        "tb": "Brenndauer",
+        "gei": "Eintrittswinkel",
+        "eitime": "Entry Interface",
+        "vei": "Geschwindigkeit am Entry Interface",
+        "range": "Entfernung zur Wasserung",
+        "gmax": "Maximale Last",
+        "lat": "Breite der Wasserung",
+        "lon": "Länge der Wasserung"
+      },
+      "lines": {
+        "intro_man": "Apollo, hier Houston, mit eurem Manöver-Pad. Bereit zum Mitschreiben.",
+        "intro_tei": "Apollo, hier Houston, mit eurem Pad für den Rückflug zur Erde. Bereit zum Mitschreiben.",
+        "intro_ent": "Apollo, hier Houston, mit eurem Wiedereintritts-Pad. Bereit zum Mitschreiben.",
+        "readback": "Bitte zurücklesen."
+      }
+    }
+  }
+}

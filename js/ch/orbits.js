@@ -204,10 +204,10 @@
             ${Sym.where(['rddot', 'mu', 'vecr', 'r'])}
             <p>${T`Gravity is a <b>conservative central force</b>. <b>Conservative</b> means no energy is lost along the way, to friction or anything else: energy of motion and energy of position trade into each other, and their sum stays constant. <b>Central</b> means the force always points to the planet’s centre, so it never twists the orbit sideways and the angular momentum (the amount of turning around the planet) stays constant too. Two quantities therefore stay fixed along any coasting trajectory, and together they fix the orbit.`}</p>
             <p>${T`<b>Mechanical energy</b> is the sum of two kinds of energy, both measured in joules (J). The <b>kinetic energy</b> \\(\\tfrac12 m v^2\\) is the energy of motion. The <b>potential energy</b> \\(-\\mu m/r\\) is the energy stored in the spacecraft’s position in the planet’s gravity. It is negative because its zero is placed at infinite distance, where gravity no longer holds you. Climbing away from the planet takes energy, so every finite distance sits below zero, and the closer you are, the lower it sits.`}</p>
-            <div class="eq">\\[ E = \\tfrac12 m v^2 - \\frac{\\mu m}{r} \\]</div>
-            ${Sym.where(['m', 'v', 'mu', 'r'], N`Add the two and you have the mechanical energy. A negative total means the spacecraft is bound to the planet.`)}
+            <div class="eq">\\[ E_{mech} = \\tfrac12 m v^2 - \\frac{\\mu m}{r} \\]</div>
+            ${Sym.where(['m', 'v', 'mu', 'r'], N`Add the two and you have the mechanical energy, written E<sub>mech</sub> so as not to confuse it with the eccentric anomaly E later in this module. A negative total means the spacecraft is bound to the planet.`)}
             <p>${T`Engineers want a number that does not depend on the spacecraft. Dividing by the mass \\(m\\) gives the energy per kilogram, called the <b>specific</b> energy, in J/kg. The mass cancels: a 5-tonne capsule and a 45-tonne stage at the same distance and speed have the same specific energy, so one number describes the orbit, whatever the vehicle. In this course “specific” always means “per unit of mass”. It comes back in <b>specific impulse</b> (${Progress.code('rockets')}), the thrust impulse per unit weight of propellant, which lets engines of any size be compared.`}</p>
-            <div class="eq">\\[ \\varepsilon = \\frac{E}{m} = \\frac{v^2}{2} - \\frac{\\mu}{r} = ${T`\\text{constant}`} \\]</div>
+            <div class="eq">\\[ \\varepsilon = \\frac{E_{mech}}{m} = \\frac{v^2}{2} - \\frac{\\mu}{r} = ${T`\\text{constant}`} \\]</div>
             ${Sym.where(['eps', ['\\tfrac12 v^2', N`kinetic energy per kilogram: the energy of motion`, 'J/kg'], ['-\\mu/r', N`potential energy per kilogram: the energy of position, negative because it is zero at infinite distance`, 'J/kg'], 'v', 'mu', 'r'], N`Like a ball on a slope: going down (smaller r) it gains speed, going up it slows, and the total stays the same.`)}
             <p>${T`Take the dot product of the two-body equation with the velocity \\(\\vec v\\) and you can show that \\(\\varepsilon\\) does not change along the orbit. That is the “conservative” property at work. The derivation is there if you want to follow it; the rest of the module does not depend on it.`}</p>
             ${deriv(T`the specific mechanical energy is constant`, `
@@ -294,7 +294,7 @@
         <section class="section">
           <h2><span class="idx">2.3</span>${T`Kepler’s laws, derived`}</h2>
           <div class="prose">
-            <p>${T`Kepler found three laws in Tycho Brahe’s observations of Mars (1609–1619). Newton showed that they follow from his own laws:`}</p>
+            <p>${T`Kepler drew three laws from Tycho Brahe’s observations: the first two from the orbit of Mars (1609), the third from comparing all the known planets (1619). Newton showed that they follow from his own laws:`}</p>
             <ol>
               <li>${T`<b>Orbits are ellipses</b> with the central body at one focus. This is the bound case of the trajectory equation.`}</li>
               <li>${T`<b>Equal areas in equal times.</b> The area swept per unit time is \\(dA/dt = h/2\\), constant because \\(h\\) is conserved. Turn on the sectors in the lab below and watch the spacecraft speed up near periapsis.`}</li>
@@ -312,12 +312,11 @@
         <section class="section">
           <h2><span class="idx">2.4</span>${T`Lab: design an orbit from a burnout state`}</h2>
           <div class="prose"><p>${T`A launch vehicle hands its payload over at <b>burnout</b>: an altitude, a speed and a flight-path angle. From those three numbers the energy and angular momentum, and therefore the whole orbit, are fixed. Change them and the orbit redraws; the satellite moves according to Kepler’s equation.`}</p>
-            <p>${T`The dot on the Earth is a ground site. The Earth turns once in a sidereal day (23 h 56 min), at the same simulated time as the spacecraft. Load the geostationary preset: the orbit takes exactly one sidereal day, and the spacecraft stays above the dot.`}</p></div>
+            <p>${T`The dot on the Earth is a ground site. The Earth turns once in a sidereal day (23 h 56 min), at the same simulated time as the spacecraft. Design a circular orbit at 35 786 km, a speed of about 3.075 km/s: it takes exactly one sidereal day, and the spacecraft stays above the dot. That is a <b>geostationary</b> orbit.`}</p>
+            <p>${T`The presets show orbits with a purpose. <b>GTO</b>, the geostationary transfer orbit, is where a launcher leaves a communications satellite: perigee low, apogee at geostationary altitude, where the satellite’s own engine makes the orbit circular. <b>Molniya</b> orbits carried Soviet communications satellites: a 12-hour ellipse with its apogee high over the northern hemisphere, where the satellite lingers for about eight hours of each orbit (Kepler’s second law). From Russia’s high latitudes a geostationary satellite sits too low on the horizon, so they used this instead. The real orbits are tilted 63.4° to the equator; the lab draws them flat. <b>After TLI</b> is Apollo 11 heading for the Moon, and <b>Hyperbolic</b> leaves the Earth for good.`}</p></div>
           <div class="lab" id="od">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Orbit designer`}</h3><span class="spacer"></span>
               <div class="btn-row">
-                <button class="btn" data-p="leo">${T`Parking orbit`}</button>
-                <button class="btn" data-p="geo">${T`Geostationary`}</button>
                 <button class="btn" data-p="gto">GTO</button>
                 <button class="btn" data-p="molniya">${T`Molniya-like`}</button>
                 <button class="btn" data-p="tli">${T`After TLI`}</button>
@@ -359,7 +358,7 @@
             <thead><tr><th>${T`Element`}</th><th>${T`Symbol`}</th><th>${T`Describes`}</th><th>${T`Apollo 11 parking orbit`}</th></tr></thead>
             <tbody>
               <tr><td>${T`Semi-major axis`}</td><td>a</td><td>${T`size (energy)`}</td><td>≈ 6 563 km</td></tr>
-              <tr><td>${T`Eccentricity`}</td><td>e</td><td>${T`shape`}</td><td>${UI.dec('≈ 0.0006')}</td></tr>
+              <tr><td>${T`Eccentricity`}</td><td>e</td><td>${T`shape`}</td><td>${UI.dec('≈ 0.0002')}</td></tr>
               <tr><td>${T`Inclination`}</td><td>i</td><td>${T`tilt of the plane relative to the equator`}</td><td>${UI.dec('32.5°')}</td></tr>
               <tr><td>${T`Right ascension of ascending node`}</td><td>Ω</td><td>${T`swivel of the plane (RAAN)`}</td><td>${T`set by launch time and azimuth`}</td></tr>
               <tr><td>${T`Argument of periapsis`}</td><td>ω</td><td>${T`where periapsis lies in the plane`}</td><td>${T`poorly defined for e ≈ 0`}</td></tr>
@@ -393,17 +392,22 @@
     return F;
   }
 
+  // orbit designer presets: burnout altitude (km), speed (km/s), flight-path angle (°)
+  const DESIGNER_PRESETS = {
+    gto: { 'od-h': 250, 'od-v': 10.195, 'od-phi': 0 },        // apogee at geostationary altitude
+    molniya: { 'od-h': 600, 'od-v': 9.962, 'od-phi': 0 },     // period half a sidereal day, apogee ≈ 39 770 km
+    tli: { 'od-h': 330, 'od-v': 10.84, 'od-phi': 6 },
+    hyp: { 'od-h': 300, 'od-v': 12.2, 'od-phi': 0 },
+  };
+  // an orbit counts as designed by hand only when the burnout state is clearly away from every preset
+  // (a preset plus one nudge of a slider is still the preset)
+  const nearPreset = (v) => Object.values(DESIGNER_PRESETS).some((p) =>
+    Math.abs(v['od-h'] - p['od-h']) < 50 && Math.abs(v['od-v'] - p['od-v']) < 0.05 && Math.abs(v['od-phi'] - p['od-phi']) < 2);
+
   function mountDesigner(root) {
     let el = null, tSince = 0, warp = 600, showAreas = true;
     let clk = 0, thE0 = 0;   // simulation clock since the last change (same time step as tSince) and the ground site's starting angle
-    const presets = {
-      leo: { 'od-h': 185, 'od-v': 7.793, 'od-phi': 0 },
-      geo: { 'od-h': 35786, 'od-v': 3.0747, 'od-phi': 0 },
-      gto: { 'od-h': 250, 'od-v': 10.15, 'od-phi': 0 },
-      molniya: { 'od-h': 600, 'od-v': 10.0, 'od-phi': 0 },
-      tli: { 'od-h': 330, 'od-v': 10.84, 'od-phi': 6 },
-      hyp: { 'od-h': 300, 'od-v': 12.2, 'od-phi': 0 },
-    };
+    const presets = DESIGNER_PRESETS;
     const view = UI.canvas(root.querySelector('#od-cv'), null);
 
     const fmts = { 'od-h': (x) => UI.fmt(x, 0), 'od-v': (x) => x.toFixed(3), 'od-phi': (x) => x.toFixed(1), 'od-warp': (x) => '×' + UI.fmt(Math.pow(10, x), 0) };
@@ -424,7 +428,7 @@
       const b = root.querySelector('#od-badge');
       const kind = el.e < 0.001 ? T`Circle` : el.e < 1 ? T`Ellipse` : el.e < 1.001 ? T`Parabola` : T`Hyperbola`;
       b.textContent = el.rp < C.RE ? T`${kind} · hits Earth` : kind;
-      if (src && el.rp - C.RE > 100e3) {          // designed by hand with the sliders
+      if (src && el.rp - C.RE > 100e3 && !nearPreset(v)) {          // designed by hand with the sliders
         if (el.e < 0.01) Progress.done('orbits', 'circle');
         if (el.e < 1 && el.ra - C.RE >= 35786e3) Progress.done('orbits', 'high');
       }

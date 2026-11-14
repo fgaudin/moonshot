@@ -109,3 +109,19 @@ test('edge cases: no NaN for tiny and huge changes, equatorial and polar', () =>
 test('figure of the azimuth has no NaN', () => { assert.ok(!/NaN|undefined|Infinity/.test(figAzimuth())); });
 
 test('practice: generators and concept questions', () => { checkGenerators(practice, 100); checkQuiz(practice); });
+
+test('an escape burn stops the plan with an error instead of NaN; a normal-only burn fails the component check of trim', () => {
+  const s0 = P.rv({ a: 6.8e6, e: 0, i: 30 * D, O: 0.2, w: 0, nu: 0.5 });
+  const r = P.execute(s0, [{ when: 'in', minutes: 0, pro: 3500, nor: 0, rad: 0 }, { when: 'an', pro: 10, nor: 0, rad: 0 }]);
+  assert.equal(r.burns.length, 1); assert.equal(r.burns[0].error, 'open');
+  assert.ok(r.burns.every((b) => Number.isFinite(b.dv)));
+  // trim (0.6°): the exact PAD has a prograde part of −0.43 m/s, so a burn of 0 prograde misses it by more than 0.1 m/s,
+  // although its plane comes within 0.1° (why the lab checks the components, not only the plane)
+  const t = SCEN.trim, v = P.circV(t.el.a), pd = P.pad(v, v, Math.abs(t.el.i - t.target.i), 1);
+  assert.ok(Math.abs(pd.pro) > 0.1 + 0.03 * Math.abs(pd.pro), String(pd.pro));
+  const st = P.rv(t.el), normalOnly = P.execute(st, [{ when: 'an', pro: 0, nor: -Math.abs(pd.nor), rad: 0 }]);
+  const err = P.planeAngle(normalOnly.final.hv, P.normalOf(t.target.i, t.target.O)) / D;
+  assert.ok(err < 0.1, `normal-only plane error ${err}`);
+  const src = require('fs').readFileSync(require('path').join(__dirname, '../js/ch/planes.js'), 'utf8');
+  assert.ok(/isPure && padOk\) Progress\.done\('planes', 'plane'\)/.test(src));
+});

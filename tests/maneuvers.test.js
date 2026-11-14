@@ -8,7 +8,7 @@ const near = (x, want, tol, what) => assert.ok(Math.abs(x - want) <= tol, `${wha
 const mu = 398600.4418, RE = 6378.137, D = Math.PI / 180;
 const cos = (a, b, d) => Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(d));
 
-test('5.2 GEO transfer numbers quoted in the text and the figure', () => {
+test('5.2 GEO transfer numbers (the figure here, the full plan in planes 11.4)', () => {
   const r1 = RE + 185, r2 = RE + 35786, at = (r1 + r2) / 2, di = 28.5 * D;
   const v1 = Math.sqrt(mu / r1), vtp = Math.sqrt(mu * (2 / r1 - 1 / at)), vta = Math.sqrt(mu * (2 / r2 - 1 / at)), v2 = Math.sqrt(mu / r2);
   near(2 * v1 * Math.sin(di / 2), 3.84, 0.005, 'turn at 7.8 km/s');
@@ -36,6 +36,7 @@ test('5.4 bi-elliptic thresholds: 11.94 and 15.58', () => {
   assert.ok(bi(11.8, 1e6) > hoh(11.8) && bi(12.1, 1e6) < hoh(12.1), 'with rb far out the break-even is 11.94');
   assert.ok(bi(15.4, 1.01 * 15.4) > hoh(15.4) && bi(15.8, 1.01 * 15.8) < hoh(15.8), 'above 15.58 any rb > r2 wins');
   assert.ok(bi(13, 1.5 * 13) > hoh(13) && bi(13, 1e5) < hoh(13), 'between: only a far rb wins');
+  assert.ok(bi(13.25, 3 * 13.25) > hoh(13.25) && bi(13.35, 3 * 13.35) < hoh(13.35), 'the lab’s rb = 3 r2 wins above about 13.3');
 });
 
 test('5.5 lunar rendezvous lead angle and the Hohmann time', () => {
@@ -48,10 +49,13 @@ test('figures have no NaN', () => {
   for (const f of [figBiElliptic, figHohmann]) assert.ok(!/NaN|undefined|Infinity/.test(f()));
 });
 
-test('the lunar-orbit objective needs a control touched by the candidate (not just the preset)', () => {
+test('planner objectives come only from a typed plan that matches, never after "Show the solution"', () => {
   const src = fs.readFileSync(require('path').join(__dirname, '../js/ch/maneuvers.js'), 'utf8');
-  assert.ok(/touched && body === BODY\.moon/.test(src));
-  assert.ok(/touched && body === BODY\.earth/.test(src));
+  const check = src.indexOf("'#mv-check').addEventListener"), peek = src.indexOf('if (peeked) return;', check);
+  const done = [...src.matchAll(/Progress\.done\('maneuvers'/g)].map((m) => m.index);
+  assert.equal(done.length, 2);
+  for (const i of done) assert.ok(i > peek && peek > check, 'credit after the check and the peek guard');
+  assert.ok(/okDv && plan\.geo/.test(src) && /okAl && plan\.lor/.test(src));
 });
 
 test('practice generators and concept questions of the topic maneuvers', () => {
@@ -63,7 +67,7 @@ test('practice generators and concept questions of the topic maneuvers', () => {
   for (const g of gens) for (let i = 0; i < 30; i++) {
     const p = g.make();
     if (g.title === 'Hohmann transfer Δv') assert.ok(p.answer > 0.3 && p.answer < 5, `Hohmann ${p.answer}`);
-    if (g.title === 'Rendezvous lead angle') assert.ok(p.answer > 3 && p.answer < 12, `lead ${p.answer}`);
+    if (g.title === 'Rendezvous phase angle') assert.ok(p.answer > 3 && p.answer < 12, `lead ${p.answer}`);
     if (g.title === 'Simple plane change') assert.ok(p.answer < 5.5);
   }
 });

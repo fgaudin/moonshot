@@ -83,3 +83,13 @@ test('practice: generators (answers not too close to zero) and concept questions
     }
   }
 });
+
+test('0.2 and 0.3 in the text: 9.45° is about 1 200 km; the t_wait formula with |rate| gives the lab wait both ways', () => {
+  const r = 6378.137 + 700, arc = 9.45 * Math.PI / 180 * r;
+  assert.ok(Math.abs(arc - 1200) < 50, String(arc));
+  for (const k of ['leo', 'above', 'long']) {
+    const S = Pt.setup(Pt.SCENARIOS[k]), up = S.n1 > S.n2, D = 180 / Math.PI;
+    const dphi = ((up ? S.phi0 - S.phiReq : S.phiReq - S.phi0) * D % 360 + 360) % 360;
+    assert.ok(Math.abs(dphi / D / Math.abs(S.n1 - S.n2) - S.wait) < 1, `${k}: ${dphi}`);
+  }
+});

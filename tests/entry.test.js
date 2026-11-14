@@ -106,3 +106,19 @@ test('figure 18.2 geometry has no NaN', () => {
     const r = AE.at(b, h); assert.ok(Number.isFinite(r.v) && Number.isFinite(r.a) && r.v > 0);
   }
 });
+
+test('10.4 corridor text: one fixed bank cannot use the whole corridor; the lab Apollo 11 entry is near 8 g', () => {
+  const run = (g, b) => Phys.simulateEntry({ v0: 11030, gamma0: g, bank: b, ld: 0.3 });
+  const safe = (r) => r.outcome !== 'skip' && r.maxG <= 10;
+  // edges by opposite rolls: lift down captures at −5.3°, lift up stays under 10 g at −7.0°
+  assert.notEqual(run(-5.3, 180).outcome, 'skip'); assert.ok(run(-7.0, 0).maxG <= 10 || run(-7.0, 0).outcome === 'skip');
+  // with one bank held throughout, the safe band is about −5.5° to −6.75°
+  const banks = []; for (let b = 0; b <= 180; b += 15) banks.push(b);
+  const anySafe = (g) => banks.some((b) => safe(run(g, b)));
+  assert.ok(anySafe(-5.5) && anySafe(-6.75), 'inside the band');
+  assert.ok(!anySafe(-5.25) && !anySafe(-7.0), 'outside the band');
+  const a = run(-6.5, 45); assert.ok(a.maxG > 7.5 && a.maxG < 8.8, String(a.maxG));
+  // the "Too shallow" preset is gone (finding the skip boundary is the candidate's job)
+  const src = require('fs').readFileSync(require('path').join(__dirname, '../js/ch/entry.js'), 'utf8');
+  assert.ok(!/data-p="shallow"/.test(src) && !/shallow: \{ 'en-v'/.test(src));
+});

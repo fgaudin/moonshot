@@ -9,7 +9,7 @@
   /* ---------------- Progress and practice ---------------- */
   Progress.register('mcc', {
     name: N`Mission Control`, topic: 'mcc', glyph: 'console',
-    briefing: N`A spacecraft flies by physics, but a mission flies by people, procedures and margins. Every maneuver you flew in this course was computed by someone, checked by someone else and read to a crew over a radio. Today you sit on both sides of that loop, {name}: build a Δv budget with honest margins, fill in the PADs, and decide an abort with the clock running.`,
+    briefing: N`A spacecraft flies by physics, but a mission flies by people, procedures and margins. Every maneuver you flew in this course was computed by someone, checked by someone else and read to a crew over a radio. Today you sit on both sides of that loop, {name}: build a Δv budget with honest margins, copy PADs by ear, and decide an abort under the mission rules.`,
     objectives: [
       { id: 'margin', text: N`Fix the heavier-payload budget: at least 5 % margin on every stage` },
       { id: 'rss', text: N`Combine four independent error sources by root-sum-square` },
@@ -146,8 +146,10 @@
     if (kind === 'ent') {
       return { eitime: rnd(142, 196, 1) * 3600 + rnd(0, 59) * 60 + rnd(0, 59), gei: -rnd(595, 705, 5) / 100, vei: rnd(11000, 11100, 1), range: rnd(2000, 2800, 10), gmax: rnd(55, 70, 1) / 10, lat: rnd(-300, 250, 5) / 10, lon: -rnd(1550, 1750, 5) / 10 };
     }
-    const dvp = rnd(-3000, 4000, 1) / 10, dvn = rnd(-300, 300, 1) / 10, dvr = rnd(-500, 500, 1) / 10;
-    const dv = Math.round(M.padTotal(dvp, dvn, dvr) * 10) / 10, m0 = rnd(15000, 30000, 100);
+    // TEI: about 1 000 m/s prograde from the CSM alone (about 16–17 t after LOI and the LM jettisoned)
+    const tei = kind === 'tei';
+    const dvp = tei ? rnd(9500, 10500, 1) / 10 : rnd(-3000, 4000, 1) / 10, dvn = rnd(-300, 300, 1) / 10, dvr = rnd(-500, 500, 1) / 10;
+    const dv = Math.round(M.padTotal(dvp, dvn, dvr) * 10) / 10, m0 = tei ? rnd(16000, 17500, 100) : rnd(15000, 30000, 100);
     const v = { purpose: kind === 'tei' ? 'TEI' : T(pick(PURPOSES)), tig: rnd(20, 90, 1) * 3600 + rnd(0, 59) * 60 + rnd(0, 59), dvp, dvn, dvr, dv,
       alpha: Math.round(M.padAlpha(dvp, dvr) * 10) / 10, beta: Math.round(M.padBeta(dvp, dvn, dvr) * 10) / 10, m0, eng: 'SPS',
       tb: Math.round(M.burnTime(314, m0, dv, 91200) * 10) / 10 };
@@ -187,6 +189,7 @@
     .mcc-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: .6rem .8rem; }
     .mcc-form label { display: flex; flex-direction: column; gap: .25rem; font: 500 .72rem/1.2 var(--f-mono); color: var(--muted); }
     .mcc-form input, .mcc-form select { width: 100%; }
+    .mcc-form label.mcc-speaking span:first-child { color: var(--accent); }
     .mcc-form .mark { font: 600 .72rem/1.3 var(--f-mono); min-height: 1em; }
     .mcc-padbox { border: 1px dashed var(--line); border-radius: 6px; padding: .7rem .9rem; background: var(--bg); }
     .mcc-padbox dl { display: grid; grid-template-columns: auto 1fr; gap: .15rem .8rem; margin: .4rem 0 0; font: .82rem/1.5 var(--f-mono); }
@@ -236,7 +239,7 @@
           title: T`Mission Control`,
           refs: [T`Sellers · Understanding Space`, T`Apollo Operations Handbook`, T`NASA Apollo Flight Journal and mission reports`],
         })}
-        ${Progress.briefing('mcc', { theory: 'theory', lab: 'mcc-lab', math: 'refresher', mathLabel: N`Exponentials and logarithms, and combining errors.` })}
+        ${Progress.briefing('mcc', { theory: 'theory', lab: 'mcc-lab', math: 'refresher', mathLabel: N`Exponentials and logarithms.` })}
 
         <section class="section" id="theory">
           <h2><span class="idx">0.1</span>${T`The room and its positions`}</h2>
@@ -273,6 +276,7 @@
             <ul>
               <li>${T`<b>Call signs.</b> The ground is “Houston”. Each spacecraft has its own name (Apollo 11 flew <i>Columbia</i> and <i>Eagle</i>), so a call is never ambiguous when two spacecraft share a loop.`}</li>
               <li>${T`<b>Readback.</b> Every set of numbers is read back by the receiver, digit by digit. The sender confirms or corrects. Nothing goes into the computer before this.`}</li>
+              <li>${T`<b>Digits, one at a time.</b> A number is read as its digits, “one five five point seven”, never “a hundred and fifty-five”, and 9 is said <b>“niner”</b>. Through the hiss and crackle of a radio link, a plain “nine” is easily heard as “five”, and to a German ear it sounds like <i>nein</i>, “no”. Aviation radio uses the same rule; listen for it in the PAD drill below.`}</li>
               <li>${T`<b>Go/no-go polls.</b> Before a critical event such as powered descent, the Flight Director calls each position in turn. Each answers “go” or “no-go” and gives a reason for a no-go. The decision belongs to the Flight Director, and a mission rule that forbids an action cannot be argued away in the heat of the moment (examples in section ${App.sec('mcc', 7)}).`}</li>
               <li>${T`<b>Short and standard.</b> Numbers in a fixed order, a fixed vocabulary, no guesses. A mission rule is useful because it is stated in the same words every time.`}</li>
             </ul>
@@ -321,6 +325,7 @@
               <li>${T`<b>Execution:</b> cutoff (the engine shuts down a little early or late, so the Δv is wrong in size) and <b>pointing</b> (the thrust is a little off the planned direction). A pointing error of θ on a Δv of 1 000 m/s puts 1 000·sin θ of it sideways: 17 m/s for 1°.`}</li>
               <li>${T`<b>Timing:</b> a burn started late by Δt moves the point of the orbit where it happens. A spacecraft at 7.8 km/s covers 7.8 km every second.`}</li>
             </ul>
+            <p>${T`Each error is given by its <b>σ</b> (sigma, the standard deviation): its typical size. Fly the same burn many times and about two burns in three land within ±1σ of the plan, 95 % within ±2σ and 99.7 % within ±3σ. Mission rules plan against <b>3σ</b>: only about three burns in a thousand do worse.`}</p>
             <p>${T`The sources are independent: the radar noise does not know about the engine’s tail-off. Independent errors do not add as lengths, because they seldom all push the same way. They add as <b>squares</b>, a combination called the root-sum-square:`}</p>
             <div class="eq">\\[ \\sigma = \\sqrt{\\sigma_1^2 + \\sigma_2^2 + \\dots + \\sigma_n^2}, \\qquad 3\\sigma = 3\\times\\sigma \\]</div>
             ${Sym.where([['\\sigma_i', N`the 1σ (one standard deviation) size of each independent error, in the same unit`, 'm/s'], ['\\sigma', N`combined 1σ error. Multiply by 3 for the 3σ planning value`, 'm/s']], N`Read: square each error, add the squares, take the square root. 3 and 4 give 5, not 7. If two errors are not independent, the straight sum is the safe bound.`)}
@@ -338,7 +343,7 @@
             <p>${T`Four real rules, and what they did:`}</p>
             <ul>
               <li>${T`<b>Program alarms, Apollo 11.</b> During the powered descent the guidance computer raised alarms 1202 and 1201: it was overloaded. Before the flight, the guidance controllers had listed which alarms were safe as long as they did not come continuously. The answer “go” came within seconds, and the landing went on (module ${Progress.code('landing')}).`}</li>
-              <li>${T`<b>Landing propellant: the bingo call.</b> When the descent stage reaches its last reserve, about 20 s of propellant, the crew must be on the ground or abort. Mission Control counts down to it: “60 seconds”, “30 seconds”. Apollo 11 landed less than 20 s before it.`}</li>
+              <li>${T`<b>Landing propellant: the bingo call.</b> When the descent stage reaches its last reserve, about 20 s of propellant, the crew must be on the ground or abort. Mission Control counts down to it: “60 seconds”, “30 seconds”. Apollo 11 landed about 20 s before it.`}</li>
               <li>${T`<b>Landing radar, Apollo 14.</b> The rules called for an abort if the landing radar gave no valid data by 10 000 ft (3 km). It stayed silent through the first part of the descent. On the ground’s advice the crew cycled its circuit breaker, and the radar locked on at about 22 000 ft (6.7 km), well before the limit.`}</li>
               <li>${T`<b>Engine steering, Apollo 16.</b> The rules required both the main and the backup steering of the service module’s engine to work before the lunar module could commit to the landing: the engine was the crew’s way home. Just before descent, the backup steering oscillated. The landing was held while engineers tested it on the ground, and it went ahead about six hours late, once they had shown the backup was safe to use.`}</li>
             </ul>
@@ -357,7 +362,7 @@
 
         <section class="section">
           <h2><span class="idx">0.8</span>${T`Lab: the mission planning desk`}</h2>
-          <div class="prose"><p>${T`Three tabs. The <b>Δv budget</b> holds an Apollo-like lunar mission with its stages, masses and three-sigma dispersions. Change anything and the margins follow. The <b>PAD worksheet</b> is a form for maneuver, TEI and entry PADs, which you can fill in, check and print, with a readback drill. The <b>Abort decision</b> asks you to choose among options with the clock running. The figures are rounded training values, close to Apollo but not exact.`}</p></div>
+          <div class="prose"><p>${T`Three tabs. The <b>Δv budget</b> holds an Apollo-like lunar mission with its stages, masses and three-sigma dispersions. Change anything and the margins follow. The <b>PAD worksheet</b> is a form for maneuver, TEI and entry PADs, which you can fill in, check and print, with a readback drill: CAPCOM reads you a PAD and you copy it by ear. The <b>Abort decision</b> gives you a failure and four options: screen them with the mission rules and make the call. The figures are rounded training values, close to Apollo but not exact.`}</p></div>
           <div class="lab tl-lab" id="mcc-lab">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Mission planning desk`}</h3><span class="spacer"></span>
               <div class="seg" id="mcc-tabs" role="group" aria-label="${T`Desk`}">
@@ -524,6 +529,101 @@
     load('nominal');
   }
 
+  /* ---------------- CAPCOM's voice: recorded clips over a simulated radio link ---------------- */
+  // The clips (audio/capcom-<lang>.js, made by tools/capcom-voice.py) are joined here: digits, "point", "minus",
+  // the field names. CAPCOM speaks English, as in Apollo, unless a clip set exists for the page's language.
+  // The radio: Quindar tones (2525 Hz keys the ground transmitter on, 2475 Hz off, 250 ms each), a voice band
+  // of 300–3400 Hz, a little clipping, a slowly fading voice, and the carrier's hiss with crackles and a squelch tail.
+  window.CapcomClips = window.CapcomClips || { sets: {}, add(lang, clips) { this.sets[lang] = clips; } };
+  function loadClips(lang) {
+    if (CapcomClips.sets[lang]) return Promise.resolve(lang);
+    return new Promise((res) => {
+      const s = document.createElement('script');
+      s.src = `audio/capcom-${lang}.js`;
+      s.onload = () => res(CapcomClips.sets[lang] ? lang : null); s.onerror = () => res(null);
+      document.head.appendChild(s);
+    });
+  }
+  function Voice() {
+    const AC = typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext);
+    let ac = null, bufs = null, lang = null, run = 0, live = [], timers = [], speaking = false;
+    const b64 = (s) => { const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; };
+    async function prepare() {
+      ac = ac || new AC();
+      if (ac.state === 'suspended') await ac.resume();
+      const l = (await loadClips(I18N.lang)) || (await loadClips('en'));
+      if (!l) return false;
+      if (lang !== l) {
+        const set = CapcomClips.sets[l], out = {};
+        await Promise.all(Object.entries(set).map(async ([k, v]) => { out[k] = await ac.decodeAudioData(b64(v)); }));
+        bufs = out; lang = l;
+      }
+      return true;
+    }
+    function radio() {
+      const hp = ac.createBiquadFilter(), lp = ac.createBiquadFilter(), sh = ac.createWaveShaper(), g = ac.createGain();
+      hp.type = 'highpass'; hp.frequency.value = 300; lp.type = 'lowpass'; lp.frequency.value = 3400;
+      const curve = new Float32Array(256); for (let i = 0; i < 256; i++) { const x = i / 127.5 - 1; curve[i] = Math.tanh(1.3 * x) / Math.tanh(1.3); }
+      sh.curve = curve; g.gain.value = 0.9;
+      hp.connect(lp); lp.connect(sh); sh.connect(g); g.connect(ac.destination);
+      return { input: hp, out: g };
+    }
+    return {
+      ok: !!AC && typeof atob === 'function',
+      busy: () => speaking,
+      stop() {
+        run++; speaking = false;
+        live.forEach((n) => { try { n.stop(); } catch (e) { /* already stopped */ } }); live = [];
+        timers.forEach(clearTimeout); timers = [];
+      },
+      // lines: [{ clips: [key | null (short pause)], el }]; onLine(el) as each line starts (highlights the field being read)
+      async play(lines, onLine) {
+        this.stop(); const me = run; speaking = true;
+        let okClips = false;
+        try { okClips = await prepare(); } catch (e) { okClips = false; }
+        if (!okClips) { speaking = false; return false; }
+        if (me !== run) { speaking = false; return; }
+        const r = radio(), tKey = ac.currentTime + 0.05, t0 = tKey + 0.2;   // the carrier comes on 0.2 s before the tone
+        let t = t0;
+        // the voice fades a little, as on a real link
+        const vg = ac.createGain(); vg.connect(r.input);
+        const node = (src, at, dur) => { src.connect(vg); src.start(at); if (dur) src.stop(at + dur); live.push(src); };
+        const tone = (hz) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = hz; g.gain.value = 0.25; o.connect(g); g.connect(r.input); o.start(t); o.stop(t + 0.25); live.push(o); t += 0.25; };
+        tone(2525); t += 0.25;
+        for (const l of lines) {
+          const at = t;
+          timers.push(setTimeout(() => { if (me === run) onLine(l.el); }, (at - ac.currentTime) * 1000));
+          l.clips.forEach((k, i) => {
+            if (k === null) { t += 0.12; return; }
+            const b = bufs[k] || bufs[k.replace('_end', '')]; if (!b) return;   // a voice may have no falling last-digit clips
+            const src = ac.createBufferSource(); src.buffer = b; node(src, t); t += b.duration + (i < l.clips.length - 1 ? 0.03 : 0);
+          });
+          t += 0.55;
+        }
+        tone(2475);
+        const tEnd = t + 0.22;   // squelch tail: the carrier drops a moment after the end tone
+        const fade = new Float32Array(64), p1 = Math.random() * 6, p2 = Math.random() * 6;
+        for (let i = 0; i < 64; i++) { const s = t0 + (t - t0) * i / 63; fade[i] = 0.86 + 0.07 * Math.sin(1.9 * s + p1) + 0.07 * Math.sin(4.3 * s + p2); }
+        vg.gain.setValueCurveAtTime(fade, t0, t - t0);
+        const sr = ac.sampleRate, n = ac.createBuffer(1, Math.ceil(sr * (tEnd - tKey)), sr), d = n.getChannelData(0);
+        // hiss of the open carrier, fading slowly, with crackles; louder in the squelch tail
+        for (let i = 0; i < d.length; i++) {
+          const s = tKey + i / sr, wob = 1 + 0.35 * Math.sin(0.7 * s + p2) + 0.25 * Math.sin(2.3 * s + p1);
+          d[i] = (Math.random() * 2 - 1) * (s > t ? 0.16 : 0.03 * wob);
+        }
+        for (let c = 0, nC = Math.round((t - tKey) * 3.5); c < nC; c++) {   // about 3–4 crackles a second
+          const at = Math.floor(Math.random() * d.length), len = Math.floor(sr * (0.002 + Math.random() * 0.012)), amp = 0.12 + Math.random() * 0.3;
+          for (let i = 0; i < len && at + i < d.length; i++) d[at + i] += (Math.random() * 2 - 1) * amp * (1 - i / len);
+        }
+        const hiss = ac.createBufferSource(); hiss.buffer = n; hiss.connect(r.input); hiss.start(tKey); live.push(hiss);
+        t = tEnd;
+        await new Promise((res) => timers.push(setTimeout(res, (t - ac.currentTime) * 1000 + 50)));
+        if (me === run) speaking = false;
+      },
+      close() { this.stop(); if (ac) ac.close(); ac = null; bufs = null; lang = null; },
+    };
+  }
+
   /* ---------------- Tab 2: PAD ---------------- */
   function padPane() {
     return `
@@ -538,9 +638,11 @@
           <div class="btn-row"><button class="btn primary" id="mcc-wcheck">${T`Check my arithmetic`}</button><button class="btn" id="mcc-wprint">${T`Print worksheet`}</button><button class="btn" id="mcc-wblank">${T`Print blank PAD`}</button></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:.7rem;min-width:0"><h4>${T`Readback drill`}</h4>
-          <p class="note" style="margin:0">${T`CAPCOM voices a PAD. Read it back into the form below, field by field. Every number must match.`}</p>
+          <p class="note" style="margin:0">${T`CAPCOM voices a PAD. Copy it by ear into the form below, field by field, as the crew did, then check the readback. Every number must match, and it counts only if you did not read the PAD on the screen.`}</p>
+          <div class="ctl" id="mcc-modectl" hidden><label>${T`CAPCOM`}</label><div class="seg" id="mcc-mode" role="group" aria-label="${T`CAPCOM`}">
+            <button data-v="voice" aria-pressed="false">${T`Voice`}</button><button data-v="text" aria-pressed="true">${T`Written`}</button></div></div>
           <div class="mcc-padbox" id="mcc-given"></div>
-          <div class="btn-row"><button class="btn" id="mcc-new">${T`New PAD`}</button><button class="btn" id="mcc-hide">${T`Hide the PAD`}</button></div>
+          <div class="btn-row"><button class="btn" id="mcc-new">${T`New PAD`}</button><button class="btn primary" id="mcc-play">${T`Play the PAD`}</button><button class="btn" id="mcc-hide">${T`Hide the PAD`}</button></div>
           <div class="mcc-form" id="mcc-rf"></div>
           <div class="btn-row"><button class="btn primary" id="mcc-rcheck">${T`Check readback`}</button></div>
           <p class="note" id="mcc-rres" style="margin:0" aria-live="polite"></p>
@@ -550,7 +652,10 @@
 
   function mountPad(root) {
     const $ = (s) => root.querySelector(s);
-    let kind = 'man', given = null;
+    let kind = 'man', given = null, looked = false, playId = 0;
+    const voice = Voice();
+    let mode = voice.ok ? 'voice' : 'text';   // the written PAD where the browser has no Web Audio
+    UI.onCleanup(() => voice.close());
     const input = (id, k) => {
       const fl = FLD[k];
       if (fl.kind === 'eng') return `<label><span>${T(fl.label)}</span><select id="${id}-${k}">${Object.entries(ENGINES).map(([e, n]) => `<option value="${e}">${T(n)}</option>`).join('')}</select><span class="mark" id="${id}-${k}-m"></span></label>`;
@@ -566,16 +671,46 @@
       $('#mcc-wcheck').hidden = !PADS[kind].calc;
       newPad();
     }
-    function newPad() {
-      given = genPad(kind);
+    // the PAD on screen: shown at once in written mode (hide it before copying), hidden in voice mode (showing it is a peek)
+    const showGiven = (on) => {
+      $('#mcc-given').hidden = !on; $('#mcc-hide').textContent = on ? T`Hide the PAD` : T`Show the PAD`;
+      if (on && mode === 'voice') looked = true;
+    };
+    function newPad(play) {
+      voice.stop(); given = genPad(kind); looked = false;
       $('#mcc-given').innerHTML = `<b class="note">${T(PADS[kind].name)}</b><dl>${PADS[kind].rb.map((k) => `<dt>${T(FLD[k].label)}</dt><dd>${fmtFld(k, given[k])}</dd>`).join('')}</dl>`;
-      $('#mcc-given').hidden = false; $('#mcc-hide').textContent = T`Hide the PAD`;
+      showGiven(mode === 'text');
+      $('#mcc-play').hidden = mode !== 'voice'; $('#mcc-play').textContent = T`Play the PAD`; playId++;
       $('#mcc-rres').textContent = '';
       root.querySelectorAll('#mcc-rf input').forEach((el) => { el.value = ''; $('#' + el.id + '-m').textContent = ''; });
+      if (play === true && mode === 'voice') playPad();
+    }
+    function playPad() {
+      const lines = [{ clips: ['intro_' + kind] }];
+      for (const k of PADS[kind].rb) {
+        const fl = FLD[k];
+        lines.push({ clips: [k, ...(fl.kind === 'get' ? M.sayGET(given[k]) : M.sayNumber(given[k], fl.d))], el: $('#r-' + k) });
+      }
+      lines.push({ clips: ['readback'] });
+      const mark = (el) => root.querySelectorAll('#mcc-rf label').forEach((l) => l.classList.toggle('mcc-speaking', !!el && l.contains(el)));
+      const id = ++playId;
+      $('#mcc-play').textContent = T`Stop`;
+      voice.play(lines, mark).then((r) => {
+        if (id !== playId) return;
+        mark(null); $('#mcc-play').textContent = T`Say again`;
+        if (r === false) {   // the clips did not load: fall back to the written PAD
+          mode = 'text'; root.querySelectorAll('#mcc-mode button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === 'text')));
+          newPad(); $('#mcc-rres').textContent = T`CAPCOM’s voice could not be loaded. Here is the PAD in writing: hide it before you copy.`;
+        }
+      });
     }
     UI.seg(root, '#mcc-padkind', (v) => { kind = v; build(); });
-    $('#mcc-new').addEventListener('click', newPad);
-    $('#mcc-hide').addEventListener('click', () => { const h = !$('#mcc-given').hidden; $('#mcc-given').hidden = h; $('#mcc-hide').textContent = h ? T`Show the PAD` : T`Hide the PAD`; });
+    UI.seg(root, '#mcc-mode', (v) => { mode = v; newPad(); });
+    $('#mcc-new').addEventListener('click', () => newPad(true));
+    $('#mcc-play').addEventListener('click', () => { if (voice.busy()) { voice.stop(); $('#mcc-play').textContent = T`Say again`; } else playPad(); });
+    $('#mcc-hide').addEventListener('click', () => showGiven($('#mcc-given').hidden));
+    // copying with the PAD on screen is reading, not listening
+    $('#mcc-rf').addEventListener('input', () => { if (!$('#mcc-given').hidden) looked = true; });
 
     $('#mcc-rcheck').addEventListener('click', () => {
       let bad = 0, empty = 0;
@@ -590,6 +725,7 @@
       const res = $('#mcc-rres');
       if (empty) res.textContent = T`${empty} field(s) still empty.`;
       else if (bad) res.textContent = T`${bad} field(s) differ from the PAD. CAPCOM would say: say again.`;
+      else if (looked) res.textContent = mode === 'voice' ? T`Readback correct, but you looked at the PAD. Take a new one and copy it by ear.` : T`Readback correct, but copied from the screen. Hide the PAD before you start writing, or switch CAPCOM to voice.`;
       else { res.textContent = T`Readback correct.`; Progress.done('mcc', 'pad'); }
     });
 
@@ -608,16 +744,24 @@
     const wsVals = () => { const v = {}; for (const k of PADS[kind].keys) { const el = $('#w-' + k); v[k] = el ? (el.tagName === 'SELECT' ? el.options[el.selectedIndex].text : el.value) : ''; } return v; };
     $('#mcc-wprint').addEventListener('click', () => printSheet(kind, wsVals()));
     $('#mcc-wblank').addEventListener('click', () => printSheet(kind, null));
+    $('#mcc-modectl').hidden = !voice.ok;
+    root.querySelectorAll('#mcc-mode button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === mode)));
     build();
   }
 
   /* ---------------- Tab 3: abort ---------------- */
-  const ABORT_CASES = {
-    a: { label: N`Service module engine failed`, spsGo: false, cons: 125,
-      text: N`Two days after TLI, a tank failure takes out the service module’s main engine. The crew is alive and the lunar module is intact. Life support in the lunar module, used as a lifeboat, lasts about 125 hours.` },
-    b: { label: N`Everything healthy, one failure`, spsGo: true, cons: 200,
-      text: N`Two days after TLI, a fault in a navigation system forces an abort decision. Both main engines are healthy and the consumables are generous at about 200 hours.` },
-  };
+  // A situation is drawn from one of four kinds, with its numbers jittered, so the answer is not the same every time:
+  // the candidate has to run the three checks. cons: hours of consumables; dpsProp: usable DPS propellant (kg).
+  const KINDS = [
+    { id: 'sps', spsGo: false, cons: [100, 135], dpsProp: 8200,
+      text: N`Two days after TLI, a tank failure takes out the service module’s main engine. The crew is alive and the lunar module is intact. Powered down and used as a lifeboat, the lunar module can keep three people alive for about {$0} hours.` },
+    { id: 'nav', spsGo: true, cons: [150, 220], dpsProp: 8200,
+      text: N`Two days after TLI, a fault in a navigation system forces an abort decision. Both main engines are healthy and the consumables are generous: about {$0} hours.` },
+    { id: 'cell', spsGo: true, cons: [72, 84], dpsProp: 8200,
+      text: N`Two days after TLI, two of the three fuel cells fail. Both main engines are healthy, but power and oxygen for the whole stack now last about {$0} hours.` },
+    { id: 'leak', spsGo: false, cons: [140, 165], dpsProp: 2500,
+      text: N`Two days after TLI, the service module’s main engine is lost, and the lunar module reports a slow propellant leak: only about {$1} kg of descent propellant can still be used. The lunar module’s consumables, stretched, last about {$0} hours.` },
+  ];
   const OPTS = [
     { id: 'A', label: N`Direct abort now with the service module engine`, engine: 'SPS', dv: 1050, s3: 25, hours: 62 },
     { id: 'B', label: N`Direct abort now with the lunar descent engine`, engine: 'DPS', dv: 1050, s3: 25, hours: 62 },
@@ -626,15 +770,26 @@
   ];
   const STACK = 43830;   // CSM + LM together
   function abortEngines(c) {
-    return { SPS: { go: c.spsGo, dvAvail: M.dv(314, STACK, 18400) }, DPS: { go: true, dvAvail: M.dv(311, STACK, 8200) } };
+    return { SPS: { go: c.spsGo, dvAvail: M.dv(314, STACK, 18400) }, DPS: { go: true, dvAvail: M.dv(311, STACK, c.dpsProp) } };
+  }
+  // a new situation: one kind, jittered numbers, and at least one option that passes
+  function drawSituation(rand = Math.random) {
+    for (;;) {
+      const k = KINDS[Math.floor(rand() * KINDS.length)];
+      const cons = Math.round(k.cons[0] + rand() * (k.cons[1] - k.cons[0]));
+      const dpsProp = k.dpsProp === 8200 ? 8200 : Math.round((k.dpsProp * (0.8 + 0.4 * rand())) / 100) * 100;
+      const opts = OPTS.map((o) => ({ ...o, dv: Math.round(o.dv * (0.95 + 0.1 * rand())), hours: Math.round(o.hours * (0.96 + 0.08 * rand())) }));
+      const c = { kind: k, spsGo: k.spsGo, cons, dpsProp, opts };
+      if (M.bestOption(opts, abortEngines(c), cons, 0.1) >= 0) return c;
+    }
   }
   function abortPane() {
     return `
-      <div class="mcc-controls"><div class="ctl"><label for="mcc-acase"><span>${T`Situation`}</span></label><select id="mcc-acase">${Object.entries(ABORT_CASES).map(([k, c]) => `<option value="${k}">${T(c.label)}</option>`).join('')}</select></div></div>
+      <div class="btn-row"><button class="btn" id="mcc-anew">${T`New situation`}</button></div>
       <p class="note" id="mcc-atext" style="margin:0"></p>
       <div class="mcc-cols">
         <div style="display:flex;flex-direction:column;gap:.6rem;min-width:0"><h4>${T`Status`}</h4><dl class="readout" id="mcc-astat"></dl>
-          <p class="note" style="margin:0">${T`Rule: the fastest option wins, provided the engine is go, the Δv available covers the burn plus its 3σ, and the trip fits within the consumables minus a 10 % reserve.`}</p></div>
+          <p class="note" style="margin:0">${T`Rule: the fastest option wins, provided the engine is go, the Δv available covers the burn plus its 3σ, and the trip fits within the consumables minus a 10 % reserve. Flight wants your call the first time: only a right first commit counts.`}</p></div>
         <div style="display:flex;flex-direction:column;gap:.6rem;min-width:0"><h4>${T`Options`}</h4><div class="mcc-opts" id="mcc-aopts"></div>
           <div class="btn-row"><button class="btn primary" id="mcc-acommit">${T`Commit to this abort`}</button></div>
           <p class="note" id="mcc-ares" style="margin:0" aria-live="polite"></p></div>
@@ -643,31 +798,40 @@
   }
   function mountAbort(root) {
     const $ = (s) => root.querySelector(s);
-    let cs = 'a';
+    let c = null, tries = 0;
     function show() {
-      const c = ABORT_CASES[cs], en = abortEngines(c);
-      $('#mcc-atext').textContent = T(c.text);
+      c = drawSituation(); tries = 0;
+      const en = abortEngines(c);
+      $('#mcc-atext').textContent = T(c.kind.text, c.cons, f(c.dpsProp, 0));
       $('#mcc-astat').innerHTML = `
         <dt>SPS</dt><dd class="${c.spsGo ? 'mcc-ok' : 'mcc-no'}">${c.spsGo ? 'GO' : 'NO-GO'}</dd>
-        <dt>${T`Δv available, SPS`}</dt><dd>${f(en.SPS.dvAvail, 0)} m/s</dd>
+        <dt>${T`Δv available, SPS`}</dt><dd>${c.spsGo ? f(en.SPS.dvAvail, 0) + ' m/s' : '—'}</dd>
         <dt>DPS</dt><dd class="mcc-ok">GO</dd>
         <dt>${T`Δv available, DPS`}</dt><dd>${f(en.DPS.dvAvail, 0)} m/s</dd>
         <dt>${T`Consumables`}</dt><dd>${c.cons} h</dd>`;
-      $('#mcc-aopts').innerHTML = OPTS.map((o) => `<label class="opt"><input type="radio" name="mcc-ao" value="${o.id}"><span><b>${o.id}.</b> ${T(o.label)}<br><span class="note">${T`Δv ${f(o.dv, 0)} m/s, 3σ ${f(o.s3, 0)} m/s, ${o.hours} h to splashdown`}</span></span></label>`).join('');
-      $('#mcc-ares').textContent = ''; $('#mcc-atab').innerHTML = '';
+      $('#mcc-aopts').innerHTML = c.opts.map((o) => `<label class="opt"><input type="radio" name="mcc-ao" value="${o.id}"><span><b>${o.id}.</b> ${T(o.label)}<br><span class="note">${T`Δv ${f(o.dv, 0)} m/s, 3σ ${f(o.s3, 0)} m/s, ${o.hours} h to splashdown`}</span></span></label>`).join('');
+      $('#mcc-ares').textContent = ''; $('#mcc-ares').className = 'note'; $('#mcc-atab').innerHTML = '';
     }
-    $('#mcc-acase').addEventListener('change', (e) => { cs = e.target.value; show(); });
+    $('#mcc-anew').addEventListener('click', show);
     $('#mcc-acommit').addEventListener('click', () => {
       const sel = root.querySelector('input[name=mcc-ao]:checked');
       const res = $('#mcc-ares');
       if (!sel) { res.textContent = T`Pick an option first.`; return; }
-      const c = ABORT_CASES[cs], en = abortEngines(c), reserve = 0.1;
-      const best = M.bestOption(OPTS, en, c.cons, reserve), idx = OPTS.findIndex((o) => o.id === sel.value);
-      const rows = OPTS.map((o, i) => { const s = M.screen(o, en, c.cons, reserve);
+      const en = abortEngines(c), reserve = 0.1;
+      const best = M.bestOption(c.opts, en, c.cons, reserve), idx = c.opts.findIndex((o) => o.id === sel.value);
+      tries++;
+      if (idx !== best) {
+        // no table yet: it would give the answer away
+        res.className = 'note mcc-no';
+        res.textContent = T`Not the best choice. Check each option against the three rules: engine, Δv with its 3σ, and time within the consumables less the reserve.`;
+        return;
+      }
+      const rows = c.opts.map((o, i) => { const s = M.screen(o, en, c.cons, reserve);
         return `<tr><td>${o.id}</td><td class="${s.engineGo ? 'ok' : 'no'}">${s.engineGo ? 'GO' : 'NO-GO'}</td><td class="${s.dvMargin >= 0 ? 'ok' : 'no'}">${f(s.dvMargin, 0)}</td><td class="${s.tMargin >= 0 ? 'ok' : 'no'}">${f(s.tMargin, 0)}</td><td>${o.hours}</td><td>${s.ok ? (i === best ? T`passes, fastest` : T`passes`) : T`fails`}</td></tr>`; }).join('');
       $('#mcc-atab').innerHTML = `<table class="data"><thead><tr><th>${T`Option`}</th><th>${T`engine`}</th><th>${T`Δv margin (m/s)`}</th><th>${T`time margin (h)`}</th><th>${T`trip (h)`}</th><th>${T`result`}</th></tr></thead><tbody>${rows}</tbody></table>`;
-      if (idx === best) { res.className = 'note mcc-ok'; res.textContent = T`Right choice: option ${OPTS[best].id} is the fastest that passes all three checks.`; Progress.done('mcc', 'abort'); }
-      else { res.className = 'note mcc-no'; res.textContent = T`Not the best choice. Read the table: look for the failed checks and for a faster option that passes.`; }
+      res.className = 'note mcc-ok';
+      if (tries === 1) { res.textContent = T`Right choice: option ${c.opts[best].id} is the fastest that passes all three checks.`; Progress.done('mcc', 'abort'); }
+      else res.textContent = T`Option ${c.opts[best].id} is right, but not on the first commit. Take a new situation and make the call in one go.`;
     });
     show();
   }

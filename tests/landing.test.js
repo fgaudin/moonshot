@@ -21,9 +21,9 @@ test('9.1 powered descent: lab lander numbers (hover time, thrust-to-weight)', (
   // gravity loss: one second of hovering costs g☾ of Δv
   near(GM, 1.62, 0.01, 'g☾ in the text');
   // lab start: 8 t, 500 kg: hover time left (formula of the text)
-  // (the lab readout uses the linear form m_res c/(m g); the log form of the text gives 121 s)
-  near(500 * ISP * G0 / (8000 * GM), 117, 1, 'hover time at the start of the lab');
+  // the lab readout uses the log form of the text, like the practice problem: 121 s (the linear form would give 117 s)
   near(ISP * G0 / GM * Math.log(8000 / 7500), 121, 1, 'log form');
+  assert.match(require('fs').readFileSync(require('path').join(__dirname, '../js/ch/landing.js'), 'utf8'), /hoverLeft = \(\) => DPS\.isp \* C\.g0 \/ GM \* Math\.log\(S\.m \/ \(S\.m - S\.prop\)\)/);
   // thrust range 10–60 % and 100 %: T/W at 8 t
   near(F * 0.1 / (8000 * GM), 0.35, 0.01, 'T/W at 10 %'); near(F * 0.6 / (8000 * GM), 2.08, 0.01, 'T/W at 60 %'); near(F / (8000 * GM), 3.47, 0.01, 'T/W at 100 %');
   // the 8 t lander can hover at 10 % ... 60 %: hover throttle is below the minimum? (it is: 8000 × 1.624 / 45040 = 28.8 %)
@@ -47,14 +47,18 @@ const env = makeEnv();
 const practice = { gens: env.Practice.GEN.filter((g) => g.topic === 'landing'), quiz: env.Practice.QUIZ.filter((q) => q.topic === 'landing') };
 
 test('9 practice (topic landing): generators and concept questions', () => {
-  assert.equal(practice.gens.length, 3); assert.ok(practice.quiz.length >= 1);
+  assert.equal(practice.gens.length, 4); assert.ok(practice.quiz.length >= 1);
   checkGenerators(practice); checkQuiz(practice);
   for (const q of practice.quiz) assert.equal(new Set(q.opts).size, q.opts.length);
 });
 
 test('9 practice: answers match an independent calculation', () => {
   for (let i = 0; i < 30; i++) {
-    const hover = practice.gens[0].make(), asc = practice.gens[1].make(), tw = practice.gens[2].make();
+    const by = (t) => practice.gens.find((g) => g.title === t).make();
+    const hover = by('Hover time'), asc = by('LM ascent stage'), tw = by('Lunar thrust-to-weight'), price = by('The price of hovering');
+    // independent check: Δv = g☾ t, then the rocket equation
+    const t = +price.q.match(/<b>(\d+) s<\/b>/)[1], m = +price.q.match(/mass is ([\d\s ]+) kg/)[1].replace(/\D/g, '');
+    assert.ok(Math.abs(price.answer - m * (1 - Math.exp(-1.624 * t / (311 * 9.80665)))) < 1e-6, `hover price ${price.answer}`);
     assert.ok(hover.answer > 40 && hover.answer < 200, `hover ${hover.answer}`);
     assert.ok(asc.answer > 1900 && asc.answer < 2200, `ascent Δv ${asc.answer}`);
     assert.ok(tw.answer > 0.1 && tw.answer < 6, `T/W ${tw.answer}`);

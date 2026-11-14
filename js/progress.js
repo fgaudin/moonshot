@@ -51,8 +51,8 @@
       name: N`Changing Orbits`, topic: 'maneuvers', glyph: 'transfer',
       briefing: N`A burn changes your velocity at one point, and the whole orbit through that point changes with it. In orbit, intuition lies: speed up and you end up slower; to catch someone ahead, you brake. One day your lunar module pilot will have to find the command module in lunar orbit, with no second chance. Plan your transfers carefully.`,
       objectives: [
-        { id: 'geo', text: N`Plan a transfer from low Earth orbit (LEO) to geostationary orbit (GEO) including the 28.5° plane change for under 4.4 km/s` },
-        { id: 'lor', text: N`Plan the LM ascent-stage rendezvous with the CSM in lunar orbit` },
+        { id: 'geo', text: N`Compute by hand the total Δv of a transfer from low Earth orbit (LEO) to geostationary orbit (GEO), including the 28.5° plane change, for a plan under 4.4 km/s` },
+        { id: 'lor', text: N`Compute by hand the phase angle for the LM ascent-stage rendezvous with the CSM in lunar orbit` },
         { id: 'qual', text: N`Qualify: answer 2 manoeuvre problems correctly` },
       ],
       debrief: N`Transfers and rendezvous are second nature now. Next: turning a transfer into numbers a crew can fly.`,

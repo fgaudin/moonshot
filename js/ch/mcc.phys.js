@@ -37,21 +37,32 @@
     RCS: { F: 1780, isp: 280 },     // four 445 N jets firing together
   };
 
-  // GET as h:mm:ss; accepts "75:49:50", "075 49 50", "75.49.50", "75h49m50"
+  // GET as h:mm:ss; accepts "75:49:50", "075 49 50", "75.49.50", "75h49m50". Signs, exponents or a lone decimal
+  // ("7.5" is not 7 h 05 min) are refused; minutes and seconds must have two digits when written after a separator.
   P.parseGET = (s) => {
-    const parts = String(s || '').trim().split(/[^0-9]+/).filter(Boolean).map(Number);
-    if (!parts.length || parts.length > 3) return NaN;
-    while (parts.length < 3) parts.push(0);
-    const [h, m, sec] = parts;
-    if (m >= 60 || sec >= 60) return NaN;
-    return h * 3600 + m * 60 + sec;
+    const t = String(s == null ? '' : s).trim();
+    const m = /^(\d{1,3})(?:[:.\sh]+(\d{2})(?:[:.\sm]+(\d{2})s?)?)?$/i.exec(t);
+    if (!m) return NaN;
+    const h = +m[1], mi = +(m[2] || 0), sec = +(m[3] || 0);
+    if (mi >= 60 || sec >= 60) return NaN;
+    return h * 3600 + mi * 60 + sec;
   };
   P.fmtGET = (t) => {
-    t = Math.round(t);
+    const neg = t < 0; t = Math.round(Math.abs(t));
     const h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = t % 60;
     const p2 = (x) => String(x).padStart(2, '0');
-    return `${String(h).padStart(3, '0')}:${p2(m)}:${p2(s)}`;
+    return `${neg && t ? '−' : ''}${String(h).padStart(3, '0')}:${p2(m)}:${p2(s)}`;
   };
+  // how CAPCOM voices a number, as a list of voice clips: digit by digit (d0…d9), "minus" when negative, "point"
+  // before the decimals; the last digit takes its falling "end of number" clip (d3_end). A GET is read in its three
+  // groups with a short pause (null) between them.
+  const endDigit = (t) => { t[t.length - 1] += '_end'; return t; };
+  P.sayNumber = (x, d) => {
+    const s = Math.abs(x).toFixed(d), neg = x < 0 && +s !== 0;
+    const [ip, fp] = s.split('.');
+    return endDigit([...(neg ? ['minus'] : []), ...[...ip].map((c) => 'd' + c), ...(fp ? ['point', ...[...fp].map((c) => 'd' + c)] : [])]);
+  };
+  P.sayGET = (t) => endDigit(P.fmtGET(t).replace('−', '').split(':').flatMap((g, i) => [...(i ? [null] : []), ...[...g].map((c) => 'd' + c)]));
   // number typed by a candidate: decimal comma, spaces, unicode minus
   P.parseNum = (s) => {
     const t = String(s == null ? '' : s).replace(/[\s  ]/g, '').replace(/[−–]/g, '-').replace(',', '.');

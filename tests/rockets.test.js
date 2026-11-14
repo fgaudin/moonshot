@@ -6,7 +6,7 @@ const g0 = 9.80665;
 const near = (a, b, tol, msg) => assert.ok(Math.abs(a - b) <= tol, `${msg || ''} ${a} vs ${b}`);
 
 test('3.1 F-1 engine: thrust at sea level and in vacuum, 15 % gain', () => {
-  const mdot = 2578, ve = 2850, pe = 44000, Ae = 9.87;
+  const mdot = 2615, ve = 2805, pe = 44000, Ae = 9.87;
   const F = (pa) => mdot * ve + (pe - pa) * Ae;
   near(F(101325) / 1e6, 6.77, 0.02);
   near(F(0) / 1e6, 7.77, 0.02);
@@ -56,4 +56,20 @@ test('3.5 staging presets: Saturn V reaches TLI, one stage cannot reach orbit, L
   assert.ok(lm.stages[0].thrust / (st[0].m0 * lm.g) > 1);
   assert.ok(lm.stages[0].thrust / (st[0].m0 * g0) < 1);   // would be grounded on Earth gravity
   for (const k in PRESETS) for (const r of Phys.rocket.staging(PRESETS[k].stages, PRESETS[k].payload)) assert.ok(Number.isFinite(r.dv) && r.dv > 0);
+});
+
+test('3.5 staging builder: presets respect the tank limit, structure never zero', () => {
+  const { PRESETS: P, MAX_PROP_RATIO, minDry } = loadChapter('rockets', ['PRESETS', 'MAX_PROP_RATIO', 'minDry']);
+  assert.equal(MAX_PROP_RATIO, 20);
+  for (const k of Object.keys(P)) for (const s of P[k].stages) assert.ok(s.dry >= minDry(s.prop), `${k} ${s.name}`);
+  assert.equal(minDry(0), 1);                                    // empty stage: 1 kg, so Δv stays finite
+  const st = Phys.rocket.staging([{ prop: 0, dry: minDry(0), isp: 300 }], 0);
+  assert.ok(isFinite(st[0].dv));
+});
+
+test('3.1 F-1 lab: the readout Isp matches the 263 / 304 s quoted in the table and practice', () => {
+  const mdot = 2615, ve = 2805, pe = 44000, Ae = 9.87;
+  const F = (pa) => mdot * ve + (pe - pa) * Ae;
+  near(F(101325) / (mdot * g0), 263.5, 1);
+  near(F(0) / (mdot * g0), 303.5, 1);
 });

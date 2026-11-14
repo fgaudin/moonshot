@@ -21,6 +21,7 @@
           <div class="prose">
             <p>${T`<b>First law, inertia.</b> A body keeps its velocity, constant speed in a straight line, unless an external force acts on it. A spacecraft coasting between Earth and Moon needs no engine to keep moving. It needs an engine only to <i>change</i> its motion.`}</p>
             ${figInertia()}
+            ${Primer.box('vectors', false, 'refresher')}
             <p>${T`<b>Momentum.</b> Before the second law, one new quantity. The momentum of a body is its mass times its velocity. It measures how hard the body is to stop: a heavy body, or a fast one, has a lot of it.`}</p>
             <div class="eq">\\[ \\vec p = m\\,\\vec v \\]</div>
             ${Sym.where([['\\vec p', N`momentum: mass times velocity. A vector, so it points the way the body moves`, 'kg·m/s'], 'm', 'vecv'], N`The unit kg·m/s is the same as N·s. A 1 kg ball at 1 m/s has a momentum of 1 kg·m/s; a 45 t spacecraft at 7.8 km/s has about 3.5 × 10⁸ kg·m/s.`)}
@@ -29,7 +30,7 @@
             <div class="eq">\\[ \\vec F = \\frac{d}{dt}\\left(m\\vec v\\right) \\quad\\Longrightarrow\\quad \\vec F = m\\,\\vec a \\;\\; ${T`\\text{(constant mass)}`} \\]</div>
             ${Sym.where(['vecF', 'ddt', 'm', 'vecv', 'veca'], N`Read it as: force = mass × acceleration. Push twice as hard and a body speeds up twice as fast.`)}
             ${figSecondLaw()}
-            ${Primer.box('vectors', false, 'refresher') + Primer.box('derivative')}
+            ${Primer.box('derivative')}
             <p>${T`A rocket's mass is <i>not</i> constant; it throws away about 13 tonnes of propellant every second at liftoff. Working this law with changing mass gives the rocket equation (module ${Progress.code('rockets')}, section ${App.sec('rockets', 3)}).`}</p>
             <p>${T`<b>Third law, action and reaction.</b> When the engine pushes exhaust backward, the exhaust pushes the engine forward with an equal and opposite force. A rocket needs no air to push against, which is why it works in a vacuum.`}</p>
             ${figThirdLaw()}
@@ -59,9 +60,11 @@
             <div class="eq">\\[ \\frac{\\mu}{r^2} = \\frac{v^2}{r} \\quad\\Longrightarrow\\quad v_{\\text{circ}} = \\sqrt{\\frac{\\mu}{r}} \\]</div>
             ${Sym.where(['mu', 'r', 'v', 'vcirc'], N`Left side: the pull of gravity per kilogram. Right side: the acceleration needed to move in a circle of radius r at speed v. Set them equal and solve for v.`)}
             <p>${T`Faster still, the path becomes an ellipse. At \\(\\sqrt2\\) times circular speed the shot never returns: it has reached <b>escape velocity</b>, where kinetic energy matches the depth of the gravity well.`}</p>
+            <p>${T`The gravity well is measured by the <b>potential energy</b>: the energy, per kilogram, that gravity has stored in the shot because of where it is. Climbing from distance \\(r\\) all the way out to infinity costs \\(\\mu/r\\) joules per kilogram, so the potential energy is counted as \\(-\\mu/r\\), zero far away and more negative deeper down. The shot escapes when its kinetic energy per kilogram, \\(\\tfrac12 v^2\\), pays for the whole climb: the total is then zero. (Module ${Progress.code('orbits')} builds on this.)`}</p>
             <div class="eq">\\[ \\tfrac12 v_{\\text{esc}}^2 - \\frac{\\mu}{r} = 0 \\quad\\Longrightarrow\\quad v_{\\text{esc}} = \\sqrt{\\frac{2\\mu}{r}} \\]</div>
             ${Sym.where(['ke', 'pe', 'vesc'], N`Escape means just enough kinetic energy to climb out of the gravity well, so the total energy is zero.`)}
             <p>${T`Try it below. Find the speed that gives a circle, then the speed that escapes. Notice that every bound shot fired horizontally passes back through the cannon's position if it misses the Earth.`}</p>
+            <p>${T`Under “Resulting path” the readout gives a preview of the next module: the energy per kilogram (it turns from negative to positive as the shot escapes), the eccentricity (0 for a circle, close to 1 for a long ellipse), the lowest point of the path (perigee) and its highest (apogee). Module ${Progress.code('orbits')} explains them; for now, watch how they change with speed.`}</p>
           </div>
           <div class="lab" id="cannon">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Newton’s cannon`}</h3><span class="spacer"></span>
@@ -143,6 +146,7 @@
         raf[i] = requestAnimationFrame(step); setBtn(i);
       };
       btns.forEach((b, i) => b.addEventListener('click', () => (raf[i] ? stop(i) : play(i))));
+      UI.onCleanup(() => raf.forEach((id, i) => { cancelAnimationFrame(id); raf[i] = 0; }));   // leaving the page stops a running panel
     });
   }
 

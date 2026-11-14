@@ -67,17 +67,57 @@ test('lunar loss of signal: quoted numbers for the 110 km orbit', () => {
   assert.equal(Math.round(Phys.lunarLOS(15e3).arcDeg / 2), 82);
 });
 
-test('abort decision: the right option in each situation', () => {
-  const { ABORT_CASES, OPTS, abortEngines } = loadChapter('mcc', ['ABORT_CASES', 'OPTS', 'abortEngines'], { Phys_mcc: M });
-  const best = (k) => OPTS[M.bestOption(OPTS, abortEngines(ABORT_CASES[k]), ABORT_CASES[k].cons, 0.1)].id;
-  assert.equal(best('a'), 'D');   // service engine dead: the fast burn needs the SPS, the plain free return outlasts the consumables
-  assert.equal(best('b'), 'A');   // all healthy: fastest direct abort
-  // in case a: DPS cannot do the direct abort, and the trim-only option fails on time
-  const en = abortEngines(ABORT_CASES.a);
-  assert.ok(!M.screen(OPTS[1], en, 125).ok && !M.screen(OPTS[2], en, 125).ok && !M.screen(OPTS[0], en, 125).ok);
+test('abort decision: the right option in each kind of situation', () => {
+  const { KINDS, OPTS, abortEngines } = loadChapter('mcc', ['KINDS', 'OPTS', 'abortEngines'], { Phys_mcc: M });
+  const at = (id, cons) => { const k = KINDS.find((x) => x.id === id); const c = { spsGo: k.spsGo, dpsProp: k.dpsProp, cons };
+    return OPTS[M.bestOption(OPTS, abortEngines(c), cons, 0.1)].id; };
+  assert.equal(at('sps', 125), 'D');    // service engine dead: the speed-up burn with the DPS, the plain free return is too slow
+  assert.equal(at('nav', 200), 'A');    // all healthy: fastest direct abort
+  assert.equal(at('cell', 78), 'A');    // short on consumables: only the direct abort fits
+  assert.equal(at('leak', 150), 'C');   // DPS short of propellant: trim only, the slow way home
 });
 
 test('quiz is well formed', () => {
   const { checkQuiz } = require('./helpers/practice.js');
   checkQuiz(loadChapter('mcc', [], { Phys_mcc: M }).practice);
+});
+
+test('GET parse and format: strict, signed format; voiced numbers digit by digit', () => {
+  assert.strictEqual(M.parseGET('75:49:50'), 75 * 3600 + 49 * 60 + 50);
+  assert.strictEqual(M.parseGET('075 49 50'), 75 * 3600 + 49 * 60 + 50);
+  assert.strictEqual(M.parseGET('75h49m50s'), 75 * 3600 + 49 * 60 + 50);
+  assert.strictEqual(M.parseGET('75'), 75 * 3600);
+  for (const bad of ['-75:49:50', '7.5', '1e3', '75:61:00', '75:4:5', '', 'abc']) assert.ok(Number.isNaN(M.parseGET(bad)), bad);
+  assert.strictEqual(M.fmtGET(-5), '−000:00:05');
+  assert.strictEqual(M.fmtGET(-0.4), '000:00:00');
+  assert.deepStrictEqual(M.sayNumber(-12.5, 1), ['minus', 'd1', 'd2', 'point', 'd5_end']);
+  assert.deepStrictEqual(M.sayNumber(-0.04, 1), ['d0', 'point', 'd0_end']);
+  assert.deepStrictEqual(M.sayNumber(907, 0), ['d9', 'd0', 'd7_end']);
+  assert.deepStrictEqual(M.sayGET(75 * 3600 + 49 * 60 + 50), ['d0', 'd7', 'd5', null, 'd4', 'd9', null, 'd5', 'd0_end']);
+  // every clip CAPCOM can need exists in each voice file (the falling last-digit clips are optional)
+  const all = require('../tools/capcom-phrases.json').phrases;
+  for (const lang of ['en', 'fr', 'de']) {
+    const ph = all[lang], finals = ph.final_digits !== false;
+    const clips = {}; new Function('CapcomClips', require('fs').readFileSync(require('path').join(__dirname, `../audio/capcom-${lang}.js`), 'utf8'))({ add: (l, o) => Object.assign(clips, o) });
+    const need = [...Array(10).keys()].flatMap((i) => ['d' + i, ...(finals ? [`d${i}_end`] : [])]).concat(['point', 'minus', 'readback', 'intro_man', 'intro_tei', 'intro_ent'],
+      ['tig', 'dvp', 'dvn', 'dvr', 'dv', 'alpha', 'beta', 'tb', 'gei', 'eitime', 'vei', 'range', 'gmax', 'lat', 'lon']);
+    for (const k of need) assert.ok(clips[k], `${lang} clip ${k}`);
+    assert.equal(Object.keys(clips).length, need.length, lang);
+    assert.ok(Object.keys(ph.fields).every((k) => need.includes(k)), lang);
+  }
+});
+
+test('abort situations: always one passing option, and the right answer varies with the situation', () => {
+  const { drawSituation, abortEngines, KINDS } = loadChapter('mcc', ['drawSituation', 'abortEngines', 'KINDS'], { Phys_mcc: M });
+  const answers = {};
+  for (let i = 0; i < 400; i++) {
+    const c = drawSituation();
+    const best = M.bestOption(c.opts, abortEngines(c), c.cons, 0.1);
+    assert.ok(best >= 0);
+    (answers[c.kind.id] = answers[c.kind.id] || new Set()).add(c.opts[best].id);
+  }
+  assert.equal(JSON.stringify(Object.keys(answers).sort()), JSON.stringify(KINDS.map((k) => k.id).sort()));
+  const all = new Set(Object.values(answers).flatMap((s) => [...s]));
+  assert.ok(all.size >= 3, [...all].join());
+  assert.ok(!all.has('B'), 'the DPS never has the Δv for a direct abort with the stack');
 });

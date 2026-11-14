@@ -61,6 +61,14 @@
         sol: R`\[ v_{esc} = \sqrt{\frac{2\mu}{R}} = \sqrt{\frac{2\times${f(b.mu, 1)}}{${f(b.r, 1)}}} = ${f(v, 3)}\ \mathrm{km/s} \]` };
     } },
 
+    { topic: 'newton', title: N`Acceleration at liftoff`, make() {
+      const F = rnd(33.5, 35, 0.1), m = rnd(2880, 2960, 10);
+      const a = F * 1e6 / (m * 1e3) - G0;
+      return { q: T`At liftoff the five F-1 engines push with <b>${f(F, 1)} MN</b> and the Saturn V has a mass of <b>${f(m, 0)} t</b>. What is its upward acceleration as it leaves the pad?`, answer: a, unit: 'm/s²',
+        hint: T`Two forces act: thrust up, weight m·g down. Newton’s second law: the net force equals mass times acceleration.`,
+        sol: R`\[ a = \frac{F - m g_0}{m} = \frac{F}{m} - g_0 = \frac{${f(F, 1)}\times10^6}{${f(m, 0)}\times10^3} - 9.807 = ${f(a, 2)}\ \mathrm{m/s^2} \]` + `<p>${T`About ${f(a / G0, 2)} g: the Saturn V rose slowly at first.`}</p>` };
+    } },
+
     // ---------------- Orbits ----------------
     { topic: 'orbits', title: N`Orbital period`, make() {
       const h = pick([185, 400, 700, 1500, 20200]);
@@ -228,14 +236,14 @@
         hint: T`The velocity keeps its magnitude but turns through Δi: Δv = 2v sin(Δi/2).`,
         sol: R`\[ v = ${f(v, 3)}\ \mathrm{km/s},\quad \Delta v = 2v\sin\frac{\Delta i}{2} = ${f(dv, 3)}\ \mathrm{km/s} \]` + `<p>${T`Plane changes are expensive in low orbit. That is one reason Apollo launch windows were planned so carefully.`}</p>` };
     } },
-    { topic: 'maneuvers', title: N`Rendezvous lead angle`, make() {
+    { topic: 'maneuvers', title: N`Rendezvous phase angle`, make() {
       const h1 = pick([15, 18]), h2 = pick([110, 111, 120]);
       const r1 = RM + h1, r2 = RM + h2, at = (r1 + r2) / 2;
       const tof = Math.PI * Math.sqrt(at * at * at / MUM), w2 = Math.sqrt(MUM / (r2 * r2 * r2));
       const lead = (Math.PI - w2 * tof) / deg;
-      return { q: T`The LM ascent stage leaves a lunar orbit at ${h1} km altitude on a Hohmann transfer to the CSM, which is in a circular orbit at <b>${h2} km</b> altitude. By what angle must the CSM lead the LM when the transfer burn starts? (μ☾ = 4 902.8 km³/s², R☾ = 1 737.4 km)`, answer: lead, unit: '°', tol: 0.02,
-        hint: T`The CSM must arrive at the meeting point at the same time: lead angle = π − ω_target × TOF.`,
-        sol: R`\[ \mathrm{TOF} = \pi\sqrt{a_t^3/\mu} = ${f(tof, 0)}\ \mathrm{s},\quad \omega_{CSM} = \sqrt{\mu/r_2^3} = ${f(w2, 6)}\ \mathrm{rad/s} \] \[ \alpha_{lead} = 180^\circ - \omega_{CSM}\,\mathrm{TOF} = ${f(lead, 2)}^\circ \]` };
+      return { q: T`The LM ascent stage leaves a lunar orbit at ${h1} km altitude on a Hohmann transfer to the CSM, which is in a circular orbit at <b>${h2} km</b> altitude. By what phase angle must the CSM lead the LM when the transfer burn starts? (μ☾ = 4 902.8 km³/s², R☾ = 1 737.4 km)`, answer: lead, unit: '°', tol: 0.02,
+        hint: T`The CSM must arrive at the meeting point at the same time: phase angle = π − ω_target × TOF.`,
+        sol: R`\[ \mathrm{TOF} = \pi\sqrt{a_t^3/\mu} = ${f(tof, 0)}\ \mathrm{s},\quad \omega_{CSM} = \sqrt{\mu/r_2^3} = ${f(w2, 6)}\ \mathrm{rad/s} \] \[ \phi = 180^\circ - \omega_{CSM}\,\mathrm{TOF} = ${f(lead, 2)}^\circ \]` };
     } },
 
     // ---------------- Planning a burn ----------------
@@ -261,11 +269,14 @@
         sol: R`\[ t_b = \frac{${v.m}\times${v.isp}\times9.807}{${v.F}}\left(1 - e^{-${dv}/(${v.isp}\times9.807)}\right) = ${f(tb, 1)}\ \mathrm{s} \]` + `<p>${T`Dividing Δv by the initial acceleration would give ${f(naive, 1)} s: slightly too long, because the acceleration grows as propellant is burned.`}</p>` };
     } },
     { topic: 'burns', title: N`Centring the burn`, make() {
-      const tb = rnd(40, 400, 2), tig = rnd(2 * 3600, 30 * 3600, 60);
-      const start = tig - tb / 2;
-      return { q: T`A burn lasting <b>${tb} s</b> has its burn point at GET <b>${UI.fmtTime(tig)}</b>. To centre the burn on it, what TIG goes on the PAD? Answer in seconds of GET.`, answer: start, unit: 's', tol: 0.0005,
-        hint: T`Start half a burn time early.`,
-        sol: R`\[ \mathrm{TIG} = t_{burn\ point} - \frac{t_b}{2} = ${tig} - ${tb / 2} = ${start}\ \mathrm{s} \]` + `<p>${T`That is GET ${UI.fmtTime(start)}.`}</p>` };
+      // burn point between 15 and 58 min past the hour, so the centred TIG stays in the same hour
+      const tb = rnd(40, 400, 2), hh = rnd(2, 30, 1), tig = hh * 3600 + rnd(15 * 60, 58 * 60, 1);
+      const start = tig - tb / 2, ans = start - hh * 3600;
+      const hms = (t) => { t = Math.round(t); const p2 = (x) => String(x).padStart(2, '0'); return `${String(Math.floor(t / 3600)).padStart(3, '0')}:${p2(Math.floor(t % 3600 / 60))}:${p2(t % 60)}`; };   // GET as on a PAD
+      const hdr = `${String(hh).padStart(3, '0')}:00:00`;
+      return { q: T`A burn lasting <b>${tb} s</b> has its burn point at GET <b>${hms(tig)}</b>. To centre the burn on it, what TIG goes on the PAD? Give it as the number of seconds after GET ${hdr}.`, answer: ans, unit: 's', tol: 0.001,
+        hint: T`Start half a burn time early. Convert the minutes and seconds after the full hour into seconds first.`,
+        sol: R`\[ t_{burn\ point} = ${hdr} + ${f(tig - hh * 3600, 0)}\ \mathrm{s},\qquad \mathrm{TIG} = t_{burn\ point} - \frac{t_b}{2} = ${f(tig - hh * 3600, 0)} - ${tb / 2} = ${f(ans, 0)}\ \mathrm{s} \]` + `<p>${T`On the PAD: TIG ${hms(start)}.`}</p>` };
     } },
     { topic: 'burns', title: N`Converting LVLH to the velocity frame`, make() {
       const H = rnd(50, 300, 10), V = rnd(-80, 80, 10) || 30, phi = pick([2, 5, 10, 15]);
@@ -294,17 +305,18 @@
       const dz = pick([5, 10, 20, 50]), above = pick([true, false]);
       const d = 3 * Math.PI * dz;
       return { q: above
-          ? T`In a circular orbit, you sit <b>${dz} m above</b> the target, with no relative velocity other than that of your slightly different circular orbit. How far do you drift along-track in one orbit? (Clohessy–Wiltshire: drift rate = 1.5 n Δz)`
-          : T`In a circular orbit, you sit <b>${dz} m below</b> the target, with no relative velocity other than that of your slightly different circular orbit. How far do you drift along-track in one orbit? (Clohessy–Wiltshire: drift rate = 1.5 n Δz)`,
+          ? T`In a circular orbit, you sit <b>${dz} m above</b> the target, with no relative velocity other than that of your slightly different circular orbit. How far do you drift along-track in one orbit?`
+          : T`In a circular orbit, you sit <b>${dz} m below</b> the target, with no relative velocity other than that of your slightly different circular orbit. How far do you drift along-track in one orbit?`,
         answer: d, unit: 'm',
         hint: T`Drift per orbit = 1.5 n Δz × T, with T = 2π/n. The n cancels.`,
         sol: T`\\[ \\Delta x = \\tfrac32\\,n\\,\\Delta z \\times \\frac{2\\pi}{n} = 3\\pi\\,\\Delta z = ${f(d, 1)}\\ \\mathrm{m\\ per\\ orbit} \\]` + `<p>${above ? T`Above the target you are slower: you fall behind.` : T`Below the target you are faster: you move ahead.`} ${T`It does not depend on which planet you orbit.`}</p>` };
     } },
-    { topic: 'docking', title: N`Time to contact`, make() {
-      const r = pick([30, 50, 100, 150]), v = pick([0.1, 0.2, 0.3, 0.5]);
-      return { q: T`The target is <b>${r} m</b> away and you close at a steady <b>${dec(v)} m/s</b>. How long until contact?`, answer: r / v / 60, unit: 'min',
-        hint: T`Time = distance / speed. Convert seconds to minutes.`,
-        sol: R`\[ t = \frac{${r}}{${v}} = ${f(r / v, 0)}\ \mathrm{s} = ${f(r / v / 60, 2)}\ \mathrm{min} \]` };
+    { topic: 'docking', title: N`Drift in lunar orbit`, make() {
+      const h = pick([100, 110, 120]), dz = pick([20, 50, 100, 200]), tm = pick([5, 10, 15]);
+      const r = RM + h, n = Math.sqrt(MUM / (r * r * r)), d = 1.5 * n * dz * 1000 * tm * 60;   // RM, MUM in km
+      return { q: T`The LM is in a circular lunar orbit at <b>${h} km</b>. You hold a circular orbit <b>${dz} m</b> below it, with no other relative motion. How far ahead of the LM do you drift in <b>${tm} minutes</b>? (μ☾ = 4 902.8 km³/s², R☾ = 1 737.4 km)`, answer: d, unit: 'm', tol: 0.01,
+        hint: T`A circular orbit Δz lower runs ahead at 1.5 n Δz, with n = √(μ/r³) the target’s mean motion.`,
+        sol: R`\[ n = \sqrt{\frac{4902.8}{${f(r, 1)}^3}} = ${f(n * 1e3, 4)}\times10^{-3}\ \mathrm{rad/s},\qquad x = 1.5\,n\,\Delta z\,t = 1.5 \times ${f(n * 1e3, 4)}\times10^{-3} \times ${dz} \times ${tm * 60} = ${f(d, 1)}\ \mathrm{m} \]` };
     } },
 
     // ---------------- Moon ----------------
@@ -366,6 +378,13 @@
         hint: T`Rocket equation again.`,
         sol: R`\[ \Delta v = 311\times9.807\times\ln\frac{${m0}}{${m0 - prop}} = ${f(dv, 0)}\ \mathrm{m/s} \]` + `<p>${T`Reaching lunar orbit needs about 1 850 m/s. There was no backup engine; the APS was kept as simple as possible to be reliable.`}</p>` };
     } },
+    { topic: 'landing', title: N`The price of hovering`, make() {
+      const t = rnd(20, 90, 5), m = rnd(7200, 8200, 100), isp = 311, gm = 1.624;
+      const dv = gm * t, prop = m * (1 - Math.exp(-dv / (isp * G0)));
+      return { q: T`Looking for a clear spot, the commander hovers for <b>${t} s</b>. The LM's mass is ${f(m, 0)} kg (I<sub>sp</sub> = 311 s, g☾ = 1.624 m/s²). How much propellant does that hover burn?`, answer: prop, unit: 'kg', tol: 0.02,
+        hint: T`While hovering, all the thrust cancels gravity: each second costs g☾ of Δv. Turn that Δv into propellant with the rocket equation.`,
+        sol: R`\[ \Delta v = g_☾\,t = 1.624\times${t} = ${f(dv, 1)}\ \mathrm{m/s},\qquad m_{prop} = m\left(1-e^{-\Delta v/(I_{sp}g_0)}\right) = ${f(prop, 0)}\ \mathrm{kg} \]` };
+    } },
     { topic: 'landing', title: N`Lunar thrust-to-weight`, make() {
       const thr = pick([10, 25, 40, 60]), m = rnd(7000, 15000, 500);
       const F = 45040 * thr / 100, gm = 1.624, tw = F / (m * gm);
@@ -387,7 +406,7 @@
       const H = 7.2, a = v * v * 1e6 * Math.sin(gam * deg) / (2 * Math.E * H * 1000), g = a / G0;
       return { q: T`A non-lifting capsule enters at <b>${dec(v)} km/s</b> with a flight-path angle of <b>−${dec(gam)}°</b>. Using the Allen–Eggers ballistic solution with a scale height of 7.2 km, what is the peak deceleration in g?`, answer: g, unit: 'g',
         hint: T`a_max = V² sin|γ| / (2 e H). It does not depend on mass or drag coefficient.`,
-        sol: R`\[ a_{max} = \frac{V_E^2\sin|\gamma|}{2eH} = \frac{(${v * 1000})^2\sin ${gam}^\circ}{2e\times7200} = ${f(a, 0)}\ \mathrm{m/s^2} = ${f(g, 1)}\,g \]` + `<p>${g > 12 ? T`Lethal for a ballistic return. Apollo used lift to keep peak loads near 6.5 g.` : T`Survivable. Lift reduces it further.`}</p>` };
+        sol: R`\[ a_{max} = \frac{V_E^2\sin|\gamma|}{2eH} = \frac{(${v * 1000})^2\sin ${gam}^\circ}{2e\times7200} = ${f(a, 0)}\ \mathrm{m/s^2} = ${f(g, 1)}\,g \]` + `<p>${g > 10 ? T`Above Apollo's 10 g design limit: a ballistic return would not do. Apollo used lift to keep peak loads near 6.5 g.` : T`Within Apollo's 10 g design limit. Lift reduces it further.`}</p>` };
     } },
     { topic: 'entry', title: N`Energy to dissipate`, make() {
       const v = pick([7.8, 11.03]), m = 5500;
@@ -409,6 +428,8 @@
   const QUIZ = [
     { topic: 'newton', q: N`Why do astronauts on the ISS float?`, opts: [N`Gravity at 400 km is too weak to hold them down`, N`They and the station are in continuous free fall`, N`The station’s spin creates a force that cancels Earth’s gravity`, N`Thin air at that altitude still buoys them up`], a: 1, why: N`Gravity there is still 89% of surface gravity. Everything aboard falls together, so nothing presses on anything else.` },
     { topic: 'newton', q: N`Escape velocity at any radius is how many times the circular speed there?`, opts: [N`2`, N`√2`, N`1.5`, N`It depends on the mass of the spacecraft`], a: 1, why: N`v_esc = √(2μ/r) = √2 · √(μ/r). Neither depends on the spacecraft’s mass.` },
+    { topic: 'newton', q: N`An astronaut floating in the cabin pushes off a wall. What happens to the spacecraft?`, opts: [N`Nothing: it is far heavier than the astronaut`, N`It moves the other way, with the same momentum as the astronaut but much more slowly`, N`It moves the same way as the astronaut`, N`It moves the other way at the same speed as the astronaut`], a: 1, why: N`Third law: the wall pushes the astronaut exactly as hard as the astronaut pushes the wall, for the same time. The two momenta are equal and opposite, so the heavy spacecraft gets the same momentum at a much smaller speed (speed = momentum / mass). Small, but not nothing: that is how a rocket works, with the exhaust in place of the astronaut.` },
+    { topic: 'orbits', q: N`Two orbits have the same size, shape and inclination but different right ascensions of the ascending node (Ω). How do they differ?`, opts: [N`The planes are tilted the same but swivelled around the Earth’s axis: they cross the equator at different longitudes in space`, N`One has its periapsis further north than the other`, N`One goes round faster`, N`They are the same orbit; Ω only says where the spacecraft is`], a: 0, why: N`Inclination i tilts the plane, Ω swivels it around the polar axis, ω turns the ellipse within the plane, and ν places the spacecraft. Same a, e, i with a different Ω: two planes with the same tilt, swung round to different directions in space.` },
     { topic: 'orbits', q: N`Where on an elliptical orbit is the spacecraft fastest?`, opts: [N`Apoapsis`, N`Periapsis`, N`At the ends of the minor axis`, N`Speed is constant`], a: 1, why: N`Angular momentum h = r v cos γ is conserved, so speed is highest where r is smallest (Kepler’s second law).` },
     { topic: 'orbits', q: N`Two orbits have the same semi-major axis but different eccentricities. Their periods are…`, opts: [N`Identical`, N`Longer for the more eccentric one`, N`Shorter for the more eccentric one`, N`Impossible to compare`], a: 0, why: N`T = 2π√(a³/μ) depends only on a. So does the specific mechanical energy, ε = −μ/2a.` },
     { topic: 'rockets', q: N`Doubling the specific impulse of a stage, at the same mass ratio, does what to its Δv?`, opts: [N`Doubles it`, N`Multiplies it by √2`, N`Multiplies it by ln 2`, N`No change`], a: 0, why: N`Δv = I_sp g₀ ln(MR) is linear in I_sp. The mass ratio only enters through a logarithm, which is why staging matters so much.` },
@@ -446,7 +467,16 @@
   const RANKS = [[0, N`Trainee`], [5, N`Flight Controller`], [15, N`CAPCOM`], [30, N`FIDO`], [50, N`Flight Director`]];
   const rankOf = (n) => RANKS.filter((r) => n >= r[0]).pop()[1];
 
-  const parseNum = (s) => parseFloat(String(s).replace(/\s|\u202f/g, '').replace(',', '.'));
+  // a typed answer: spaces, unicode minus, decimal comma, thousands separators (1,234.5 in English, 1.234,5 in fr/de),
+  // a trailing %; anything else after the number (units, letters) makes it NaN rather than being silently dropped
+  const parseNum = (s) => {
+    let t = String(s == null ? '' : s).replace(/[\s\u00a0\u2009\u202f]/g, '').replace(/[\u2212\u2013]/g, '-').replace(/%$/, '');
+    const comma = typeof I18N !== 'undefined' && I18N.decimalComma && I18N.decimalComma();
+    if (!comma && /^[+-]?\d{1,3}(,\d{3})+(\.\d*)?$/.test(t)) t = t.replace(/,/g, '');
+    else if (/^[+-]?\d{1,3}(\.\d{3})+,\d*$/.test(t)) t = t.replace(/\./g, '').replace(',', '.');
+    else t = t.replace(',', '.');
+    return /^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(t) ? parseFloat(t) : NaN;
+  };
 
   // Constants panel: the same numbers as the Reference page, taken from Phys.C (text built when first opened, so it follows the language)
   App.css('practice-constants', `
@@ -551,7 +581,7 @@
   const pickGen = (topic) => pick(GEN.filter((g) => !topic || topic === 'all' || g.topic === topic));
 
   const Practice = {
-    TOPICS, GEN, QUIZ,
+    TOPICS, GEN, QUIZ, parseNum,
     // a module adds its own practice: Practice.register('topic', N`Topic name`, [generators], [concept questions])
     register(topic, label, gens = [], quiz = []) {
       TOPICS[topic] = label;
