@@ -534,7 +534,9 @@
   // the field names. CAPCOM speaks English, as in Apollo, unless a clip set exists for the page's language.
   // The radio: Quindar tones (2525 Hz keys the ground transmitter on, 2475 Hz off, 250 ms each), a voice band
   // of 300–3400 Hz, a little clipping, a slowly fading voice, and the carrier's hiss with crackles and a squelch tail.
-  window.CapcomClips = window.CapcomClips || { sets: {}, add(lang, clips) { this.sets[lang] = clips; } };
+  // meta.gap: seconds between the clips of a number (negative: they overlap, for voices that sound choppy otherwise);
+  // meta.pointGap: seconds after the decimal mark, so the decimal digit is not rushed
+  window.CapcomClips = window.CapcomClips || { sets: {}, meta: {}, add(lang, clips, meta) { this.sets[lang] = clips; this.meta[lang] = meta || {}; } };
   function loadClips(lang) {
     if (CapcomClips.sets[lang]) return Promise.resolve(lang);
     return new Promise((res) => {
@@ -546,7 +548,7 @@
   }
   function Voice() {
     const AC = typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext);
-    let ac = null, bufs = null, lang = null, run = 0, live = [], timers = [], speaking = false;
+    let ac = null, bufs = null, lang = null, gap = 0.03, pointGap = 0.03, run = 0, live = [], timers = [], speaking = false;
     const b64 = (s) => { const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; };
     async function prepare() {
       ac = ac || new AC();
@@ -556,7 +558,7 @@
       if (lang !== l) {
         const set = CapcomClips.sets[l], out = {};
         await Promise.all(Object.entries(set).map(async ([k, v]) => { out[k] = await ac.decodeAudioData(b64(v)); }));
-        bufs = out; lang = l;
+        bufs = out; lang = l; gap = CapcomClips.meta[l].gap ?? 0.03; pointGap = CapcomClips.meta[l].pointGap ?? gap;
       }
       return true;
     }
@@ -593,10 +595,13 @@
         for (const l of lines) {
           const at = t;
           timers.push(setTimeout(() => { if (me === run) onLine(l.el); }, (at - ac.currentTime) * 1000));
-          l.clips.forEach((k, i) => {
+          const seq = l.clips;
+          seq.forEach((k, i) => {
             if (k === null) { t += 0.12; return; }
             const b = bufs[k] || bufs[k.replace('_end', '')]; if (!b) return;   // a voice may have no falling last-digit clips
-            const src = ac.createBufferSource(); src.buffer = b; node(src, t); t += b.duration + (i < l.clips.length - 1 ? 0.03 : 0);
+            const src = ac.createBufferSource(); src.buffer = b; node(src, t);
+            // the field name is followed by a normal pause; the clips of a number by the voice's gap
+            t += b.duration + (i === seq.length - 1 ? 0 : i === 0 ? 0.03 : k === 'point' ? pointGap : gap);
           });
           t += 0.55;
         }

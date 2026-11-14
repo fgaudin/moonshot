@@ -24,7 +24,8 @@ A review of every module (content, physics, practice generators, architecture), 
   44 % (words synthesized alone) to 100 %. The cuts use Piper's phoneme alignments, so they fall exactly at the commas.
   CAPCOM speaks the page's language: French (Piper "fr_FR-upmc-medium", speaker Pierre, CC BY-SA 4.0; spelled
   "Youstonne" and "padde" so that it says them the French way; "virgule", "Répétez quand vous êtes prêts") and German
-  ("de_DE-thorsten-high", CC0; "zwo" for 2 as in German radio, "Komma", "Bitte zurücklesen"). The readback counts only if the PAD was not shown. Without Web Audio, or if the clips fail to load, the written PAD
+  ("de_DE-thorsten-high", CC0; "zwo" for 2 as in German radio, "Komma", "Bitte zurücklesen"). Each clip set carries
+  its own timing: in French the digits join with no gap and a short breath follows « virgule ». The readback counts only if the PAD was not shown. Without Web Audio, or if the clips fail to load, the written PAD
   is used and must be hidden before copying. Clips: `audio/capcom-en.js`, made by `tools/capcom-voice.py` from
   `tools/capcom-phrases.json` (base64 in a script so it also works from file://). CAPCOM speaks English in every language, as in Apollo.
   TM-19 §0.3 explains why digits are read one at a time and 9 is “niner”.

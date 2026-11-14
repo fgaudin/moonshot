@@ -1,5 +1,5 @@
 {
-  "_comment": "Spoken pieces of CAPCOM's PAD readout (js/ch/mcc.js). Generate with tools/capcom-voice.py, which explains how each piece is cut out of a short phrase. frame: two throw-away words around a digit. Each language follows its own radio habits: niner (en), zwo (de). Spelled for the voice, not for the eye: write 'pad' in lowercase (in capitals the voice spells it), fr 'Youstonne' (the French say Houston that way), 'padde' (a final d is silent in French).",
+  "_comment": "Spoken pieces of CAPCOM's PAD readout (js/ch/mcc.js). Generate with tools/capcom-voice.py, which explains how each piece is cut out of a short phrase. frame: two throw-away words around a digit. Each language follows its own radio habits: niner (en), zwo (de). Spelled for the voice, not for the eye: write 'pad' in lowercase (in capitals the voice spells it), fr 'Youstonne' (the French say Houston that way), 'padde' (a final d is silent in French). digit_gap: seconds between the clips of a number (default 0.03; negative overlaps them). Fusing 'X virgule' into one clip was tried and dropped: the French voice swallows « virgule » when it is not on its own. point_gap: seconds after the decimal mark (default: digit_gap).",
   "voices": {
     "en": {
       "model": "en_US-ryan-high",
@@ -100,7 +100,9 @@
         "intro_tei": "Apollo, ici Youstonne, avec votre padde d'injection vers la Terre. Prêt à copier.",
         "intro_ent": "Apollo, ici Youstonne, avec votre padde de rentrée. Prêt à copier.",
         "readback": "Répétez quand vous êtes prêts."
-      }
+      },
+      "digit_gap": 0.0,
+      "point_gap": 0.1
     },
     "de": {
       "frame": [
