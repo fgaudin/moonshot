@@ -212,6 +212,24 @@
         sol: R`\[ \rho = 1.225\,e^{-${h}/7.2} = ${f(rho, 4)}\ \mathrm{kg/m^3},\quad q = \tfrac12\rho v^2 = ${f(q, 2)}\ \mathrm{kPa} \]` + `<p>${T`The Saturn V reached Max Q of about 35 kPa near 13 km altitude, 80 s after liftoff.`}</p>` };
     } },
 
+    { topic: 'ascent', title: N`Circularising at apogee`, make() {
+      // a cutoff state that coasts up to an apogee between 200 and 900 km, perigee inside the Earth
+      let h, v, g, r, a, e, ra, va, vc;
+      do {
+        h = rnd(110, 160, 5); v = rnd(7.45, 7.75, 0.05); g = rnd(2, 8, 1);
+        r = RE + h; a = -MU / (2 * (v * v / 2 - MU / r));
+        const hm = r * v * Math.cos(g * deg); e = Math.sqrt(1 - hm * hm / (MU * a));
+        ra = a * (1 + e); va = hm / ra; vc = Math.sqrt(MU / ra);
+      } while (!(a > 0 && ra - RE > 200 && ra - RE < 900 && a * (1 - e) < RE));
+      const dv = (vc - va) * 1000, vs = v.toFixed(2);
+      return { q: T`An upper stage cuts off at <b>${h} km</b> altitude, at <b>${dec(vs)} km/s</b> with a flight-path angle of <b>${g}°</b> (speed relative to the Earth’s centre). It coasts up to apogee. What Δv must the circularisation burn at apogee supply? (μ⊕ = 398 600 km³/s², R⊕ = 6 378 km)`, answer: dv, unit: 'm/s', tol: 0.02,
+        hint: T`The energy gives a, the angular momentum r v cos γ gives e and the speed at apogee. Then circular speed at r<sub>a</sub> minus that speed.`,
+        sol: R`\[ r = ${f(r, 1)}\ \mathrm{km},\quad a = -\frac{\mu}{2\left(\frac{v^2}{2}-\frac{\mu}{r}\right)} = ${f(a, 1)}\ \mathrm{km} \]` +
+          R`\[ h = r v\cos\gamma = ${f(r * v * Math.cos(g * deg), 0)}\ \mathrm{km^2/s},\quad e = \sqrt{1-\frac{h^2}{\mu a}} = ${f(e, 4)},\quad r_a = a(1+e) = ${f(ra, 1)}\ \mathrm{km} \]` +
+          R`\[ v_a = \frac{h}{r_a} = ${f(va, 4)}\ \mathrm{km/s},\quad \Delta v = \sqrt{\frac{\mu}{r_a}} - v_a = ${f(vc, 4)} - ${f(va, 4)} = ${f(dv, 1)}\ \mathrm{m/s} \]` +
+          `<p>${T`The apogee is ${f(ra - RE, 0)} km above the ground and the perigee of the coast ellipse is ${f(a * (1 - e) - RE, 0)} km: without that burn the stage falls back.`}</p>` };
+    } },
+
     // ---------------- Manoeuvres ----------------
     { topic: 'maneuvers', title: N`Hohmann transfer Δv`, make() {
       const h1 = pick([185, 300, 400]), h2 = pick([1000, 5000, 20200, 35786]);
@@ -437,6 +455,7 @@
     { topic: 'rockets', q: N`A rocket’s liftoff thrust-to-weight ratio is 0.95. What happens when the engines ignite?`, opts: [N`It rises slowly, since thrust nearly equals weight`, N`It sits on the pad burning propellant until it is light enough`, N`It tips over, because the thrust cannot hold it upright`, N`It rises, as long as its specific impulse is high enough`], a: 1, why: N`Thrust is less than weight, so the net force is downward and the pad holds it. As propellant burns the mass drops and TWR rises, but all that propellant is wasted. Real rockets are held down until thrust is verified and released only when TWR > 1.` },
     { topic: 'rockets', q: N`Why can the S-IVB upper stage fly with a TWR of only 0.64?`, opts: [N`Gravity at 180 km is much weaker than at the surface`, N`It only needs sideways speed now; the faster it goes, the less of its weight it must carry`, N`Its hydrogen engine has a higher Isp, which makes up for the low thrust ratio`, N`It cannot: it sinks a little, and guidance accepts a lower orbit`], a: 1, why: N`At 180 km gravity is still 95% of its surface value. What changes is the task: the vehicle no longer has to climb, and the faster it goes sideways the less of its weight it must support.` },
     { topic: 'ascent', q: N`What is gravity loss?`, opts: [N`Propellant mass lost overboard as the stages are dropped one after another`, N`Thrust spent holding the vehicle up instead of speeding it along its path`, N`The Δv lost because gravity is weaker at altitude than at the launch pad`, N`Energy lost to heat in the exhaust and through the engine walls`], a: 1, why: N`Δv_grav = ∫ g sin γ dt. A vertical climb loses about 9.8 m/s every second. Pitching over early reduces it, but drag rises.` },
+    { topic: 'ascent', q: N`When does a launcher coast to apogee and circularise there, instead of flying straight into orbit?`, opts: [N`When its last stage finishes its horizontal speed before its path reaches orbit altitude`, N`When the target orbit is retrograde and the launch must head west against Earth’s rotation`, N`Only for orbits above geostationary altitude, where a direct climb would take several hours`, N`When the first stage has more thrust than all the upper stages put together`], a: 0, why: N`A stage that reaches orbital speed while still below orbit altitude is on an ellipse whose apogee is at that altitude: it cuts off, coasts up, and raises the perigee with a horizontal burn at apogee. A stage still short of speed when it reaches orbit altitude holds it and keeps burning: direct insertion.` },
     { topic: 'ascent', q: N`Why launch toward the east?`, opts: [N`Eastward launches keep the rocket out of the Sun’s glare at dawn`, N`Earth’s rotation gives up to 465 m/s of eastward speed for free`, N`The high-altitude winds blow eastward and reduce the drag on the way up`, N`Tradition, a habit kept since the first rocket ranges of the 1940s`], a: 1, why: N`From Cape Canaveral (28.5° N) the free boost is about 408 m/s.` },
     { topic: 'maneuvers', q: N`In a Hohmann transfer to a higher circular orbit, the second burn is made…`, opts: [N`At perigee, retrograde`, N`At apogee, prograde`, N`At apogee, retrograde`, N`Halfway, radially`], a: 1, why: N`At apogee the transfer orbit is slower than the circular orbit there, so a prograde burn circularizes.` },
     { topic: 'maneuvers', q: N`To catch up with a target ahead of you in the same circular orbit, you should first…`, opts: [N`Burn prograde, to speed up and close the gap directly`, N`Burn retrograde, to drop into a lower, faster orbit`, N`Burn radially outward, to climb above it and wait`, N`Wait: the gap closes by itself through orbital drift`], a: 1, why: N`Orbital mechanics is counter-intuitive here: a lower orbit has a shorter period, so you gain on the target. Prograde would raise you and slow you down.` },

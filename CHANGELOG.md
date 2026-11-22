@@ -3,6 +3,23 @@
 What changed and why, in more detail than the commit messages. Newest first. Module numbers (TM-n, section n.k)
 follow the current `ORDER` in `js/app.js`.
 
+## 2026-11-22 — TM-6: direct insertion or coast to apogee (self-test gap G1)
+
+- **New section 6.3, "Direct insertion or coast to apogee"** (`js/ch/ascent.js`; the lab moves to 6.4). The course
+  gave one way to reach orbit, the Saturn V's closed-loop direct insertion; the KSP self-test (Spaceship
+  `selftest/gaps.md`, G1) showed it fails when forced on a short, powerful last stage. The section gives the
+  criterion: compare the time the stage needs to finish its orbital speed with the time left before its path reaches
+  orbit altitude. Path first: direct insertion (Saturn V), holding altitude with the thrust tilted by
+  sin α = (g − v²/r)/a_T, a steering loss; the simulator's upper-stage law (a_r = 6Δh/T² − 4ṙ/T) shows why a burn
+  forced too short goes wrong. Speed first: coast to apogee (Explorer 1, today's kick stages), with
+  Δv_circ = √(μ/r_a) − r v cos γ / r_a. Both pay gravity loss while climbing; direct insertion adds steering loss,
+  the circularisation pays neither. Why not always coast: high thrust costs drag, Max Q and heating low down and
+  engine mass on an upper stage, the coast needs a second ignition and leaves the perigee inside the Earth until the
+  apogee burn.
+- **Practice** (`js/practice.js`): a problem (cutoff altitude, speed and flight-path angle → circularisation Δv at
+  apogee, 150–670 m/s) and a concept question on when to coast to apogee (speed reached before orbit altitude).
+- French and German for all of it (`js/i18n/{fr,de}/ascent.js`, `practice.js`); 194 tests pass.
+
 ## 2026-11-14 — full review: objectives earned honestly, bugs, consistency, clearer sections, CAPCOM's voice
 
 A review of every module (content, physics, practice generators, architecture), then translated.
