@@ -150,7 +150,7 @@
         ${Progress.briefing('sounding', { theory: 'theory', lab: 'sd', math: 'refresher', mathLabel: N`What dp/dh means.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">5.1</span>${T`What a pressure gauge tells you`}</h2>
+          <h2>${T`What a pressure gauge tells you`}</h2>
           <div class="prose">
             <p>${T`Air has weight. The pressure at any height is the weight of the air above, spread over one square metre. Climb a little and some of that air is below you: the pressure drops by the weight of the slice you passed. A slice of thickness dh holds a mass ρ dh per square metre, so its weight is ρ g dh:`}</p>
             <div class="eq">\\[ \\frac{dp}{dh} = -\\rho\\,g \\]</div>
@@ -161,7 +161,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.2</span>${T`The exponential atmosphere`}</h2>
+          <h2>${T`The exponential atmosphere`}</h2>
           <div class="prose">
             <p>${T`The equation has two unknowns, p and ρ. The ideal gas law links them: ρ = pM/(RT), with M the molar mass of the gas (kilograms per mole) and T the absolute temperature (kelvin). Put it in and the density disappears:`}</p>
             <div class="eq">\\[ \\frac{dp}{dh} = -\\frac{Mg}{RT}\\,p \\]</div>
@@ -185,7 +185,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.3</span>${T`Real layers, and why the exponential still works`}</h2>
+          <h2>${T`Real layers, and why the exponential still works`}</h2>
           <div class="prose">
             <p>${T`The real atmosphere is built from layers. In the troposphere (to 11 km) the temperature falls by 6.5 K per kilometre. Above it comes a layer of constant temperature, then a layer that warms, and so on. Inside a layer of constant temperature the exponential is exact. Where the temperature changes, H changes slowly with height, and over any limited range the curve of ln p against h is nearly straight.`}</p>
             <p>${T`The 1976 U.S. Standard Atmosphere gives 101 325 Pa at sea level, 22 700 Pa at 11 km, 5 530 Pa at 20 km, and 79.8 Pa at 50 km. A single exponential cannot match all four, but a line fitted over the range you care about is good to a few percent. That is why the ascent (${Progress.code('ascent')}) and entry (${Progress.code('entry')}) modules use one scale height: a working model, with its range of validity in mind. The lab has a scenario with the real layers so you can see the line bend.`}</p>
@@ -194,7 +194,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.4</span>${T`Fitting a line to noisy data`}</h2>
+          <h2>${T`Fitting a line to noisy data`}</h2>
           <div class="prose">
             <p>${T`A gauge on a rocket gives pairs (h<sub>i</sub>, p<sub>i</sub>), each with an error of a few percent. Take the logarithm and the model is a line, y = a + b·h, with y = ln p:`}</p>
             <div class="eq">\\[ \\ln p = \\ln p_0 - \\frac{h}{H} \\quad\\Longrightarrow\\quad b = -\\frac{1}{H}, \\qquad a = \\ln p_0 \\]</div>
@@ -225,7 +225,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.5</span>${T`Density, dynamic pressure and max-q`}</h2>
+          <h2>${T`Density, dynamic pressure and max-q`}</h2>
           <div class="prose">
             <p>${T`What a vehicle feels is not the static pressure but the air flowing past it. The density comes from the fit, \\(\\rho = p/(gH)\\), and the force from the <b>dynamic pressure</b>, the pressure the moving air would exert if the vehicle brought it to rest (in pascals):`}</p>
             <div class="eq">\\[ q = \\tfrac12\\,\\rho\\,v^2, \\qquad D = q\\,C_D A \\]</div>
@@ -235,7 +235,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.6</span>${T`Drag as a second instrument`}</h2>
+          <h2>${T`Drag as a second instrument`}</h2>
           <div class="prose">
             <p>${T`After <b>burnout</b>, when the motor stops, the rocket coasts. Only gravity and drag act. Newton’s second law gives, for a body going up at speed v, with the <b>ballistic coefficient</b> β the mass per unit of drag area (heavy and slim: high β, so drag slows it little):`}</p>
             <div class="eq">\\[ a = -g - \\frac{\\rho v^2}{2\\beta}, \\qquad \\beta = \\frac{m}{C_D A} \\quad\\Longrightarrow\\quad |a| - g = \\frac{\\rho v^2}{2\\beta} \\]</div>
@@ -252,7 +252,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.7</span>${T`A short history`}</h2>
+          <h2>${T`A short history`}</h2>
           <div class="prose">
             <p>${T`After the Second World War the United States flew captured V-2 rockets from White Sands, New Mexico, with instruments in place of warheads. They carried pressure gauges and other sensors above the reach of any balloon, and gave the first direct measurements of the upper atmosphere. The Aerobee, first flown in 1947, was built for the job: a small, cheap rocket made to fly research payloads again and again. Sounding rockets of this kind went on measuring pressure, temperature and radiation for decades.`}</p>
           </div>
@@ -261,7 +261,7 @@
         ${Archive.capsule('v2')}
 
         <section class="section">
-          <h2><span class="idx">5.8</span>${T`Lab: the sounding range`}</h2>
+          <h2>${T`Lab: the sounding range`}</h2>
           <div class="prose"><p>${T`The atmosphere is hidden. Pick a motor and a propellant load, launch, and read the telemetry: time, altitude, pressure (±3 %), speed and acceleration. Estimate H and p₀ from the scatter of ln p against h, and type them in. After you submit, the lab shows the least-squares fit of the same data and the true atmosphere. Optionally, find β from a sample taken during the coast. Compare a small and a large rocket: the same noise gives a very different fit.`}</p>
             <p>${T`<b>How to fit.</b> Quick estimate first: pick two coasting samples far apart in altitude, then \\(H \\approx (h_2 - h_1)/(\\ln p_1 - \\ln p_2)\\) and \\(\\ln p_0 = \\ln p_1 + h_1/H\\). To do better, use all the points: download the CSV, add a column ln p, and either apply the formulas of section ${App.sec('sounding', 4)} or let a spreadsheet do it (its SLOPE and INTERCEPT functions give b and a). Remember that h is measured from the datum, not from the launch site.`}</p>
             <p>${T`The objective asks for a flight above two scale heights: about 15 km on an Earth-like world, more where the air is light or warm. After you submit, the lab tells you how many scale heights your samples span.`}</p></div>

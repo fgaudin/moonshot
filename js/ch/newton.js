@@ -17,7 +17,7 @@
         ${Progress.briefing('newton', { theory: 'theory', lab: 'cannon', math: 'refresher', mathLabel: N`Vectors, derivatives and powers of ten.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">1.1</span>${T`The three laws of motion`}</h2>
+          <h2>${T`The three laws of motion`}</h2>
           <div class="prose">
             <p>${T`<b>First law, inertia.</b> A body keeps its velocity, constant speed in a straight line, unless an external force acts on it. A spacecraft coasting between Earth and Moon needs no engine to keep moving. It needs an engine only to <i>change</i> its motion.`}</p>
             ${figInertia()}
@@ -38,7 +38,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">1.2</span>${T`Universal gravitation`}</h2>
+          <h2>${T`Universal gravitation`}</h2>
           <div class="prose">
             <p>${T`Any two masses attract each other along the line joining them, with a force proportional to both masses and inversely proportional to the square of their distance:`}</p>
             <div class="eq">\\[ F_g = \\frac{G\\,M\\,m}{r^2}, \\qquad G = 6.674\\times10^{-11}\\ \\mathrm{N\\,m^2\\,kg^{-2}} \\]</div>
@@ -54,7 +54,7 @@
         ${Archive.capsule('blueMarble')}
 
         <section class="section">
-          <h2><span class="idx">1.3</span>${T`Newton’s cannon`}</h2>
+          <h2>${T`Newton’s cannon`}</h2>
           <div class="prose">
             <p>${T`In <i>A Treatise of the System of the World</i>, Newton imagined a cannon on a very tall mountain firing horizontally. The faster the shot, the farther it lands, until at one particular speed the ground curves away exactly as fast as the shot falls. That speed is the <b>circular orbital velocity</b>. Gravity supplies exactly the centripetal acceleration of a circle:`}</p>
             <div class="eq">\\[ \\frac{\\mu}{r^2} = \\frac{v^2}{r} \\quad\\Longrightarrow\\quad v_{\\text{circ}} = \\sqrt{\\frac{\\mu}{r}} \\]</div>
@@ -80,7 +80,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">1.4</span>${T`From Newton to the two-body equation`}</h2>
+          <h2>${T`From Newton to the two-body equation`}</h2>
           <div class="prose">
             <p>${T`Combine the second law with gravitation for a small body \\(m\\) near a large one \\(M\\). If the bodies are spherically symmetric, no other forces act and \\(m \\ll M\\), then the motion of \\(m\\) relative to \\(M\\) obeys`}</p>
             <div class="eq">\\[ \\ddot{\\vec r} + \\frac{\\mu}{r^3}\\,\\vec r = \\vec 0 \\]</div>

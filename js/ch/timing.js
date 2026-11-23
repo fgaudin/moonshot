@@ -177,7 +177,7 @@
         ${Progress.briefing('timing', { theory: 'theory', lab: 'pc', math: 'refresher', mathLabel: N`Angles that wrap around.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">0.1</span>${T`Two clocks of different speed`}</h2>
+          <h2>${T`Two clocks of different speed`}</h2>
           <div class="prose">
             <p>${T`In a circular orbit the spacecraft sweeps the same angle every second. That rate is the <b>mean motion</b>. Kepler’s third law gives it from the radius alone:`}</p>
             <div class="eq">\\[ n = \\sqrt{\\frac{\\mu}{a^3}} = \\frac{2\\pi}{T} \\]</div>
@@ -191,7 +191,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.2</span>${T`The phase angle a Hohmann transfer needs`}</h2>
+          <h2>${T`The phase angle a Hohmann transfer needs`}</h2>
           <div class="prose">
             <p>${T`Module ${Progress.code('maneuvers')} (section ${App.sec('maneuvers', 1)}) gave the transfer ellipse and its time. The chaser fires, flies half the ellipse (180° of angle) and arrives at the other apsis after the transfer time. The target must be exactly there at that moment. During the flight the target moves n<sub>t</sub>·t<sub>t</sub>, so at the burn it must be ahead of the chaser by the rest:`}</p>
             <div class="eq">\\[ t_t = \\pi\\sqrt{\\frac{a_t^3}{\\mu}}, \\qquad a_t = \\frac{r_1 + r_2}{2}, \\qquad \\phi_{req} = \\pi - n_{target}\\,t_t \\]</div>
@@ -202,7 +202,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.3</span>${T`How long to wait`}</h2>
+          <h2>${T`How long to wait`}</h2>
           <div class="prose">
             <p>${T`Measure the phase angle now, φ<sub>now</sub>. It moves at φ̇ = n<sub>target</sub> − n<sub>chaser</sub>, a constant rate, so the time until it equals φ<sub>req</sub> is a division. The result must be positive and less than one cycle; if the geometry has just passed, the next chance comes one full cycle later, the <b>synodic period</b>:`}</p>
             <div class="eq">\\[ t_{wait} = \\frac{\\Delta\\phi}{|n_{chaser} - n_{target}|}, \\qquad \\Delta\\phi = (\\phi_{now} - \\phi_{req}) \\bmod 360^\\circ, \\qquad T_{syn} = \\frac{2\\pi}{|n_{chaser} - n_{target}|} \\]</div>
@@ -212,7 +212,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.4</span>${T`TIG on the mission clock`}</h2>
+          <h2>${T`TIG on the mission clock`}</h2>
           <div class="prose">
             <p>${T`The crew and Mission Control talk in <b>ground elapsed time</b>, GET: hours, minutes and seconds since liftoff, hours not wrapped into days. The calculation above gives a wait. Add it to the GET at which the phase angle was measured, the <b>fix</b> (the navigator’s word for a position measured at a known time):`}</p>
             <div class="eq">\\[ \\mathrm{TIG} = \\mathrm{GET}_{fix} + t_{wait} \\]</div>
@@ -223,7 +223,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.5</span>${T`The Moon moves too`}</h2>
+          <h2>${T`The Moon moves too`}</h2>
           <div class="prose">
             <p>${T`The same idea sets the moment for the burn that leaves Earth for the Moon. The Moon travels about 13.2° per day around the Earth. The translunar trajectory takes days, so the burn must start when the Moon is the right angle ahead, and the departure point in the parking orbit must also match the plane. The path is not a Hohmann half-ellipse, though. TLI gives a little more speed than the minimum: without the Moon the ellipse would climb well beyond the Moon’s orbit, so the spacecraft crosses the distance in about 3 days instead of the 5 of a Hohmann transfer, and near the Moon its gravity takes over and bends the path. The logic of “arrive where the target will be” is identical. On Apollo 11 the translunar injection burn (TLI) came during the second revolution of Earth parking orbit, at about GET 2:44.`}</p>
             <p>${T`In lunar orbit the rendezvous is the same problem on a smaller scale. The Lunar Module ascent stage lifts off from the surface, enters a lower orbit than the Command and Service Module, and must come up to it. Liftoff therefore has to be timed with the CSM’s position, and the ascent is possible only when the CSM’s orbit plane passes over the landing site. An orbit plane keeps its direction in space while the ground turns beneath it, so a site lies in the plane only at certain moments. The Moon turns slowly, 0.55° per hour, so the site drifts away from the CSM’s plane only gradually; on the longer surface stays of the last missions the CSM made a small plane change to keep it overhead. Module ${Progress.code('planes')} treats planes and launch windows in full. The lower LM is faster and gains on the CSM, as in section ${App.sec('timing', 1)}. This is a rendezvous <b>launch window</b>: it opens once per orbit, and it is the phase angle that decides it.`}</p>
@@ -233,7 +233,7 @@
         ${Archive.capsule('gemini6')}
 
         <section class="section">
-          <h2><span class="idx">0.6</span>${T`Lifting off to meet the mother ship`}</h2>
+          <h2>${T`Lifting off to meet the mother ship`}</h2>
           <div class="prose">
             <p>${T`Section ${App.sec('timing', 5)} said that the LM must lift off at the right moment. Here is the calculation, in its simplest form. Everything is two-body and circular, and the landing site lies in the orbit plane of the mother ship, the CSM. The method: climb to a low circular orbit, then fly a Hohmann transfer up to the CSM’s orbit and arrive where the CSM is. Real Apollo flights used a longer coelliptic sequence after liftoff, which tolerates an imperfect insertion; module ${Progress.code('landing')} describes it. The direct method below is the exact version of the idea.`}</p>
             <p>${T`The ascent takes a time t<sub>asc</sub> and carries the LM over a downrange angle θ<sub>asc</sub> of the Moon, measured at its centre. For the Apollo LM, think of about 7 minutes to reach an orbit of about 15 km altitude, and a few hundred kilometres of ground track. These are inputs here, and we use 420 s and 300 km, which is 300 / 1 737.4 = 0.1727 rad = 9.89°. The Moon’s rotation is neglected: its surface turns only 0.55° per hour, so the site hardly moves during the flight (a note at the end of the section shows its one small effect).`}</p>
@@ -253,7 +253,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.7</span>${T`When the ascent is not perfect`}</h2>
+          <h2>${T`When the ascent is not perfect`}</h2>
           <div class="prose">
             <p>${T`If the window is missed, the next one comes one CSM period later, here 118.75 min. The alternative is to coast in the low orbit, as in section ${App.sec('timing', 3)}: the LM is faster than the CSM, so it gains on it, and each minute of coast raises the angle the CSM may be ahead by (n<sub>L</sub> − n<sub>C</sub>), 0.25° here. If at the moment of insertion the CSM is φ<sub>now</sub> ahead of the site and the required angle is φ<sub>lift</sub>, the coast is`}</p>
             <div class="eq">\\[ t_c = \\frac{\\phi_{now} - \\phi_{lift}}{n_L - n_C} \\]</div>
@@ -264,7 +264,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.8</span>${T`Lab: the phasing clock`}</h2>
+          <h2>${T`Lab: the phasing clock`}</h2>
           <div class="prose"><p>${T`A chaser and a target orbit counterclockwise, seen from above the pole. The scenario gives the angles at one GET. Compute the required phase angle and the TIG, type both, then press Execute. The lab flies an impulsive Hohmann transfer from your TIG and shows where the chaser arrives and where the target is: the miss. Use the warp controls to watch the geometry. “New fix” measures the two positions again at a later GET, so every attempt is your own calculation.`}</p></div>
           <div class="lab tl-lab" id="pc">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Phasing clock`}</h3><span class="spacer"></span>

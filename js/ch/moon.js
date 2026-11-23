@@ -628,7 +628,7 @@
         ${Progress.briefing('moon', { theory: 'theory', lab: 'tl', math: 'refresher', mathLabel: N`Powers and roots.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">0.1</span>${T`The sphere of influence and patched conics`}</h2>
+          <h2>${T`The sphere of influence and patched conics`}</h2>
           <div class="prose">
             <p>${T`Near the Moon, its gravity dominates the spacecraft’s motion relative to it; farther out, Earth’s does. Laplace defined the boundary as the <b>sphere of influence</b>:`}</p>
             <div class="eq">\\[ r_{SOI} = D\\left(\\frac{m_☾}{m_\\oplus}\\right)^{2/5} = 384\\,400\\ \\mathrm{km}\\times(0.0123)^{0.4} \\approx ${UI.fmt(soi, 0)}\\ \\mathrm{km} \\]</div>
@@ -640,7 +640,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.2</span>${T`Trans-lunar injection`}</h2>
+          <h2>${T`Trans-lunar injection`}</h2>
           <div class="prose">
             <p>${T`From the 185 km parking orbit, the S-IVB re-ignited over the Pacific about 2 h 44 min after launch and burned for 5 min 47 s. The first estimate is a Hohmann-like ellipse with apogee at the Moon’s distance:`}</p>
             <div class="eq">\\[ v_p = \\sqrt{\\mu_\\oplus\\left(\\frac{2}{r_p} - \\frac{2}{r_p + r_a}\\right)} = 10.93\\ \\mathrm{km/s} \\]</div>
@@ -652,7 +652,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.3</span>${T`Speed relative to the Moon: v∞`}</h2>
+          <h2>${T`Speed relative to the Moon: v∞`}</h2>
           <div class="prose">
             <p>${T`At the edge of the sphere the planner changes frames. The Earth-centred orbit gives the spacecraft’s velocity relative to the Earth, \\(\\vec v_{sc}\\). The Moon itself moves at \\(\\vec v_☾\\). The velocity relative to the Moon is the difference of the two vectors:`}</p>
             <div class="eq">\\[ \\vec v_{rel} = \\vec v_{sc} - \\vec v_☾, \\qquad v_{rel}^2 = v_{sc}^2 + v_☾^2 - 2\\,v_{sc}\\,v_☾\\cos\\theta \\]</div>
@@ -681,7 +681,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.4</span>${T`The hyperbola at the Moon`}</h2>
+          <h2>${T`The hyperbola at the Moon`}</h2>
           <div class="prose">
             <p>${T`Inside the sphere the path is a hyperbola with the Moon at its focus. Two numbers fix it: \\(v_\\infty\\) and the periselene radius \\(r_p\\), the closest distance to the Moon’s centre. Its shape decides how far the Moon turns the direction of flight:`}</p>
             <div class="eq">\\[ e = 1 + \\frac{r_p\\,v_\\infty^2}{\\mu_☾}, \\qquad \\delta = 2\\arcsin\\frac{1}{e} \\]</div>
@@ -705,7 +705,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.5</span>${T`Lunar orbit insertion`}</h2>
+          <h2>${T`Lunar orbit insertion`}</h2>
           <div class="prose">
             <p>${T`Relative to the Moon, an arriving spacecraft is on a hyperbola with excess speed \\(v_\\infty \\approx 0.8\\)–\\(1\\) km/s. To be captured it must burn retrograde at periselene, behind the Moon and out of radio contact with Earth:`}</p>
             <div class="eq">${T`\\[ v_{p} = \\sqrt{v_\\infty^2 + \\frac{2\\mu_☾}{r_p}}, \\qquad \\Delta v_{LOI} = v_p - v_{\\text{target orbit}} \\]`}</div>
@@ -715,7 +715,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.6</span>${T`Lab: fly to the Moon`}</h2>
+          <h2>${T`Lab: fly to the Moon`}</h2>
           <div class="prose">
             <p>${T`The lab flies the plan: patched conics, one body at a time. The large view shows the whole trip. The zoom beside it follows the spacecraft without turning: centred on the Earth just after TLI, then on the Moon, closer and closer as the spacecraft falls in. There you see the switch from the Earth conic (blue) to the Moon conic (orange) at the edge of the sphere, and the hyperbola swinging around the Moon.`}</p>
             <ol>

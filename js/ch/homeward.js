@@ -169,7 +169,7 @@
         ${Progress.briefing('homeward', { theory: 'theory', lab: 'hw', math: 'refresher', mathLabel: N`Subtracting velocity vectors.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">0.1</span>${T`Start at the end: the return ellipse`}</h2>
+          <h2>${T`Start at the end: the return ellipse`}</h2>
           <div class="prose">
             <p>${T`Planning the way out went forwards: from the parking orbit to the Moon. For the return, start at the Earth. The spacecraft must arrive in a precise way: reach the <b>entry interface</b>, the conventional top of the atmosphere at 122 km, with a flight-path angle of about −6.5°, inside a corridor from −5.3° to −7.4°. Because the speed there is nearly fixed by the energy, that angle is set by the <b>perigee</b> the spacecraft would have in vacuum. A vacuum perigee between about 12 and 65 km altitude is inside the corridor. The middle, 40 km, gives −6.4°. Where the edges come from (skipping out on one side, too many g on the other) is the subject of the next module, ${Progress.code('entry')}; here, take the corridor as given.`}</p>
             <p>${T`Now choose the shape of the Earth orbit. The spacecraft starts at the Moon’s distance. The cheapest return is an ellipse with its <b>apogee at the Moon’s distance</b> and its perigee at 40 km altitude. It is a transfer ellipse, like the Hohmann transfer of module ${Progress.code('maneuvers')}, run downwards.`}</p>
@@ -181,7 +181,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.2</span>${T`From the Earth’s view to the Moon’s view`}</h2>
+          <h2>${T`From the Earth’s view to the Moon’s view`}</h2>
           <div class="prose">
             <p>${T`The spacecraft must have ${f(h.va, 1)} m/s relative to the Earth at the Moon’s distance. But the Moon itself moves at v<sub>☾</sub> = √(μ⊕/D) = ${f(h.vM, 1)} m/s. This is the patched-conic value, which treats the Moon as a test mass; counting its own mass, √((μ⊕ + μ☾)/D) gives 1 024.6 m/s, the value the three-body simulator of module ${Progress.code('moon')} uses. This module keeps the simpler value, for the hand calculation and the lab alike. The real mean is 1.02 km/s. Subtract the two velocity vectors to get the velocity relative to the Moon. They are parallel, so it is a plain subtraction:`}</p>
             <div class="eq">\\[ v_\\infty = v_☾ - v_a = ${f(h.vM, 1)} - ${f(h.va, 1)} = ${f(h.vinf, 1)}\\ \\mathrm{m/s} \\]</div>
@@ -192,7 +192,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.3</span>${T`The burn: Δv and the ejection angle`}</h2>
+          <h2>${T`The burn: Δv and the ejection angle`}</h2>
           <div class="prose">
             <p>${T`The spacecraft sits in a circular lunar orbit of radius r (110 km altitude: r = ${f((RM + 110e3) / 1e3, 0)} km). It must leave the Moon’s gravity with a speed v<sub>∞</sub> to spare. Energy conservation on the departure hyperbola gives the speed needed at the burn, and the burn is the difference with the circular speed:`}</p>
             <div class="eq">\\[ v_{hyp} = \\sqrt{v_\\infty^2 + \\frac{2\\mu_☾}{r}}, \\qquad \\Delta v = v_{hyp} - v_c, \\qquad v_c = \\sqrt{\\frac{\\mu_☾}{r}} \\]</div>
@@ -211,7 +211,7 @@
         ${Archive.capsule('receding')}
 
         <section class="section">
-          <h2><span class="idx">0.4</span>${T`Which revolution? Time and longitude`}</h2>
+          <h2>${T`Which revolution? Time and longitude`}</h2>
           <div class="prose">
             <p>${T`A spacecraft in a 110 km lunar orbit goes round in ${f(Ph.lunarOrbit(110e3).P / 60, 1)} minutes. Seen from the Earth, the Moon turns slowly, so the far-side midpoint comes round again after ${f(Ph.lunarOrbit(110e3).Psyn / 60, 1)} minutes. The burn position φ comes round once per such revolution. Every revolution is a new launch window, about 2 hours later.`}</p>
             <p>${T`If the burn is made one revolution later, the geometry between the spacecraft, the Moon and the Earth is repeated. The trajectory is the same, and only the clock moves: the flight takes just as long and arrives at the same place in space, 2 hours later. The Earth turns 15° per hour, so each revolution shifts the splashdown by about 30° of longitude. Mission Control chooses the revolution to put splashdown where the recovery ships are and in daylight.`}</p>
@@ -221,7 +221,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.5</span>${T`The corridor and how steep the sensitivities are`}</h2>
+          <h2>${T`The corridor and how steep the sensitivities are`}</h2>
           <div class="prose">
             <p>${T`The corridor is about 55 km in perigee altitude: a flight-path angle of −5.3° at its shallow edge (perigee about 65 km), −7.4° at its steep edge (perigee about 12 km). Shallower and the spacecraft skims the atmosphere and skips back out to space. Steeper and the deceleration is too high. Each kilometre of perigee changes the entry angle by about 0.04°.`}</p>
             <p>${T`Now see how the burn controls the perigee. In the lab model, 1 m/s of error in the burn Δv moves the perigee by about 150 km. One degree of burn position, which is about 20 seconds of timing, moves it by about 1 270 km. The corridor is 55 km: the burn must be right to a fraction of a metre per second and a second or so. No engine and no clock is that good. The way home therefore includes <b>midcourse corrections</b>, the subject of the Apollo navigation in module ${Progress.code('moon')} on the way out as well: tracking measures where the spacecraft really goes, and a burn of a few metres per second, long after the main burn, moves the perigee back into the slot.`}</p>
@@ -230,14 +230,14 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.6</span>${T`Free return and Apollo 13`}</h2>
+          <h2>${T`Free return and Apollo 13`}</h2>
           <div class="prose">
             <p>${T`Module ${Progress.code('freereturn')} (section ${App.sec('freereturn', 2)}) told how Apollo 13’s crew got back onto a free return after the oxygen tank failure. For return planning the second burn is the one to study: about two hours after passing the Moon, the lunar module’s descent engine sped the return up, a trans-Earth burn made with the wrong engine. The spacecraft splashed down on 17 April 1970, in the corridor, after a few small midcourse corrections.`}</p>
           </div>
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.7</span>${T`Lab: the trans-Earth planner`}</h2>
+          <h2>${T`Lab: the trans-Earth planner`}</h2>
           <div class="prose"><p>${T`Pick a scenario, then set the Δv of the burn, its position φ in lunar orbit, and the revolution. The plan runs through the patched-conic simulation as you change it, and three panels follow the burn to its consequence:`}</p>
             <ol>
               <li>${T`<b>Burn at the Moon.</b> Drag the burn point around the orbit, or type φ. The hyperbola and its departure direction turn with it. The small buttons under the fields change a value by a fine step, which you need: the target is narrow.`}</li>

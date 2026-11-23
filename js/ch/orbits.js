@@ -197,7 +197,7 @@
         ${Progress.briefing('orbits', { theory: 'theory', lab: 'od', math: 'refresher', mathLabel: N`Vectors, trigonometry, ellipses and iteration.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">2.1</span>${T`Two constants of motion`}</h2>
+          <h2>${T`Two constants of motion`}</h2>
           <div class="prose">
             <p>${T`A spacecraft that coasts, with its engines off, feels the pull of one planet only. Its motion obeys the <b>two-body equation</b>: the acceleration points to the planet’s centre and gets weaker with the square of the distance.`}</p>
             <div class="eq">\\[ \\ddot{\\vec r} = -\\frac{\\mu}{r^3}\\,\\vec r \\]</div>
@@ -239,7 +239,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">2.2</span>${T`The trajectory equation`}</h2>
+          <h2>${T`The trajectory equation`}</h2>
           <div class="prose">
             <p>${T`Solving the equation of motion once more gives the shape of every possible path, the polar equation of a conic with the central body at one focus:`}</p>
             <div class="eq">\\[ r = \\frac{p}{1 + e\\cos\\nu}, \\qquad p = \\frac{h^2}{\\mu} = a(1-e^2) \\]</div>
@@ -292,7 +292,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">2.3</span>${T`Kepler’s laws, derived`}</h2>
+          <h2>${T`Kepler’s laws, derived`}</h2>
           <div class="prose">
             <p>${T`Kepler drew three laws from Tycho Brahe’s observations: the first two from the orbit of Mars (1609), the third from comparing all the known planets (1619). Newton showed that they follow from his own laws:`}</p>
             <ol>
@@ -310,7 +310,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">2.4</span>${T`Lab: design an orbit from a burnout state`}</h2>
+          <h2>${T`Lab: design an orbit from a burnout state`}</h2>
           <div class="prose"><p>${T`A launch vehicle hands its payload over at <b>burnout</b>: an altitude, a speed and a flight-path angle. From those three numbers the energy and angular momentum, and therefore the whole orbit, are fixed. Change them and the orbit redraws; the satellite moves according to Kepler’s equation.`}</p>
             <p>${T`The dot on the Earth is a ground site. The Earth turns once in a sidereal day (23 h 56 min), at the same simulated time as the spacecraft. Design a circular orbit at 35 786 km, a speed of about 3.075 km/s: it takes exactly one sidereal day, and the spacecraft stays above the dot. That is a <b>geostationary</b> orbit.`}</p>
             <p>${T`The presets show orbits with a purpose. <b>GTO</b>, the geostationary transfer orbit, is where a launcher leaves a communications satellite: perigee low, apogee at geostationary altitude, where the satellite’s own engine makes the orbit circular. <b>Molniya</b> orbits carried Soviet communications satellites: a 12-hour ellipse with its apogee high over the northern hemisphere, where the satellite lingers for about eight hours of each orbit (Kepler’s second law). From Russia’s high latitudes a geostationary satellite sits too low on the horizon, so they used this instead. The real orbits are tilted 63.4° to the equator; the lab draws them flat. <b>After TLI</b> is Apollo 11 heading for the Moon, and <b>Hyperbolic</b> leaves the Earth for good.`}</p></div>
@@ -335,7 +335,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">2.5</span>${T`Where will it be? Kepler’s equation`}</h2>
+          <h2>${T`Where will it be? Kepler’s equation`}</h2>
           <div class="prose">
             <p>${T`Sooner or later every mission must answer the question “where will the spacecraft be at time \\(t\\)?” The angle \\(\\nu\\) does not grow uniformly with time, so Kepler introduced two auxiliary angles. The <b>eccentric anomaly</b> \\(E\\) is measured at the centre of the ellipse, on an auxiliary circle of radius \\(a\\). The <b>mean anomaly</b> \\(M\\) does grow uniformly, at the mean motion \\(n\\):`}</p>
             <div class="eq">\\[ n = \\sqrt{\\frac{\\mu}{a^3}}, \\qquad M = n\\,(t - t_p) = E - e\\sin E \\]</div>
@@ -350,7 +350,7 @@
         ${Archive.capsule('trench')}
 
         <section class="section">
-          <h2><span class="idx">2.6</span>${T`Orbital elements in three dimensions`}</h2>
+          <h2>${T`Orbital elements in three dimensions`}</h2>
           <div class="prose">
             <p>${T`Two angles fix the orbit plane, one more orients the ellipse within it, two numbers give its size and shape, and a last angle places the spacecraft. These are the six <b>classical orbital elements</b>:`}</p>
           </div>

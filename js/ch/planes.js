@@ -290,7 +290,7 @@
         ${Progress.briefing('planes', { theory: 'theory', lab: 'pl', math: 'refresher', mathLabel: N`Vectors and the law of cosines.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">11.1</span>${T`Describing a tilted orbit`}</h2>
+          <h2>${T`Describing a tilted orbit`}</h2>
           <div class="prose">
             <p>${T`Every Apollo flight left Cape Canaveral, at 28.5° N, and a rocket cannot put its orbit closer to the equator than its launch site (section ${App.sec('planes', 5)}). The plane of that orbit stays fixed in space while the Earth turns under it: a spacecraft inclined at 28.5° passes over latitudes from 28.5° south to 28.5° north and nowhere else. An orbit in a different plane is a different orbit, and reaching it costs Δv. A geostationary satellite launched from Florida must remove those 28.5° somewhere; a lunar module must lift off into the plane of the command module. To say which plane, and how far apart two planes are, takes a few angles.`}</p>
             <p>${T`An orbit lies in a plane through the Earth’s centre. Two angles say which plane. Take the equatorial plane as the reference, with the x axis pointing at the vernal equinox (a fixed direction among the stars) and the z axis at the north pole.`}</p>
@@ -309,7 +309,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">11.2</span>${T`The simple plane change`}</h2>
+          <h2>${T`The simple plane change`}</h2>
           <div class="prose">
             <p>${T`A plane change turns the velocity vector without changing its length. Two velocity vectors of equal length v, an angle Δi apart, form an isosceles triangle. The Δv is its third side:`}</p>
             <div class="eq">\\[ \\Delta v = 2\\,v\\,\\sin\\frac{\\Delta i}{2} \\]</div>
@@ -321,7 +321,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">11.3</span>${T`The burn as PAD components`}</h2>
+          <h2>${T`The burn as PAD components`}</h2>
           <div class="prose">
             <p>${T`A PAD gives the burn in the maneuver frame of the orbit before the burn: <b>prograde</b> along the velocity, <b>normal</b> along the angular momentum h (perpendicular to the plane), <b>radial</b> outwards. A plane change at a node needs the normal component. It also needs a prograde one:`}</p>
             <div class="eq">\\[ \\Delta v_N = v\\sin\\Delta i, \\qquad \\Delta v_P = -v\\,(1-\\cos\\Delta i), \\qquad \\Delta v_R = 0 \\]</div>
@@ -332,7 +332,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">11.4</span>${T`Plane and speed together`}</h2>
+          <h2>${T`Plane and speed together`}</h2>
           <div class="prose">
             <p>${T`If the orbit also needs a different speed, do both in one burn. The velocity before the burn has length v₁, the velocity after has length v₂, and the two vectors are an angle Δi apart. The law of cosines gives the Δv:`}</p>
             <div class="eq">\\[ \\Delta v^2 = v_1^2 + v_2^2 - 2\\,v_1 v_2\\cos\\Delta i, \\qquad \\Delta v_P = v_2\\cos\\Delta i - v_1, \\quad \\Delta v_N = \\pm v_2\\sin\\Delta i \\]</div>
@@ -350,7 +350,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">11.5</span>${T`Launch azimuth and launch windows`}</h2>
+          <h2>${T`Launch azimuth and launch windows`}</h2>
           <div class="prose">
             <p>${T`The cheapest plane change is the one you never make: launch into the right plane. A rocket leaving a site at latitude φ along an azimuth β (measured from north, clockwise) ends up in an orbit of inclination i. Spherical trigonometry on the triangle formed by the site, the north pole and the point where the orbit crosses the equator gives:`}</p>
             <div class="eq">\\[ \\cos i = \\cos\\phi\\,\\sin\\beta, \\qquad \\sin\\beta = \\frac{\\cos i}{\\cos\\phi} \\]</div>
@@ -366,7 +366,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">11.6</span>${T`Lab: plane change`}</h2>
+          <h2>${T`Lab: plane change`}</h2>
           <div class="prose"><p>${T`Pick a scenario. The globe is three-dimensional: drag it to turn it. Grey is the current orbit, green dashed the target, and the orange ring is what you end up with. In the plane-change scenarios, work out Δi, the speed, the node and the PAD components, then type them in with the burn time and press Execute. The lab flies the burn and compares the result with the target. In the launch scenario, enter the azimuth and press Launch. Only values you type yourself count towards the objectives, and “Show Mission Control’s solution” disables credit for that attempt.`}</p></div>
           <div class="lab tl-lab" id="pl">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Plane change`}</h3><span class="spacer"></span>

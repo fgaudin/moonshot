@@ -181,7 +181,7 @@
         ${Progress.briefing('launcher', { theory: 'theory', lab: 'ln', math: 'refresher', mathLabel: N`Interpolation in a table.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">7.1</span>${T`Thrust depends on the air around the engine`}</h2>
+          <h2>${T`Thrust depends on the air around the engine`}</h2>
           <div class="prose">
             <p>${T`Module ${Progress.code('rockets')} gave the thrust equation. Here is what it means for a rocket that climbs out of the atmosphere:`}</p>
             <div class="eq">\\[ F = \\dot m\\,v_e + (p_e - p_a)\\,A_e \\]</div>
@@ -195,7 +195,7 @@
         ${Archive.capsule('j2')}
 
         <section class="section">
-          <h2><span class="idx">7.2</span>${T`Isp from sea level to vacuum`}</h2>
+          <h2>${T`Isp from sea level to vacuum`}</h2>
           <div class="prose">
             <p>${T`Specific impulse is the thrust divided by the weight flow, <i>I<sub>sp</sub></i> = <i>F</i>/(ṁ g₀). The mass flow ṁ of a given engine is fixed, so the thrust and the specific impulse follow the same law. Write the vacuum thrust as <i>F<sub>vac</sub></i>. Then the thrust at ambient pressure <i>p</i> is <i>F<sub>vac</sub></i> − <i>p A<sub>e</sub></i>, and dividing by ṁ g₀ gives:`}</p>
             <div class="eq">\\[ F(p) = F_{vac} - p\\,A_e,\\qquad I_{sp}(p) = I_{vac} - \\left(I_{vac} - I_{SL}\\right)\\frac{p}{p_0},\\qquad A_e = \\frac{F_{vac} - F_{SL}}{p_0} \\]</div>
@@ -212,7 +212,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.3</span>${T`Two stages, two jobs`}</h2>
+          <h2>${T`Two stages, two jobs`}</h2>
           <div class="prose">
             <p>${T`The rocket equation of module ${Progress.code('rockets')} adds up stage by stage. The two stages face different problems:`}</p>
             <ul>
@@ -224,7 +224,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.4</span>${T`Where the Δv goes`}</h2>
+          <h2>${T`Where the Δv goes`}</h2>
           <div class="prose">
             <p>${T`Circular orbital speed at 200 km is 7.78 km/s. As module ${Progress.code('ascent')} showed, a launcher must supply more than that, because gravity and the air take part of the thrust. Here is the same budget written the way the lab measures it, adding up each loss second by second. The vehicle’s ideal Δv, the integral of its thrust acceleration, is:`}</p>
             <div class="eq">\\[ \\Delta v_{ideal} = v_{orbit} + \\Delta v_{grav} + \\Delta v_{drag} + \\Delta v_{steer} - \\Delta v_{rot} \\]</div>
@@ -236,7 +236,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.5</span>${T`The pitch program`}</h2>
+          <h2>${T`The pitch program`}</h2>
           <div class="prose">
             <p>${T`A launcher does not choose its angle in flight. It follows a program written on the ground as a table of pitch angles against time. The pitch is measured from the vertical, 0° straight up and 90° horizontal, the natural reading for a rocket standing on its pad. The flight-path angle γ of module ${Progress.code('ascent')} is measured from the horizontal instead: when the vehicle points along its velocity, pitch = 90° − γ. The usual phases are:`}</p>
             <ol>
@@ -252,7 +252,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.6</span>${T`How Mission Control iterates a table`}</h2>
+          <h2>${T`How Mission Control iterates a table`}</h2>
           <div class="prose">
             <p>${T`Nobody writes a perfect table at the first try. The method is a loop, the same guess, check and correct as in any iteration.`}</p>
             ${Primer.box('iteration', false)}
@@ -267,7 +267,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">7.7</span>${T`Lab: pitch program designer`}</h2>
+          <h2>${T`Lab: pitch program designer`}</h2>
           <div class="prose"><p>${T`Choose a preset or edit the stage sliders to make your own vehicle. Then edit the kick and the pitch table. The simulation is planar, over a round, <b>non-rotating</b> Earth, with the exponential atmosphere of this module. Stage 1 follows a vertical rise, the kick and a gravity turn. Stage 2 follows your table. Stage 2 cuts off when it has the energy of a circular orbit at 200 km: your table decides the shape of the orbit. The preset tables are drafts that do <b>not</b> reach orbit. Only flights after your own edits count for the objectives.`}</p></div>
           <div class="lab tl-lab" id="ln">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Pitch program designer`}</h3><span class="spacer"></span>

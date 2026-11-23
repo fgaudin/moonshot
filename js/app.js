@@ -89,10 +89,15 @@
     });
     App.markVisited(c.id);
     Primer.activate(page);
-    // automatic section numbers: "k" part kept, module number from the order
+    // automatic section numbers: a section's <h2> without an .idx gets one, "n.k", n from the module order, k counted
+    // in page order. A heading that already has an .idx (✓ Check yourself) keeps it and is not counted.
     if (Progress.MODULES[c.id]) {
       const n = Progress.code(c.id).replace('TM-', '');
-      page.querySelectorAll('.section > h2 > .idx').forEach((el) => { const m = el.textContent.match(/^\d+\.(\d+)$/); if (m) el.textContent = `${n}.${m[1]}`; });
+      let k = 0;
+      page.querySelectorAll('.section > h2').forEach((h) => {
+        if (h.querySelector(':scope > .idx')) return;
+        const idx = document.createElement('span'); idx.className = 'idx'; idx.textContent = `${n}.${++k}`; h.prepend(idx);
+      });
     }
     // focus targets: a debrief link into ground school, or ?focus=<element id> (handy for links and screenshots)
     const focus = App.pendingFocus || new URLSearchParams(location.search).get('focus');
@@ -104,8 +109,9 @@
     Progress.dockPlace();   // the objectives button shows once the briefing's list is out of view
   }
 
-  /* Numbering is computed from the module order: TM-n codes and section numbers n.k.
-     App.sec('moon', 1) → "13.1"; chapter files write their section numbers as "0.k" or any "n.k". */
+  /* Numbering is computed: TM-n codes from the module order, section numbers n.k from the page order (every section
+     <h2> without an .idx of its own, see render).
+     App.sec(id, k) gives "13.1" for the moon module's first numbered section. tests/sections.test.js checks every reference. */
   App.sec = (id, k) => `${Progress.code(id).replace('TM-', '')}.${k}`;
   // a module's own styles, injected once (keeps css/style.css for shared components)
   App.css = (id, text) => {

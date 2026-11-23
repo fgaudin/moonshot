@@ -332,7 +332,7 @@
         ${Progress.briefing('freereturn', { theory: 'theory', lab: 'fr', math: 'refresher', mathLabel: N`Adding and subtracting vectors.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">0.1</span>${T`What a flyby does`}</h2>
+          <h2>${T`What a flyby does`}</h2>
           <div class="prose">
             <p>${T`Module ${mc} ended inside the sphere of influence. The spacecraft crosses into it (patch 1) with a velocity \\(v_{rel}\\) relative to the Moon. The Moon’s hyperbola turns that velocity by an angle δ, and where the spacecraft crosses out again (patch 2), at the same distance from the Moon, it leaves just as fast: same length, new direction. Now go back to the Earth’s point of view. At patch 2, change frames again, the other way: add the Moon’s velocity.`}</p>
             <div class="eq">\\[ \\vec v_{out} = \\vec v_{rel,out} + \\vec v_☾ \\]</div>
@@ -345,7 +345,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.2</span>${T`The free return`}</h2>
+          <h2>${T`The free return`}</h2>
           <div class="prose">
             <p>${T`A <b>free return</b> is the flyby whose turn sends the spacecraft back to Earth with a perigee inside the <b>entry corridor</b>: the narrow band of perigee heights, about 12 to 65 km (flight-path angles of −7.4° to −5.3° at entry interface, module ${Progress.code('entry')}), where the capsule neither skips off the atmosphere nor dives into it too steeply (module ${Progress.code('entry')}). The perigee is measured as if the Earth had no air, the <b>vacuum perigee</b>. In the rotating frame, where the Earth–Moon line stands still, the path traces the famous <b>figure eight</b>. Patched conics can design one: in the lab, a TLI of 3 160 m/s at −132.333° (the burn position in the parking orbit, measured from the Earth–Moon line as in module ${mc}) passes 369 km from the Moon and comes back to a 52 km vacuum perigee.`}</p>
             <p>${T`Apollo 8, 10 and 11 were launched onto free-return trajectories, so that a dead main engine would still mean coming home. Apollo 12 onward used <b>hybrid</b> trajectories to reach landing sites the free return could not. They left the free return with a midcourse burn of the Service Propulsion System. On Apollo 13 an oxygen tank exploded 56 hours out, crippling the Service Module and making its engine too risky to use. The crew fired the Lunar Module’s descent engine for 35 seconds to get <i>back</i> on a free return, then burned again two hours after closest approach (PC+2), back on the near side, to speed up the return. Neither burn was needed to turn the spacecraft around: the Moon did that.`}</p>
@@ -357,7 +357,7 @@
         ${Archive.capsule('apollo13')}
 
         <section class="section">
-          <h2><span class="idx">0.3</span>${T`Aiming by timing`}</h2>
+          <h2>${T`Aiming by timing`}</h2>
           <div class="prose">
             <p>${T`This section and the next use one velocity triangle, seen near the Moon. Four names are enough: \\(\\vec v_{sc}\\), the spacecraft’s velocity relative to the Earth; \\(\\vec v_☾\\), the Moon’s velocity; \\(\\vec v_\\infty = \\vec v_{sc} - \\vec v_☾\\), the spacecraft’s velocity relative to the Moon (the \\(v_{rel}\\) of section ${App.sec('freereturn', 1)}); and \\(b\\), the aim offset: how far from the Moon’s centre the straight line along \\(v_\\infty\\) passes. Every correction below is a way to change \\(b\\).`}</p>
             <p>${T`Section ${App.sec('moon', 4)} gave the aim offset for a chosen periselene. Take the lab’s scenario <i>Aim for a 110 km periselene</i>, in the patched-conic model. Its TLI sends the spacecraft past the Moon at 899 km, aimed \\(b\\) = 5 560 km from the centre. Lunar orbit insertion wants 110 km, which needs \\(b\\) = 4 494 km (the example of section ${App.sec('moon', 4)}). The aim line must move by \\(\\Delta b\\) = 4 494 − 5 560 = −1 066 km. Two tools can move it: the timing of the TLI burn, and a midcourse correction.`}</p>
@@ -373,7 +373,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.4</span>${T`Midcourse correction by hand`}</h2>
+          <h2>${T`Midcourse correction by hand`}</h2>
           <div class="prose">
             <p>${T`A burn does the same job as a timing change. A burn \\(\\Delta v\\) makes the spacecraft drift away from where it would have been, at \\(\\Delta v\\) in the direction of the burn, so after a time \\(t_{go}\\) it is about \\(\\Delta v\\,t_{go}\\) away: the earlier the burn, the longer the lever arm. As with timing, only the part of that drift across \\(v_\\infty\\) moves the arrival line; the part along it only changes when the spacecraft reaches the Moon. In the lab, midcourse burns are made along the direction of flight, \\(\\vec v_{sc}\\), forward (prograde) or backward (retrograde), which makes an angle α with \\(v_\\infty\\):`}</p>
             <div class="eq">\\[ \\Delta b \\approx \\Delta v\\,t_{go}\\,\\sin\\alpha \\qquad\\Longleftrightarrow\\qquad \\Delta v \\approx \\frac{\\Delta b}{t_{go}\\,\\sin\\alpha}, \\qquad \\sin\\alpha = \\frac{v_☾\\,\\sin\\psi}{v_{sc}} \\]</div>
@@ -386,7 +386,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.5</span>${T`Measure the sensitivity`}</h2>
+          <h2>${T`Measure the sensitivity`}</h2>
           <div class="prose">
             <p>${T`Flight controllers did not trust a lever arm worked out by hand. They ran the trajectory twice with two nearby burns and took the difference. In the patched-conic lab, +1 m/s at 26.7 h gives \\(b = 5\\,713\\) km and −1 m/s gives 5 406 km. The sensitivity is (5 713 − 5 406)/2 = 153.5 km of aim offset per m/s, or 121 km of periselene altitude per m/s. It is 12% above the hand value, the size of the error left by the straight-line picture. Then correct linearly: \\(\\Delta v = -1\\,066/153.5 = -6.95\\) m/s. Fly it, measure again, and correct the rest. The burn also changes \\(v_\\infty\\) slightly, so recompute the \\(b\\) you need with the new \\(v_\\infty\\) each pass. The same two-run trick works for the TLI point.`}</p>
             <p>${T`The two tables collect the runs, one per fix: either shift the TLI point or burn at 26.7 h, never both. Each row is one way of computing the correction, from the hand formula to the second measured pass, and the last column is the periselene the lab then actually gives. The target is 110 km; the starting point is 899 km.`}</p>
@@ -407,7 +407,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.6</span>${T`Plan versus reality`}</h2>
+          <h2>${T`Plan versus reality`}</h2>
           <div class="prose">
             <p>${T`Everything so far used patched conics, an approximation: one body pulls at a time, the Earth outside the Moon’s sphere of influence and the Moon inside it. The real spacecraft feels the Earth and the Moon at the same time, most of all near the edge of the sphere, where both pull comparably hard. The lab’s other model integrates that: the planar <b>circular restricted three-body problem</b>, with the Earth and the Moon circling their common barycentre.`}</p>
             <p>${T`Fly the same burns in both models, with the ghost on. The patched-conic free return, TLI at −132.333°, hits the Moon in the three-body model. The three-body free return is the TLI at −132.18° with a 0.03 m/s MCC: it passes 290 km from the Moon and returns to a 34 km perigee, where patched conics predicts 899 km and a perigee 4 600 km below the surface. The two free returns differ by 0.15° of TLI point, about two seconds of burn timing. In the three-body model a TLI error of <b>0.1 m/s</b>, out of 3 160, moves the return perigee by about a thousand kilometres.`}</p>
@@ -416,7 +416,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.7</span>${T`Lab: free return and corrections`}</h2>
+          <h2>${T`Lab: free return and corrections`}</h2>
           <div class="prose">
             <p>${T`The lab starts in the patched-conic model. The verdict box says at once whether the spacecraft comes home. The two zooms show the pass close to the Moon, where you can see the flyby altitude or the impact, and the return to Earth: the dashed line continues the orbit to its vacuum perigee, and the gauge under it places that perigee against the corridor.`}</p>
             <ol>

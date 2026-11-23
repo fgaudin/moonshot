@@ -44,7 +44,7 @@
         ${Progress.briefing('burns', { theory: 'theory', lab: 'mc', math: 'refresher', mathLabel: N`Vectors (dot products) and logarithms.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">6.1</span>${T`What Mission Control sends up`}</h2>
+          <h2>${T`What Mission Control sends up`}</h2>
           <div class="prose">
             <p>${T`In module ${Progress.code('maneuvers')} a burn was an instant kick of so many metres per second. To actually fly one, the crew needs more. On Apollo, the capsule communicator read each burn to the crew as a <b>PAD</b>, a standard form they copied by hand. A maneuver PAD contained:`}</p>
             <ul>
@@ -61,7 +61,7 @@
         ${Archive.capsule('apollo13mcc')}
 
         <section class="section">
-          <h2><span class="idx">6.2</span>${T`The maneuver frame`}</h2>
+          <h2>${T`The maneuver frame`}</h2>
           <div class="prose">
             <p>${T`A Δv is a vector. Mission Control describes it with three components along axes attached to the orbit at the moment of the burn:`}</p>
             <ul>
@@ -79,7 +79,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.3</span>${T`From the orbit you want to three numbers`}</h2>
+          <h2>${T`From the orbit you want to three numbers`}</h2>
           <div class="prose">
             <p>${T`Mission Control works backwards. Decide the velocity you need just after the burn, subtract the velocity you will have just before it, and project the difference onto the axes of the frame:`}</p>
             <div class="eq">\\[ \\begin{aligned} \\Delta\\vec v &= \\vec v_{after} - \\vec v_{before} \\\\ \\Delta v_P &= \\Delta\\vec v\\cdot\\hat p \\\\ \\Delta v_R &= \\Delta\\vec v\\cdot\\hat r \\\\ \\Delta v_N &= \\Delta\\vec v\\cdot\\hat n \\end{aligned} \\]</div>
@@ -95,7 +95,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.4</span>${T`How long to burn`}</h2>
+          <h2>${T`How long to burn`}</h2>
           <div class="prose">
             <p>${T`The engine’s thrust is constant but the spacecraft gets lighter as it burns, so the acceleration grows. The burn time follows from the rocket equation, not from Δv divided by the initial acceleration:`}</p>
             <div class="eq">\\[ \\begin{gathered} t_b = \\frac{m_0\\,I_{sp}\\,g_0}{F}\\left(1 - e^{-\\Delta v/(I_{sp}\\,g_0)}\\right) \\\\ m_{prop} = m_0\\left(1 - e^{-\\Delta v/(I_{sp}\\,g_0)}\\right) \\end{gathered} \\]</div>
@@ -105,7 +105,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.5</span>${T`Finite burns`}</h2>
+          <h2>${T`Finite burns`}</h2>
           <div class="prose">
             <p>${T`The plan assumes an instant kick at one moment, the <b>burn point</b>. A real burn lasts seconds or minutes, during which the spacecraft keeps moving along its orbit while the engine holds a fixed direction in space. Two consequences:`}</p>
             <ul>
@@ -120,7 +120,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">6.6</span>${T`Lab: the maneuver computer`}</h2>
+          <h2>${T`Lab: the maneuver computer`}</h2>
           <div class="prose"><p>${T`Choose a scenario, compute the burn as Mission Control, then enter it in the maneuver computer: when to burn and the prograde and radial components (this lab is planar, so there is no normal component). The computer works out the attitude, the burn time and the predicted orbit, writes the PAD, and flies the burn as a real finite burn: attitude held fixed in space (or kept at the same angle to prograde, if you tick that option), cut off when the planned Δv has been delivered. The dashed orbit is the plan; the solid line is what actually happens.`}</p></div>
           <div class="lab tl-lab" id="mc">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Maneuver computer`}</h3><span class="spacer"></span>

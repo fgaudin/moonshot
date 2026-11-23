@@ -255,7 +255,7 @@
         ${Progress.briefing('entry', { theory: 'theory', lab: 'en', math: 'refresher', mathLabel: N`Derivatives and exponentials.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">10.1</span>${T`Equations of entry`}</h2>
+          <h2>${T`Equations of entry`}</h2>
           <div class="prose">
             <p>${T`Three equations describe a capsule flying through the atmosphere, over a spherical, non-rotating Earth. Each answers one question: how fast the speed changes, how fast the path bends, and how fast the altitude drops. The air thins out with altitude as \\(\\rho(h) = \\rho_0 e^{-h/H}\\). The capsule has a mass \\(m\\), a drag coefficient \\(C_D\\), a reference area \\(A\\) and a lift-to-drag ratio \\(L/D\\).`}</p>
             <div class="en-eq3">
@@ -279,7 +279,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">10.2</span>${T`The ballistic case: Allen and Eggers`}</h2>
+          <h2>${T`The ballistic case: Allen and Eggers`}</h2>
           <div class="prose">
             <p>${T`Drop lift and gravity (drag dominates) and the equations integrate in closed form (Allen & Eggers: studied in 1953, published by NACA in 1958). The result is surprising. The peak deceleration depends only on the entry speed and angle. The ballistic coefficient β, which describes the vehicle, is not in it:`}</p>
             <div class="eq">\\[ a_{max} = \\frac{v_E^2\\,\\sin|\\gamma_E|}{2\\,e\\,H}, \\qquad \\rho^* = \\frac{\\beta\\,\\sin|\\gamma_E|}{H} \\]</div>
@@ -293,7 +293,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">10.3</span>${T`Heating and the blunt body`}</h2>
+          <h2>${T`Heating and the blunt body`}</h2>
           <div class="prose">
             <p>${T`Convective heating at the stagnation point follows the Sutton–Graves relation:`}</p>
             <div class="eq">${T`\\[ \\dot q = k\\sqrt{\\frac{\\rho}{r_n}}\\;v^3, \\qquad k = 1.74\\times10^{-4}\\ \\text{(SI, Earth air)} \\]`}</div>
@@ -304,7 +304,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">10.4</span>${T`Lift and the entry corridor`}</h2>
+          <h2>${T`Lift and the entry corridor`}</h2>
           <div class="prose">
             <p>${T`The CM's centre of mass was offset from its axis, so it flew tilted at an angle of attack of about 20°, which gave \\(L/D \\approx 0.3\\). With lift up, the capsule pulls out higher and decelerates gently. With lift down, it digs in. There are two boundaries:`}</p>
             <ul>
@@ -347,7 +347,7 @@
         ${Archive.capsule('hornet')}
 
         <section class="section">
-          <h2><span class="idx">10.5</span>${T`Landing near a chosen point`}</h2>
+          <h2>${T`Landing near a chosen point`}</h2>
           <div class="prose">
             <p>${T`A capsule cannot steer onto a runway, but a crew and Mission Control can aim it at a patch of ocean some tens of kilometres across. Two things decide where it lands: when the deorbit burn starts and how big it is. This section turns both into a rule for a pocket calculator, in five steps: the entry angle, the vacuum arc, the arc in the air, the Earth's turn, and the sensitivities. The setting is the simplest one: a circular orbit over the equator, flown eastward, so everything happens in one plane and the landing site slides east under the capsule as the Earth turns. A site at another latitude, or an inclined orbit, adds a cross-range offset and a factor cos(latitude) on the Earth's motion. Those are left out here.`}</p>
             <h3>${T`1. The deorbit burn and the entry angle`}</h3>
@@ -419,7 +419,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">10.6</span>${T`Blackout and splashdown`}</h2>
+          <h2>${T`Blackout and splashdown`}</h2>
           <div class="prose">
             <p>${T`Air in the shock layer ionizes into a plasma that blocks radio for several minutes. Apollo's blackout lasted about 3 to 4 minutes. At 7.3 km two drogue parachutes opened to stabilize the capsule; at 3 km three 25 m main parachutes slowed it to about 9 m/s for splashdown. Apollo 11 hit the Pacific at 16:50 UTC on 24 July 1969, 195 hours 18 minutes after liftoff.`}</p>
           </div>

@@ -57,8 +57,9 @@ App.chapter({ id: '<id>', phase: N`Phase`, title: N`Title`, lab: N`Lab name`, bl
    real book chapters (Sellers, *Understanding Space*; Bate, Mueller & White, *Fundamentals of Astrodynamics*) or
    primary sources; do not invent chapter titles you are unsure of (use the book name alone then).
 2. `Progress.briefing('<id>', { theory: 'theory', lab: '<labId>', math: 'refresher', mathLabel: N\`…\` })`.
-3. Theory sections: `<section class="section">` with `<h2><span class="idx">0.1</span>${T\`…\`}</h2>`; section
-   numbers are renumbered automatically (write `0.1`, `0.2`…). The first section has `id="theory"`.
+3. Theory sections: `<section class="section">` with `<h2>${T\`…\`}</h2>`, no number: the app numbers every
+   section heading n.k in page order (a heading with its own `<span class="idx">`, like ✓ below, is left out of the
+   count). The first section has `id="theory"`.
    Every display equation (`<div class="eq">\\[ … \\]</div>`) is followed by `${Sym.where([...], N\`note\`)}` with
    each symbol explained (custom rows `['tex', N\`meaning\`, 'unit']`; existing keys from `SYM` in `js/symbols.js`).
    Give a plain-language reading of anything involving calculus. Include at least one
@@ -69,7 +70,9 @@ App.chapter({ id: '<id>', phase: N`Phase`, title: N`Title`, lab: N`Lab name`, bl
    `Practice.embed(page.querySelector('#practice-slot'), '<id>', 3)`.
 
 Cross-references to other modules: `${Progress.code('moon')}` (gives "TM-13") or `App.sec('moon', 1)` (gives
-"13.1"). Never hard-code a module or section number.
+"13.1", the first numbered section). Never hard-code a module or section number. Add each new `App.sec` reference,
+with the title of the section it points at, to `REFS` in `tests/sections.test.js`. Inserting, removing or moving a
+section renumbers the ones after it: that test then names every reference that now points elsewhere.
 
 ## Labs
 

@@ -203,7 +203,7 @@
         ${Progress.briefing('navigation', { theory: 'theory', lab: 'nv', math: 'refresher', mathLabel: N`Sine, cosine and arcsine.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">3.1</span>${T`What the crew actually reads`}</h2>
+          <h2>${T`What the crew actually reads`}</h2>
           <div class="prose">
             <p>${T`The previous module described orbits by their elements. A spacecraft does not measure elements. The instruments, read on board or sent to the ground by radio as <b>telemetry</b>, give four things:`}</p>
             <ul>
@@ -217,7 +217,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">3.2</span>${T`From readings to a state vector`}</h2>
+          <h2>${T`From readings to a state vector`}</h2>
           <div class="prose">
             <p>${T`Everything happens in the plane of the orbit, so two directions are enough: the <b>local vertical</b>, straight up along the line from the Earth’s centre through the spacecraft, and the <b>local horizontal</b>, at right angles to it in the direction of motion. The distance from the Earth’s centre is the altitude plus the Earth’s radius. The velocity splits into a vertical part, which is the climb rate ḣ, and a horizontal part. Together they give the <b>flight-path angle</b> γ, the angle of the velocity above the local horizontal:`}</p>
             ${figComponents()}
@@ -229,7 +229,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">3.3</span>${T`From the state to the orbit`}</h2>
+          <h2>${T`From the state to the orbit`}</h2>
           <div class="prose">
             <p>${T`Two conserved quantities fix the orbit. The <b>specific energy</b> gives the size, through the semi-major axis. The <b>specific angular momentum</b> gives the shape, through the semi-latus rectum:`}</p>
             <p>${T`A reminder from module ${Progress.code('orbits')}: the <b>semi-major axis</b> a is half the long axis of the ellipse; the <b>semi-latus rectum</b> p is the distance from the planet to the orbit, measured at right angles to the long axis; the <b>true anomaly</b> ν is the angle at the planet from periapsis to the spacecraft.`}</p>
@@ -248,7 +248,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">3.4</span>${T`Prediction: time to apoapsis`}</h2>
+          <h2>${T`Prediction: time to apoapsis`}</h2>
           <div class="prose">
             <p>${T`Knowing the orbit, the next question is when. Convert the true anomaly into the eccentric anomaly, then into the mean anomaly with Kepler’s equation, because the mean anomaly grows at a steady rate:`}</p>
             <div class="eq">\\[ \\begin{gathered} E = 2\\arctan\\!\\left(\\sqrt{\\frac{1-e}{1+e}}\\,\\tan\\frac{\\nu}{2}\\right) \\\\ M = E - e\\sin E, \\qquad n = \\sqrt{\\frac{\\mu}{a^3}} \\\\ t_{apo} = \\frac{\\pi - M}{n} \\end{gathered} \\]</div>
@@ -259,7 +259,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">3.5</span>${T`How wrong can the answer be?`}</h2>
+          <h2>${T`How wrong can the answer be?`}</h2>
           <div class="prose">
             <p>${T`Every reading has an error. Because the formulas above are smooth, a small error in one reading moves the apsides by an amount proportional to it. The ratio is the <b>sensitivity</b>. Two new signs appear below. The curly <b>∂</b> (read “partial d”) marks a <b>partial derivative</b>: the rate at which the answer changes with one reading while the other readings are held fixed. The Greek letter <b>σ</b> (sigma) is the <b>standard deviation</b> of an instrument, the typical size of its random error: about two readings out of three fall within ±1σ of the truth.`}</p>
             <div class="eq">\\[ \\begin{aligned} \\Delta h_{a,p} \\approx{}& \\frac{\\partial h_{a,p}}{\\partial v}\\,\\Delta v + \\frac{\\partial h_{a,p}}{\\partial \\dot h}\\,\\Delta\\dot h \\\\ &+ \\frac{\\partial h_{a,p}}{\\partial h}\\,\\Delta h \\end{aligned} \\]</div>
@@ -276,7 +276,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">3.6</span>${T`Ground tracking and onboard navigation`}</h2>
+          <h2>${T`Ground tracking and onboard navigation`}</h2>
           <div class="prose">
             <p>${T`On Apollo the crew did not do this alone. The Manned Space Flight Network tracked the spacecraft from ground stations around the world: radar in Earth orbit, and further out the Unified S-Band radio link, which gave the distance by timing a signal’s round trip and the speed along the line of sight from its Doppler shift. Mission Control in Houston computed the state vector and <b>uplinked</b> it to the guidance computer. That was the main source of the onboard state.`}</p>
             <p>${T`The command module also carried a sextant and a scanning telescope. The crew could measure angles between stars and landmarks or the horizon, and the computer turned them into a state vector. This was the independent backup, for use when communications were lost, and a check on the ground’s numbers.`}</p>
@@ -287,7 +287,7 @@
         ${Archive.capsule('tracking')}
 
         <section class="section">
-          <h2><span class="idx">3.7</span>${T`Lab: the telemetry desk`}</h2>
+          <h2>${T`Lab: the telemetry desk`}</h2>
           <div class="prose"><p>${T`Pick a scenario. The display shows only raw readings. Compute the periapsis and apoapsis altitudes (and, if you like, the time to apoapsis), type them in and submit. The orbit is drawn after you submit, with the truth beside your answer. The tolerance is shown in the task. Only answers you type yourself count towards the objectives, and “Show the working” disables credit for the current readings.`}</p></div>
           <div class="lab tl-lab" id="nv">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Telemetry desk`}</h3></div>

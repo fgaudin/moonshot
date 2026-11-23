@@ -242,7 +242,7 @@
         ${Progress.briefing('mcc', { theory: 'theory', lab: 'mcc-lab', math: 'refresher', mathLabel: N`Exponentials and logarithms.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">0.1</span>${T`The room and its positions`}</h2>
+          <h2>${T`The room and its positions`}</h2>
           <div class="prose">
             <p>${T`During Apollo, the flight was run from the Mission Operations Control Room in Houston. Each console owned a part of the vehicle or the trajectory and watched it with the help of a back room of specialists. The Flight Director sat above them all. Every position answered with a single word, <b>go</b> or <b>no-go</b>, and the Flight Director decided.`}</p>
           </div>
@@ -257,7 +257,7 @@
         ${Archive.capsule('flightDirectors')}
 
         <section class="section">
-          <h2><span class="idx">0.2</span>${T`The flight plan and the clock`}</h2>
+          <h2>${T`The flight plan and the clock`}</h2>
           <div class="prose">
             <p>${T`Everything on the timeline is a <b>GET</b>, ground elapsed time: hours, minutes and seconds since liftoff. A PAD says “TIG 075:49:50”, not a calendar time, so everybody, on the ground and in the spacecraft, counts the same clock. The flight plan lists the events in order, each with its GET: engine burns, midcourse windows, sleep periods, go/no-go points. The Flight Activities Officer keeps it.`}</p>
             <p>${T`The plan also follows <b>coverage</b>. Antennas on Earth see the spacecraft only part of the time. Near the Moon the limit is simple geometry: when the spacecraft goes behind the Moon, the signal stops (<b>loss of signal</b>, LOS) and returns when it comes out (<b>acquisition</b>, AOS). In lunar orbit that is a large part of every orbit (below). The Apollo crews flew LOI and TEI on the far side, out of contact. The ground could not help, so the PAD had to be complete and read back before the loss of signal, and the result was known only at acquisition.`}</p>
@@ -270,7 +270,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.3</span>${T`Voice protocol`}</h2>
+          <h2>${T`Voice protocol`}</h2>
           <div class="prose">
             <p>${T`Voices are organised in <b>loops</b>. The air-to-ground loop connects the crew and CAPCOM only. The flight director loop connects the Flight Director with every console. Each console also has private loops with its back room. Nobody calls the crew except CAPCOM, so the crew hears one voice with one style, even when twenty people are working the problem.`}</p>
             <ul>
@@ -284,7 +284,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.4</span>${T`PADs and readback`}</h2>
+          <h2>${T`PADs and readback`}</h2>
           <div class="prose">
             <p>${T`A <b>PAD</b> is a standard form that CAPCOM reads to the crew and the crew copies by hand. Module ${Progress.code('burns')} introduced the maneuver PAD. In this course it contains:`}</p>
             <ul>
@@ -300,7 +300,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.5</span>${T`Δv budget and margins`}</h2>
+          <h2>${T`Δv budget and margins`}</h2>
           <div class="prose">
             <p>${T`A mission plan starts as a list of burns with a Δv each, and each burn is assigned to a stage. Once the plan is flown on paper, some propellant is left in each stage after its last planned burn. The rocket equation of module ${Progress.code('rockets')} turns it into the <b>remaining Δv</b>, Δv<sub>rem</sub>: what the stage could still give if it had to. It is the stage’s reserve:`}</p>
             <div class="eq">\\[ \\Delta v_{rem} = I_{sp}\\,g_0\\,\\ln\\frac{m_0}{m_0 - m_{prop}} \\]</div>
@@ -317,7 +317,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.6</span>${T`Error budgets and midcourse corrections`}</h2>
+          <h2>${T`Error budgets and midcourse corrections`}</h2>
           <div class="prose">
             <p>${T`Three families of error act on every burn:`}</p>
             <ul>
@@ -337,7 +337,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.7</span>${T`Mission rules and aborts`}</h2>
+          <h2>${T`Mission rules and aborts`}</h2>
           <div class="prose">
             <p>${T`The worst moment to decide what is acceptable is when something has just broken. <b>Mission rules</b> are written before flight, by the people who will fly and run it: which failure is a no-go for which event, which failure forces an abort, how much margin must remain. In real time, the Flight Director applies the rule and spends the time thinking about what the rule did not foresee.`}</p>
             <p>${T`Four real rules, and what they did:`}</p>
@@ -361,7 +361,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.8</span>${T`Lab: the mission planning desk`}</h2>
+          <h2>${T`Lab: the mission planning desk`}</h2>
           <div class="prose"><p>${T`Three tabs. The <b>Δv budget</b> holds an Apollo-like lunar mission with its stages, masses and three-sigma dispersions. Change anything and the margins follow. The <b>PAD worksheet</b> is a form for maneuver, TEI and entry PADs, which you can fill in, check and print, with a readback drill: CAPCOM reads you a PAD and you copy it by ear. The <b>Abort decision</b> gives you a failure and four options: screen them with the mission rules and make the call. The figures are rounded training values, close to Apollo but not exact.`}</p></div>
           <div class="lab tl-lab" id="mcc-lab">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Mission planning desk`}</h3><span class="spacer"></span>

@@ -160,7 +160,7 @@
         ${Progress.briefing('descent', { theory: 'theory', lab: 'ds', math: 'refresher', mathLabel: N`Constant acceleration.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">0.1</span>${T`Lowering the orbit: DOI`}</h2>
+          <h2>${T`Lowering the orbit: DOI`}</h2>
           <div class="prose">
             <p>${T`The lander cannot brake from a 110 km circular orbit: the braking burn would start high above the terrain. The plan is to drop the periapsis first. A short <b>descent orbit insertion</b> (DOI) burn, retrograde, on the side of the Moon opposite the site, turns the circle into an ellipse whose low point is about 15 km above the surface. Apollo used a periapsis of about that height. The burn is made at the apoapsis of the new ellipse, so vis-viva gives the new speed there:`}</p>
             <div class="eq">\\[ \\Delta v_{DOI} = v_c - v_a,\\qquad v_c = \\sqrt{\\frac{\\mu}{r_a}},\\qquad v_a = \\sqrt{\\mu\\left(\\frac{2}{r_a} - \\frac{1}{a}\\right)},\\qquad a = \\frac{r_a + r_p}{2} \\]</div>
@@ -173,7 +173,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.2</span>${T`Braking: the constant-deceleration model`}</h2>
+          <h2>${T`Braking: the constant-deceleration model`}</h2>
           <div class="prose">
             <p>${T`From PDI the engine pushes against the motion. To a first approximation the deceleration is constant, so the distance and the time follow from the refresher below:`}</p>
             <div class="eq">\\[ a = \\frac{F}{m},\\qquad t_{brake} = \\frac{v}{a},\\qquad d_{brake} = \\frac{v^2}{2a} \\]</div>
@@ -184,7 +184,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.3</span>${T`The last stop: braking altitude`}</h2>
+          <h2>${T`The last stop: braking altitude`}</h2>
           <div class="prose">
             <p>${T`Close to the ground the lander moves slowly and mostly down. Gravity now acts directly against the stop. If the thrust gives an upward acceleration a, the net deceleration is a − g, and the same distance formula gives the altitude at which to start:`}</p>
             <div class="eq">\\[ h_{brake} = \\frac{v^2}{2\\,(a - g_☾)} \\]</div>
@@ -194,7 +194,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.4</span>${T`Propellant and the cost of gravity`}</h2>
+          <h2>${T`Propellant and the cost of gravity`}</h2>
           <div class="prose">
             <p>${T`The rocket equation turns any Δv into propellant. With I<sub>sp</sub> of about 311 s, c = I<sub>sp</sub> g₀ ≈ 3 050 m/s:`}</p>
             <div class="eq">\\[ m_{prop} = m_0\\left(1 - e^{-\\Delta v/c}\\right) \\]</div>
@@ -205,7 +205,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.5</span>${T`The hover margin`}</h2>
+          <h2>${T`The hover margin`}</h2>
           <div class="prose">
             <p>${T`The propellant that remains at the end of the plan is the reserve. A good way to express it is as time: how long could the lander hover? To hover, the thrust equals the weight, F = m g☾. The flow rate is F/c, so:`}</p>
             <div class="eq">\\[ \\dot m = \\frac{m\\,g_☾}{c},\\qquad t_{hover} = \\frac{m_{res}}{\\dot m} = \\frac{m_{res}\\,I_{sp}\\,g_0}{m\\,g_☾} \\]</div>
@@ -216,7 +216,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">0.6</span>${T`Hitting the site`}</h2>
+          <h2>${T`Hitting the site`}</h2>
           <div class="prose">
             <p>${T`A plan that lands 5 km away is a plan that fails. Three errors matter.`}</p>
             <ul>
@@ -231,7 +231,7 @@
         ${Archive.capsule('surveyor')}
 
         <section class="section">
-          <h2><span class="idx">0.7</span>${T`Lab: the descent planner`}</h2>
+          <h2>${T`Lab: the descent planner`}</h2>
           <div class="prose"><p>${T`Pick a scenario. Set the DOI Δv, the ignition point (the distance before the site where the engine starts), the braking throttle and the altitude of the high gate, where the final approach begins. The simulation flies the plan: thrust opposite to the velocity, with the steering holding a smooth descent from periapsis to the high gate. It shows where you land, how fast, and how many seconds of hover are left. The plot shows altitude against ground distance with the height exaggerated. First compute d = v²/(2a) by hand and use it as your first guess, then refine. Only your own changes count towards the objectives.`}</p></div>
           <div class="lab tl-lab" id="ds">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Descent planner`}</h3><span class="spacer"></span></div>

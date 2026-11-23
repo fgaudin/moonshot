@@ -3,6 +3,18 @@
 What changed and why, in more detail than the commit messages. Newest first. Module numbers (TM-n, section n.k)
 follow the current `ORDER` in `js/app.js`.
 
+## 2026-11-23 — Section numbers counted, not written
+
+- **Sections are numbered in page order** (`js/app.js`): a chapter writes a section's heading as a plain `<h2>`,
+  and the app adds its number n.k: n from the module order (as before), k counted on the page. A heading with its
+  own mark (✓ Check yourself) keeps it and is not counted. The 117 hand-written numbers in `js/ch/*.js` are gone:
+  inserting a section no longer means renumbering the rest by hand, nor gives a duplicate (the 6.3 of 2026-11-22). Every module renders the same numbers and titles as
+  before (checked page by page in a browser).
+- **The cross-references are checked** (new `tests/sections.test.js`): `App.sec(id, k)` still names a section by k,
+  so the test pins each of the 28 references to the title of the section it points at. Inserting, removing or
+  moving a section fails the test for every reference it shifts. A new reference must be added to the test's
+  table; a section number written by hand fails too. `tools/MODULE-GUIDE.md` says so.
+
 ## 2026-11-22 — TM-6: direct insertion or coast to apogee (self-test gap G1)
 
 - **New section 6.3, "Direct insertion or coast to apogee"** (`js/ch/ascent.js`; the lab moves to 6.4). The course

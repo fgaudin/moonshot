@@ -51,7 +51,7 @@
         ${Progress.briefing('ascent', { theory: 'theory', lab: 'as', math: 'refresher', mathLabel: N`Integrals and trigonometry.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">4.1</span>${T`The Δv budget to orbit`}</h2>
+          <h2>${T`The Δv budget to orbit`}</h2>
           <div class="prose">
             <p>${T`Circular speed at the Apollo parking altitude of 185 km is 7.79 km/s, yet launch vehicles must supply about 9.3–9.5 km/s. The difference is <b>losses</b>, minus a gift from Earth’s rotation:`}</p>
             <div class="eq">${T`\\[ \\Delta v_{design} = v_{orbit} + \\underbrace{\\int g\\sin\\gamma\\,dt}_{\\text{gravity loss}} + \\underbrace{\\int \\frac{D}{m}\\,dt}_{\\text{drag loss}} + \\underbrace{\\int \\frac{F}{m}(1-\\cos\\alpha)\\,dt}_{\\text{steering loss}} - v_{rotation} \\]`}</div>
@@ -68,7 +68,7 @@
         ${Archive.capsule('liftoff')}
 
         <section class="section">
-          <h2><span class="idx">4.2</span>${T`The gravity turn`}</h2>
+          <h2>${T`The gravity turn`}</h2>
           <div class="prose">
             <p>${T`A rocket starts vertical so it clears the pad and gets out of the thick air. A few seconds later it makes a small <b>pitch kick</b>, a slight tilt away from the vertical, then lets gravity do the turning (the Saturn V flew a pre-computed tilt program that approximates this turn): with thrust aligned to the airflow there is no <b>angle of attack</b> (the angle between the vehicle’s axis and the oncoming air), so no aerodynamic side load. The flight-path angle obeys`}</p>
             <div class="eq">\\[ \\dot\\gamma = -\\left(\\frac{g}{v} - \\frac{v}{r}\\right)\\cos\\gamma \\]</div>
@@ -78,7 +78,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">4.3</span>${T`Direct insertion or coast to apogee`}</h2>
+          <h2>${T`Direct insertion or coast to apogee`}</h2>
           <div class="prose">
             <p>${T`Above the atmosphere the upper stage has two jobs left: finish the horizontal speed of the orbit, and be at the orbit’s altitude when it does. Which one ends first decides how the vehicle reaches orbit. Compare two times: the time the stage still needs to reach orbital speed, roughly the speed still to gain divided by its acceleration, and the time left before its path reaches orbit altitude.`}</p>
             <p>${T`<b>The path reaches orbit altitude first.</b> The stage gets there still short of orbital speed, so it holds that altitude and keeps burning. This is <b>direct insertion</b>, the Saturn V’s way. Its S-II and S-IVB burned for about nine minutes at about one g or less, and the S-IVB cut off at 185 km, flying level at circular speed. To hold altitude, the thrust points a little above the velocity, enough to make up for the part of gravity that the curved path does not cancel yet:`}</p>
@@ -97,7 +97,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">4.4</span>${T`Lab: fly the Saturn V`}</h2>
+          <h2>${T`Lab: fly the Saturn V`}</h2>
           <div class="prose"><p>${T`A planar simulation with Apollo-era numbers: five F-1s whose thrust rises as the air thins, the centre engine shut down at T+135 s, J-2 upper stages, an exponential atmosphere and a rotating Earth. You choose when and how hard to pitch over. Small changes to the kick have large effects: real launch vehicles fly a carefully pre-computed <b>pitch program</b>, a table of tilt angles against time, for this reason.`}</p>
             <p>${T`<b>Reading the lab.</b> The ledger adds up where the Δv went. <i>Ideal Δv expended</i> is what the rocket equation gives for the propellant burned so far. Subtract the gravity, drag and steering losses, add the Earth’s rotation, and what is left is about the final inertial speed: the 7.8 km/s of orbit. A better pitch-over shows up as smaller losses and more propellant left in the S-IVB. The presets show the three ways it goes. <i>Nominal</i> is close to Apollo’s. <i>Late and gentle</i> still reaches orbit, because the upper-stage guidance rescues it, but climbing steeply for too long costs over 2 km/s of extra gravity and steering loss, about 60 t of propellant. <i>Too hard</i> tips over in the thick air and is lost. <i>Launch west</i> fights the Earth’s rotation.`}</p>
             <p>${T`The lab vehicle is simplified: one drag coefficient, an exponential atmosphere, a simple guidance law. It flies a little differently from the real Saturn V (see the comparison below), but the trade it shows, climbing out of the air against turning sideways to build speed, is the real one, and the ledger works the same for any rocket.`}</p></div>

@@ -155,7 +155,7 @@
         ${Progress.briefing('maneuvers', { theory: 'theory', lab: 'mv', math: 'refresher', mathLabel: N`Trigonometry and the law of cosines.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">5.1</span>${T`The Hohmann transfer`}</h2>
+          <h2>${T`The Hohmann transfer`}</h2>
           <div class="prose">
             <p>${T`Walter Hohmann showed in 1925 that the cheapest two-impulse way between coplanar circular orbits is an ellipse tangent to both. Its periapsis touches the inner orbit and its apoapsis the outer one. Both burns are <b>prograde</b>, along the velocity (a <b>retrograde</b> burn points against it), where they change energy most efficiently:`}</p>
             <div class="eq">\\[ a_t = \\frac{r_1 + r_2}{2} \\]</div>
@@ -170,7 +170,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.2</span>${T`Plane changes`}</h2>
+          <h2>${T`Plane changes`}</h2>
           <div class="prose">
             <p>${T`To tilt an orbit, the velocity vector must be rotated through the angle \\(\\Delta i\\) at one of the nodes, where the two planes intersect. With constant speed, the velocity triangle is isosceles:`}</p>
             <div class="eq">\\[ \\Delta v_{plane} = 2\\,v\\,\\sin\\frac{\\Delta i}{2} \\]</div>
@@ -185,7 +185,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.3</span>${T`Lab: plan a transfer`}</h2>
+          <h2>${T`Lab: plan a transfer`}</h2>
           <div class="lab" id="mv">
             <div class="lab-head"><span class="tag">${T`Lab`}</span><h3>${T`Transfer & rendezvous planner`}</h3><span class="spacer"></span>
               <div class="btn-row"><button class="btn" data-p="geo">LEO → GEO</button><button class="btn" data-p="iss">${T`Shuttle → Hubble`}</button><button class="btn" data-p="moon">${T`LEO → Moon distance`}</button><button class="btn" data-p="lor">${T`LM → CSM (Moon)`}</button></div></div>
@@ -211,7 +211,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.4</span>${T`When Hohmann is not the cheapest`}</h2>
+          <h2>${T`When Hohmann is not the cheapest`}</h2>
           <div class="prose">
             <p>${T`Above \\(r_2/r_1 \\approx 15.58\\) a <b>bi-elliptic</b> transfer is cheaper than a Hohmann transfer for any far apoapsis \\(r_b > r_2\\). Between 11.94 and 15.58 it is cheaper only if \\(r_b\\) is far enough out. It burns out to a far apoapsis \\(r_b > r_2\\), raises its periapsis there for almost nothing, then falls back and circularizes at \\(r_2\\). The flight takes much longer. Along with its solution, the lab shows the bi-elliptic cost with \\(r_b = 3 r_2\\) once the ratio passes 11.94; with an apoapsis that close it only beats Hohmann above a ratio of about 13.3 (shown in green). In practice the time penalty usually rules it out.`}</p>
             ${figBiElliptic()}
@@ -219,7 +219,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">5.5</span>${T`Rendezvous: lunar orbit rendezvous`}</h2>
+          <h2>${T`Rendezvous: lunar orbit rendezvous`}</h2>
           <div class="prose">
             <p>${T`A chaser in a lower orbit moves faster in angle than its target, so it gains on it. To meet with a Hohmann transfer, the chaser must start when the target is ahead by the right angle, the <b>phase angle</b> φ (some books call it the lead angle): during the transfer the target moves on while the chaser travels 180°, so φ = 180° − (the angle the target covers during the transfer). Module ${Progress.code('timing')} derives it in full and turns it into an ignition time.`}</p>
             <p>${T`If the geometry is wrong, wait. The relative angle changes at \\(\\omega_{chaser} - \\omega_{tgt}\\) per second, giving a <b>synodic period</b> between opportunities: the time until the same alignment comes round again (module ${Progress.code('timing')}). To catch up with a target ahead in the <i>same</i> orbit, burn <b>retrograde</b>, drop into a lower and faster phasing orbit, and come back up. In orbit you slow down to speed up.`}</p>

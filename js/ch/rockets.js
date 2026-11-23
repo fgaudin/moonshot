@@ -43,7 +43,7 @@
         ${Progress.briefing('rockets', { theory: 'theory', lab: 'st', math: 'refresher', mathLabel: N`Rates of change and logarithms.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">3.1</span>${T`The thrust equation`}</h2>
+          <h2>${T`The thrust equation`}</h2>
           <div class="prose">
             <p>${T`Draw an imaginary box around the engine and count what leaves it. Every second, the engine throws a mass of gas backwards at high speed: that is momentum leaving the box each second, and by Newton’s second and third laws the gas pushes the rocket forward just as hard. A second, smaller push comes from the gas pressure at the nozzle exit, which is not the same as the air pressure outside:`}</p>
             <div class="eq">\\[ F = \\dot m\\, v_e + (p_e - p_a)\\,A_e \\]</div>
@@ -66,7 +66,7 @@
         ${Archive.capsule('f1')}
 
         <section class="section">
-          <h2><span class="idx">3.2</span>${T`Specific impulse`}</h2>
+          <h2>${T`Specific impulse`}</h2>
           <div class="prose">
             <p>${T`The figure of merit for a propellant and engine is the <b>specific impulse</b>: the impulse delivered per unit <i>weight</i> of propellant consumed. It comes out in seconds:`}</p>
             <div class="eq">\\[ I_{sp} = \\frac{F}{\\dot m\\, g_0} = \\frac{c}{g_0} \\]</div>
@@ -79,7 +79,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">3.3</span>${T`The rocket equation`}</h2>
+          <h2>${T`The rocket equation`}</h2>
           <div class="prose">
             <p>${T`In time \\(dt\\) a rocket of mass \\(m\\) ejects \\(-dm\\) of propellant at speed \\(c\\) relative to itself. Conservation of momentum, with no external forces, gives \\(m\\,dv = -c\\,dm\\). Integrate from the initial mass \\(m_0\\) to the final mass \\(m_f\\):`}</p>
             <div class="eq">\\[ \\Delta v = c\\,\\ln\\frac{m_0}{m_f} = I_{sp}\\,g_0\\,\\ln\\frac{m_0}{m_f} \\]</div>
@@ -99,7 +99,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">3.4</span>${T`Thrust-to-weight ratio`}</h2>
+          <h2>${T`Thrust-to-weight ratio`}</h2>
           <div class="prose">
             <p>${T`The rocket equation says how much Δv the propellant can buy. It says nothing about <i>how fast</i> the propellant is burned, and that matters as soon as gravity is pulling. The <b>thrust-to-weight ratio</b> compares the engines’ push with the vehicle’s weight:`}</p>
             <div class="eq">\\[ \\mathrm{TWR} = \\frac{F}{m\\,g} \\qquad\\Longrightarrow\\qquad a_{\\text{vertical}} = (\\mathrm{TWR} - 1)\\,g \\]</div>
@@ -116,7 +116,7 @@
         </section>
 
         <section class="section">
-          <h2><span class="idx">3.5</span>${T`Staging`}</h2>
+          <h2>${T`Staging`}</h2>
           <div class="prose">
             <p>${T`The way out is to stop carrying empty tanks. A <b>staged</b> rocket drops each stage’s structure when its propellant is gone, and the rocket equation restarts with a smaller mass. The total is the sum of the stages’ contributions, each computed with everything above it as payload:`}</p>
             <div class="eq">\\[ \\Delta v_{total} = \\sum_{k} I_{sp,k}\\,g_0\\,\\ln\\frac{m_{0,k}}{m_{f,k}} \\]</div>

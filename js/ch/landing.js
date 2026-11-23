@@ -18,7 +18,7 @@
         ${Progress.briefing('landing', { theory: 'theory', lab: 'ld', math: 'refresher', mathLabel: N`Logarithms.` })}
 
         <section class="section" id="theory">
-          <h2><span class="idx">9.1</span>${T`Powered descent`}</h2>
+          <h2>${T`Powered descent`}</h2>
           <div class="prose">
             <p>${T`After undocking, the Lunar Module <i>Eagle</i> lowered its perilune to 15 km with a 23 m/s descent orbit insertion burn. At perilune it lit the Descent Propulsion System (DPS) for <b>powered descent initiation</b> and flew three guidance programs:`}</p>
             <ol>
@@ -37,7 +37,7 @@
         ${Archive.capsule('eagleUndocks')}
 
         <section class="section">
-          <h2><span class="idx">9.2</span>${T`Lab: you have the stick`}</h2>
+          <h2>${T`Lab: you have the stick`}</h2>
           <div class="prose"><p>${T`You start late in the approach phase, 500 m up and above low gate, sinking at 12 m/s and drifting forward at 18 m/s over a boulder field. Real numbers: 8 t lander, 45 kN engine throttleable 10–60% (plus 100%), I<sub>sp</sub> 311 s, lunar gravity 1.62 m/s². Land on the flat pad: sink rate under 3 m/s, drift under 1.2 m/s, tilt under 6°.`}</p>
           <p class="mono note">${T`Keyboard: ↑/↓ or W/S throttle (or descent rate in P66) · ←/→ or A/D tilt · P toggles P66 · R restart. Buttons work on touch screens.`}</p></div>
           <div class="lab" id="ld">
@@ -62,7 +62,7 @@
         ${Archive.capsule('ladder')}
 
         <section class="section">
-          <h2><span class="idx">9.3</span>${T`Ascent and rendezvous`}</h2>
+          <h2>${T`Ascent and rendezvous`}</h2>
           <div class="prose">
             <p>${T`The ascent stage used the descent stage as its launch pad. Its Ascent Propulsion System had one fixed-thrust engine (15.6 kN, I<sub>sp</sub> 311 s) with no throttle and no gimbal (a pivot that lets an engine steer by tilting). It was built as simply as possible: pressure-fed, with hypergolic propellants that ignite on contact. There was no backup. A 7-minute burn delivered about 1 850 m/s, into a 17 × 83 km orbit. From there, three more burns brought <i>Eagle</i> back to <i>Columbia</i>. CSI (coelliptic sequence initiation) and CDH (constant delta height) placed the LM on an orbit a constant height below the CSM’s; TPI (terminal phase initiation), timed on the phase angle as in module ${Progress.code('timing')}, started the final climb to it.`}</p>
           </div>
